@@ -45,20 +45,9 @@ void mapHardware()
 {
   uint8_t offset = 0;
   
+  lcd.clear();
   offset = lcd.printAt(0, 0, M_SCAN_HARDWARE);
-  offset = lcd.printAt(0, 1, M_SWITCH);
   
-  // Scan for Switch modules.
-  for (uint8_t module = 0; module < SWITCH_MODULE_MAX; module++)
-  {
-    lcd.printAt(offset + 1, 1, module, 2);
-    Wire.beginTransmission(switchBaseID + module);
-    if (!Wire.endTransmission())   
-    {  
-        setSwitchModulePresent(module);
-    }
-  }
-
   // Scan for Servo modules.
   offset = lcd.printAt(0, 1, M_SERVO);
   for (uint8_t module = 0; module < SWITCH_MODULE_MAX; module++)
@@ -70,7 +59,63 @@ void mapHardware()
         setServoModulePresent(module);  
     }
   }
+
+  // Scan for Switch modules.
+  offset = lcd.printAt(0, 1, M_SWITCH);
+  for (uint8_t module = 0; module < SWITCH_MODULE_MAX; module++)
+  {
+    lcd.printAt(offset + 1, 1, module, 2);
+    Wire.beginTransmission(switchBaseID + module);
+    if (!Wire.endTransmission())   
+    {  
+        setSwitchModulePresent(module);
+    }
+  }
+
+  lcd.clear();
 }
+
+
+/** Configure all switches for input.
+ */
+void initSwitches()
+{ 
+  uint8_t offset = 0;
+  
+  lcd.clear();
+  offset = lcd.printAt(0, 0, M_INIT_SWITCHES);
+
+  offset = lcd.printAt(0, 1, M_SWITCH);
+  for(uint8_t module = 0; module < SWITCH_MODULE_MAX; module++)
+  {
+    if (isSwitchModule(module))
+    {
+      lcd.printAt(offset, 1, module, 3);
+      Wire.beginTransmission(switchBaseID + module); 
+      Wire.write(SWITCH_PORTA_DIRECTION);
+      Wire.write(0xFF);
+      Wire.endTransmission();
+
+      Wire.beginTransmission(switchBaseID + module);  
+      Wire.write(SWITCH_PORTB_DIRECTION);
+      Wire.write(0xFF);
+      Wire.endTransmission();
+
+      Wire.beginTransmission(switchBaseID + module);
+      Wire.write (SWITCH_PORTA_PULLUPS);
+      Wire.write(0xFF);
+      Wire.endTransmission();  
+       
+      Wire.beginTransmission(switchBaseID + module);
+      Wire.write(SWITCH_PORTB_PULLUPS);
+      Wire.write(0xFF);
+      Wire.endTransmission();  
+    }   
+  }   
+  
+  lcd.clear();  
+}
+
 
 
 /** Initialise servos.

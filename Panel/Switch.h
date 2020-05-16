@@ -1,7 +1,7 @@
 /** Switch data.
  */
-#ifndef _SWITCH_H
-#define _SWITCH_H
+#ifndef _Switch_h
+#define _Switch_h
 
 // Switch modules.
 #define SWITCH_MODULE_SIZE  16  // 16 switches to each module.
@@ -14,6 +14,11 @@
 #define SWITCH_MAX  (SWITCH_MODULE_SIZE * SWITCH_MODULE_MAX)  // Maximum switches (up to 128).
 #define SWITCH_END  (SWITCH_BASE + SWITCH_SIZE * SWITCH_MAX)  // End of Switch EEPROM.
 
+// Switch message commands.
+#define SWITCH_PORTA_DIRECTION  0x00
+#define SWITCH_PORTB_DIRECTION  0x01
+#define SWITCH_PORTA_PULLUPS    0x0C
+#define SWITCH_PORTB_PULLUPS    0x0D
 
 /** Data describing a switch's operation.
  */
@@ -61,12 +66,21 @@ void setSwitchModulePresent(uint8_t aModule)
 }
 
 
+/** Is a Switch module present?
+ *  Look for switch's module in switchModules.
+ */
+boolean isSwitchModule(uint8_t aModule)
+{
+  return switchModules & (1 << aModule);
+}
+
+
 /** Is a Switch present?
  *  Look for switch's module in switchModules.
  */
 boolean isSwitch(uint8_t aSwitch)
 {
-  return switchModules & (1 << (aSwitch >> SWITCH_MODULE_SHIFT));
+  return isSwitchModule(aSwitch >> SWITCH_MODULE_SHIFT);
 }
 
 #endif

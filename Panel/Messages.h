@@ -1,11 +1,13 @@
 /** PROGMEM messages
  */
-#ifndef _MESSAGES_H
-#define _MESSAGES_H
+#ifndef _Messages_h
+#define _Messages_h
  
-const char M_SCAN_HARDWARE[]  PROGMEM = "Scan hardware";
 const char M_SERVO[]          PROGMEM = "Servo";
 const char M_SWITCH[]         PROGMEM = "Switch";
+const char M_SCAN_HARDWARE[]  PROGMEM = "Scan hardware";
+const char M_INIT_SWITCHES[]  PROGMEM = "Init switches";
+
 
 /** Gets a PROGMEM message and copies it to a buffer
  *  for regular usage.

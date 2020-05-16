@@ -1,7 +1,7 @@
 /** Servo data.
  */
-#ifndef _SERVO_H
-#define _SERVO_H
+#ifndef _Servo_h
+#define _Servo_h
 
 // Servo modules.
 #define SERVO_MODULE_SIZE   8   // 8 servos to each module.
@@ -63,12 +63,21 @@ void setServoModulePresent(uint8_t aModule)
 }
 
 
+/** Is a Servo module present?
+ *  Look for servo's module in servoModules.
+ */
+boolean isServoModule(uint8_t aModule)
+{
+  return servoModules & (1 << aModule);
+}
+
+
 /** Is a Servo present?
  *  Look for servo's module in servoModules.
  */
 boolean isServo(uint8_t aServo)
 {
-  return servoModules & (1 << (aServo >> SERVO_MODULE_SHIFT));
+  return isServoModule(aServo >> SERVO_MODULE_SHIFT);
 }
 
 #endif
