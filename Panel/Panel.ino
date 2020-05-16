@@ -158,31 +158,54 @@ void scanSwitches()
         int state = pins & mask;
         if (state != currentSwitchState[module] & mask)
         {
-          processSwitch((module << SWITCH_MODULE_SHIFT) + pin, state);
-
-          // Record new state.
-          state ^= mask;
-          currentSwitchState[module] = state;
+          processSwitch(module, pin, state);
         }
       }
+
+      // Record new state.
+      currentSwitchState[module] = pins;
     }
   }
 }
 
 
 /** Read the pins of a SwitchModule.
- *  Return the state of the pins.
+ *  Return the state of the pins, 16 bits, both ports.
  */
 int readSwitchModule(int module)
 {
-  // TODO - Query switch state
-  return 0;
+  int value = 0;
+  
+  Wire.beginTransmission(module);    
+  Wire.write(SWITCH_READ_DATA);
+  Wire.requestFrom(module, 2);  // read the current GPIO output latches
+  value = Wire.read() << 8;
+        + Wire.read();
+  Wire.endTransmission();    
+
+  return value;
 }
 
 
-void processSwitch(int pin, int state)
+/** Process the changed switch.
+ */
+void processSwitch(int module, int pin, int state)
 {
   
+}
+
+
+/** Send a coomand to an output module.
+ *  Return error code if any.
+ */
+int sendCommand(uint8_t module, uint8_t pin, uint8_t value, uint8_t pace, uint8_t state)
+{
+  Wire.beginTransmission(module);
+  Wire.write(pin);        
+  Wire.write(value);  
+  Wire.write(pace);   
+  Wire.write(state);  
+  return Wire.endTransmission();
 }
 
 

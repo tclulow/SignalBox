@@ -19,6 +19,7 @@
 #define SWITCH_PORTB_DIRECTION  0x01
 #define SWITCH_PORTA_PULLUPS    0x0C
 #define SWITCH_PORTB_PULLUPS    0x0D
+#define SWITCH_READ_DATA        0x12
 
 /** Data describing a switch's operation.
  */
