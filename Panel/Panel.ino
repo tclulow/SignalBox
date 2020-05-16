@@ -1,6 +1,9 @@
-/*
-
-  The circuit:
+/** 
+ *  Controll panel.
+ *  
+ *  LCD constants and functions.
+ *
+ * The circuit:
  * LCD RS pin to digital pin 12
  * LCD Enable pin to digital pin 11
  * LCD D4 pin to digital pin 5
@@ -17,18 +20,23 @@
 
 #include "Messages.h"
 #include "Lcd.h"
+#include "Panel.h"
 
-const char message[] = "A message";
+// initialize the library with the numbers of the interface pins
+// LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+LCD lcd(12, 11, 5, 4, 3, 2);
 
 
+/** Setup the Arduino.
+ */
 void setup()
 {
   Serial.begin(115200);
 
-  lcdInit();
+  lcd.begin(16, 2);
 
   // Print a message to the LCD.
-  lcd.print(message);
+  lcd.printAt(0, 0, message_p);
   delay(2000);
   
   lcd.setCursor(0, 1);
@@ -37,6 +45,9 @@ void setup()
   delay(2000);
 }
 
+
+/** Main loop.
+ */
 void loop()
 {
   lcd.setCursor(10, 1);
