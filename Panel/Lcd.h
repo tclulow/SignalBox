@@ -1,5 +1,7 @@
 /**
  */
+#ifndef _LCD_H
+#define _LCD_H
  
 // include the library code:
 #include <LiquidCrystal.h>
@@ -24,22 +26,63 @@ class LCD: public LiquidCrystal
 
   
   /** Print a PROGMEM message to the LCD.
+   *  Return length of message printed.
    */
-  void print_P(PGM_P messagePtr)
+  uint8_t print_P(PGM_P messagePtr)
   {
     char b;
+    uint8_t chars = 0;
+    
     while (b = pgm_read_byte(messagePtr++))
     {
+      chars++;
       print(b);
     }
+
+    return chars;
   }
 
 
   /** Print a message at a particular location.
+   *  Return the length of the message printed.
    */
-  void printAt(int col, int row, PGM_P messagePtr)
+  uint8_t printAt(int col, int row, PGM_P messagePtr)
   {
     setCursor(col, row);
-    print_P(messagePtr);
+    return print_P(messagePtr);
+  }
+
+
+  /** Print an int at a particular location.
+   *  Use the specified number of characters with leading spaces.
+   */
+  uint8_t printAt(int col, int row, int aNumber, uint8_t aLength)
+  {
+    int value = aNumber;
+    char buffer[aLength + 1];
+    int offset = aLength;
+    
+    buffer[offset] = '\0';
+    
+    while(--offset >= 0)
+    {
+      if (value >= 0)
+      {
+        buffer[offset] = '0' + (char)(value % 10);
+        value = value / 10;
+        if (value == 0)
+        {
+          value = -1;
+        }
+      }
+      else
+      {
+        buffer[offset] = ' ';
+      }
+    }
+    
+    return printAt(col, row, buffer);
   }
 };
+
+#endif
