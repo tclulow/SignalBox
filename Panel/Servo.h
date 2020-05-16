@@ -26,14 +26,14 @@ struct ServoData
 };
 
 // Variables for working with a Servo.
-uint16_t   servoModules = 0;    // Bit map of Servo modules present.
-uint8_t    servoNumber  = 0;    // Current Servo number.
+int        servoModules = 0;    // Bit map of Servo modules present.
+int        servoNumber  = 0;    // Current Servo number.
 ServoData  servoData;           // Data describing current Servo.
 
 
 /** Load a Servo's data from EEPROM.
  */
-void loadServo(uint8_t aServo)
+void loadServo(int aServo)
 {
   if (aServo < SERVO_MAX)
   {
@@ -57,7 +57,7 @@ void saveServo()
 
 /** Record the presence of a ServoModule in the map.
  */
-void setServoModulePresent(uint8_t aModule)
+void setServoModulePresent(int aModule)
 {
   servoModules |= (1 << aModule); 
 }
@@ -66,7 +66,7 @@ void setServoModulePresent(uint8_t aModule)
 /** Is a Servo module present?
  *  Look for servo's module in servoModules.
  */
-boolean isServoModule(uint8_t aModule)
+boolean isServoModule(int aModule)
 {
   return servoModules & (1 << aModule);
 }
@@ -75,7 +75,7 @@ boolean isServoModule(uint8_t aModule)
 /** Is a Servo present?
  *  Look for servo's module in servoModules.
  */
-boolean isServo(uint8_t aServo)
+boolean isServo(int aServo)
 {
   return isServoModule(aServo >> SERVO_MODULE_SHIFT);
 }

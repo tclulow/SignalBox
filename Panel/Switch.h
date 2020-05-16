@@ -29,14 +29,14 @@ struct SwitchData
 };
 
 // Variables for working with a Switch.
-uint16_t   switchModules = 0;   // Bit map of Switch modules present.
-uint8_t    switchNumber  = 0;   // Current Switch number.
+int        switchModules = 0;   // Bit map of Switch modules present.
+int        switchNumber  = 0;   // Current Switch number.
 SwitchData switchData;          // Data describing current Servo.
 
 
 /** Load a Switch's data from EEPROM.
  */
-void loadSwitch(uint8_t aSwitch)
+void loadSwitch(int aSwitch)
 {
   if (aSwitch < SWITCH_MAX)
   {
@@ -60,7 +60,7 @@ void saveSwitch()
 
 /** Record the presence of a SwitchModule in the map.
  */
-void setSwitchModulePresent(uint8_t aModule)
+void setSwitchModulePresent(int aModule)
 {
   switchModules |= (1 << aModule); 
 }
@@ -69,7 +69,7 @@ void setSwitchModulePresent(uint8_t aModule)
 /** Is a Switch module present?
  *  Look for switch's module in switchModules.
  */
-boolean isSwitchModule(uint8_t aModule)
+boolean isSwitchModule(int aModule)
 {
   return switchModules & (1 << aModule);
 }
@@ -78,7 +78,7 @@ boolean isSwitchModule(uint8_t aModule)
 /** Is a Switch present?
  *  Look for switch's module in switchModules.
  */
-boolean isSwitch(uint8_t aSwitch)
+boolean isSwitch(int aSwitch)
 {
   return isSwitchModule(aSwitch >> SWITCH_MODULE_SHIFT);
 }

@@ -26,6 +26,7 @@
 #include "Panel.h"
 #include "Servo.h"
 #include "Switch.h"
+#include "Buttons.h"
 
 
 // Initialize the LCD library with the numbers of the interface pins
@@ -37,42 +38,49 @@ const uint8_t controllerID = 0x10;    // Controller ID.
 const uint8_t servoBaseID  = 0x50;    // Base ID of the Servo modules 
 const uint8_t switchBaseID = 0x20;    // Base ID of the Switch modules.
 
+int currentSwitchState[SWITCH_MODULE_MAX];    // Current state of switches
 
 
 /** Map the Servo and Switch modules.
  */
 void mapHardware()
 {
-  uint8_t offset = 0;
-  
   lcd.clear();
-  offset = lcd.printAt(0, 0, M_SCAN_HARDWARE);
+  lcd.printAt(0, 0, M_SCAN_HARDWARE);
+  lcd.print(CHAR_SPACE);
   
   // Scan for Servo modules.
-  offset = lcd.printAt(0, 1, M_SERVO);
-  for (uint8_t module = 0; module < SWITCH_MODULE_MAX; module++)
+  for (int module = 0; module < SWITCH_MODULE_MAX; module++)
   {
-    lcd.printAt(offset + 1, 1, module, 2);
     Wire.beginTransmission(servoBaseID + module);
-    if (!Wire.endTransmission())   
-    {  
-        setServoModulePresent(module);  
+    if (Wire.endTransmission())
+    {
+      lcd.print(CHAR_DOT); 
+    }
+    else
+    {
+      lcd.print(module, HEX);
+      setServoModulePresent(module);  
     }
   }
 
   // Scan for Switch modules.
-  offset = lcd.printAt(0, 1, M_SWITCH);
-  for (uint8_t module = 0; module < SWITCH_MODULE_MAX; module++)
+  lcd.setCursor(0, 1);
+  for (int module = 0; module < SWITCH_MODULE_MAX; module++)
   {
-    lcd.printAt(offset + 1, 1, module, 2);
     Wire.beginTransmission(switchBaseID + module);
-    if (!Wire.endTransmission())   
+    if (Wire.endTransmission())   
+    {
+      lcd.print(CHAR_DOT); 
+    }
+    else
     {  
-        setSwitchModulePresent(module);
+      lcd.print(module, HEX);
+      setSwitchModulePresent(module);
     }
   }
-
-  lcd.clear();
+  delay(1000);
+  // lcd.clear();
 }
 
 
@@ -80,17 +88,16 @@ void mapHardware()
  */
 void initSwitches()
 { 
-  uint8_t offset = 0;
+  int offset = 0;
   
   lcd.clear();
-  offset = lcd.printAt(0, 0, M_INIT_SWITCHES);
+  lcd.printAt(0, 0, M_INIT_SWITCHES);
 
-  offset = lcd.printAt(0, 1, M_SWITCH);
-  for(uint8_t module = 0; module < SWITCH_MODULE_MAX; module++)
+  for(int module = 0; module < SWITCH_MODULE_MAX; module++)
   {
     if (isSwitchModule(module))
     {
-      lcd.printAt(offset, 1, module, 3);
+      lcd.print(module, HEX);
       Wire.beginTransmission(switchBaseID + module); 
       Wire.write(SWITCH_PORTA_DIRECTION);
       Wire.write(0xFF);
@@ -110,28 +117,89 @@ void initSwitches()
       Wire.write(SWITCH_PORTB_PULLUPS);
       Wire.write(0xFF);
       Wire.endTransmission();  
-    }   
+    }
+    else
+    {
+      lcd.print(CHAR_DOT);
+    }
   }   
-  
-  lcd.clear();  
+  delay(1000);
+  // lcd.clear();  
 }
 
 
-
-/** Initialise servos.
+/** Configure the system.
  */
-void initServos()
+void configure()
 {
-  for (int servo = 0; servo < SERVO_MAX; servo++)
+  lcd.clear();
+  lcd.printAt(0, 0, M_CONFIG);
+
+  // Wait for button to be released.
+  while (readButton());
+
+  // TODO - configuration here
+}
+
+
+/** Scan all the switches.
+ *  Process any that have changed.
+ */
+void scanSwitches()
+{ 
+  // Scan all the modules. 
+  for (int module=0; module < SWITCH_MODULE_MAX; module++)
   {
-    loadServo(servo);
-    saveServo();
-    loadSwitch(servo);
-    saveSwitch();
-    setServoModulePresent(2);
-    setSwitchModulePresent(3);
+    if (isSwitchModule(module))                                        
+    {
+      int pins = readSwitchModule(module);
+      for (int pin = 0, mask = 1; pin < SWITCH_MODULE_SIZE; pin++, mask <<= 1)
+      {
+        int state = pins & mask;
+        if (state != currentSwitchState[module] & mask)
+        {
+          processSwitch((module << SWITCH_MODULE_SHIFT) + pin, state);
+
+          // Record new state.
+          state ^= mask;
+          currentSwitchState[module] = state;
+        }
+      }
+    }
   }
 }
+
+
+/** Read the pins of a SwitchModule.
+ *  Return the state of the pins.
+ */
+int readSwitchModule(int module)
+{
+  // TODO - Query switch state
+  return 0;
+}
+
+
+void processSwitch(int pin, int state)
+{
+  
+}
+
+
+///** Initialise servos.
+// */
+//void initServos()
+//{
+//  for (int servo = 0; servo < SERVO_MAX; servo++)
+//  {
+//    loadServo(servo);
+//    saveServo();
+//    loadSwitch(servo);
+//    saveSwitch();
+//    setServoModulePresent(2);
+//    setSwitchModulePresent(3);
+//  }
+//}
 
 
 /** Setup the Arduino.
@@ -142,8 +210,8 @@ void setup()
   lcd.begin(16, 2);             // LCD panel.
   Wire.begin(controllerID);     // I2C network    
 
-  mapHardware();
-  initServos();
+  mapHardware();                // Scan for attached hardware.
+  initSwitches();               // Initialise all switches.
 }
 
 
@@ -151,7 +219,11 @@ void setup()
  */
 void loop()
 {
-  lcd.setCursor(10, 1);
-  lcd.print(millis());
+  if (readButton())       // Press any button to configure.
+  {
+    configure();
+  }
+
+  scanSwitches();
 }
  

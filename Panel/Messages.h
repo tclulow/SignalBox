@@ -3,9 +3,10 @@
 #ifndef _Messages_h
 #define _Messages_h
  
+const char M_CONFIG[]         PROGMEM = "Configure";
+const char M_SCAN_HARDWARE[]  PROGMEM = "Scan";
 const char M_SERVO[]          PROGMEM = "Servo";
 const char M_SWITCH[]         PROGMEM = "Switch";
-const char M_SCAN_HARDWARE[]  PROGMEM = "Scan hardware";
 const char M_INIT_SWITCHES[]  PROGMEM = "Init switches";
 
 
