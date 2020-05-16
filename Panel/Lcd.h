@@ -1,7 +1,7 @@
-/**
+/** LCD extension of LiquidCrystal
  */
-#ifndef _LCD_H
-#define _LCD_H
+#ifndef _LCD_h
+#define _LCD_h
  
 // include the library code:
 #include <LiquidCrystal.h>

@@ -1,7 +1,7 @@
 /** Constants for Panel.
  */
-#ifndef _PANEL_H
-#define _PANEL_H
+#ifndef _Panel_h
+#define _Panel_h
 
 
 
