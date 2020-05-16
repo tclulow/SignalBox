@@ -1,8 +1,11 @@
 /** PROGMEM messages
  */
+#ifndef _MESSAGES_H
+#define _MESSAGES_H
  
-const char message_p[] PROGMEM = "Progmem";
-
+const char M_SCAN_HARDWARE[]  PROGMEM = "Scan hardware";
+const char M_SERVO[]          PROGMEM = "Servo";
+const char M_SWITCH[]         PROGMEM = "Switch";
 
 /** Gets a PROGMEM message and copies it to a buffer
  *  for regular usage.
@@ -15,3 +18,5 @@ char* getMessage(PGM_P progmemMessage)
   strcpy_P(buffer, progmemMessage);
   return buffer;
 }
+
+#endif

@@ -18,31 +18,87 @@
  * wiper to LCD VO pin (pin 3)
  */
 
+#include <EEPROM.h>
+#include <Wire.h>
+
 #include "Messages.h"
 #include "Lcd.h"
 #include "Panel.h"
+#include "Servo.h"
+#include "Switch.h"
 
-// initialize the library with the numbers of the interface pins
+
+// Initialize the LCD library with the numbers of the interface pins
 // LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 LCD lcd(12, 11, 5, 4, 3, 2);
+
+/** The i2c node IDs. */
+const uint8_t controllerID = 0x10;    // Controller ID.
+const uint8_t servoBaseID  = 0x50;    // Base ID of the Servo modules 
+const uint8_t switchBaseID = 0x20;    // Base ID of the Switch modules.
+
+
+
+/** Map the Servo and Switch modules.
+ */
+void mapHardware()
+{
+  uint8_t offset = 0;
+  
+  offset = lcd.printAt(0, 0, M_SCAN_HARDWARE);
+  offset = lcd.printAt(0, 1, M_SWITCH);
+  
+  // Scan for Switch modules.
+  for (uint8_t module = 0; module < SWITCH_MODULE_MAX; module++)
+  {
+    lcd.printAt(offset + 1, 1, module, 2);
+    Wire.beginTransmission(switchBaseID + module);
+    if (!Wire.endTransmission())   
+    {  
+        setSwitchModulePresent(module);
+    }
+  }
+
+  // Scan for Servo modules.
+  offset = lcd.printAt(0, 1, M_SERVO);
+  for (uint8_t module = 0; module < SWITCH_MODULE_MAX; module++)
+  {
+    lcd.printAt(offset + 1, 1, module, 2);
+    Wire.beginTransmission(servoBaseID + module);
+    if (!Wire.endTransmission())   
+    {  
+        setServoModulePresent(module);  
+    }
+  }
+}
+
+
+/** Initialise servos.
+ */
+void initServos()
+{
+  for (int servo = 0; servo < SERVO_MAX; servo++)
+  {
+    loadServo(servo);
+    saveServo();
+    loadSwitch(servo);
+    saveSwitch();
+    setServoModulePresent(2);
+    setSwitchModulePresent(3);
+  }
+}
 
 
 /** Setup the Arduino.
  */
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(115200);         // Serial IO.
+  lcd.begin(16, 2);             // LCD panel.
+  Wire.begin(controllerID);     // I2C network    
 
-  lcd.begin(16, 2);
-
-  // Print a message to the LCD.
-  lcd.printAt(0, 0, message_p);
-  delay(2000);
-  
-  lcd.setCursor(0, 1);
-  // lcdPrint(message_p);
-  lcd.print(getMessage(message_p));
-  delay(2000);
+  mapHardware();
+  initServos();
 }
 
 
