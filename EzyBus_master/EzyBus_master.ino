@@ -977,26 +977,6 @@ void setup(){
    logo();   
 }
 //-------------------------------------------------------------------------
-int isPowerOfTwo(unsigned n)
-{  return n && (! (n & (n-1)) ); }
-//-------------------------------------------------------------------------
-// Returns position of the only set bit in 'n'
-int findPosition(unsigned n)
-{   if (!isPowerOfTwo(n))
-        return -1;
-    unsigned i = 1, pos = 1;
-    // Iterate through bits of n till we find a set bit
-    // i&n will be non-zero only when 'i' and 'n' have a set bit
-    // at same position
-    while (!(i & n))
-       {// Unset current bit and set the next bit in 'i'
-        i = i << 1;
-        // increment position
-        ++pos;
-        }
-    return pos;
-}
-//-------------------------------------------------------------------------
 void scan_switches()
 { 
   for(int switchNum=0; switchNum<8; switchNum++)           // Read each MCP23017 in turn, from module 0 to module 7
@@ -1007,55 +987,61 @@ void scan_switches()
       delay(100);                                          // recovery time
       if (new_input != previous_check[switchNum])          // If there is a change in input
       {
-         diff = (previous_check[switchNum] ^ new_input);   // Calculate the difference from last time
-         PinNum=(findPosition(diff)-1);                    // Convert to a pin number
-         TargetModule = servoBaseAddress+2*switchNum;      // Calculate which module to send the command to
-         if (PinNum>7)
-         {
-             TargetModule++;                               //  if pin > 8 then adjust module number
-             //  PinNum=PinNum-8;                             
-         }                 
-         //     delay(200);      // For debounce
-         Mem_Address = 64*switchNum+4*PinNum;             
-         Serial.print("Fetching from Mem address : "); Serial.println(Mem_Address);
-         mode = EEPROM.read(Mem_Address);                  // Fetch the data from EEPROM
-         switch_state = bitRead(new_input,PinNum);  
-         byte lvalue = EEPROM.read(Mem_Address+1);         // fetch LEFT rotation value from EEPROM
-         byte rvalue = EEPROM.read(Mem_Address+2);         // else fetch RIGHT rotation value from EEPROM 
-         if (switch_state==1)                              // Decide which rotation value to fetch from EEPROM 
-         {
-            value = lvalue;
-         }  
-         else
-         {
-            value=rvalue;
-         }        
-         if(mode==2)                                      //  Digital mode
-         {                                                
-            value=90;                                     //  Ensures any connected servo stays in mid position
-         }  
-         if(mode==1)
-         {
-            byte diff=abs(lvalue-rvalue);
-            if (switch_state==1)
+        diff = (previous_check[switchNum] ^ new_input);    // Calculate the difference from last time
+        // PinNum=(findPosition(diff)-1);                     // Convert to a pin number
+        for (int mask = 1, PinNum = 0; PinNum < 16; PinNum++, mask <<= 1)
+        {
+          if (mask & diff)
+          {
+            TargetModule = servoBaseAddress+2*switchNum;      // Calculate which module to send the command to
+            if (PinNum>7)
             {
-                SignalUp(lvalue,rvalue,diff);
-            }
+              TargetModule++;                                 //  if pin > 8 then adjust module number
+              //  PinNum=PinNum-8;                             
+            }                 
+            //     delay(200);      // For debounce
+            Mem_Address = 64*switchNum+4*PinNum;             
+            Serial.print("Fetching from Mem address : "); Serial.println(Mem_Address);
+            mode = EEPROM.read(Mem_Address);                  // Fetch the data from EEPROM
+            switch_state = bitRead(new_input,PinNum);  
+            byte lvalue = EEPROM.read(Mem_Address+1);         // fetch LEFT rotation value from EEPROM
+            byte rvalue = EEPROM.read(Mem_Address+2);         // else fetch RIGHT rotation value from EEPROM 
+            if (switch_state==1)                              // Decide which rotation value to fetch from EEPROM 
+            {
+              value = lvalue;
+            }  
             else
             {
-                SignalDown(lvalue,rvalue,diff);
+              value=rvalue;
+            }        
+            if(mode==2)                                      //  Digital mode
+            {                                                
+              value=90;                                      //  Ensures any connected servo stays in mid position
             }  
-         }   
-         servo_speed=EEPROM.read(Mem_Address+3);
-         previous_check[switchNum]=new_input;
-         noshow=false;
-         if(mode!=1)                              // Only move servo if not in signal mode 
-         {                                     
-            send_command();                       // Send the servo message down the I2C bus
-         }
+            if(mode==1)
+            {
+              byte diff=abs(lvalue-rvalue);
+              if (switch_state==1)
+              {
+                SignalUp(lvalue,rvalue,diff);
+              }
+              else
+              {
+                SignalDown(lvalue,rvalue,diff);
+              }  
+            }   
+            servo_speed=EEPROM.read(Mem_Address+3);
+            previous_check[switchNum]=new_input;
+            noshow=false;
+            if(mode!=1)                              // Only move servo if not in signal mode 
+            {                                     
+              send_command();                        // Send the servo message down the I2C bus
+            }
+          }
+        }
       }
-   } 
-}
+    } 
+  }
 }
 //-------------------------------------------------------------------------
 void loop()
