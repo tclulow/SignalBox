@@ -20,9 +20,9 @@
 struct ServoData
 {
   uint8_t mode  = 0;
-  uint8_t left  = 0;
-  uint8_t right = 0;
-  uint8_t speed = 0;
+  uint8_t lo    = 0;
+  uint8_t hi    = 0;
+  uint8_t pace  = 0;
 };
 
 // Variables for working with a Servo.
