@@ -5,9 +5,9 @@
  
 const char M_CONFIG[]         PROGMEM = "Configure";
 const char M_SCAN_HARDWARE[]  PROGMEM = "Scan";
-const char M_SERVO[]          PROGMEM = "Servo";
-const char M_SWITCH[]         PROGMEM = "Switch";
-const char M_INIT_SWITCHES[]  PROGMEM = "Init switches";
+const char M_OUTPUT[]         PROGMEM = "Output";
+const char M_INPUT[]          PROGMEM = "Input";
+const char M_INIT_INPUTS[]    PROGMEM = "Init inputs";
 
 
 /** Gets a PROGMEM message and copies it to a buffer

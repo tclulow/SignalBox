@@ -24,8 +24,8 @@
 #include "Messages.h"
 #include "Lcd.h"
 #include "Panel.h"
-#include "Servo.h"
-#include "Switch.h"
+#include "Output.h"
+#include "Input.h"
 #include "Buttons.h"
 
 
@@ -35,13 +35,13 @@ LCD lcd(12, 11, 5, 4, 3, 2);
 
 /** The i2c node IDs. */
 const uint8_t controllerID = 0x10;    // Controller ID.
-const uint8_t servoBaseID  = 0x50;    // Base ID of the Servo modules 
-const uint8_t switchBaseID = 0x20;    // Base ID of the Switch modules.
+const uint8_t outputBaseID = 0x50;    // Base ID of the Output modules 
+const uint8_t inputBaseID  = 0x20;    // Base ID of the Input modules.
 
-int currentSwitchState[SWITCH_MODULE_MAX];    // Current state of switches
+int currentInputState[INPUT_MODULE_MAX];    // Current state of inputs
 
 
-/** Map the Servo and Switch modules.
+/** Map the Output and Input modules.
  */
 void mapHardware()
 {
@@ -49,10 +49,10 @@ void mapHardware()
   lcd.printAt(0, 0, M_SCAN_HARDWARE);
   lcd.print(CHAR_SPACE);
   
-  // Scan for Servo modules.
-  for (int module = 0; module < SWITCH_MODULE_MAX; module++)
+  // Scan for Output modules.
+  for (int module = 0; module < INPUT_MODULE_MAX; module++)
   {
-    Wire.beginTransmission(servoBaseID + module);
+    Wire.beginTransmission(outputBaseID + module);
     if (Wire.endTransmission())
     {
       lcd.print(CHAR_DOT); 
@@ -60,15 +60,15 @@ void mapHardware()
     else
     {
       lcd.print(module, HEX);
-      setServoModulePresent(module);  
+      setOutputModulePresent(module);  
     }
   }
 
-  // Scan for Switch modules.
+  // Scan for Input modules.
   lcd.setCursor(0, 1);
-  for (int module = 0; module < SWITCH_MODULE_MAX; module++)
+  for (int module = 0; module < INPUT_MODULE_MAX; module++)
   {
-    Wire.beginTransmission(switchBaseID + module);
+    Wire.beginTransmission(inputBaseID + module);
     if (Wire.endTransmission())   
     {
       lcd.print(CHAR_DOT); 
@@ -76,7 +76,7 @@ void mapHardware()
     else
     {  
       lcd.print(module, HEX);
-      setSwitchModulePresent(module);
+      setInputModulePresent(module);
     }
   }
   delay(1000);
@@ -84,37 +84,37 @@ void mapHardware()
 }
 
 
-/** Configure all switches for input.
+/** Configure all inputs for input.
  */
-void initSwitches()
+void initInputs()
 { 
   int offset = 0;
   
   lcd.clear();
-  lcd.printAt(0, 0, M_INIT_SWITCHES);
+  lcd.printAt(0, 0, M_INIT_INPUTS);
 
-  for(int module = 0; module < SWITCH_MODULE_MAX; module++)
+  for(int module = 0; module < INPUT_MODULE_MAX; module++)
   {
-    if (isSwitchModule(module))
+    if (isInputModule(module))
     {
       lcd.print(module, HEX);
-      Wire.beginTransmission(switchBaseID + module); 
-      Wire.write(SWITCH_PORTA_DIRECTION);
+      Wire.beginTransmission(inputBaseID + module); 
+      Wire.write(INPUT_PORTA_DIRECTION);
       Wire.write(0xFF);
       Wire.endTransmission();
 
-      Wire.beginTransmission(switchBaseID + module);  
-      Wire.write(SWITCH_PORTB_DIRECTION);
+      Wire.beginTransmission(inputBaseID + module);  
+      Wire.write(INPUT_PORTB_DIRECTION);
       Wire.write(0xFF);
       Wire.endTransmission();
 
-      Wire.beginTransmission(switchBaseID + module);
-      Wire.write (SWITCH_PORTA_PULLUPS);
+      Wire.beginTransmission(inputBaseID + module);
+      Wire.write (INPUT_PORTA_PULLUPS);
       Wire.write(0xFF);
       Wire.endTransmission();  
        
-      Wire.beginTransmission(switchBaseID + module);
-      Wire.write(SWITCH_PORTB_PULLUPS);
+      Wire.beginTransmission(inputBaseID + module);
+      Wire.write(INPUT_PORTB_PULLUPS);
       Wire.write(0xFF);
       Wire.endTransmission();  
     }
@@ -142,42 +142,42 @@ void configure()
 }
 
 
-/** Scan all the switches.
+/** Scan all the inputs.
  *  Process any that have changed.
  */
-void scanSwitches()
+void scanInputs()
 { 
   // Scan all the modules. 
-  for (int module=0; module < SWITCH_MODULE_MAX; module++)
+  for (int module=0; module < INPUT_MODULE_MAX; module++)
   {
-    if (isSwitchModule(module))                                        
+    if (isInputModule(module))                                        
     {
-      int pins = readSwitchModule(module);
-      for (int pin = 0, mask = 1; pin < SWITCH_MODULE_SIZE; pin++, mask <<= 1)
+      int pins = readInputModule(module);
+      for (int pin = 0, mask = 1; pin < INPUT_MODULE_SIZE; pin++, mask <<= 1)
       {
         int state = pins & mask;
-        if (state != currentSwitchState[module] & mask)
+        if (state != currentInputState[module] & mask)
         {
-          processSwitch(module, pin, state);
+          processInput(module, pin, state);
         }
       }
 
       // Record new state.
-      currentSwitchState[module] = pins;
+      currentInputState[module] = pins;
     }
   }
 }
 
 
-/** Read the pins of a SwitchModule.
+/** Read the pins of a InputModule.
  *  Return the state of the pins, 16 bits, both ports.
  */
-int readSwitchModule(int module)
+int readInputModule(int module)
 {
   int value = 0;
   
   Wire.beginTransmission(module);    
-  Wire.write(SWITCH_READ_DATA);
+  Wire.write(INPUT_READ_DATA);
   Wire.requestFrom(module, 2);  // read the current GPIO output latches
   value = Wire.read() << 8;
         + Wire.read();
@@ -187,9 +187,9 @@ int readSwitchModule(int module)
 }
 
 
-/** Process the changed switch.
+/** Process the changed input.
  */
-void processSwitch(int module, int pin, int state)
+void processInput(int module, int pin, int state)
 {
   
 }
@@ -209,18 +209,18 @@ int sendCommand(uint8_t module, uint8_t pin, uint8_t value, uint8_t pace, uint8_
 }
 
 
-///** Initialise servos.
+///** Initialise outputs.
 // */
-//void initServos()
+//void initOutputs()
 //{
-//  for (int servo = 0; servo < SERVO_MAX; servo++)
+//  for (int output = 0; output < OUTPUT_MAX; output++)
 //  {
-//    loadServo(servo);
-//    saveServo();
-//    loadSwitch(servo);
-//    saveSwitch();
-//    setServoModulePresent(2);
-//    setSwitchModulePresent(3);
+//    loadOutput(output);
+//    saveOutput();
+//    loadInput(output);
+//    saveInput();
+//    setOutputModulePresent(2);
+//    setInputModulePresent(3);
 //  }
 //}
 
@@ -234,7 +234,7 @@ void setup()
   Wire.begin(controllerID);     // I2C network    
 
   mapHardware();                // Scan for attached hardware.
-  initSwitches();               // Initialise all switches.
+  initInputs();               // Initialise all inputs.
 }
 
 
@@ -247,6 +247,6 @@ void loop()
     configure();
   }
 
-  scanSwitches();
+  scanInputs();
 }
  
