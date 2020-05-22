@@ -30,8 +30,8 @@
  */
 struct InputData
 {
-  uint8_t input1 = 0xff;
-  uint8_t input2 = 0xff;
+  uint8_t output1 = 0xff;   // The output conrolled by this input.
+  uint8_t output2 = 0xff;
 };
 
 

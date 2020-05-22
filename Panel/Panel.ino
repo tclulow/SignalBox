@@ -35,10 +35,11 @@ LCD lcd(12, 11, 5, 4, 3, 2);
 
 /** The i2c node IDs. */
 const uint8_t controllerID = 0x10;    // Controller ID.
-const uint8_t outputBaseID = 0x50;    // Base ID of the Output modules 
+const uint8_t outputBaseID = 0x50;    // Base ID of the Output modules.
 const uint8_t inputBaseID  = 0x20;    // Base ID of the Input modules.
 
-int currentInputState[INPUT_MODULE_MAX];    // Current state of inputs
+// Record state of inputs.
+int currentInputState[INPUT_MODULE_MAX];    // Current state of inputs.
 
 
 /** Map the Output and Input modules.
@@ -88,11 +89,16 @@ void mapHardware()
  */
 void initInputs()
 { 
-  int offset = 0;
-  
   lcd.clear();
   lcd.printAt(0, 0, M_INIT_INPUTS);
 
+  // Clear state of Inputs.
+  for (int module = 0; module < INPUT_MODULE_MAX; module++)
+  {
+    currentInputState[module] = 0;
+  }
+
+  // For every Input module, set it's mode of operation.
   for(int module = 0; module < INPUT_MODULE_MAX; module++)
   {
     if (isInputModule(module))
@@ -148,7 +154,7 @@ void configure()
 void scanInputs()
 { 
   // Scan all the modules. 
-  for (int module=0; module < INPUT_MODULE_MAX; module++)
+  for (int module = 0; module < INPUT_MODULE_MAX; module++)
   {
     if (isInputModule(module))                                        
     {
@@ -191,38 +197,55 @@ int readInputModule(int module)
  */
 void processInput(int module, int pin, int state)
 {
+  loadInput(module, pin);
+  int output = inputData.output1 & INPUT_OUTPUT_MASK;
+  loadOutput(output);
   
+  if (inputData.output1 & INPUT_PUSH_TO_MAKE)
+  {
+    if (state)      // Send change state when button pressed, not when released.
+    {
+      outputData.mode ^= OUTPUT_STATE;    // Toggle the state.
+      sendOutputCommand();                // Send to Output.
+      saveOutput();
+    }
+  }
+  else    // Toggle switch
+  {
+    if (state)
+    {
+      outputData.mode |= OUTPUT_STATE;    // Set output state
+    }
+    else
+    {
+      outputData.mode &= ~OUTPUT_STATE;   // Clear output state
+    }
+    
+    sendOutputCommand();                  // Send change state to match that of the input.
+    saveOutput();
+  }
 }
 
 
-/** Send a coomand to an output module.
+/** Send a command to an output module.
  *  Return error code if any.
  */
-int sendCommand(uint8_t module, uint8_t pin, uint8_t value, uint8_t pace, uint8_t state)
+int sendOutputCommand()
 {
-  Wire.beginTransmission(module);
-  Wire.write(pin);        
-  Wire.write(value);  
-  Wire.write(pace);   
-  Wire.write(state);  
+  Wire.beginTransmission(outputNumber << OUTPUT_MODULE_SHIFT);
+  Wire.write(outputNumber & OUTPUT_OUTPUT_MASK);
+  if (outputData.mode & OUTPUT_STATE)
+  {
+    Wire.write(outputData.hi);
+  }
+  else
+  {
+    Wire.write(outputData.lo);
+  }
+  Wire.write(outputData.pace);   
+  Wire.write((outputData.mode & OUTPUT_STATE) ? 1 : 0);  
   return Wire.endTransmission();
 }
-
-
-///** Initialise outputs.
-// */
-//void initOutputs()
-//{
-//  for (int output = 0; output < OUTPUT_MAX; output++)
-//  {
-//    loadOutput(output);
-//    saveOutput();
-//    loadInput(output);
-//    saveInput();
-//    setOutputModulePresent(2);
-//    setInputModulePresent(3);
-//  }
-//}
 
 
 /** Setup the Arduino.
@@ -234,7 +257,7 @@ void setup()
   Wire.begin(controllerID);     // I2C network    
 
   mapHardware();                // Scan for attached hardware.
-  initInputs();               // Initialise all inputs.
+  initInputs();                 // Initialise all inputs.
 }
 
 
