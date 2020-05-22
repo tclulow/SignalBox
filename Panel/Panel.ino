@@ -92,10 +92,10 @@ void initInputs()
   lcd.clear();
   lcd.printAt(0, 0, M_INIT_INPUTS);
 
-  // Clear state of Inputs.
+  // Clear state of Inputs, all high.
   for (int module = 0; module < INPUT_MODULE_MAX; module++)
   {
-    currentInputState[module] = 0;
+    currentInputState[module] = 0xFF;
   }
 
   // For every Input module, set it's mode of operation.
@@ -232,7 +232,7 @@ void processInput(int module, int pin, int state)
  */
 int sendOutputCommand()
 {
-  Wire.beginTransmission(outputNumber << OUTPUT_MODULE_SHIFT);
+  Wire.beginTransmission(outputBaseID + (outputNumber << OUTPUT_MODULE_SHIFT));
   Wire.write(outputNumber & OUTPUT_OUTPUT_MASK);
   if (outputData.mode & OUTPUT_STATE)
   {
