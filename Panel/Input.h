@@ -4,9 +4,10 @@
 #define _Input_h
 
 // Input modules.
-#define INPUT_MODULE_SIZE    16  // 16 inputs to each module.
-#define INPUT_MODULE_MAX     8   // Maximum modules.
-#define INPUT_MODULE_SHIFT   4   // Shift input number this amount to get a module number.
+#define INPUT_MODULE_SIZE    16     // 16 inputs to each module.
+#define INPUT_MODULE_MAX     8      // Maximum modules.
+#define INPUT_MODULE_SHIFT   4      // Shift input number this amount to get a module number.
+#define INPUT_INPUT_MASK     0x07   // Mask to get input number within a module.
 
 // InputData saved in EEPROM
 #define INPUT_BASE   OUTPUT_END                                 // EEPROM base of Input data.
@@ -21,23 +22,27 @@
 #define INPUT_PORTB_PULLUPS    0x0D
 #define INPUT_READ_DATA        0x12
 
-/** Data describing a input's operation.
+// Mask for INPUT options
+#define INPUT_PUSH_TO_MAKE     0x80
+#define INPUT_OUTPUT_MASK      0x7f
+
+/** Data describing an Input's operation.
  */
 struct InputData
 {
-  uint8_t servo  = 0xff;
-  uint8_t servo2 = 0xff;
+  uint8_t input1 = 0xff;
+  uint8_t input2 = 0xff;
 };
 
 
-/** Variables for working with a Input.
+/** Variables for working with an Input.
  */
 int        inputModules = 0;    // Bit map of Input modules present.
 int        inputNumber  = 0;    // Current Input number.
 InputData  inputData;           // Data describing current Servo.
 
 
-/** Load a Input's data from EEPROM.
+/** Load an Input's data from EEPROM.
  */
 void loadInput(int aInput)
 {
@@ -49,7 +54,15 @@ void loadInput(int aInput)
 }
 
 
-/** Save a Input's data to EEPROM.
+/** Load an Input's data from EEPROM.
+ */
+void loadInput(int aModule, int aInput)
+{
+  loadInput((aModule << INPUT_MODULE_SHIFT) + (aInput & INPUT_INPUT_MASK));
+}
+
+
+/** Save an Input's data to EEPROM.
  *  Data in inputNumber and inputData.
  */
 void saveInput()
@@ -61,7 +74,7 @@ void saveInput()
 }
 
 
-/** Record the presence of a InputModule in the map.
+/** Record the presence of an InputModule in the map.
  */
 void setInputModulePresent(int aModule)
 {
@@ -69,7 +82,7 @@ void setInputModulePresent(int aModule)
 }
 
 
-/** Is a Input module present?
+/** Is an Input module present?
  *  Look for input's module in inputModules.
  */
 boolean isInputModule(int aModule)
@@ -78,7 +91,7 @@ boolean isInputModule(int aModule)
 }
 
 
-/** Is a Input present?
+/** Is an Input present?
  *  Look for input's module in inputModules.
  */
 boolean isInput(int aInput)

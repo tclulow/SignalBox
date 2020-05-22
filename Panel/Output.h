@@ -4,9 +4,10 @@
 #define _Output_h
 
 // Output modules.
-#define OUTPUT_MODULE_SIZE   8   // 8 outputs to each module.
-#define OUTPUT_MODULE_MAX    16  // Maximum modules.
-#define OUTPUT_MODULE_SHIFT  4   // Shift output number this amount to get a module number.
+#define OUTPUT_MODULE_SIZE   8      // 8 outputs to each module.
+#define OUTPUT_MODULE_MAX    16     // Maximum modules.
+#define OUTPUT_MODULE_SHIFT  4      // Shift output number this amount to get a module number.
+#define OUTPUT_OUTPUT_MASK   0x0f   // Mask to get output number within a module.
 
 // OutputData saved in EEPROM
 #define OUTPUT_BASE  0                                          // EEPROM base of Output data.
@@ -14,8 +15,15 @@
 #define OUTPUT_MAX   (OUTPUT_MODULE_SIZE * OUTPUT_MODULE_MAX)   // Maximum outputs (up to 128).
 #define OUTPUT_END   (OUTPUT_BASE + OUTPUT_SIZE * OUTPUT_MAX)   // End of Switch EEPROM.
 
+// Mask for OUTPUT options
+#define OUTPUT_STATE        0x80
+#define OUTPUT_MODE_MASK    0x0f
+#define OUTPUT_MODE_NONE    0x00
+#define OUTPUT_MODE_SERVO   0x01
+#define OUTPUT_MODE_LED     0x02
+#define OUTPUT_MODE_SIGNAL  0x03
 
-/** Data describing a Output's operation.
+/** Data describing an Output's operation.
  */
 struct OutputData
 {
@@ -33,7 +41,7 @@ int        outputNumber  = 0;   // Current Output number.
 OutputData outputData;          // Data describing current Output.
 
 
-/** Load a Output's data from EEPROM.
+/** Load an Output's data from EEPROM.
  */
 void loadOutput(int aOutput)
 {
@@ -45,7 +53,23 @@ void loadOutput(int aOutput)
 }
 
 
-/** Save a Output's data to EEPROM.
+/** Load an Output's data from EEPROM.
+ */
+void loadOutput(int aModule, int aOutput)
+{
+  loadOutput((aModule << OUTPUT_MODULE_SHIFT) + (aOutput & OUTPUT_OUTPUT_MASK));
+}
+
+
+/** Load an Output's data from EEPROM.
+ */
+void loadOutputModule(int aModule, int aOutput)
+{
+  loadOutput((aModule << OUTPUT_MODULE_SHIFT) + (aOutput & OUTPUT_OUTPUT_MASK));
+}
+
+
+/** Save an Output's data to EEPROM.
  *  Data in outputNumber and outputData.
  */
 void saveOutput()
