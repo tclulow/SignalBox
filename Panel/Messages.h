@@ -12,17 +12,20 @@ const char M_OUTPUT[]         PROGMEM = "Output";
 const char M_INPUT[]          PROGMEM = "Input";
 const char M_INIT_INPUTS[]    PROGMEM = "Init inputs";
 
+const char M_HI[]             PROGMEM = "Hi";
+const char M_LO[]             PROGMEM = "Lo";
+
 
 /** Gets a PROGMEM message and copies it to a buffer
  *  for regular usage.
  *  
  *  Note the buffer is a singleton and will be overwritten by the next call.
  */
-char* getMessage(PGM_P progmemMessage)
-{
-  static char buffer[16];
-  strcpy_P(buffer, progmemMessage);
-  return buffer;
-}
+//char* getMessage(PGM_P progmemMessage)
+//{
+//  static char buffer[16];
+//  strcpy_P(buffer, progmemMessage);
+//  return buffer;
+//}
 
 #endif

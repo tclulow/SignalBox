@@ -7,8 +7,16 @@
 #include <LiquidCrystal.h>
 
 
-#define LCD_COLS 16   // LCD is 16 columns
-#define LCD_ROWS  2   // by 2 rows.
+#define LCD_COLS 16         // LCD is 16 columns
+#define LCD_ROWS  2         // by 2 rows.
+
+#define LCD_ROW_INPUT   0   // Rows for LCD state messages
+#define LCD_ROW_OUTPUT  1
+#define LCD_COL_INPUT   0   // Cols for LCD state messages
+#define LCD_COL_OUTPUT  0
+#define LCD_COL_MODULE  8
+#define LCD_COL_PIN    11
+#define LCD_COL_STATE  14
 
 
 /** An LCD class that can print PROGMEM messages.
