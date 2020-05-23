@@ -9,7 +9,7 @@ const char M_VERSION[]        PROGMEM = "v0.1    May 2020";
 const char M_CONFIG[]         PROGMEM = "Configure";
 const char M_SCAN_HARDWARE[]  PROGMEM = "Scan";
 const char M_OUTPUT[]         PROGMEM = "Output";
-const char M_INPUT[]          PROGMEM = "Input";
+const char M_INPUT[]          PROGMEM = "Input ";
 const char M_INIT_INPUTS[]    PROGMEM = "Init inputs";
 
 const char M_HI[]             PROGMEM = "Hi";

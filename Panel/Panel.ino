@@ -28,12 +28,8 @@
 #include "Output.h"
 #include "Input.h"
 #include "Buttons.h"
+#include "Configure.h"
 
-
-// Initialize the LCD library with the numbers of the interface pins
-// LiquidCrystal lcd(8, 9, 4, 5, 6, 7);  // Pins used for the LCD
-// LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-LCD lcd(8, 9, 4, 5, 6, 7);
 
 // Record state of inputs.
 uint16_t currentInputState[INPUT_MODULE_MAX];    // Current state of inputs.
@@ -130,20 +126,6 @@ void initInputs()
   }   
   delay(DELAY);
   // lcd.clear();  
-}
-
-
-/** Configure the system.
- */
-void configure()
-{
-  lcd.clear();
-  lcd.printAt(0, 0, M_CONFIG);
-
-  // Wait for button to be released.
-  while (readButton());
-
-  // TODO - configuration here
 }
 
 
@@ -305,7 +287,7 @@ void loop()
 {
   if (readButton())       // Press any button to configure.
   {
-    configure();
+    configure.run();
   }
 
   scanInputs();

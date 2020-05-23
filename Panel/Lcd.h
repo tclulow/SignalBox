@@ -10,9 +10,12 @@
 #define LCD_COLS 16         // LCD is 16 columns
 #define LCD_ROWS  2         // by 2 rows.
 
-#define LCD_ROW_INPUT   0   // Rows for LCD state messages
+#define LCD_ROW_CONFIG  0   // Rows for LCD state messages.
+#define LCD_ROW_INPUT   0
 #define LCD_ROW_OUTPUT  1
-#define LCD_COL_INPUT   0   // Cols for LCD state messages
+
+#define LCD_COL_CONFIG  0   // Cols for LCD state messages.
+#define LCD_COL_INPUT   0
 #define LCD_COL_OUTPUT  0
 #define LCD_COL_MODULE  8
 #define LCD_COL_PIN    11
@@ -107,5 +110,15 @@ class LCD: public LiquidCrystal
 //    return printAt(col, row, buffer);
 //  }
 };
+
+
+/** A singleton instance of the class.
+ *  Initialize the LCD library with the numbers of the interface pins
+ *  Typical options:
+ *  LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+ *  LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+ */
+LCD lcd(8, 9, 4, 5, 6, 7);
+
 
 #endif

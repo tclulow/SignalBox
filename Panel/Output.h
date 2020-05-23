@@ -6,8 +6,9 @@
 // Output modules.
 #define OUTPUT_MODULE_SIZE   8      // 8 outputs to each module.
 #define OUTPUT_MODULE_MAX    16     // Maximum modules.
+#define OUTPUT_MODULE_MASK   0x0f   // 4 bits for 16 modules.
 #define OUTPUT_MODULE_SHIFT  4      // Shift output number this amount to get a module number.
-#define OUTPUT_OUTPUT_MASK   0x0f   // Mask to get output number within a module.
+#define OUTPUT_OUTPUT_MASK   0x07   // Mask to get output number within a module.
 
 // OutputData saved in EEPROM
 #define OUTPUT_BASE  0                                          // EEPROM base of Output data.

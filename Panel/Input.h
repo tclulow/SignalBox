@@ -6,8 +6,9 @@
 // Input modules.
 #define INPUT_MODULE_SIZE    16     // 16 inputs to each module.
 #define INPUT_MODULE_MAX     8      // Maximum modules.
+#define INPUT_MODULE_MASK    0x07   // 3 bits for 8 modules.
 #define INPUT_MODULE_SHIFT   4      // Shift input number this amount to get a module number.
-#define INPUT_INPUT_MASK     0x07   // Mask to get input number within a module.
+#define INPUT_INPUT_MASK     0x0f   // Mask to get input number within a module.
 
 // InputData saved in EEPROM
 #define INPUT_BASE   OUTPUT_END                                 // EEPROM base of Input data.
