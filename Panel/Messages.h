@@ -2,7 +2,10 @@
  */
 #ifndef _Messages_h
 #define _Messages_h
- 
+
+const char M_SOFTWARE[]       PROGMEM = "Panel   EzyBus";
+const char M_VERSION[]        PROGMEM = "v0.1    May 2020";
+
 const char M_CONFIG[]         PROGMEM = "Configure";
 const char M_SCAN_HARDWARE[]  PROGMEM = "Scan";
 const char M_OUTPUT[]         PROGMEM = "Output";

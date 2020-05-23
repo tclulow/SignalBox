@@ -1,10 +1,10 @@
 /** 
- *  Controll panel.
+ *  Control panel.
  *  
  *  LCD constants and functions.
  *
  * The circuit:
- * LCD RS pin to digital pin 12
+ * LCD RS pin to digital pin 12m
  * LCD Enable pin to digital pin 11
  * LCD D4 pin to digital pin 5
  * LCD D5 pin to digital pin 4
@@ -30,8 +30,9 @@
 
 
 // Initialize the LCD library with the numbers of the interface pins
+// LiquidCrystal lcd(8, 9, 4, 5, 6, 7);  // Pins used for the LCD
 // LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-LCD lcd(12, 11, 5, 4, 3, 2);
+LCD lcd(8, 9, 4, 5, 6, 7);
 
 /** The i2c node IDs. */
 const uint8_t controllerID = 0x10;    // Controller ID.
@@ -48,25 +49,9 @@ void mapHardware()
 {
   lcd.clear();
   lcd.printAt(0, 0, M_SCAN_HARDWARE);
-  lcd.print(CHAR_SPACE);
+  lcd.setCursor(LCD_COLS - INPUT_MODULE_MAX, 0);
   
-  // Scan for Output modules.
-  for (int module = 0; module < INPUT_MODULE_MAX; module++)
-  {
-    Wire.beginTransmission(outputBaseID + module);
-    if (Wire.endTransmission())
-    {
-      lcd.print(CHAR_DOT); 
-    }
-    else
-    {
-      lcd.print(module, HEX);
-      setOutputModulePresent(module);  
-    }
-  }
-
   // Scan for Input modules.
-  lcd.setCursor(0, 1);
   for (int module = 0; module < INPUT_MODULE_MAX; module++)
   {
     Wire.beginTransmission(inputBaseID + module);
@@ -80,6 +65,23 @@ void mapHardware()
       setInputModulePresent(module);
     }
   }
+
+  // Scan for Output modules.
+  lcd.setCursor(0, 1);
+  for (int module = 0; module < OUTPUT_MODULE_MAX; module++)
+  {
+    Wire.beginTransmission(outputBaseID + module);
+    if (Wire.endTransmission())
+    {
+      lcd.print(CHAR_DOT); 
+    }
+    else
+    {
+      lcd.print(module, HEX);
+      setOutputModulePresent(module);  
+    }
+  }
+
   delay(1000);
   // lcd.clear();
 }
@@ -91,6 +93,7 @@ void initInputs()
 { 
   lcd.clear();
   lcd.printAt(0, 0, M_INIT_INPUTS);
+  lcd.setCursor(0, 1);
 
   // Clear state of Inputs, all high.
   for (int module = 0; module < INPUT_MODULE_MAX; module++)
@@ -252,12 +255,16 @@ int sendOutputCommand()
  */
 void setup()
 {
-  Serial.begin(115200);         // Serial IO.
-  lcd.begin(16, 2);             // LCD panel.
-  Wire.begin(controllerID);     // I2C network    
+  Serial.begin(115200);           // Serial IO.
+  lcd.begin(LCD_COLS, LCD_ROWS);  // LCD panel.
+  Wire.begin(controllerID);       // I2C network    
 
-  mapHardware();                // Scan for attached hardware.
-  initInputs();                 // Initialise all inputs.
+  mapHardware();                  // Scan for attached hardware.
+  initInputs();                   // Initialise all inputs.
+
+  lcd.clear();
+  lcd.printAt(0, 0, M_SOFTWARE);
+  lcd.printAt(0, 1, M_VERSION);
 }
 
 

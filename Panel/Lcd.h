@@ -2,9 +2,13 @@
  */
 #ifndef _LCD_h
 #define _LCD_h
- 
+
 // include the library code:
 #include <LiquidCrystal.h>
+
+
+#define LCD_COLS 16   // LCD is 16 columns
+#define LCD_ROWS  2   // by 2 rows.
 
 
 /** An LCD class that can print PROGMEM messages.
@@ -53,6 +57,9 @@ class LCD: public LiquidCrystal
   }
 
 
+  /** Print a character at a particular location.
+   *  Return the length of the character printed (1).
+   */
   uint8_t printAt(int col, int row, char aChar)
   {
     setCursor(col, row);
