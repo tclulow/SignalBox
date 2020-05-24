@@ -71,7 +71,7 @@ void waitForButtonRelease()
 }
 
 
-/** Wait for a button tobe pressed.
+/** Wait for a button to be pressed.
  *  Return that button after waiting for the release.
  */
 int waitForButton()

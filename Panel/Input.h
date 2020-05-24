@@ -17,6 +17,11 @@
 #define INPUT_MAX    (INPUT_MODULE_SIZE * INPUT_MODULE_MAX)     // Maximum inputs (up to 128).
 #define INPUT_END    (INPUT_BASE + INPUT_SIZE * INPUT_MAX)      // End of Input EEPROM.
 
+// Mask for Input options
+#define INPUT_BUTTON_MASK      0x80     // The input is a button rather than a toggle.
+#define INPUT_DISABLED_MASK    0x80     // The Input's output is disabled.
+#define INPUT_OUTPUT_MASK      0x7f     // mask to get the Input's output without the flags above.
+
 // Input message commands.
 #define INPUT_PORTA_DIRECTION  0x00
 #define INPUT_PORTB_DIRECTION  0x01
@@ -24,9 +29,6 @@
 #define INPUT_PORTB_PULLUPS    0x0D
 #define INPUT_READ_DATA        0x12
 
-// Mask for INPUT options
-#define INPUT_PUSH_TO_MAKE     0x80
-#define INPUT_OUTPUT_MASK      0x7f
 
 /** Data describing an Input's operation.
  */

@@ -18,13 +18,13 @@ class Configure
 
   /** Print -/+ characters around a variable.
    */
-  void printMinusPlus(int aCol, int aRow, int aLen, boolean aShow)
+  void markField(int aCol, int aRow, int aLen, boolean aShow)
   {
     if (aCol > 0)
     {
-      lcd.printAt(aCol - 1,    aRow, aShow ? CHAR_MINUS : CHAR_SPACE);
+      lcd.printAt(aCol - 1,    aRow, aShow ? CHAR_RIGHT : CHAR_SPACE);
     }
-    lcd.printAt(aCol + aLen, aRow, aShow ? CHAR_PLUS  : CHAR_SPACE);
+    lcd.printAt(aCol + aLen, aRow, aShow ? CHAR_LEFT  : CHAR_SPACE);
   }
 
 
@@ -33,9 +33,10 @@ class Configure
   void stageIO()
   {
     boolean finished = false;
+    
     lcd.clear();
     int offset = lcd.printAt(LCD_COL_CONFIG, LCD_ROW_TOP, (isInput ? M_INPUT : M_OUTPUT));
-    printMinusPlus(LCD_COL_CONFIG, LCD_ROW_TOP, offset, true);
+    markField(LCD_COL_CONFIG, LCD_ROW_TOP, offset, true);
 
     while (!finished)
     {
@@ -44,14 +45,14 @@ class Configure
         case BUTTON_NONE:   break;
         case BUTTON_UP:
         case BUTTON_DOWN:   isInput = !isInput;
-                            lcd.printAt(LCD_COL_CONFIG, LCD_ROW_TOP, (isInput ? M_INPUT : M_OUTPUT));
+                            offset = lcd.printAt(LCD_COL_CONFIG, LCD_ROW_TOP, (isInput ? M_INPUT : M_OUTPUT));
                             break;
         case BUTTON_SELECT: 
         case BUTTON_LEFT:   finished = true;
                             break;
-        case BUTTON_RIGHT:  printMinusPlus(LCD_COL_CONFIG, LCD_ROW_TOP, offset, false);
+        case BUTTON_RIGHT:  markField(LCD_COL_CONFIG, LCD_ROW_TOP, offset, false);
                             stageModule();
-                            printMinusPlus(LCD_COL_CONFIG, LCD_ROW_TOP, offset, true);
+                            markField(LCD_COL_CONFIG, LCD_ROW_TOP, offset, true);
                             break;
       }
     }
@@ -63,10 +64,11 @@ class Configure
   void stageModule()
   {
     boolean finished = false;
+    
     module = module & (isInput ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
     lcd.printAt(LCD_COL_MODULE, LCD_ROW_TOP, HEX_CHARS[module]);
     lcd.printAt(LCD_COL_MODULE - 1, LCD_ROW_BOT, M_MOD);
-    printMinusPlus(LCD_COL_MODULE, LCD_ROW_TOP, 1, true);
+    markField(LCD_COL_MODULE, LCD_ROW_TOP, 1, true);
 
     while (!finished)
     {
@@ -83,16 +85,16 @@ class Configure
         case BUTTON_LEFT:   finished = true;
                             lcd.clearRow(LCD_COL_MODULE - 1, LCD_ROW_BOT);
                             break;
-        case BUTTON_RIGHT:  printMinusPlus(LCD_COL_MODULE, LCD_ROW_TOP, 1, false);
+        case BUTTON_RIGHT:  markField(LCD_COL_MODULE, LCD_ROW_TOP, 1, false);
                             lcd.clearRow(LCD_COL_MODULE - 1, LCD_ROW_BOT);
                             stagePin();
                             lcd.printAt(LCD_COL_MODULE - 1, LCD_ROW_BOT, M_MOD);
-                            printMinusPlus(LCD_COL_MODULE, LCD_ROW_TOP, 1, true);
+                            markField(LCD_COL_MODULE, LCD_ROW_TOP, 1, true);
                             break;
       }
     }
 
-    printMinusPlus(LCD_COL_MODULE, LCD_ROW_TOP, 1, false);
+    markField(LCD_COL_MODULE, LCD_ROW_TOP, 1, false);
   }
 
   
@@ -101,10 +103,11 @@ class Configure
   void stagePin()
   {
     boolean finished = false;
+    
     pin = pin & (isInput ? INPUT_INPUT_MASK : OUTPUT_OUTPUT_MASK);
     lcd.printAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[pin]);
     lcd.printAt(LCD_COL_PIN - 1, LCD_ROW_BOT, M_PIN);
-    printMinusPlus(LCD_COL_PIN, LCD_ROW_TOP, 1, true);
+    markField(LCD_COL_PIN, LCD_ROW_TOP, 1, true);
     
     while (!finished)
     {
@@ -121,7 +124,7 @@ class Configure
         case BUTTON_LEFT:   finished = true;
                             lcd.clearRow(LCD_COL_PIN - 1, LCD_ROW_BOT);
                             break;
-        case BUTTON_RIGHT:  printMinusPlus(LCD_COL_PIN, LCD_ROW_TOP, 1, false);
+        case BUTTON_RIGHT:  markField(LCD_COL_PIN, LCD_ROW_TOP, 1, false);
                             lcd.clearRow(LCD_COL_PIN - 1, LCD_ROW_BOT);
                             if (isInput)
                             {
@@ -131,13 +134,13 @@ class Configure
                             {
                               stageOutput();
                             }
-                            printMinusPlus(LCD_COL_PIN, LCD_ROW_TOP, 1, true);
+                            markField(LCD_COL_PIN, LCD_ROW_TOP, 1, true);
                             lcd.printAt(LCD_COL_PIN - 1, LCD_ROW_BOT, M_PIN);
                             break;
       }
     }
 
-    printMinusPlus(LCD_COL_PIN, LCD_ROW_TOP, 1, false);
+    markField(LCD_COL_PIN, LCD_ROW_TOP, 1, false);
   }
 
   
@@ -145,18 +148,19 @@ class Configure
    */
   void stageInput()
   {
-    boolean changed = false;
     boolean finished = false;
+    boolean changed  = false;
+    
     loadInput(module, pin);
 
     // Retrieve Toggle/Button flag and clear from data.
-    uint8_t isButton = inputData.output[0] & INPUT_PUSH_TO_MAKE;
+    uint8_t isButton = inputData.output[0] & INPUT_BUTTON_MASK;
     inputData.output[0] &= INPUT_OUTPUT_MASK;
 
     // Output appropriate prompt.
     lcd.clearRow(LCD_COL_CONFIG, LCD_ROW_BOT);
     int offset = lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
-    printMinusPlus(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
+    markField(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
     printInputOutputs();
     
     while (!finished)
@@ -165,7 +169,7 @@ class Configure
       {
         case BUTTON_NONE:   break;
         case BUTTON_UP:
-        case BUTTON_DOWN:   isButton ^= INPUT_PUSH_TO_MAKE;
+        case BUTTON_DOWN:   isButton ^= INPUT_BUTTON_MASK;
                             lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
                             changed = true;
                             break;
@@ -181,7 +185,7 @@ class Configure
                               {
                                 lcd.clearRow(LCD_COL_CONFIG, LCD_ROW_BOT);
                                 lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
-                                printMinusPlus(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
+                                markField(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
                                 printInputOutputs();
                               }
                             }
@@ -200,7 +204,7 @@ class Configure
                               {
                                 lcd.clearRow(LCD_COL_CONFIG, LCD_ROW_BOT);
                                 lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
-                                printMinusPlus(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
+                                markField(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
                                 printInputOutputs();
                               }
                             }
@@ -209,9 +213,9 @@ class Configure
                               finished = true;
                             }
                             break;
-        case BUTTON_RIGHT:  printMinusPlus(LCD_COL_CONFIG, LCD_ROW_BOT, offset, false);
+        case BUTTON_RIGHT:  markField(LCD_COL_CONFIG, LCD_ROW_BOT, offset, false);
                             changed |= stageInputOutput();
-                            printMinusPlus(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
+                            markField(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
                             printInputOutputs();
                             break;
       }
@@ -228,7 +232,7 @@ class Configure
     int offset = LCD_COL_INPUT_OUTPUT;
     for (int output = 0; output < INPUT_OUTPUT_MAX; output++, offset += 3)
     {
-      lcd.printAtHex(offset, LCD_ROW_BOT, inputData.output[output], 2);
+      printOutput(offset, inputData.output[output]);
     }
   }
   
@@ -240,33 +244,52 @@ class Configure
     boolean changed = false;
     int     offset  = LCD_COL_INPUT_OUTPUT;
     int     index   = 0;
-    uint8_t output   = inputData.output[index];
+    uint8_t output  = inputData.output[index];
+
+    markField(offset, LCD_ROW_BOT, 2, true);
 
     while (index >= 0)
     {
-      lcd.printAtHex(offset, LCD_ROW_BOT, output, 2);
-      printMinusPlus(offset, LCD_ROW_BOT, 2, true);
-
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
         case BUTTON_UP:     changed = true;
-                            output = (output + 1) & INPUT_OUTPUT_MASK;
-                            lcd.printAtHex(offset, LCD_ROW_BOT, output, 2);
+                            if (output & INPUT_DISABLED_MASK)
+                            {
+                              output &= INPUT_OUTPUT_MASK;
+                            }
+                            else
+                            {
+                              output = (output + 1) & INPUT_OUTPUT_MASK;
+                            }
+                            printOutput(offset, output);
                             break;
         case BUTTON_DOWN:   changed = true;
-                            output = (output - 1) & INPUT_OUTPUT_MASK;
-                            lcd.printAtHex(offset, LCD_ROW_BOT, output, 2);
+                            if (output & INPUT_DISABLED_MASK)
+                            {
+                              output &= INPUT_OUTPUT_MASK;
+                            }
+                            else
+                            {
+                              output = (output - 1) & INPUT_OUTPUT_MASK;
+                            }
+                            printOutput(offset, output);
                             break;
-        case BUTTON_SELECT: break;    // TODO disable/enable if index > 0
+        case BUTTON_SELECT: if (index > 0)
+                            {
+                              changed = true;
+                              output ^= INPUT_DISABLED_MASK;
+                              printOutput(offset, output);
+                            }
+                            break;
         case BUTTON_LEFT:   inputData.output[index] = output;
-                            printMinusPlus(offset, LCD_ROW_BOT, 2, false);
+                            markField(offset, LCD_ROW_BOT, 2, false);
                             index -= 1;
                             if (index >= 0)
                             {
                               output = inputData.output[index];
                               offset -= 3;
-                              printMinusPlus(offset, LCD_ROW_BOT, 2, true);
+                              markField(offset, LCD_ROW_BOT, 2, true);
                             }
                             break;
         case BUTTON_RIGHT:  inputData.output[index] = output;
@@ -277,17 +300,30 @@ class Configure
                             }
                             else
                             {
-                              printMinusPlus(offset, LCD_ROW_BOT, 2, false);
+                              markField(offset, LCD_ROW_BOT, 2, false);
                               output = inputData.output[index];
                               offset += 3;
-                              lcd.printAtHex(offset, LCD_ROW_BOT, output, 2);
-                              printMinusPlus(offset, LCD_ROW_BOT, 2, true);
+                              printOutput(offset, output);
+                              markField(offset, LCD_ROW_BOT, 2, true);
                             }
                             break;
       }
     }
 
     return changed;
+  }
+
+
+  void printOutput(int aOffset, int aOutput)
+  {
+    if (aOutput & INPUT_DISABLED_MASK)
+    {
+      lcd.printAt(aOffset, LCD_ROW_BOT, M_DISABLED);
+    }
+    else
+    {
+      lcd.printAtHex(aOffset, LCD_ROW_BOT, aOutput, 2);
+    }
   }
   
   
