@@ -4,13 +4,6 @@
 #define _Configure_h
 
 
-// Stages of configuration.
-#define STAGE_IO        1
-#define STAGE_MODULE    2
-#define STAGE_PIN       3
-#define STAGE_ADJUST    4
-
-
 /** Configure the system.
  */
 class Configure
@@ -21,14 +14,16 @@ class Configure
   boolean isInput = true;   // Configuring inputs or outputs?
   int     module  = 0;      // The module we're configuring.
   int     pin     = 0;      // The pin we're configuring.
-  int     stage   = 0;      // Stage we're at in configuration (see definitions above).
   
 
   /** Print -/+ characters around a variable.
    */
   void printMinusPlus(int aCol, int aRow, int aLen, boolean aShow)
   {
-    lcd.printAt(aCol - 1,    aRow, aShow ? CHAR_MINUS : CHAR_SPACE);
+    if (aCol > 0)
+    {
+      lcd.printAt(aCol - 1,    aRow, aShow ? CHAR_MINUS : CHAR_SPACE);
+    }
     lcd.printAt(aCol + aLen, aRow, aShow ? CHAR_PLUS  : CHAR_SPACE);
   }
 
@@ -37,11 +32,12 @@ class Configure
    */
   void stageIO()
   {
-    stage = STAGE_IO;
+    boolean finished = false;
     lcd.clear();
-    lcd.printAt(LCD_COL_CONFIG, LCD_ROW_TOP, (isInput ? M_INPUT : M_OUTPUT));
+    int offset = lcd.printAt(LCD_COL_CONFIG, LCD_ROW_TOP, (isInput ? M_INPUT : M_OUTPUT));
+    printMinusPlus(LCD_COL_CONFIG, LCD_ROW_TOP, offset, true);
 
-    while (stage == STAGE_IO)
+    while (!finished)
     {
       switch (waitForButton())
       {
@@ -51,9 +47,11 @@ class Configure
                             lcd.printAt(LCD_COL_CONFIG, LCD_ROW_TOP, (isInput ? M_INPUT : M_OUTPUT));
                             break;
         case BUTTON_SELECT: 
-        case BUTTON_LEFT:   stage -= 1;
+        case BUTTON_LEFT:   finished = true;
                             break;
-        case BUTTON_RIGHT:  stageModule();
+        case BUTTON_RIGHT:  printMinusPlus(LCD_COL_CONFIG, LCD_ROW_TOP, offset, false);
+                            stageModule();
+                            printMinusPlus(LCD_COL_CONFIG, LCD_ROW_TOP, offset, true);
                             break;
       }
     }
@@ -64,13 +62,13 @@ class Configure
    */
   void stageModule()
   {
-    stage = STAGE_MODULE;
+    boolean finished = false;
     module = module & (isInput ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
     lcd.printAt(LCD_COL_MODULE, LCD_ROW_TOP, HEX_CHARS[module]);
     lcd.printAt(LCD_COL_MODULE - 1, LCD_ROW_BOT, M_MOD);
     printMinusPlus(LCD_COL_MODULE, LCD_ROW_TOP, 1, true);
 
-    while (stage == STAGE_MODULE)
+    while (!finished)
     {
       switch (waitForButton())
       {
@@ -81,8 +79,9 @@ class Configure
         case BUTTON_DOWN:   module = (module - 1) & (isInput ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
                             lcd.printAt(LCD_COL_MODULE, LCD_ROW_TOP, HEX_CHARS[module]);
                             break;
-        case BUTTON_SELECT: 
-        case BUTTON_LEFT:   stage -= 1;
+        case BUTTON_SELECT: break;
+        case BUTTON_LEFT:   finished = true;
+                            lcd.clearRow(LCD_COL_MODULE - 1, LCD_ROW_BOT);
                             break;
         case BUTTON_RIGHT:  printMinusPlus(LCD_COL_MODULE, LCD_ROW_TOP, 1, false);
                             lcd.clearRow(LCD_COL_MODULE - 1, LCD_ROW_BOT);
@@ -101,13 +100,13 @@ class Configure
    */
   void stagePin()
   {
-    stage = STAGE_PIN;
+    boolean finished = false;
     pin = pin & (isInput ? INPUT_INPUT_MASK : OUTPUT_OUTPUT_MASK);
     lcd.printAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[pin]);
     lcd.printAt(LCD_COL_PIN - 1, LCD_ROW_BOT, M_PIN);
     printMinusPlus(LCD_COL_PIN, LCD_ROW_TOP, 1, true);
     
-    while (stage == STAGE_PIN)
+    while (!finished)
     {
       switch (waitForButton())
       {
@@ -118,8 +117,9 @@ class Configure
         case BUTTON_DOWN:   pin = (pin - 1) & (isInput ? INPUT_INPUT_MASK : OUTPUT_OUTPUT_MASK);
                             lcd.printAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[pin]);
                             break;
-        case BUTTON_SELECT:
-        case BUTTON_LEFT:   stage -= 1; 
+        case BUTTON_SELECT: break;
+        case BUTTON_LEFT:   finished = true;
+                            lcd.clearRow(LCD_COL_PIN - 1, LCD_ROW_BOT);
                             break;
         case BUTTON_RIGHT:  printMinusPlus(LCD_COL_PIN, LCD_ROW_TOP, 1, false);
                             lcd.clearRow(LCD_COL_PIN - 1, LCD_ROW_BOT);
@@ -146,7 +146,7 @@ class Configure
   void stageInput()
   {
     boolean changed = false;
-    stage = STAGE_ADJUST;
+    boolean finished = false;
     loadInput(module, pin);
 
     // Retrieve Toggle/Button flag and clear from data.
@@ -155,9 +155,11 @@ class Configure
 
     // Output appropriate prompt.
     lcd.clearRow(LCD_COL_CONFIG, LCD_ROW_BOT);
-    lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
+    int offset = lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
+    printMinusPlus(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
+    printInputOutputs();
     
-    while (stage == STAGE_ADJUST)
+    while (!finished)
     {
       switch (waitForButton())
       {
@@ -173,37 +175,44 @@ class Configure
                               {
                                 inputData.output[0] |= isButton;
                                 saveInput();
-                                stage -= 1;
+                                finished = true;
                               }
                               else
                               {
                                 lcd.clearRow(LCD_COL_CONFIG, LCD_ROW_BOT);
                                 lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
+                                printMinusPlus(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
+                                printInputOutputs();
                               }
                             }
                             else
                             {
-                              stage -= 1;
+                              finished = true;
                             }
                             break;
         case BUTTON_LEFT:   if (changed)
                             {
                               if (cancel())
                               {
-                                stage -= 1;
+                                finished = true;
                               }
                               else
                               {
                                 lcd.clearRow(LCD_COL_CONFIG, LCD_ROW_BOT);
                                 lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
+                                printMinusPlus(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
+                                printInputOutputs();
                               }
                             }
                             else
                             {
-                              stage -= 1;
+                              finished = true;
                             }
                             break;
-        case BUTTON_RIGHT:  changed |= stageInputOutput();
+        case BUTTON_RIGHT:  printMinusPlus(LCD_COL_CONFIG, LCD_ROW_BOT, offset, false);
+                            changed |= stageInputOutput();
+                            printMinusPlus(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
+                            printInputOutputs();
                             break;
       }
     }
@@ -211,6 +220,18 @@ class Configure
     lcd.clearRow(LCD_COL_CONFIG, LCD_ROW_BOT);
   }
 
+
+  /** Print the Input's outputs.
+   */
+  void printInputOutputs()
+  {
+    int offset = LCD_COL_INPUT_OUTPUT;
+    for (int output = 0; output < INPUT_OUTPUT_MAX; output++, offset += 3)
+    {
+      lcd.printAtHex(offset, LCD_ROW_BOT, inputData.output[output], 2);
+    }
+  }
+  
 
   /** Process an Input's output definitions.
    */
@@ -269,13 +290,14 @@ class Configure
     return changed;
   }
   
+  
   /** Process Output stage.
    */
   void stageOutput()
   {
-    stage = STAGE_ADJUST;
+    boolean finished = false;
     
-    while (stage == STAGE_ADJUST)
+    while (!finished)
     {
       switch (waitForButton())
       {
@@ -283,7 +305,7 @@ class Configure
         case BUTTON_UP:     break;
         case BUTTON_DOWN:   break;
         case BUTTON_SELECT: 
-        case BUTTON_LEFT:   stage -= 1;
+        case BUTTON_LEFT:   finished = true;
                             break;
         case BUTTON_RIGHT:break;
       }
