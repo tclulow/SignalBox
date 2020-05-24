@@ -3,11 +3,13 @@
 #ifndef _Messages_h
 #define _Messages_h
 
-const char M_SOFTWARE[]       PROGMEM = "Panel   EzyBus";
+const char M_SOFTWARE[]       PROGMEM = "Panel   EzyBus  ";
 const char M_VERSION[]        PROGMEM = "v0.1    May 2020";
 
 const char M_CONFIRM[]        PROGMEM = "Confirm? Sel=Yes";
 const char M_CANCEL[]         PROGMEM = "Cancel?  Sel=Yes";
+const char M_SAVED[]          PROGMEM = "Change saved    ";
+const char M_CANCELLED[]      PROGMEM = "Change cancelled";
 
 const char M_CONFIG[]         PROGMEM = "Configure";
 const char M_SCAN_HARDWARE[]  PROGMEM = "Scan";

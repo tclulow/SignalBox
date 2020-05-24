@@ -179,6 +179,8 @@ class Configure
                               {
                                 inputData.output[0] |= isButton;
                                 saveInput();
+                                lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, M_SAVED);
+                                delay(DELAY);
                                 finished = true;
                               }
                               else
@@ -198,6 +200,8 @@ class Configure
                             {
                               if (cancel())
                               {
+                                lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, M_CANCELLED);
+                                delay(DELAY);
                                 finished = true;
                               }
                               else
