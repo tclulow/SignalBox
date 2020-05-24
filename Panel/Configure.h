@@ -269,7 +269,6 @@ class Configure
     return changed;
   }
   
-  
   /** Process Output stage.
    */
   void stageOutput()
