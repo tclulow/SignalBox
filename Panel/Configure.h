@@ -175,7 +175,7 @@ class Configure
   }
 
   
-/** Process Adjust stage.
+  /** Process Adjust stage.
    */
   void stageOutput()
   {
