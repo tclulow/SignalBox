@@ -28,7 +28,10 @@ class Configure
    */
   void waitForButtonRelease()
   {
-    while (readButton());
+    while (readButton())
+    {
+      delay(100);
+    }
   }
 
 
