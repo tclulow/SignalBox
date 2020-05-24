@@ -11,10 +11,10 @@
 #define OUTPUT_OUTPUT_MASK   0x07   // Mask to get output number within a module.
 
 // OutputData saved in EEPROM
-#define OUTPUT_BASE  0                                          // EEPROM base of Output data.
+#define OUTPUT_BASE  SYSTEM_END                                 // EEPROM base of OutputData.
 #define OUTPUT_SIZE  sizeof(OutputData)                         // Size of OutputData entry.
 #define OUTPUT_MAX   (OUTPUT_MODULE_SIZE * OUTPUT_MODULE_MAX)   // Maximum outputs (up to 128).
-#define OUTPUT_END   (OUTPUT_BASE + OUTPUT_SIZE * OUTPUT_MAX)   // End of Switch EEPROM.
+#define OUTPUT_END   (OUTPUT_BASE + OUTPUT_SIZE * OUTPUT_MAX)   // End of OutputData EEPROM.
 
 // Mask for OUTPUT options
 #define OUTPUT_STATE        0x80

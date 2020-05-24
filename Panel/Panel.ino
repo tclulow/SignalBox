@@ -25,6 +25,7 @@
 #include "Panel.h"
 #include "Messages.h"
 #include "Lcd.h"
+#include "System.h"
 #include "Output.h"
 #include "Input.h"
 #include "Buttons.h"
@@ -126,6 +127,21 @@ void initInputs()
   }   
   delay(DELAY);
   // lcd.clear();  
+}
+
+
+/** Software hasn't been run before.
+ */
+void firstRun()
+{
+  lcd.clear();
+  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_FIRST_RUN);
+
+  systemData.magic   = MAGIC_NUMBER;
+  systemData.version = VERSION;
+  saveSystemData();
+  
+  delay(DELAY);
 }
 
 
@@ -286,14 +302,55 @@ void setup()
 {
   #if DEBUG
   Serial.begin(115200);           // Serial IO.
+  Serial.print("System  ");
+  Serial.print(SYSTEM_BASE, HEX);
+  Serial.print(" to ");
+  Serial.print(SYSTEM_END, HEX);
+  Serial.println();
+  Serial.print("Outputs ");
+  Serial.print(OUTPUT_BASE, HEX);
+  Serial.print(" to ");
+  Serial.print(OUTPUT_END, HEX);
+  Serial.println();
+  Serial.print("Inputs  ");
+  Serial.print(INPUT_BASE, HEX);
+  Serial.print(" to ");
+  Serial.print(INPUT_END, HEX);
+  Serial.println();
   #endif
-  
+
+  // Initialise subsystems.
   lcd.begin(LCD_COLS, LCD_ROWS);  // LCD panel.
   Wire.begin(controllerID);       // I2C network    
 
+  // Discover and initialise attached hardware.
   mapHardware();                  // Scan for attached hardware.
   initInputs();                   // Initialise all inputs.
 
+  // Deal with first run (software has never been run before).
+  if (!loadSystemData())
+  {
+    firstRun();
+  }
+
+  // Report abscence of hardware.
+  if (   (inputModules  == 0)
+      || (outputModules == 0))
+  {
+    int row = LCD_ROW_TOP;
+    lcd.clear();
+    if (inputModules == 0)
+    {
+      lcd.printAt(LCD_COL_START, row++, M_NO_INPUTS);
+    }
+    if (outputModules == 0)
+    {
+      lcd.printAt(LCD_COL_START, row++, M_NO_OUTPUTS);
+    }
+    delay(DELAY);
+  }
+
+  // Announce ourselves.
   lcd.clear();
   lcd.printAt(0, 0, M_SOFTWARE);
   lcd.printAt(0, 1, M_VERSION);
