@@ -133,7 +133,14 @@ class Configure
                             break;
         case BUTTON_RIGHT:
         case BUTTON_SELECT: printMinusPlus(LCD_COL_PIN, LCD_ROW_CONFIG, false);
-                            stageAdjust();
+                            if (isInput)
+                            {
+                              stageInput();
+                            }
+                            else
+                            {
+                              stageOutput();
+                            }
                             printMinusPlus(LCD_COL_PIN, LCD_ROW_CONFIG, true);
                             break;
       }
@@ -145,7 +152,32 @@ class Configure
   
   /** Process Adjust stage.
    */
-  void stageAdjust()
+  void stageInput()
+  {
+    stage = STAGE_ADJUST;
+    
+    while (stage == STAGE_ADJUST)
+    {
+      button = readButton();
+      waitForButtonRelease();
+
+      switch (button)
+      {
+        case BUTTON_NONE:   break;
+        case BUTTON_UP:     break;
+        case BUTTON_DOWN:   break;
+        case BUTTON_LEFT:   stage -= 1;
+                            break;
+        case BUTTON_RIGHT:
+        case BUTTON_SELECT: break;
+      }
+    }
+  }
+
+  
+/** Process Adjust stage.
+   */
+  void stageOutput()
   {
     stage = STAGE_ADJUST;
     
