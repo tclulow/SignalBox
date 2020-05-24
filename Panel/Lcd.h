@@ -10,9 +10,8 @@
 #define LCD_COLS 16         // LCD is 16 columns
 #define LCD_ROWS  2         // by 2 rows.
 
-#define LCD_ROW_CONFIG  0   // Rows for LCD state messages.
-#define LCD_ROW_INPUT   0
-#define LCD_ROW_OUTPUT  1
+#define LCD_ROW_TOP     0   // Rows for LCD state messages.
+#define LCD_ROW_BOT     1
 
 #define LCD_COL_CONFIG  0   // Cols for LCD state messages.
 #define LCD_COL_INPUT   0
@@ -76,6 +75,22 @@ class LCD: public LiquidCrystal
     setCursor(col, row);
     print(aChar);
     return 1;
+  }
+
+
+  /** Clear a row from the given column to the end.
+   *  Return the number of spaces output.
+   */
+  uint8_t clearRow(int aCol, int aRow)
+  {
+    uint8_t spaces = 0;
+    setCursor(aCol, aRow);
+    for (spaces = 0; spaces < LCD_COLS - aCol; spaces++)
+    {
+      print(CHAR_SPACE);
+    }
+
+    return spaces;
   }
 
 

@@ -14,9 +14,8 @@ const char M_INIT_INPUTS[]    PROGMEM = "Init inputs";
 
 const char M_HI[]             PROGMEM = "Hi";
 const char M_LO[]             PROGMEM = "Lo";
-
-const char M_TOGGLE[]         PROGMEM = "Toggle";
-const char M_BUTTON[]         PROGMEM = "Button";
+const char M_MOD[]            PROGMEM = "Mod";
+const char M_PIN[]            PROGMEM = "Pin";
 
 
 /** Gets a PROGMEM message and copies it to a buffer

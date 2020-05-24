@@ -50,7 +50,7 @@ class Configure
   {
     stage = STAGE_IO;
     lcd.clear();
-    lcd.printAt(LCD_COL_CONFIG, LCD_ROW_CONFIG, (isInput ? M_INPUT : M_OUTPUT));
+    lcd.printAt(LCD_COL_CONFIG, LCD_ROW_TOP, (isInput ? M_INPUT : M_OUTPUT));
 
     while (stage == STAGE_IO)
     {
@@ -62,7 +62,7 @@ class Configure
         case BUTTON_NONE:   break;
         case BUTTON_UP:
         case BUTTON_DOWN:   isInput = !isInput;
-                            lcd.printAt(LCD_COL_CONFIG, LCD_ROW_CONFIG, (isInput ? M_INPUT : M_OUTPUT));
+                            lcd.printAt(LCD_COL_CONFIG, LCD_ROW_TOP, (isInput ? M_INPUT : M_OUTPUT));
                             break;
         case BUTTON_LEFT:   stage -= 1;
                             break;
@@ -79,8 +79,10 @@ class Configure
   void stageModule()
   {
     stage = STAGE_MODULE;
-    lcd.printAt(LCD_COL_MODULE, LCD_ROW_CONFIG, HEX_CHARS[module]);
-    printMinusPlus(LCD_COL_MODULE, LCD_ROW_CONFIG, true);
+    module = module & (isInput ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
+    lcd.printAt(LCD_COL_MODULE, LCD_ROW_TOP, HEX_CHARS[module]);
+    lcd.printAt(LCD_COL_MODULE - 1, LCD_ROW_BOT, M_MOD);
+    printMinusPlus(LCD_COL_MODULE, LCD_ROW_TOP, true);
 
     while (stage == STAGE_MODULE)
     {
@@ -91,22 +93,22 @@ class Configure
       {
         case BUTTON_NONE:   break;
         case BUTTON_UP:     module = (module + 1) & (isInput ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
-                            lcd.printAt(LCD_COL_MODULE, LCD_ROW_CONFIG, HEX_CHARS[module]);
+                            lcd.printAt(LCD_COL_MODULE, LCD_ROW_TOP, HEX_CHARS[module]);
                             break;
         case BUTTON_DOWN:   module = (module - 1) & (isInput ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
-                            lcd.printAt(LCD_COL_MODULE, LCD_ROW_CONFIG, HEX_CHARS[module]);
+                            lcd.printAt(LCD_COL_MODULE, LCD_ROW_TOP, HEX_CHARS[module]);
                             break;
         case BUTTON_LEFT:   stage -= 1;
                             break;
         case BUTTON_RIGHT:
-        case BUTTON_SELECT: printMinusPlus(LCD_COL_MODULE, LCD_ROW_CONFIG, false);
+        case BUTTON_SELECT: printMinusPlus(LCD_COL_MODULE, LCD_ROW_TOP, false);
                             stagePin();
-                            printMinusPlus(LCD_COL_MODULE, LCD_ROW_CONFIG, true);
+                            printMinusPlus(LCD_COL_MODULE, LCD_ROW_TOP, true);
                             break;
       }
     }
 
-    printMinusPlus(LCD_COL_MODULE, LCD_ROW_CONFIG, false);
+    printMinusPlus(LCD_COL_MODULE, LCD_ROW_TOP, false);
   }
 
   
@@ -115,8 +117,10 @@ class Configure
   void stagePin()
   {
     stage = STAGE_PIN;
-    lcd.printAt(LCD_COL_PIN, LCD_ROW_CONFIG, HEX_CHARS[pin]);
-    printMinusPlus(LCD_COL_PIN, LCD_ROW_CONFIG, true);
+    pin = pin & (isInput ? INPUT_INPUT_MASK : OUTPUT_OUTPUT_MASK);
+    lcd.printAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[pin]);
+    lcd.printAt(LCD_COL_PIN - 1, LCD_ROW_BOT, M_PIN);
+    printMinusPlus(LCD_COL_PIN, LCD_ROW_TOP, true);
     
     while (stage == STAGE_PIN)
     {
@@ -127,60 +131,30 @@ class Configure
       {
         case BUTTON_NONE:   break;
         case BUTTON_UP:     pin = (pin + 1) & (isInput ? INPUT_INPUT_MASK : OUTPUT_OUTPUT_MASK);
-                            lcd.printAt(LCD_COL_PIN, LCD_ROW_CONFIG, HEX_CHARS[pin]);
+                            lcd.printAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[pin]);
                             break;
         case BUTTON_DOWN:   pin = (pin - 1) & (isInput ? INPUT_INPUT_MASK : OUTPUT_OUTPUT_MASK);
-                            lcd.printAt(LCD_COL_PIN, LCD_ROW_CONFIG, HEX_CHARS[pin]);
+                            lcd.printAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[pin]);
                             break;
         case BUTTON_LEFT:   stage -= 1;
                             break;
         case BUTTON_RIGHT:
-        case BUTTON_SELECT: printMinusPlus(LCD_COL_PIN, LCD_ROW_CONFIG, false);
-                            if (isInput)
-                            {
-                              stageInput();
-                            }
-                            else
-                            {
-                              stageOutput();
-                            }
-                            printMinusPlus(LCD_COL_PIN, LCD_ROW_CONFIG, true);
+        case BUTTON_SELECT: printMinusPlus(LCD_COL_PIN, LCD_ROW_TOP, false);
+                            stageAdjust();
+                            printMinusPlus(LCD_COL_PIN, LCD_ROW_TOP, true);
+                            lcd.printAt(LCD_COL_MODULE - 1, LCD_ROW_BOT, M_MOD);
+                            lcd.printAt(LCD_COL_PIN - 1, LCD_ROW_BOT, M_PIN);
                             break;
       }
     }
 
-    printMinusPlus(LCD_COL_PIN, LCD_ROW_CONFIG, false);
+    printMinusPlus(LCD_COL_PIN, LCD_ROW_TOP, false);
   }
 
   
   /** Process Adjust stage.
    */
-  void stageInput()
-  {
-    stage = STAGE_ADJUST;
-    
-    while (stage == STAGE_ADJUST)
-    {
-      button = readButton();
-      waitForButtonRelease();
-
-      switch (button)
-      {
-        case BUTTON_NONE:   break;
-        case BUTTON_UP:     break;
-        case BUTTON_DOWN:   break;
-        case BUTTON_LEFT:   stage -= 1;
-                            break;
-        case BUTTON_RIGHT:
-        case BUTTON_SELECT: break;
-      }
-    }
-  }
-
-  
-  /** Process Adjust stage.
-   */
-  void stageOutput()
+  void stageAdjust()
   {
     stage = STAGE_ADJUST;
     

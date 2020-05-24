@@ -22,9 +22,9 @@
 #include <Wire.h>
 
 #include "Config.h"
+#include "Panel.h"
 #include "Messages.h"
 #include "Lcd.h"
-#include "Panel.h"
 #include "Output.h"
 #include "Input.h"
 #include "Buttons.h"
@@ -195,13 +195,22 @@ long readInputModule(int module)
  */
 void processInput(int module, int pin, int state)
 {
+  #if DEBUG
   // Report the input
-  lcd.clear();
-  lcd.printAt(LCD_COL_INPUT,  LCD_ROW_INPUT, M_INPUT);
-  lcd.printAt(LCD_COL_MODULE, LCD_ROW_INPUT, HEX_CHARS[module]);
-  lcd.printAt(LCD_COL_PIN,    LCD_ROW_INPUT, HEX_CHARS[pin]);
-  lcd.printAt(LCD_COL_STATE,  LCD_ROW_INPUT, (state ? M_HI : M_LO));
-   
+  Serial.print("Input  ");
+  Serial.print(HEX_CHARS[module]);
+  Serial.print(" ");
+  Serial.print(HEX_CHARS[pin]);
+  Serial.print(" ");
+  Serial.print(state ? M_HI : M_LO);
+  Serial.println();
+
+//  lcd.clear();
+//  lcd.printAt(LCD_COL_INPUT,  LCD_ROW_INPUT, M_INPUT);
+//  lcd.printAt(LCD_COL_MODULE, LCD_ROW_INPUT, HEX_CHARS[module]);
+//  lcd.printAt(LCD_COL_PIN,    LCD_ROW_INPUT, HEX_CHARS[pin]);
+//  lcd.printAt(LCD_COL_STATE,  LCD_ROW_INPUT, (state ? M_HI : M_LO));
+  #endif
   
   loadInput(module, pin);
   int output = inputData.output1 & INPUT_OUTPUT_MASK;
@@ -238,12 +247,22 @@ void processInput(int module, int pin, int state)
  */
 int sendOutputCommand()
 {
+  #if DEBUG
   // Report output
-  lcd.printAt(LCD_COL_OUTPUT,  LCD_ROW_OUTPUT, M_OUTPUT);
-  lcd.printAt(LCD_COL_MODULE,  LCD_ROW_OUTPUT, HEX_CHARS[outputNumber << OUTPUT_MODULE_SHIFT]);
-  lcd.printAt(LCD_COL_PIN,     LCD_ROW_OUTPUT, HEX_CHARS[outputNumber & OUTPUT_OUTPUT_MASK]);
-  lcd.printAt(LCD_COL_STATE,   LCD_ROW_OUTPUT, ((outputData.mode & OUTPUT_STATE) ? M_HI : M_LO));
-  delay(DELAY);
+  Serial.print("Output ");
+  Serial.print(HEX_CHARS[outputNumber << OUTPUT_MODULE_SHIFT]);
+  Serial.print(" ");
+  Serial.print(HEX_CHARS[outputNumber & OUTPUT_OUTPUT_MASK]);
+  Serial.print(" ");
+  Serial.print((outputData.mode & OUTPUT_STATE) ? M_HI : M_LO);
+  Serial.println();
+
+//  lcd.printAt(LCD_COL_OUTPUT,  LCD_ROW_OUTPUT, M_OUTPUT);
+//  lcd.printAt(LCD_COL_MODULE,  LCD_ROW_OUTPUT, HEX_CHARS[outputNumber << OUTPUT_MODULE_SHIFT]);
+//  lcd.printAt(LCD_COL_PIN,     LCD_ROW_OUTPUT, HEX_CHARS[outputNumber & OUTPUT_OUTPUT_MASK]);
+//  lcd.printAt(LCD_COL_STATE,   LCD_ROW_OUTPUT, ((outputData.mode & OUTPUT_STATE) ? M_HI : M_LO));
+//  delay(DELAY);
+  #endif
   
   Wire.beginTransmission(outputBaseID + (outputNumber << OUTPUT_MODULE_SHIFT));
   Wire.write(outputNumber & OUTPUT_OUTPUT_MASK);
