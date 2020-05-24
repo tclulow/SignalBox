@@ -214,11 +214,11 @@ void processInput(int module, int pin, int state)
   #if DEBUG
   // Report the input
   Serial.print("Input  ");
-  Serial.print(HEX_CHARS[module]);
+  Serial.print(HEX_CHARS[module & 0xf]);
   Serial.print(" ");
-  Serial.print(HEX_CHARS[pin]);
+  Serial.print(HEX_CHARS[pin & 0xf]);
   Serial.print(" ");
-  Serial.print(state ? M_HI : M_LO);
+  Serial.print(state ? "Hi" : "Lo");
   Serial.println();
 
 //  lcd.clear();
@@ -266,11 +266,11 @@ int sendOutputCommand()
   #if DEBUG
   // Report output
   Serial.print("Output ");
-  Serial.print(HEX_CHARS[outputNumber << OUTPUT_MODULE_SHIFT]);
+  Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_MODULE_SHIFT) & 0xf]);
   Serial.print(" ");
-  Serial.print(HEX_CHARS[outputNumber & OUTPUT_OUTPUT_MASK]);
+  Serial.print(HEX_CHARS[outputNumber & OUTPUT_OUTPUT_MASK & 0xf]);
   Serial.print(" ");
-  Serial.print((outputData.mode & OUTPUT_STATE) ? M_HI : M_LO);
+  Serial.print((outputData.mode & OUTPUT_STATE) ? "Hi" : "Lo");
   Serial.println();
 
 //  lcd.printAt(LCD_COL_OUTPUT,  LCD_ROW_OUTPUT, M_OUTPUT);

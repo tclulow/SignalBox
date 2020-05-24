@@ -14,9 +14,6 @@
 #define LCD_ROW_BOT     1
 
 #define LCD_COL_START   0   // Cols for LCD state messages.
-#define LCD_COL_CONFIG  0
-#define LCD_COL_INPUT   0
-#define LCD_COL_OUTPUT  0
 #define LCD_COL_MODULE  8
 #define LCD_COL_PIN    11
 #define LCD_COL_STATE  14

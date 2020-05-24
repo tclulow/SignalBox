@@ -35,8 +35,8 @@ class Configure
     boolean finished = false;
     
     lcd.clear();
-    int offset = lcd.printAt(LCD_COL_CONFIG, LCD_ROW_TOP, (isInput ? M_INPUT : M_OUTPUT));
-    markField(LCD_COL_CONFIG, LCD_ROW_TOP, offset, true);
+    int offset = lcd.printAt(LCD_COL_START, LCD_ROW_TOP, (isInput ? M_INPUT : M_OUTPUT));
+    markField(LCD_COL_START, LCD_ROW_TOP, offset, true);
 
     while (!finished)
     {
@@ -45,14 +45,14 @@ class Configure
         case BUTTON_NONE:   break;
         case BUTTON_UP:
         case BUTTON_DOWN:   isInput = !isInput;
-                            offset = lcd.printAt(LCD_COL_CONFIG, LCD_ROW_TOP, (isInput ? M_INPUT : M_OUTPUT));
+                            offset = lcd.printAt(LCD_COL_START, LCD_ROW_TOP, (isInput ? M_INPUT : M_OUTPUT));
                             break;
-        case BUTTON_SELECT: 
+        case BUTTON_SELECT: break;
         case BUTTON_LEFT:   finished = true;
                             break;
-        case BUTTON_RIGHT:  markField(LCD_COL_CONFIG, LCD_ROW_TOP, offset, false);
+        case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_TOP, offset, false);
                             stageModule();
-                            markField(LCD_COL_CONFIG, LCD_ROW_TOP, offset, true);
+                            markField(LCD_COL_START, LCD_ROW_TOP, offset, true);
                             break;
       }
     }
@@ -158,9 +158,9 @@ class Configure
     inputData.output[0] &= INPUT_OUTPUT_MASK;
 
     // Output appropriate prompt.
-    lcd.clearRow(LCD_COL_CONFIG, LCD_ROW_BOT);
-    int offset = lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
-    markField(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
+    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+    int offset = lcd.printAt(LCD_COL_START, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
+    markField(LCD_COL_START, LCD_ROW_BOT, offset, true);
     printInputOutputs();
     
     while (!finished)
@@ -170,7 +170,7 @@ class Configure
         case BUTTON_NONE:   break;
         case BUTTON_UP:
         case BUTTON_DOWN:   isButton ^= INPUT_BUTTON_MASK;
-                            lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
+                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
                             changed = true;
                             break;
         case BUTTON_SELECT: if (changed)
@@ -179,15 +179,15 @@ class Configure
                               {
                                 inputData.output[0] |= isButton;
                                 saveInput();
-                                lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, M_SAVED);
+                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
                                 delay(DELAY);
                                 finished = true;
                               }
                               else
                               {
-                                lcd.clearRow(LCD_COL_CONFIG, LCD_ROW_BOT);
-                                lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
-                                markField(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
+                                lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
+                                markField(LCD_COL_START, LCD_ROW_BOT, offset, true);
                                 printInputOutputs();
                               }
                             }
@@ -200,15 +200,15 @@ class Configure
                             {
                               if (cancel())
                               {
-                                lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, M_CANCELLED);
+                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
                                 delay(DELAY);
                                 finished = true;
                               }
                               else
                               {
-                                lcd.clearRow(LCD_COL_CONFIG, LCD_ROW_BOT);
-                                lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
-                                markField(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
+                                lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
+                                markField(LCD_COL_START, LCD_ROW_BOT, offset, true);
                                 printInputOutputs();
                               }
                             }
@@ -217,15 +217,15 @@ class Configure
                               finished = true;
                             }
                             break;
-        case BUTTON_RIGHT:  markField(LCD_COL_CONFIG, LCD_ROW_BOT, offset, false);
+        case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, offset, false);
                             changed |= stageInputOutput();
-                            markField(LCD_COL_CONFIG, LCD_ROW_BOT, offset, true);
+                            markField(LCD_COL_START, LCD_ROW_BOT, offset, true);
                             printInputOutputs();
                             break;
       }
     }
 
-    lcd.clearRow(LCD_COL_CONFIG, LCD_ROW_BOT);
+    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
   }
 
 
@@ -344,7 +344,7 @@ class Configure
         case BUTTON_NONE:   break;
         case BUTTON_UP:     break;
         case BUTTON_DOWN:   break;
-        case BUTTON_SELECT: 
+        case BUTTON_SELECT: break;
         case BUTTON_LEFT:   finished = true;
                             break;
         case BUTTON_RIGHT:break;
@@ -357,7 +357,7 @@ class Configure
    */
   boolean confirm()
   {
-    int offset = lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, M_CONFIRM);
+    int offset = lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CONFIRM);
     lcd.clearRow(offset, LCD_ROW_BOT);
 
     return waitForButton() == BUTTON_SELECT;
@@ -368,7 +368,7 @@ class Configure
    */
   boolean cancel()
   {
-    int offset = lcd.printAt(LCD_COL_CONFIG, LCD_ROW_BOT, M_CANCEL);
+    int offset = lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCEL);
     lcd.clearRow(offset, LCD_ROW_BOT);
 
     return waitForButton() == BUTTON_SELECT;
