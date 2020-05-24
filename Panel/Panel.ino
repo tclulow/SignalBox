@@ -140,6 +140,29 @@ void firstRun()
   systemData.magic   = MAGIC_NUMBER;
   systemData.version = VERSION;
   saveSystemData();
+
+  // Inialise all inputs to have one output with the same number.
+  lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_DEFAULT_INPUTS);
+  for (int input = 0; input < INPUT_MAX; input++)
+  {
+    loadInput(input);
+    inputData.output[0] = INPUT_BUTTON_MASK | input;
+    inputData.output[1] = INPUT_DISABLED_MASK; 
+    inputData.output[2] = INPUT_DISABLED_MASK; 
+    saveInput();
+  }
+
+  // Inialise all outputs.
+  lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+  lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_DEFAULT_OUTPUTS);
+  for (int output = 0; output < INPUT_MAX; output++)
+  {
+    loadOutput(output);
+    outputData.mode  = 0;
+    outputData.lo    = 0;
+    outputData.hi    = 180;
+    outputData.pace  = 25;
+  }
   
   delay(DELAY);
 }
