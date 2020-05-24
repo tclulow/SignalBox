@@ -19,6 +19,7 @@
 #define LCD_COL_MODULE  8
 #define LCD_COL_PIN    11
 #define LCD_COL_STATE  14
+#define LCD_COL_INPUT_OUTPUT 7
 
 
 /** An LCD class that can print PROGMEM messages.
@@ -75,6 +76,21 @@ class LCD: public LiquidCrystal
     setCursor(col, row);
     print(aChar);
     return 1;
+  }
+
+
+  /** Print a number as a string of hex digits.
+   *  Padded with leading zeros to length aDigits.
+   */
+  uint8_t printAtHex(int col, int row, int aValue, int aDigits)
+  {
+    setCursor(col, row);
+    for (int digit = aDigits - 1; digit >= 0; digit--)
+    {
+      print(HEX_CHARS[(aValue >> (4 * digit)) & 0xf]);
+    }
+  
+    return aDigits;
   }
 
 

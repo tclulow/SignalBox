@@ -6,6 +6,9 @@
 const char M_SOFTWARE[]       PROGMEM = "Panel   EzyBus";
 const char M_VERSION[]        PROGMEM = "v0.1    May 2020";
 
+const char M_CONFIRM[]        PROGMEM = "Confirm? Sel=Yes";
+const char M_CANCEL[]         PROGMEM = "Cancel?  Sel=Yes";
+
 const char M_CONFIG[]         PROGMEM = "Configure";
 const char M_SCAN_HARDWARE[]  PROGMEM = "Scan";
 const char M_OUTPUT[]         PROGMEM = "Output";
@@ -16,6 +19,8 @@ const char M_HI[]             PROGMEM = "Hi";
 const char M_LO[]             PROGMEM = "Lo";
 const char M_MOD[]            PROGMEM = "Mod";
 const char M_PIN[]            PROGMEM = "Pin";
+const char M_BUTTON[]         PROGMEM = "Button";
+const char M_TOGGLE[]         PROGMEM = "Toggle";
 
 
 /** Gets a PROGMEM message and copies it to a buffer

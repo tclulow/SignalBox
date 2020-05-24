@@ -9,6 +9,7 @@
 #define INPUT_MODULE_MASK    0x07   // 3 bits for 8 modules.
 #define INPUT_MODULE_SHIFT   4      // Shift input number this amount to get a module number.
 #define INPUT_INPUT_MASK     0x0f   // Mask to get input number within a module.
+#define INPUT_OUTPUT_MAX     3      // Number of outputs each input can control.
 
 // InputData saved in EEPROM
 #define INPUT_BASE   OUTPUT_END                                 // EEPROM base of Input data.
@@ -31,8 +32,7 @@
  */
 struct InputData
 {
-  uint8_t output1 = 0xff;   // The output conrolled by this input.
-  uint8_t output2 = 0xff;
+  uint8_t output[INPUT_OUTPUT_MAX];   // The outputs conrolled by this input.
 };
 
 

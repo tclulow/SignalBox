@@ -213,10 +213,10 @@ void processInput(int module, int pin, int state)
   #endif
   
   loadInput(module, pin);
-  int output = inputData.output1 & INPUT_OUTPUT_MASK;
+  int output = inputData.output[0] & INPUT_OUTPUT_MASK;
   loadOutput(output);
   
-  if (inputData.output1 & INPUT_PUSH_TO_MAKE)
+  if (inputData.output[0] & INPUT_PUSH_TO_MAKE)
   {
     if (state)      // Send change state when button pressed, not when released.
     {

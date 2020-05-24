@@ -59,4 +59,32 @@ int readButton()
   return BUTTON_NONE;
 }
 
+
+/** Wait for button to be released.
+ */
+void waitForButtonRelease()
+{
+  while (readButton())
+  {
+    delay(100);
+  }
+}
+
+
+/** Wait for a button tobe pressed.
+ *  Return that button after waiting for the release.
+ */
+int waitForButton()
+{
+  int button;
+  while ((button = readButton()) == 0)
+  {
+    delay(100);
+  }
+
+  waitForButtonRelease();
+
+  return button;
+}
+
 #endif
