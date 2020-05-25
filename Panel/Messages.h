@@ -35,10 +35,10 @@ const char M_LO[]              PROGMEM = "Lo";
 // Array of (pointers to) output types.
 const char M_NONE[]            PROGMEM = "None  ";
 const char M_SERVO[]           PROGMEM = "Servo ";
-const char M_LED[]             PROGMEM = "LED   ";
 const char M_SIGNAL[]          PROGMEM = "Signal";
+const char M_LED[]             PROGMEM = "LED   ";
  
-const char* const M_OUTPUT_TYPES[] = { M_NONE, M_SERVO, M_LED, M_SIGNAL };
+const char* const M_OUTPUT_TYPES[] = { M_NONE, M_SERVO, M_SIGNAL, M_LED };
 
 
 /** Gets a PROGMEM message and copies it to a buffer

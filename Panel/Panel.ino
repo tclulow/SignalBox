@@ -159,9 +159,10 @@ void firstRun()
   {
     loadOutput(output);
     outputData.mode  = 0;
-    outputData.lo    = 0;
+    outputData.lo    = 2;
     outputData.hi    = 180;
-    outputData.pace  = 25;
+    outputData.pace  = 61;
+    saveOutput();
   }
   
   delay(DELAY);

@@ -349,7 +349,8 @@ class Configure
     lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
     int offset = lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputMode]);
     markField(LCD_COL_START, LCD_ROW_BOT, offset, true);
-    
+    printOutputParams(outputMode);
+
     while (!finished)
     {
       switch (waitForButton())
@@ -361,6 +362,7 @@ class Configure
                               outputMode = 0;
                             }
                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputMode]);
+                            printOutputParams(outputMode);
                             changed = true;
                             break;
         case BUTTON_DOWN:   outputMode - 1;
@@ -369,6 +371,7 @@ class Configure
                               outputMode = OUTPUT_MODE_MAX;
                             }
                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputMode]);
+                            printOutputParams(outputMode);
                             changed = true;
                             break;
         case BUTTON_SELECT: if (changed)
@@ -386,6 +389,7 @@ class Configure
                                 lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
                                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputMode]);
                                 markField(LCD_COL_START, LCD_ROW_BOT, offset, true);
+                                printOutputParams(outputMode);
                               }
                             }
                             else
@@ -406,6 +410,7 @@ class Configure
                                 lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
                                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputMode]);
                                 markField(LCD_COL_START, LCD_ROW_BOT, offset, true);
+                                printOutputParams(outputMode);
                               }
                             }
                             else
@@ -413,11 +418,93 @@ class Configure
                               finished = true;
                             }
                             break;
-        case BUTTON_RIGHT:  break;
+        case BUTTON_RIGHT:  if (outputMode == OUTPUT_MODE_SERVO)
+                            {
+                              markField(LCD_COL_START, LCD_ROW_BOT, offset, false);
+                              changed |= stageOutputParms();
+                              markField(LCD_COL_START, LCD_ROW_BOT, offset, true);
+                            }
+                            break;
       }
     }
 
     lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+  }
+
+
+  /** Print the Output's parameters depending on mode.
+   */
+  void printOutputParams(int aMode)
+  {
+    int offset = LCD_COL_OUTPUT_PARAM;
+
+    if (   (aMode == OUTPUT_MODE_SERVO)
+        || (aMode == OUTPUT_MODE_SIGNAL))
+    {
+      lcd.printAtHex(offset, LCD_ROW_BOT, outputData.lo,   2);
+      offset += 3;
+      lcd.printAtHex(offset, LCD_ROW_BOT, outputData.hi,   2);
+      offset += 3;
+      lcd.printAtHex(offset, LCD_ROW_BOT, outputData.pace, 2);
+    }
+    else
+    {
+      lcd.clearRow(offset, LCD_ROW_BOT);
+    }
+  }
+  
+
+  /** Process an Input's output definitions.
+   */
+  boolean stageOutputParms()
+  {
+    boolean changed  = false;
+    int     offset   = LCD_COL_OUTPUT_PARAM;
+    int     index    = 0;
+    uint8_t params[] = { outputData.lo, outputData.hi, outputData.pace }; 
+
+    markField(offset, LCD_ROW_BOT, 2, true);
+
+    while (index >= 0)
+    {
+      switch (waitForButton())
+      {
+        case BUTTON_NONE:   break;
+        case BUTTON_UP:     params[index] += 1;
+                            lcd.printAtHex(offset + index * 3, LCD_ROW_BOT, params[index], 2);
+                            changed = true;
+                            break;
+        case BUTTON_DOWN:   params[index] -= 1;
+                            lcd.printAtHex(offset + index * 3, LCD_ROW_BOT, params[index], 2);
+                            changed = true;
+                            break;
+        case BUTTON_SELECT: break;
+        case BUTTON_LEFT:   markField(offset + index * 3, LCD_ROW_BOT, 2, false);
+                            index -= 1;
+                            if (index >= 0)
+                            {
+                              markField(offset + index * 3, LCD_ROW_BOT, 2, true);
+                            }
+                            break;
+        case BUTTON_RIGHT:  if (index < 2)
+                            {
+                              markField(offset + index * 3, LCD_ROW_BOT, 2, false);
+                              index += 1;
+                              markField(offset + index * 3, LCD_ROW_BOT, 2, true);
+                            }
+                            break;
+      }
+    }
+
+    // Update outputData if changes have been made.
+    if (changed)
+    {
+      outputData.lo   = params[0];
+      outputData.hi   = params[1];
+      outputData.pace = params[2];
+    }
+    
+    return changed;
   }
 
 

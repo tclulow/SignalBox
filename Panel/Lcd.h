@@ -13,11 +13,12 @@
 #define LCD_ROW_TOP     0   // Rows for LCD state messages.
 #define LCD_ROW_BOT     1
 
-#define LCD_COL_START   0   // Cols for LCD state messages.
-#define LCD_COL_MODULE  8
-#define LCD_COL_PIN    11
-#define LCD_COL_STATE  14
-#define LCD_COL_INPUT_OUTPUT 7
+#define LCD_COL_START         0   // Cols for LCD state messages.
+#define LCD_COL_MODULE        8   // Module number.
+#define LCD_COL_PIN          11   // Pin number.
+#define LCD_COL_STATE        14   // State of output.
+#define LCD_COL_INPUT_OUTPUT  7   // Input's outputs(3) start at this col.
+#define LCD_COL_OUTPUT_PARAM  7   // Output's parameters(3) start at this col.
 
 
 /** An LCD class that can print PROGMEM messages.
