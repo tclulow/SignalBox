@@ -257,8 +257,7 @@ class Configure
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
-        case BUTTON_UP:     changed = true;
-                            if (output & INPUT_DISABLED_MASK)
+        case BUTTON_UP:     if (output & INPUT_DISABLED_MASK)
                             {
                               output &= INPUT_OUTPUT_MASK;
                             }
@@ -267,9 +266,9 @@ class Configure
                               output = (output + 1) & INPUT_OUTPUT_MASK;
                             }
                             printOutput(offset, output);
+                            changed = true;
                             break;
-        case BUTTON_DOWN:   changed = true;
-                            if (output & INPUT_DISABLED_MASK)
+        case BUTTON_DOWN:   if (output & INPUT_DISABLED_MASK)
                             {
                               output &= INPUT_OUTPUT_MASK;
                             }
@@ -278,6 +277,7 @@ class Configure
                               output = (output - 1) & INPUT_OUTPUT_MASK;
                             }
                             printOutput(offset, output);
+                            changed = true;
                             break;
         case BUTTON_SELECT: if (index > 0)
                             {
@@ -318,6 +318,8 @@ class Configure
   }
 
 
+  /** Show an output number (or disabled marker).
+   */
   void printOutput(int aOffset, int aOutput)
   {
     if (aOutput & INPUT_DISABLED_MASK)
@@ -336,20 +338,86 @@ class Configure
   void stageOutput()
   {
     boolean finished = false;
+    boolean changed  = false;
+    
+    loadOutput(module, pin);
+
+    // Retrieve type
+    uint8_t outputMode = outputData.mode & OUTPUT_MODE_MASK;
+
+    // Output appropriate prompt.
+    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+    int offset = lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputMode]);
+    markField(LCD_COL_START, LCD_ROW_BOT, offset, true);
     
     while (!finished)
     {
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
-        case BUTTON_UP:     break;
-        case BUTTON_DOWN:   break;
-        case BUTTON_SELECT: break;
-        case BUTTON_LEFT:   finished = true;
+        case BUTTON_UP:     outputMode += 1;
+                            if (outputMode > OUTPUT_MODE_MAX)
+                            {
+                              outputMode = 0;
+                            }
+                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputMode]);
+                            changed = true;
                             break;
-        case BUTTON_RIGHT:break;
+        case BUTTON_DOWN:   outputMode - 1;
+                            if (outputMode < 0)
+                            {
+                              outputMode = OUTPUT_MODE_MAX;
+                            }
+                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputMode]);
+                            changed = true;
+                            break;
+        case BUTTON_SELECT: if (changed)
+                            {
+                              if (confirm())
+                              {
+                                outputData.mode = outputMode | (outputData.mode & ~OUTPUT_MODE_MASK);
+                                saveOutput();
+                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
+                                delay(DELAY);
+                                finished = true;
+                              }
+                              else
+                              {
+                                lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputMode]);
+                                markField(LCD_COL_START, LCD_ROW_BOT, offset, true);
+                              }
+                            }
+                            else
+                            {
+                              finished = true;
+                            }
+                            break;
+        case BUTTON_LEFT:   if (changed)
+                            {
+                              if (cancel())
+                              {
+                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
+                                delay(DELAY);
+                                finished = true;
+                              }
+                              else
+                              {
+                                lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputMode]);
+                                markField(LCD_COL_START, LCD_ROW_BOT, offset, true);
+                              }
+                            }
+                            else
+                            {
+                              finished = true;
+                            }
+                            break;
+        case BUTTON_RIGHT:  break;
       }
     }
+
+    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
   }
 
 
