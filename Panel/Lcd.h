@@ -18,7 +18,9 @@
 #define LCD_COL_PIN          11   // Pin number.
 #define LCD_COL_STATE        14   // State of output.
 #define LCD_COL_INPUT_OUTPUT  7   // Input's outputs(3) start at this col.
+#define LCD_COL_INPUT_STEP    3   // Three columns per output.
 #define LCD_COL_OUTPUT_PARAM  7   // Output's parameters(3) start at this col.
+#define LCD_COL_OUTPUT_STEP   3   // Three columns per parameter.
 
 
 /** An LCD class that can print PROGMEM messages.

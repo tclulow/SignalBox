@@ -11,14 +11,14 @@ const char M_CANCEL[]          PROGMEM = "Cancel?  Sel=Yes";
 const char M_SAVED[]           PROGMEM = "Change saved    ";
 const char M_CANCELLED[]       PROGMEM = "Change cancelled";
 
+const char M_SCAN_MODULES[]    PROGMEM = "Modules";
 const char M_NO_INPUTS[]       PROGMEM = "No input module";
 const char M_NO_OUTPUTS[]      PROGMEM = "No output module";
+const char M_INIT_INPUTS[]     PROGMEM = "Init inputs";
+
 const char M_FIRST_RUN[]       PROGMEM = "First run";
 const char M_DEFAULT_INPUTS[]  PROGMEM = "Default inputs";
 const char M_DEFAULT_OUTPUTS[] PROGMEM = "Default outputs";
-
-const char M_SCAN_HARDWARE[]   PROGMEM = "Scan";
-const char M_INIT_INPUTS[]     PROGMEM = "Init inputs";
 
 const char M_CONFIG[]          PROGMEM = "Configure";
 const char M_OUTPUT[]          PROGMEM = "Output";

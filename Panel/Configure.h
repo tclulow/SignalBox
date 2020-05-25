@@ -234,7 +234,7 @@ class Configure
   void printInputOutputs()
   {
     int offset = LCD_COL_INPUT_OUTPUT;
-    for (int output = 0; output < INPUT_OUTPUT_MAX; output++, offset += 3)
+    for (int output = 0; output < INPUT_OUTPUT_MAX; output++, offset += LCD_COL_INPUT_STEP)
     {
       printOutput(offset, inputData.output[output]);
     }
@@ -292,7 +292,7 @@ class Configure
                             if (index >= 0)
                             {
                               output = inputData.output[index];
-                              offset -= 3;
+                              offset -= LCD_COL_INPUT_STEP;
                               markField(offset, LCD_ROW_BOT, 2, true);
                             }
                             break;
@@ -306,7 +306,7 @@ class Configure
                             {
                               markField(offset, LCD_ROW_BOT, 2, false);
                               output = inputData.output[index];
-                              offset += 3;
+                              offset += LCD_COL_INPUT_STEP;
                               printOutput(offset, output);
                               markField(offset, LCD_ROW_BOT, 2, true);
                             }
@@ -418,7 +418,8 @@ class Configure
                               finished = true;
                             }
                             break;
-        case BUTTON_RIGHT:  if (outputMode == OUTPUT_MODE_SERVO)
+        case BUTTON_RIGHT:  if (   (outputMode == OUTPUT_MODE_SERVO)
+                                || (outputMode == OUTPUT_MODE_SIGNAL))
                             {
                               markField(LCD_COL_START, LCD_ROW_BOT, offset, false);
                               changed |= stageOutputParms();
@@ -442,9 +443,9 @@ class Configure
         || (aMode == OUTPUT_MODE_SIGNAL))
     {
       lcd.printAtHex(offset, LCD_ROW_BOT, outputData.lo,   2);
-      offset += 3;
+      offset += LCD_COL_OUTPUT_STEP;
       lcd.printAtHex(offset, LCD_ROW_BOT, outputData.hi,   2);
-      offset += 3;
+      offset += LCD_COL_OUTPUT_STEP;
       lcd.printAtHex(offset, LCD_ROW_BOT, outputData.pace, 2);
     }
     else
@@ -471,26 +472,26 @@ class Configure
       {
         case BUTTON_NONE:   break;
         case BUTTON_UP:     params[index] += 1;
-                            lcd.printAtHex(offset + index * 3, LCD_ROW_BOT, params[index], 2);
+                            lcd.printAtHex(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
                             changed = true;
                             break;
         case BUTTON_DOWN:   params[index] -= 1;
-                            lcd.printAtHex(offset + index * 3, LCD_ROW_BOT, params[index], 2);
+                            lcd.printAtHex(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
                             changed = true;
                             break;
         case BUTTON_SELECT: break;
-        case BUTTON_LEFT:   markField(offset + index * 3, LCD_ROW_BOT, 2, false);
+        case BUTTON_LEFT:   markField(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, false);
                             index -= 1;
                             if (index >= 0)
                             {
-                              markField(offset + index * 3, LCD_ROW_BOT, 2, true);
+                              markField(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
                             }
                             break;
         case BUTTON_RIGHT:  if (index < 2)
                             {
-                              markField(offset + index * 3, LCD_ROW_BOT, 2, false);
+                              markField(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, false);
                               index += 1;
-                              markField(offset + index * 3, LCD_ROW_BOT, 2, true);
+                              markField(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
                             }
                             break;
       }

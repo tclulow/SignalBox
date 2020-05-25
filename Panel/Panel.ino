@@ -41,7 +41,7 @@ uint16_t currentInputState[INPUT_MODULE_MAX];    // Current state of inputs.
 void mapHardware()
 {
   lcd.clear();
-  lcd.printAt(0, 0, M_SCAN_HARDWARE);
+  lcd.printAt(0, 0, M_SCAN_MODULES);
   lcd.setCursor(LCD_COLS - INPUT_MODULE_MAX, 0);
   
   // Scan for Input modules.
