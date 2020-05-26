@@ -18,8 +18,14 @@ class SystemData
 {
   public:
   
-  long    magic = 0;
-  long    version = 0;
+  long    magic           = 0;    // Magic number to identify software.
+  long    version         = 0;    // Software version number to identify upgrades.
+
+  uint8_t i2cControllerID = 0;    // I2C module IDs.
+  uint8_t i2cInputBaseID  = 0;
+  uint8_t i2cOutputBaseID = 0;
+
+  uint8_t rfu[21];                // RFU - object is 32 bytes.
 };
 
 

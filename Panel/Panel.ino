@@ -47,7 +47,7 @@ void mapHardware()
   // Scan for Input modules.
   for (int module = 0; module < INPUT_MODULE_MAX; module++)
   {
-    Wire.beginTransmission(inputBaseID + module);
+    Wire.beginTransmission(systemData.i2cInputBaseID + module);
     if (Wire.endTransmission()FAKE_MODULE)   
     {
       lcd.print(CHAR_DOT); 
@@ -63,7 +63,7 @@ void mapHardware()
   lcd.setCursor(0, 1);
   for (int module = 0; module < OUTPUT_MODULE_MAX; module++)
   {
-    Wire.beginTransmission(outputBaseID + module);
+    Wire.beginTransmission(systemData.i2cOutputBaseID + module);
     if (Wire.endTransmission()FAKE_MODULE)
     {
       lcd.print(CHAR_DOT); 
@@ -100,22 +100,22 @@ void initInputs()
     if (isInputModule(module))
     {
       lcd.print(HEX_CHARS[module]);
-      Wire.beginTransmission(inputBaseID + module); 
+      Wire.beginTransmission(systemData.i2cInputBaseID + module); 
       Wire.write(INPUT_PORTA_DIRECTION);
       Wire.write(0xFF);
       Wire.endTransmission();
 
-      Wire.beginTransmission(inputBaseID + module);  
+      Wire.beginTransmission(systemData.i2cInputBaseID + module);  
       Wire.write(INPUT_PORTB_DIRECTION);
       Wire.write(0xFF);
       Wire.endTransmission();
 
-      Wire.beginTransmission(inputBaseID + module);
+      Wire.beginTransmission(systemData.i2cInputBaseID + module);
       Wire.write (INPUT_PORTA_PULLUPS);
       Wire.write(0xFF);
       Wire.endTransmission();  
        
-      Wire.beginTransmission(inputBaseID + module);
+      Wire.beginTransmission(systemData.i2cInputBaseID + module);
       Wire.write(INPUT_PORTB_PULLUPS);
       Wire.write(0xFF);
       Wire.endTransmission();  
@@ -137,33 +137,39 @@ void firstRun()
   lcd.clear();
   lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_FIRST_RUN);
 
+  // Initialise SystemData.
   systemData.magic   = MAGIC_NUMBER;
   systemData.version = VERSION;
+
+  systemData.i2cControllerID = DEFAULT_I2C_CONTROLLER_ID;
+  systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
+  systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
+
   saveSystemData();
 
-  // Inialise all inputs to have one output with the same number.
-  lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_DEFAULT_INPUTS);
-  for (int input = 0; input < INPUT_MAX; input++)
-  {
-    loadInput(input);
-    inputData.output[0] = INPUT_BUTTON_MASK | input;
-    inputData.output[1] = INPUT_DISABLED_MASK; 
-    inputData.output[2] = INPUT_DISABLED_MASK; 
-    saveInput();
-  }
-
-  // Inialise all outputs.
-  lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-  lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_DEFAULT_OUTPUTS);
-  for (int output = 0; output < INPUT_MAX; output++)
-  {
-    loadOutput(output);
-    outputData.mode  = 0;
-    outputData.lo    = 2;
-    outputData.hi    = 180;
-    outputData.pace  = 61;
-    saveOutput();
-  }
+//  // Inialise all inputs to have one output with the same number.
+//  lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_DEFAULT_INPUTS);
+//  for (int input = 0; input < INPUT_MAX; input++)
+//  {
+//    loadInput(input);
+//    inputData.output[0] = INPUT_BUTTON_MASK | input;
+//    inputData.output[1] = INPUT_DISABLED_MASK; 
+//    inputData.output[2] = INPUT_DISABLED_MASK; 
+//    saveInput();
+//  }
+//
+//  // Inialise all outputs.
+//  lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+//  lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_DEFAULT_OUTPUTS);
+//  for (int output = 0; output < INPUT_MAX; output++)
+//  {
+//    loadOutput(output);
+//    outputData.mode  = 0;
+//    outputData.lo    = 2;
+//    outputData.hi    = 180;
+//    outputData.pace  = 61;
+//    saveOutput();
+//  }
   
   delay(DELAY);
 }
@@ -180,7 +186,7 @@ void scanInputs()
     if (isInputModule(module))                                        
     {
       // Read current state of pins and if successful and there's been a change
-      int pins = readInputModule(inputBaseID + module);
+      int pins = readInputModule(systemData.i2cInputBaseID + module);
       if (   (pins >= 0)
           && (pins != currentInputState[module]))
       {
@@ -304,7 +310,7 @@ int sendOutputCommand()
 //  delay(DELAY);
   #endif
   
-  Wire.beginTransmission(outputBaseID + (outputNumber << OUTPUT_MODULE_SHIFT));
+  Wire.beginTransmission(systemData.i2cOutputBaseID + (outputNumber << OUTPUT_MODULE_SHIFT));
   Wire.write(outputNumber & OUTPUT_OUTPUT_MASK);
   if (outputData.mode & OUTPUT_STATE)
   {
@@ -344,12 +350,12 @@ void setup()
   #endif
 
   // Initialise subsystems.
-  lcd.begin(LCD_COLS, LCD_ROWS);  // LCD panel.
-  Wire.begin(controllerID);       // I2C network    
+  lcd.begin(LCD_COLS, LCD_ROWS);            // LCD panel.
+  Wire.begin(systemData.i2cControllerID);   // I2C network    
 
   // Discover and initialise attached hardware.
-  mapHardware();                  // Scan for attached hardware.
-  initInputs();                   // Initialise all inputs.
+  mapHardware();                            // Scan for attached hardware.
+  initInputs();                             // Initialise all inputs.
 
   // Deal with first run (software has never been run before).
   if (!loadSystemData())
