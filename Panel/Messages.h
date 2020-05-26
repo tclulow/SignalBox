@@ -5,6 +5,7 @@
 
 const char M_SOFTWARE[]        PROGMEM = "Panel   EzyBus  ";
 const char M_VERSION[]         PROGMEM = "v0.1    May 2020";
+const char M_TODO[]            PROGMEM = "TODO - detail";
 
 const char M_CONFIRM[]         PROGMEM = "Confirm? Sel=Yes";
 const char M_CANCEL[]          PROGMEM = "Cancel?  Sel=Yes";
@@ -21,23 +22,28 @@ const char M_DEFAULT_INPUTS[]  PROGMEM = "Default inputs";
 const char M_DEFAULT_OUTPUTS[] PROGMEM = "Default outputs";
 
 const char M_CONFIG[]          PROGMEM = "Configure";
+const char M_SYSTEM[]          PROGMEM = "System";
 const char M_OUTPUT[]          PROGMEM = "Output";
 const char M_INPUT[]           PROGMEM = "Input ";
+
 const char M_MOD[]             PROGMEM = "Mod";
 const char M_PIN[]             PROGMEM = "Pin";
+
 const char M_BUTTON[]          PROGMEM = "Button";
 const char M_TOGGLE[]          PROGMEM = "Toggle";
 const char M_DISABLED[]        PROGMEM = "..";
 
-const char M_HI[]              PROGMEM = "Hi";
-const char M_LO[]              PROGMEM = "Lo";
-
-// Array of (pointers to) output types.
 const char M_NONE[]            PROGMEM = "None  ";
 const char M_SERVO[]           PROGMEM = "Servo ";
 const char M_SIGNAL[]          PROGMEM = "Signal";
 const char M_LED[]             PROGMEM = "LED   ";
- 
+
+//const char M_HI[]              PROGMEM = "Hi";
+//const char M_LO[]              PROGMEM = "Lo";
+
+// Array of (pointers to) MENU OPTIONS AND output types.
+const char* const M_TOP_MENU[]     = { M_SYSTEM, M_INPUT, M_OUTPUT };
+const char* const M_INPUT_TYPES[]  = { M_BUTTON, M_TOGGLE };
 const char* const M_OUTPUT_TYPES[] = { M_NONE, M_SERVO, M_SIGNAL, M_LED };
 
 

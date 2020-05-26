@@ -23,7 +23,7 @@
 #define OUTPUT_MODE_SERVO   0x01
 #define OUTPUT_MODE_SIGNAL  0x02
 #define OUTPUT_MODE_LED     0x03
-#define OUTPUT_MODE_MAX     0x03
+#define OUTPUT_MODE_MAX     0x04
 
 /** Data describing an Output's operation.
  */
