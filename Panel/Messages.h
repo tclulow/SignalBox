@@ -38,13 +38,16 @@ const char M_SERVO[]           PROGMEM = "Servo ";
 const char M_SIGNAL[]          PROGMEM = "Signal";
 const char M_LED[]             PROGMEM = "LED   ";
 
-//const char M_HI[]              PROGMEM = "Hi";
-//const char M_LO[]              PROGMEM = "Lo";
+const char M_HI[]              PROGMEM = "Hi";
+const char M_LO[]              PROGMEM = "Lo";
+const char M_PACE[]            PROGMEM = "Spd";
 
-// Array of (pointers to) MENU OPTIONS AND output types.
-const char* const M_TOP_MENU[]     = { M_SYSTEM, M_INPUT, M_OUTPUT };
-const char* const M_INPUT_TYPES[]  = { M_BUTTON, M_TOGGLE };
-const char* const M_OUTPUT_TYPES[] = { M_NONE, M_SERVO, M_SIGNAL, M_LED };
+
+// Array of (pointers to) certain messages.
+const char* const M_TOP_MENU[]      = { M_SYSTEM, M_INPUT, M_OUTPUT };
+const char* const M_INPUT_TYPES[]   = { M_BUTTON, M_TOGGLE };
+const char* const M_OUTPUT_TYPES[]  = { M_NONE, M_SERVO, M_SIGNAL, M_LED };
+const char* const M_OUTPUT_PARAMS[] = { M_LO, M_HI, M_PACE };
 
 
 /** Gets a PROGMEM message and copies it to a buffer

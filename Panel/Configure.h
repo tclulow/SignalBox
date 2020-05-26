@@ -138,6 +138,15 @@ class Configure
       lcd.clearRow(offset, LCD_ROW_BOT);
     }
   }
+
+
+  /** Display an Output parameter's prompt above it.
+   */
+  void displayOutputParam(int aParam)
+  {
+    lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_TOP);
+    lcd.printAt(LCD_COL_OUTPUT_PARAM + aParam * LCD_COL_OUTPUT_STEP, LCD_ROW_TOP, M_OUTPUT_PARAMS[aParam]);
+  }
   
 
   /** Process IO stage.
@@ -550,6 +559,7 @@ class Configure
     int     index    = 0;
     uint8_t params[] = { outputData.lo, outputData.hi, outputData.pace }; 
 
+    displayOutputParam(index);
     markField(offset, LCD_ROW_BOT, 2, true);
 
     while (index >= 0)
@@ -570,6 +580,7 @@ class Configure
                             index -= 1;
                             if (index >= 0)
                             {
+                              displayOutputParam(index);
                               markField(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
                             }
                             break;
@@ -577,6 +588,7 @@ class Configure
                             {
                               markField(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, false);
                               index += 1;
+                              displayOutputParam(index);
                               markField(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
                             }
                             break;
@@ -590,6 +602,8 @@ class Configure
       outputData.hi   = params[1];
       outputData.pace = params[2];
     }
+
+    displayModule();
     
     return changed;
   }
