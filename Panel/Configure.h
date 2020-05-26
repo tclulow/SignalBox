@@ -275,8 +275,47 @@ class Configure
                             }
                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SYS_TYPES[sysMenu]);
                             break;
-        case BUTTON_SELECT: break;
-        case BUTTON_LEFT:   finished = true;
+        case BUTTON_SELECT: if (changed)
+                            {
+                              if (confirm())
+                              {
+                                saveSystemData();
+                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
+                                delay(DELAY);
+                                displayDetailSystem();
+                                finished = true;
+                              }
+                              else
+                              {
+                                displayDetailSystem();
+                                markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+                              }
+                            }
+                            else
+                            {
+                              finished = true;
+                            }
+                            break;
+        case BUTTON_LEFT:   if (changed)
+                            {
+                              if (cancel())
+                              {
+                                loadSystemData();
+                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
+                                delay(DELAY);
+                                displayDetailSystem();
+                                finished = true;
+                              }
+                              else
+                              {
+                                displayDetailSystem();
+                                markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+                              }
+                            }
+                            else
+                            {
+                              finished = true;
+                            }
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
                             if (sysMenu == SYS_I2C)
