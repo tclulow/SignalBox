@@ -7,7 +7,11 @@
 #define TOP_SYSTEM 0
 #define TOP_INPUT  1
 #define TOP_OUTPUT 2
-#define TOP_MAX    2
+#define TOP_MAX    3
+
+#define SYS_I2C    0
+#define SYS_BUTTON 1
+#define SYS_MAX    2
 
 
 /** Configure the system.
@@ -17,6 +21,7 @@ class Configure
   private:
 
   int     topMenu = 0;      // Top menu being shown
+  int     sysMenu = 0;      // System menu being shown.
   int     module  = 0;      // The module we're configuring.
   int     pin     = 0;      // The pin we're configuring.
   
@@ -32,9 +37,10 @@ class Configure
                        break;
       case TOP_INPUT:  
       case TOP_OUTPUT: displayModule();
-                       displayDetail();
                        break;
     }
+
+    displayDetail();
   }
 
 
@@ -43,9 +49,47 @@ class Configure
   void displaySystem()
   {
     lcd.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
-    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
   }
 
+
+  void displayDetailSystem()
+  {
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SYS_TYPES[sysMenu]);
+    switch (sysMenu)
+    {
+      case SYS_I2C:    displaySystemI2cParams();
+                       break;
+      case SYS_BUTTON: lcd.printAt(LCD_COL_MARK, LCD_ROW_BOT, M_TODO);
+                       break;
+    }
+  }
+
+
+  /** Display System's parameters depending on mode.
+   */
+  void displaySystemI2cParams()
+  {
+    int offset = LCD_COL_I2C_PARAM;
+
+    lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
+    
+    lcd.printAtHex(offset, LCD_ROW_BOT, systemData.i2cControllerID, 2);
+    offset += LCD_COL_OUTPUT_STEP;
+    lcd.printAtHex(offset, LCD_ROW_BOT, systemData.i2cInputBaseID,  2);
+    offset += LCD_COL_OUTPUT_STEP;
+    lcd.printAtHex(offset, LCD_ROW_BOT, systemData.i2cOutputBaseID, 2);
+  }
+
+
+
+  /** Display an i2c parameter's prompt above it.
+   */
+  void displayI2cPrompt(int aParam)
+  {
+    lcd.clearRow(LCD_COL_I2C_PARAM, LCD_ROW_TOP);
+    lcd.printAt(LCD_COL_I2C_PARAM + aParam * LCD_COL_I2C_STEP, LCD_ROW_TOP, M_I2C_PROMPTS[aParam]);
+  }
+  
 
   /** Display the module/pin selection line of the menu.
    */
@@ -64,7 +108,7 @@ class Configure
     lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
     switch (topMenu)
     {
-      case TOP_SYSTEM: lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_TODO);
+      case TOP_SYSTEM: displayDetailSystem();
                        break;
       case TOP_INPUT:  displayDetailInput();
                        break;
@@ -142,10 +186,10 @@ class Configure
 
   /** Display an Output parameter's prompt above it.
    */
-  void displayOutputParam(int aParam)
+  void displayOutputPrompt(int aParam)
   {
     lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_TOP);
-    lcd.printAt(LCD_COL_OUTPUT_PARAM + aParam * LCD_COL_OUTPUT_STEP, LCD_ROW_TOP, M_OUTPUT_PARAMS[aParam]);
+    lcd.printAt(LCD_COL_OUTPUT_PARAM + aParam * LCD_COL_OUTPUT_STEP, LCD_ROW_TOP, M_OUTPUT_PROMPTS[aParam]);
   }
   
 
@@ -169,14 +213,14 @@ class Configure
       {
         case BUTTON_NONE:   break;
         case BUTTON_UP:     topMenu += 2;     // Use +1 to compensate for the -1 that the code below will do.
-                            if (topMenu > 3)
+                            if (topMenu > TOP_MAX)
                             {
                               topMenu = 1;
                             }
         case BUTTON_DOWN:   topMenu -= 1;
                             if (topMenu < 0)
                             {
-                              topMenu = 2;
+                              topMenu = TOP_MAX - 1;
                             }
                             // Ensure module and pin are in-range
                             module = module & (topMenu == TOP_INPUT ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
@@ -191,7 +235,7 @@ class Configure
         case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, false);
                             if (topMenu == TOP_SYSTEM)
                             {
-                              // TODO - system menu.
+                              menuSystem();
                             }
                             else if (   (topMenu == TOP_INPUT)
                                      || (topMenu == TOP_OUTPUT))
@@ -202,6 +246,110 @@ class Configure
                             break;
       }
     }
+  }
+
+
+  /** Process System menu.
+   */
+  void menuSystem()
+  {
+    boolean finished = false;
+    boolean changed = false;
+
+    markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+
+    while (!finished)
+    {
+      switch (waitForButton())
+      {
+        case BUTTON_NONE:   break;
+        case BUTTON_UP:     sysMenu += 2;     // Use +1 to compensate for the -1 that the code below will do.
+                            if (sysMenu > SYS_MAX)
+                            {
+                              sysMenu = 1;
+                            }
+        case BUTTON_DOWN:   sysMenu -= 1;
+                            if (sysMenu < 0)
+                            {
+                              sysMenu = SYS_MAX - 1;
+                            }
+                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SYS_TYPES[sysMenu]);
+                            break;
+        case BUTTON_SELECT: break;
+        case BUTTON_LEFT:   finished = true;
+                            break;
+        case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+                            if (sysMenu == SYS_I2C)
+                            {
+                              changed = menuSystemI2c();
+                            }
+                            {
+                              // menuSystemButton();
+                            }
+                            markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+                            break;
+      }
+    }
+
+    markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+  }
+
+
+  /** Process System i2c menu.
+   *  Reurn true if changes made.
+   */
+  boolean menuSystemI2c()
+  {
+    boolean changed = false;
+    int index = 0;
+
+    int params[] = { systemData.i2cControllerID, systemData.i2cInputBaseID, systemData.i2cOutputBaseID };
+    displayI2cPrompt(index);
+    markField(LCD_COL_I2C_PARAM, LCD_ROW_BOT, 2, true);
+
+    while (index >= 0)
+    {
+      switch (waitForButton())
+      {
+        case BUTTON_NONE:   break;
+        case BUTTON_UP:     params[index] += 1;
+                            lcd.printAtHex(LCD_COL_I2C_PARAM + index * LCD_COL_I2C_STEP, LCD_ROW_BOT, params[index], 2);
+                            changed = true;
+                            break;
+        case BUTTON_DOWN:   params[index] -= 1;
+                            lcd.printAtHex(LCD_COL_I2C_PARAM + index * LCD_COL_I2C_STEP, LCD_ROW_BOT, params[index], 2);
+                            changed = true;
+                            break;
+        case BUTTON_SELECT: break;
+        case BUTTON_LEFT:   markField(LCD_COL_I2C_PARAM + index * LCD_COL_I2C_STEP, LCD_ROW_BOT, 2, false);
+                            index -= 1;
+                            if (index >= 0)
+                            {
+                              displayI2cPrompt(index);
+                              markField(LCD_COL_I2C_PARAM + index * LCD_COL_I2C_STEP, LCD_ROW_BOT, 2, true);
+                            }
+                            break;
+        case BUTTON_RIGHT:  if (index < 2)
+                            {
+                              markField(LCD_COL_I2C_PARAM + index * LCD_COL_I2C_STEP, LCD_ROW_BOT, 2, false);
+                              index += 1;
+                              displayI2cPrompt(index);
+                              markField(LCD_COL_I2C_PARAM + index * LCD_COL_I2C_STEP, LCD_ROW_BOT, 2, true);
+                            }
+                            break;
+      }
+    }
+
+    // Update outputData if changes have been made.
+    if (changed)
+    {
+      systemData.i2cControllerID = params[0];
+      systemData.i2cInputBaseID  = params[1];
+      systemData.i2cOutputBaseID = params[2];
+    }
+
+    lcd.clearRow(LCD_COL_I2C_PARAM, LCD_ROW_TOP);
+    return changed;
   }
 
 
@@ -555,12 +703,11 @@ class Configure
   boolean menuOutputParms()
   {
     boolean changed  = false;
-    int     offset   = LCD_COL_OUTPUT_PARAM;
     int     index    = 0;
     uint8_t params[] = { outputData.lo, outputData.hi, outputData.pace }; 
 
-    displayOutputParam(index);
-    markField(offset, LCD_ROW_BOT, 2, true);
+    displayOutputPrompt(index);
+    markField(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, 2, true);
 
     while (index >= 0)
     {
@@ -568,28 +715,28 @@ class Configure
       {
         case BUTTON_NONE:   break;
         case BUTTON_UP:     params[index] += 1;
-                            lcd.printAtHex(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
+                            lcd.printAtHex(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
                             changed = true;
                             break;
         case BUTTON_DOWN:   params[index] -= 1;
-                            lcd.printAtHex(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
+                            lcd.printAtHex(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
                             changed = true;
                             break;
         case BUTTON_SELECT: break;
-        case BUTTON_LEFT:   markField(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, false);
+        case BUTTON_LEFT:   markField(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, false);
                             index -= 1;
                             if (index >= 0)
                             {
-                              displayOutputParam(index);
-                              markField(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
+                              displayOutputPrompt(index);
+                              markField(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
                             }
                             break;
         case BUTTON_RIGHT:  if (index < 2)
                             {
-                              markField(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, false);
+                              markField(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, false);
                               index += 1;
-                              displayOutputParam(index);
-                              markField(offset + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
+                              displayOutputPrompt(index);
+                              markField(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
                             }
                             break;
       }

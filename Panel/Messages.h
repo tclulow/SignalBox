@@ -26,6 +26,13 @@ const char M_SYSTEM[]          PROGMEM = "System";
 const char M_OUTPUT[]          PROGMEM = "Output";
 const char M_INPUT[]           PROGMEM = "Input ";
 
+const char M_SYS_I2C[]         PROGMEM = "I2c id";
+const char M_SYS_BUTTON[]      PROGMEM = "Button";
+
+const char M_ID_CONSOLE[]      PROGMEM = "Con";
+const char M_ID_INPUT[]        PROGMEM = "Inp";
+const char M_ID_OUTPUT[]       PROGMEM = "Out";
+
 const char M_MOD[]             PROGMEM = "Mod";
 const char M_PIN[]             PROGMEM = "Pin";
 
@@ -44,10 +51,12 @@ const char M_PACE[]            PROGMEM = "Spd";
 
 
 // Array of (pointers to) certain messages.
-const char* const M_TOP_MENU[]      = { M_SYSTEM, M_INPUT, M_OUTPUT };
-const char* const M_INPUT_TYPES[]   = { M_BUTTON, M_TOGGLE };
-const char* const M_OUTPUT_TYPES[]  = { M_NONE, M_SERVO, M_SIGNAL, M_LED };
-const char* const M_OUTPUT_PARAMS[] = { M_LO, M_HI, M_PACE };
+const char* const M_TOP_MENU[]       = { M_SYSTEM, M_INPUT, M_OUTPUT };
+const char* const M_I2C_PROMPTS[]    = { M_ID_CONSOLE, M_ID_INPUT, M_ID_OUTPUT };
+const char* const M_INPUT_TYPES[]    = { M_BUTTON, M_TOGGLE };
+const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED };
+const char* const M_OUTPUT_PROMPTS[] = { M_LO, M_HI, M_PACE };
+const char* const M_SYS_TYPES[]      = { M_SYS_I2C, M_SYS_BUTTON };
 
 
 /** Gets a PROGMEM message and copies it to a buffer

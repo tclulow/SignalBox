@@ -24,8 +24,11 @@ class SystemData
   uint8_t i2cControllerID = 0;    // I2C module IDs.
   uint8_t i2cInputBaseID  = 0;
   uint8_t i2cOutputBaseID = 0;
+  uint8_t filler1         = 0;    // Filler for word boundary.
 
-  uint8_t rfu[21];                // RFU - object is 32 bytes.
+  //int   buttons[5];             // Configuration of analog buttons.
+  
+  uint8_t rfu[20];                // RFU - object is 32 bytes.
 };
 
 
