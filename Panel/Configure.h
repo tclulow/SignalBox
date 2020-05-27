@@ -10,8 +10,7 @@
 #define TOP_MAX    3
 
 #define SYS_I2C    0
-#define SYS_BUTTON 1
-#define SYS_MAX    2
+#define SYS_MAX    1
 
 
 /** Configure the system.
@@ -38,6 +37,11 @@ class Configure
       case TOP_INPUT:  
       case TOP_OUTPUT: displayModule();
                        break;
+      #if DEBUG
+      default:         Serial.print('displayAll: unexpected case ');
+                       Serial.println(topMenu);
+                       break;
+      #endif
     }
 
     displayDetail();
@@ -52,14 +56,22 @@ class Configure
   }
 
 
+  /** Display detail for System menu.
+   */
   void displayDetailSystem()
   {
     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SYS_TYPES[sysMenu]);
+    displaySystemParams();
+  }
+
+
+  /** Display parameters for System menu.
+   */
+  void displaySystemParams()
+  {
     switch (sysMenu)
     {
       case SYS_I2C:    displaySystemI2cParams();
-                       break;
-      case SYS_BUTTON: lcd.printAt(LCD_COL_MARK, LCD_ROW_BOT, M_TODO);
                        break;
     }
   }
@@ -272,7 +284,7 @@ class Configure
                             {
                               sysMenu = SYS_MAX - 1;
                             }
-                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SYS_TYPES[sysMenu]);
+                            displayDetailSystem();
                             break;
         case BUTTON_SELECT: if (changed)
                             {
