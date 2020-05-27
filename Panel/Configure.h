@@ -168,18 +168,17 @@ class Configure
 
     lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
     
-    if (   (aMode == OUTPUT_MODE_SERVO)
-        || (aMode == OUTPUT_MODE_SIGNAL))
+    if (aMode == OUTPUT_MODE_NONE)
+    {
+      lcd.clearRow(offset, LCD_ROW_BOT);
+    }
+    else
     {
       lcd.printAtHex(offset, LCD_ROW_BOT, outputData.lo,   2);
       offset += LCD_COL_OUTPUT_STEP;
       lcd.printAtHex(offset, LCD_ROW_BOT, outputData.hi,   2);
       offset += LCD_COL_OUTPUT_STEP;
       lcd.printAtHex(offset, LCD_ROW_BOT, outputData.pace, 2);
-    }
-    else
-    {
-      lcd.clearRow(offset, LCD_ROW_BOT);
     }
   }
 
@@ -505,7 +504,7 @@ class Configure
     boolean changed  = false;
     
     // Retrieve Toggle/Button flag and clear from data.
-    uint8_t isButton = inputData.output[0] & INPUT_BUTTON_MASK;
+    int isButton = inputData.output[0] & INPUT_BUTTON_MASK;
     inputData.output[0] &= INPUT_OUTPUT_MASK;
 
     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
@@ -578,7 +577,7 @@ class Configure
     boolean changed = false;
     int     offset  = LCD_COL_INPUT_OUTPUT;
     int     index   = 0;
-    uint8_t output  = inputData.output[index];
+    int     output  = inputData.output[index];
 
     markField(offset, LCD_ROW_BOT, 2, true);
 
@@ -656,7 +655,7 @@ class Configure
     boolean changed  = false;
     
     // Retrieve type
-    uint8_t outputMode = outputData.mode & OUTPUT_MODE_MASK;
+    int outputMode = outputData.mode & OUTPUT_MODE_MASK;
 
     // Mark the field.
     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
@@ -724,8 +723,7 @@ class Configure
                               finished = true;
                             }
                             break;
-        case BUTTON_RIGHT:  if (   (outputMode == OUTPUT_MODE_SERVO)
-                                || (outputMode == OUTPUT_MODE_SIGNAL))
+        case BUTTON_RIGHT:  if (outputMode != OUTPUT_MODE_NONE)
                             {
                               markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
                               changed |= menuOutputParms();
@@ -743,7 +741,7 @@ class Configure
   {
     boolean changed  = false;
     int     index    = 0;
-    uint8_t params[] = { outputData.lo, outputData.hi, outputData.pace }; 
+    int     params[] = { outputData.lo, outputData.hi, outputData.pace }; 
 
     displayOutputPrompt(index);
     markField(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, 2, true);
