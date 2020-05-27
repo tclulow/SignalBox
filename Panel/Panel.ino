@@ -36,12 +36,23 @@
 uint16_t currentInputState[INPUT_MODULE_MAX];    // Current state of inputs.
 
 
+/** Announce ourselves.
+ */
+void announce()
+{
+  lcd.clear();
+  lcd.printAt(LCD_COL_START,                       LCD_ROW_TOP, M_SOFTWARE);
+  lcd.printAt(LCD_COLS - strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
+  lcd.printAt(LCD_COLS - strlen_P(M_VERSION_DATE), LCD_ROW_BOT, M_VERSION_DATE);
+}
+
+
 /** Map the Output and Input modules.
  */
 void mapHardware()
 {
   lcd.clear();
-  lcd.printAt(0, 0, M_SCAN_MODULES);
+  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_SCAN_MODULES);
   lcd.setCursor(LCD_COLS - INPUT_MODULE_MAX, 0);
   
   // Scan for Input modules.
@@ -85,8 +96,8 @@ void mapHardware()
 void initInputs()
 { 
   lcd.clear();
-  lcd.printAt(0, 0, M_INIT_INPUTS);
-  lcd.setCursor(0, 1);
+  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INIT_INPUTS);
+  lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
   // Clear state of Inputs, all high.
   for (int module = 0; module < INPUT_MODULE_MAX; module++)
@@ -381,9 +392,7 @@ void setup()
   }
 
   // Announce ourselves.
-  lcd.clear();
-  lcd.printAt(0, 0, M_SOFTWARE);
-  lcd.printAt(0, 1, M_VERSION);
+  announce();
 }
 
 
@@ -394,6 +403,7 @@ void loop()
   if (readButton())       // Press any button to configure.
   {
     configure.run();
+    announce();
   }
 
   scanInputs();

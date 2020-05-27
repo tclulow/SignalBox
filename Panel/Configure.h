@@ -53,6 +53,7 @@ class Configure
   void displaySystem()
   {
     lcd.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
+    lcd.printAt(LCD_COLS - strlen_P(M_VERSION), LCD_ROW_TOP, M_VERSION);
   }
 
 
@@ -408,7 +409,8 @@ class Configure
       systemData.i2cOutputBaseID = params[2];
     }
 
-    lcd.clearRow(LCD_COL_I2C_PARAM, LCD_ROW_TOP);
+    displaySystem();
+    
     return changed;
   }
 
@@ -863,7 +865,7 @@ class Configure
   void run()
   {
     lcd.clear();
-    lcd.printAt(0, 0, M_CONFIG);
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_CONFIG);
     waitForButtonRelease();
 
     menuTop();
