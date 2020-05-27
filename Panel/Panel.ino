@@ -400,12 +400,24 @@ void setup()
  */
 void loop()
 {
-  if (readButton())       // Press any button to configure.
-  {
-    configure.run();
-    announce();
-  }
+  int  loops    = 0;
+  char active[] = "-\\|/";
 
-  scanInputs();
+  // Loop forever
+  while (true)
+  {
+    // Press any button to configure.
+    if (readButton())
+    {
+      configure.run();
+      announce();
+    }
+
+    // Process any inputs
+    scanInputs();           
+
+    // Show activity.
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, active[loops++ & 0x3]);
+  }
 }
  
