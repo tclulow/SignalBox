@@ -73,6 +73,11 @@ class Configure
     {
       case SYS_I2C:    displaySystemI2cParams();
                        break;
+      #if DEBUG
+      default:         Serial.print('displaySystemParams: unexpected case ');
+                       Serial.println(sysMenu);
+                       break;
+      #endif
     }
   }
 
@@ -126,6 +131,11 @@ class Configure
                        break;
       case TOP_OUTPUT: displayDetailOutput();
                        break;
+      #if DEBUG
+      default:         Serial.print('displayDetail: unexpected case ');
+                       Serial.println(topMenu);
+                       break;
+      #endif
     }
   }
 
