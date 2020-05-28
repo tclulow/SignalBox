@@ -4,13 +4,22 @@
 #define _Configure_h
 
 // Top-level menu states.
-#define TOP_SYSTEM 0
-#define TOP_INPUT  1
-#define TOP_OUTPUT 2
-#define TOP_MAX    3
+#define TOP_SYSTEM   0
+#define TOP_INPUT    1
+#define TOP_OUTPUT   2
+#define TOP_REPORT   3
+#define TOP_MAX      4
 
-#define SYS_I2C    0
-#define SYS_MAX    1
+// Sys menu states.
+#define SYS_I2C      0
+#define SYS_MAX      1
+
+// Rep menu states.
+#define REP_ALL      0
+#define REP_SYSTEM   1
+#define REP_INPUTS   2
+#define REP_OUTPUTS  3
+#define REP_MAX      4
 
 
 /** Configure the system.
@@ -19,10 +28,11 @@ class Configure
 {
   private:
 
-  int     topMenu = 0;      // Top menu being shown
-  int     sysMenu = 0;      // System menu being shown.
-  int     module  = 0;      // The module we're configuring.
-  int     pin     = 0;      // The pin we're configuring.
+  int topMenu = 0;      // Top menu being shown
+  int sysMenu = 0;      // System menu being shown.
+  int repMenu = 0;      // Report menu being shown.
+  int module  = 0;      // The module we're configuring.
+  int pin     = 0;      // The pin we're configuring.
   
 
   /** Display all current data.
@@ -37,8 +47,10 @@ class Configure
       case TOP_INPUT:  
       case TOP_OUTPUT: displayModule();
                        break;
+      case TOP_REPORT: displaySystem();
+                       break;
       #if DEBUG
-      default:         Serial.print('displayAll: unexpected case ');
+      default:         Serial.print("displayAll: unexpected case: ");
                        Serial.println(topMenu);
                        break;
       #endif
@@ -54,6 +66,40 @@ class Configure
   {
     lcd.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
     lcd.printAt(LCD_COLS - strlen_P(M_VERSION), LCD_ROW_TOP, M_VERSION);
+  }
+
+
+  /** Display the module/pin selection line of the menu.
+   */
+  void displayModule()
+  {
+    lcd.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
+    lcd.printAt(LCD_COL_MODULE, LCD_ROW_TOP, HEX_CHARS[module]);
+    lcd.printAt(LCD_COL_PIN   , LCD_ROW_TOP, HEX_CHARS[pin]);
+  }
+
+
+  /** Display the detail line of the menu.
+   */
+  void displayDetail()
+  {
+    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+    switch (topMenu)
+    {
+      case TOP_SYSTEM: displayDetailSystem();
+                       break;
+      case TOP_INPUT:  displayDetailInput();
+                       break;
+      case TOP_OUTPUT: displayDetailOutput();
+                       break;
+      case TOP_REPORT: displayDetailReport();
+                       break;
+      #if DEBUG
+      default:         Serial.print("displayDetail: unexpected case: ");
+                       Serial.println(topMenu);
+                       break;
+      #endif
+    }
   }
 
 
@@ -75,7 +121,7 @@ class Configure
       case SYS_I2C:    displaySystemI2cParams();
                        break;
       #if DEBUG
-      default:         Serial.print('displaySystemParams: unexpected case ');
+      default:         Serial.print("displaySystemParams: unexpected case: ");
                        Serial.println(sysMenu);
                        break;
       #endif
@@ -107,39 +153,15 @@ class Configure
     lcd.clearRow(LCD_COL_I2C_PARAM, LCD_ROW_TOP);
     lcd.printAt(LCD_COL_I2C_PARAM + aParam * LCD_COL_I2C_STEP, LCD_ROW_TOP, M_I2C_PROMPTS[aParam]);
   }
+
+
+  /** Display Report menu.
+   */
+  void displayDetailReport()
+  {
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_REPORT_TYPES[repMenu]);
+  }
   
-
-  /** Display the module/pin selection line of the menu.
-   */
-  void displayModule()
-  {
-    lcd.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
-    lcd.printAt(LCD_COL_MODULE, LCD_ROW_TOP, HEX_CHARS[module]);
-    lcd.printAt(LCD_COL_PIN   , LCD_ROW_TOP, HEX_CHARS[pin]);
-  }
-
-
-  /** Display the detail line of the menu.
-   */
-  void displayDetail()
-  {
-    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-    switch (topMenu)
-    {
-      case TOP_SYSTEM: displayDetailSystem();
-                       break;
-      case TOP_INPUT:  displayDetailInput();
-                       break;
-      case TOP_OUTPUT: displayDetailOutput();
-                       break;
-      #if DEBUG
-      default:         Serial.print('displayDetail: unexpected case ');
-                       Serial.println(topMenu);
-                       break;
-      #endif
-    }
-  }
-
 
   /** Display Input details.
    */
@@ -264,6 +286,17 @@ class Configure
                             {
                               menuModule(topMenu == TOP_INPUT);
                             }
+                            else if (topMenu == TOP_REPORT)
+                            {
+                              menuReport();
+                            }
+                            else
+                            {
+                              #if DEBUG
+                              Serial.print("menuTop: unexpected case: ");
+                              Serial.println(topMenu);
+                              #endif
+                            }
                             markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
                             break;
       }
@@ -344,8 +377,12 @@ class Configure
                             {
                               changed = menuSystemI2c();
                             }
+                            else
                             {
-                              // menuSystemButton();
+                              #if DEBUG
+                              Serial.print("menuSystem: unexpected case: ");
+                              Serial.println(sysMenu);
+                              #endif
                             }
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
@@ -415,6 +452,45 @@ class Configure
   }
 
 
+  /** Process Report menu.
+   */
+  void menuReport()
+  {
+    boolean finished = false;
+    
+    markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+
+    while (!finished)
+    {
+      switch (waitForButton())
+      {
+        case BUTTON_NONE:   break;
+        case BUTTON_UP:     repMenu += 2;     // Use +1 to compensate for the -1 that the code below will do.
+                            if (repMenu > REP_MAX)
+                            {
+                              repMenu = 1;
+                            }
+        case BUTTON_DOWN:   repMenu -= 1;
+                            if (repMenu < 0)
+                            {
+                              repMenu = REP_MAX - 1;
+                            }
+                            displayDetailReport();
+                            break;
+        case BUTTON_SELECT: break;
+        case BUTTON_LEFT:   finished = true;
+                            break;
+        case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+                            printReport(repMenu);
+                            markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+                            break;
+      }
+    }
+
+    markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+  }
+  
+
   /** Process Module menu.
    *  For both input and output.
    */
@@ -429,7 +505,7 @@ class Configure
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
-        case BUTTON_UP:     module += 2;
+        case BUTTON_UP:     module += 2;     // Use +1 to compensate for the -1 that the code below will do.
                             if (module > (aIsInput ? INPUT_MODULE_MAX : OUTPUT_MODULE_MAX))
                             {
                               module = 1;
@@ -478,7 +554,7 @@ class Configure
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
-        case BUTTON_UP:     pin += 2;
+        case BUTTON_UP:     pin += 2;     // Use +1 to compensate for the -1 that the code below will do.
                             if (pin > (aIsInput ? INPUT_MODULE_SIZE : OUTPUT_MODULE_SIZE))
                             {
                               pin = 1;
@@ -689,7 +765,7 @@ class Configure
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
-        case BUTTON_UP:     outputMode += 2;
+        case BUTTON_UP:     outputMode += 2;     // Use +1 to compensate for the -1 that the code below will do.
                             if (outputMode > OUTPUT_MODE_MAX)
                             {
                               outputMode = 1;
@@ -849,6 +925,29 @@ class Configure
 
     return waitForButton() == BUTTON_SELECT;
   }
+
+
+  /** Print selected report.
+   */
+  void printReport(int aReport)
+  {
+    lcd.printAt(LCD_COL_REP_STATUS, LCD_ROW_BOT, M_PRINTING);
+
+    switch(aReport)
+    {
+      case REP_ALL:
+      case REP_SYSTEM:
+      case REP_INPUTS:
+      case REP_OUTPUTS:
+      #if DEBUG
+      default:          Serial.print("printReport: unexpected case: ");
+                        Serial.println(aReport);
+      #endif
+    }
+
+    lcd.clearRow(LCD_COL_REP_STATUS, LCD_ROW_BOT);
+  }
+
 
   
   public:
