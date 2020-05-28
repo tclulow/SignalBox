@@ -993,7 +993,7 @@ class Configure
         Serial.print(CHAR_TAB);
         printHex(pin, 1);
         Serial.print(CHAR_TAB);
-        Serial.print(PGMT(M_INPUT_TYPES[(inputData.output[0] & INPUT_TOGGLE_MASK ? 0 : 1)]));
+        Serial.print(PGMT(M_INPUT_TYPES[(inputData.output[0] & INPUT_TOGGLE_MASK ? 1 : 0)]));
         
         for (int output = 0; output < INPUT_OUTPUT_MAX; output++)
         {
