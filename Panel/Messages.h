@@ -3,6 +3,10 @@
 #ifndef _Messages_h
 #define _Messages_h
 
+// Incantation to convert a PROGMEM string to something usable by other finctions.
+#define PGMT(pgm_ptr) ( reinterpret_cast< const __FlashStringHelper * >( pgm_ptr ) )
+
+
 const char M_SOFTWARE[]        PROGMEM = "Panel";
 const char M_VERSION[]         PROGMEM = "v0.1";
 const char M_VERSION_DATE[]    PROGMEM = "May 2020";
@@ -51,6 +55,12 @@ const char M_LED[]             PROGMEM = "LED   ";
 const char M_HI[]              PROGMEM = "Hi";
 const char M_LO[]              PROGMEM = "Lo";
 const char M_PACE[]            PROGMEM = "Spd";
+
+
+// Headers for the reports
+const char M_HEADER_SYSTEM[]   PROGMEM = "#System\tVersion\tDetail\tControl\tInput\tOutput";
+const char M_HEADER_INPUT[]    PROGMEM = "#Input\tModule\tPin\tType\tOutput1\tOutput2\tOutput3";
+const char M_HEADER_OUTPUT[]   PROGMEM = "#Output\tModule\tPin\tType\tLo\tHi\tSpd";
 
 
 // Array of (pointers to) certain messages.

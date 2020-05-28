@@ -18,7 +18,7 @@
 #define INPUT_END    (INPUT_BASE + INPUT_SIZE * INPUT_MAX)      // End of Input EEPROM.
 
 // Mask for Input options
-#define INPUT_BUTTON_MASK      0x80     // The input is a button rather than a toggle.
+#define INPUT_TOGGLE_MASK      0x80     // The input is a toggle rather than a button.
 #define INPUT_DISABLED_MASK    0x80     // The Input's output is disabled.
 #define INPUT_OUTPUT_MASK      0x7f     // mask to get the Input's output without the flags above.
 

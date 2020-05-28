@@ -170,7 +170,7 @@ class Configure
     int output = 0;
     int offset = LCD_COL_INPUT_OUTPUT;
 
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, (inputData.output[output] & INPUT_BUTTON_MASK ? M_BUTTON : M_TOGGLE));
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, (inputData.output[output] & INPUT_TOGGLE_MASK ? M_TOGGLE : M_BUTTON));
     lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
     
     offset = LCD_COL_INPUT_OUTPUT;
@@ -604,7 +604,7 @@ class Configure
     boolean changed  = false;
     
     // Retrieve Toggle/Button flag and clear from data.
-    int isButton = inputData.output[0] & INPUT_BUTTON_MASK;
+    int isToggle = inputData.output[0] & INPUT_TOGGLE_MASK;
     inputData.output[0] &= INPUT_OUTPUT_MASK;
 
     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
@@ -615,15 +615,15 @@ class Configure
       {
         case BUTTON_NONE:   break;
         case BUTTON_UP:
-        case BUTTON_DOWN:   isButton ^= INPUT_BUTTON_MASK;
-                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, (isButton ? M_BUTTON : M_TOGGLE));
+        case BUTTON_DOWN:   isToggle ^= INPUT_TOGGLE_MASK;
+                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, (isToggle ? M_TOGGLE : M_BUTTON));
                             changed = true;
                             break;
         case BUTTON_SELECT: if (changed)
                             {
                               if (confirm())
                               {
-                                inputData.output[0] |= isButton;
+                                inputData.output[0] |= isToggle;
                                 saveInput();
                                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
                                 delay(DELAY);
@@ -909,8 +909,7 @@ class Configure
    */
   boolean confirm()
   {
-    int offset = lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CONFIRM);
-    lcd.clearRow(offset, LCD_ROW_BOT);
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CONFIRM);
 
     return waitForButton() == BUTTON_SELECT;
   }
@@ -920,8 +919,7 @@ class Configure
    */
   boolean cancel()
   {
-    int offset = lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCEL);
-    lcd.clearRow(offset, LCD_ROW_BOT);
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCEL);
 
     return waitForButton() == BUTTON_SELECT;
   }
@@ -935,10 +933,16 @@ class Configure
 
     switch(aReport)
     {
-      case REP_ALL:
-      case REP_SYSTEM:
-      case REP_INPUTS:
-      case REP_OUTPUTS:
+      case REP_ALL:     printSystem();
+                        printInputs();
+                        printOutputs();
+                        break;
+      case REP_SYSTEM:  printSystem();
+                        break;
+      case REP_INPUTS:  printInputs();
+                        break;
+      case REP_OUTPUTS: printOutputs();
+                        break;
       #if DEBUG
       default:          Serial.print("printReport: unexpected case: ");
                         Serial.println(aReport);
@@ -949,6 +953,111 @@ class Configure
   }
 
 
+
+
+  /** Print the system parameters.
+   */
+  void printSystem()
+  {
+    Serial.println(PGMT(M_HEADER_SYSTEM));
+    
+    Serial.print(PGMT(M_SYSTEM));
+    Serial.print(CHAR_TAB);
+    Serial.print(PGMT(M_VERSION));
+    Serial.print(CHAR_TAB);
+    Serial.print(PGMT(M_SYS_I2C));
+    Serial.print(CHAR_TAB);
+    printHex(systemData.i2cControllerID, 2);
+    Serial.print(CHAR_TAB);
+    printHex(systemData.i2cInputBaseID,  2);
+    Serial.print(CHAR_TAB);
+    printHex(systemData.i2cOutputBaseID, 2);
+    Serial.println();
+    Serial.println();
+  }
+
+
+  void printInputs()
+  {
+    Serial.println(PGMT(M_HEADER_INPUT));
+
+    for (int module = 0; module < INPUT_MODULE_MAX; module++)
+    {
+      for (int pin = 0; pin < INPUT_MODULE_SIZE; pin++)
+      {
+        loadInput(module, pin);
+
+        Serial.print(PGMT(M_INPUT));
+        Serial.print(CHAR_TAB);
+        printHex(module, 1);
+        Serial.print(CHAR_TAB);
+        printHex(pin, 1);
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_INPUT_TYPES[(inputData.output[0] & INPUT_TOGGLE_MASK ? 0 : 1)]));
+        
+        for (int output = 0; output < INPUT_OUTPUT_MAX; output++)
+        {
+          Serial.print(CHAR_TAB);
+          printHex(inputData.output[output] & INPUT_OUTPUT_MASK, 2);
+          if (   (output > 0)
+              && (inputData.output[output] & INPUT_DISABLED_MASK))
+          {
+            Serial.print(CHAR_STAR);
+          }
+        }
+        Serial.println();
+      }
+      Serial.println();
+    }
+  }
+
+
+  void printOutputs()
+  {
+    Serial.println(PGMT(M_HEADER_OUTPUT));
+    
+    for (int module = 0; module < OUTPUT_MODULE_MAX; module++)
+    {
+      for (int pin = 0; pin < OUTPUT_MODULE_SIZE; pin++)
+      {
+        loadOutput(module, pin);
+
+        Serial.print(PGMT(M_OUTPUT));
+        Serial.print(CHAR_TAB);
+        printHex(module, 1);
+        Serial.print(CHAR_TAB);
+        printHex(pin, 1);
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_OUTPUT_TYPES[outputData.mode & OUTPUT_MODE_MASK]));
+        
+        for (int output = 0; output < INPUT_OUTPUT_MAX; output++)
+        {
+          Serial.print(CHAR_TAB);
+          printHex(inputData.output[output] & INPUT_OUTPUT_MASK, 2);
+          if (   (output > 0)
+              && (inputData.output[output] & INPUT_DISABLED_MASK))
+          {
+            Serial.print(CHAR_STAR);
+          }
+        }
+        Serial.println();
+      }
+      Serial.println();
+    }
+  }
+
+  /** Print a number as a string of hex digits.
+   *  Padded with leading zeros to length aDigits.
+   */
+  void printHex(int aValue, int aDigits)
+  {
+    for (int digit = aDigits - 1; digit >= 0; digit--)
+    {
+      Serial.print(HEX_CHARS[(aValue >> (digit << 2)) & 0xf]);
+    }
+  }
+
+  
   
   public:
   

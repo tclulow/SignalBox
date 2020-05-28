@@ -50,61 +50,48 @@ class LCD: public LiquidCrystal
   /** Print a PROGMEM message to the LCD.
    *  Return length of message printed.
    */
-  int print_P(PGM_P messagePtr)
+  void print_P(PGM_P messagePtr)
   {
-    char b;
-    int chars = 0;
-    
-    while (b = pgm_read_byte(messagePtr++))
-    {
-      chars++;
-      print(b);
-    }
-
-    return chars;
+    print(PGMT(messagePtr));
   }
-
 
   /** Print a message at a particular location.
    *  Return the length of the message printed.
    */
-  int printAt(int col, int row, PGM_P messagePtr)
+  void printAt(int col, int row, PGM_P messagePtr)
   {
     setCursor(col, row);
-    return print_P(messagePtr);
+    print_P(messagePtr);
   }
 
 
   /** Print a character at a particular location.
    *  Return the length of the character printed (1).
    */
-  int printAt(int col, int row, char aChar)
+  void printAt(int col, int row, char aChar)
   {
     setCursor(col, row);
     print(aChar);
-    return 1;
   }
 
 
   /** Print a number as a string of hex digits.
    *  Padded with leading zeros to length aDigits.
    */
-  int printAtHex(int col, int row, int aValue, int aDigits)
+  void printAtHex(int col, int row, int aValue, int aDigits)
   {
     setCursor(col, row);
     for (int digit = aDigits - 1; digit >= 0; digit--)
     {
       print(HEX_CHARS[(aValue >> (4 * digit)) & 0xf]);
     }
-  
-    return aDigits;
   }
 
 
   /** Clear a row from the given column to the end.
    *  Return the number of spaces output.
    */
-  int clearRow(int aCol, int aRow)
+  void clearRow(int aCol, int aRow)
   {
     int spaces = 0;
     setCursor(aCol, aRow);
@@ -112,8 +99,6 @@ class LCD: public LiquidCrystal
     {
       print(CHAR_SPACE);
     }
-
-    return spaces;
   }
 
 

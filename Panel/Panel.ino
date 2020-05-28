@@ -273,16 +273,7 @@ void processInput(int module, int pin, int state)
   int output = inputData.output[0] & INPUT_OUTPUT_MASK;
   loadOutput(output);
   
-  if (inputData.output[0] & INPUT_BUTTON_MASK)
-  {
-    if (state)      // Send change state when button pressed, not when released.
-    {
-      outputData.mode ^= OUTPUT_STATE;    // Toggle the state.
-      sendOutputCommand();                // Send to Output.
-      saveOutput();
-    }
-  }
-  else    // Toggle switch
+  if (inputData.output[0] & INPUT_TOGGLE_MASK)
   {
     if (state)
     {
@@ -295,6 +286,15 @@ void processInput(int module, int pin, int state)
     
     sendOutputCommand();                  // Send change state to match that of the input.
     saveOutput();
+  }
+  else  // button input
+  {
+    if (state)      // Send change state when button pressed, not when released.
+    {
+      outputData.mode ^= OUTPUT_STATE;    // Toggle the state.
+      sendOutputCommand();                // Send to Output.
+      saveOutput();
+    }
   }
 }
 
