@@ -974,6 +974,26 @@ class Configure
     printHex(systemData.i2cOutputBaseID, 2);
     Serial.println();
     Serial.println();
+
+    dumpMemory();
+  }
+
+
+  void dumpMemory()
+  {
+    for (int base = 0; base < INPUT_END; base += 16)
+    {
+      printHex(base, 4);
+      Serial.print(":");
+      
+      for (int offs = 0; offs < 16; offs++)
+      {
+        Serial.print(CHAR_SPACE);
+        printHex(EEPROM.read(base + offs), 2);
+      }
+
+      Serial.println();
+    }
   }
 
 
@@ -998,7 +1018,9 @@ class Configure
         for (int output = 0; output < INPUT_OUTPUT_MAX; output++)
         {
           Serial.print(CHAR_TAB);
-          printHex(inputData.output[output] & INPUT_OUTPUT_MASK, 2);
+          printHex(((inputData.output[output] & INPUT_OUTPUT_MASK) >> OUTPUT_MODULE_SHIFT) & OUTPUT_MODULE_MASK, 1);
+          Serial.print(CHAR_SPACE);
+          printHex(((inputData.output[output] & INPUT_OUTPUT_MASK)                       ) & OUTPUT_OUTPUT_MASK, 1);
           if (   (output > 0)
               && (inputData.output[output] & INPUT_DISABLED_MASK))
           {
@@ -1029,17 +1051,12 @@ class Configure
         printHex(pin, 1);
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_OUTPUT_TYPES[outputData.mode & OUTPUT_MODE_MASK]));
-        
-        for (int output = 0; output < INPUT_OUTPUT_MAX; output++)
-        {
-          Serial.print(CHAR_TAB);
-          printHex(inputData.output[output] & INPUT_OUTPUT_MASK, 2);
-          if (   (output > 0)
-              && (inputData.output[output] & INPUT_DISABLED_MASK))
-          {
-            Serial.print(CHAR_STAR);
-          }
-        }
+        Serial.print(CHAR_TAB);
+        printHex(outputData.lo, 2);
+        Serial.print(CHAR_TAB);
+        printHex(outputData.hi, 2);
+        Serial.print(CHAR_TAB);
+        printHex(outputData.pace, 2);
         Serial.println();
       }
       Serial.println();

@@ -7,7 +7,7 @@
 #define OUTPUT_MODULE_SIZE   8      // 8 outputs to each module.
 #define OUTPUT_MODULE_MAX    16     // Maximum modules.
 #define OUTPUT_MODULE_MASK   0x0f   // 4 bits for 16 modules.
-#define OUTPUT_MODULE_SHIFT  4      // Shift output number this amount to get a module number.
+#define OUTPUT_MODULE_SHIFT  3      // Shift output number this amount to get a module number.
 #define OUTPUT_OUTPUT_MASK   0x07   // Mask to get output number within a module.
 
 // OutputData saved in EEPROM
@@ -58,14 +58,6 @@ void loadOutput(int aOutput)
 /** Load an Output's data from EEPROM.
  */
 void loadOutput(int aModule, int aOutput)
-{
-  loadOutput((aModule << OUTPUT_MODULE_SHIFT) + (aOutput & OUTPUT_OUTPUT_MASK));
-}
-
-
-/** Load an Output's data from EEPROM.
- */
-void loadOutputModule(int aModule, int aOutput)
 {
   loadOutput((aModule << OUTPUT_MODULE_SHIFT) + (aOutput & OUTPUT_OUTPUT_MASK));
 }
