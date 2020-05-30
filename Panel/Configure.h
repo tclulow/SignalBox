@@ -133,15 +133,15 @@ class Configure
    */
   void displaySystemI2cParams()
   {
-    int offset = LCD_COL_I2C_PARAM;
+    int col = LCD_COL_I2C_PARAM;
 
     lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
     
-    lcd.printAtHex(offset, LCD_ROW_BOT, systemData.i2cControllerID, 2);
-    offset += LCD_COL_OUTPUT_STEP;
-    lcd.printAtHex(offset, LCD_ROW_BOT, systemData.i2cInputBaseID,  2);
-    offset += LCD_COL_OUTPUT_STEP;
-    lcd.printAtHex(offset, LCD_ROW_BOT, systemData.i2cOutputBaseID, 2);
+    lcd.printAtHex(col, LCD_ROW_BOT, systemData.i2cControllerID, 2);
+    col += LCD_COL_OUTPUT_STEP;
+    lcd.printAtHex(col, LCD_ROW_BOT, systemData.i2cInputBaseID,  2);
+    col += LCD_COL_OUTPUT_STEP;
+    lcd.printAtHex(col, LCD_ROW_BOT, systemData.i2cOutputBaseID, 2);
   }
 
 
@@ -167,31 +167,56 @@ class Configure
    */
   void displayDetailInput()
   {
-    int output = 0;
-    int offset = LCD_COL_INPUT_OUTPUT;
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, (inputData.output[0] & INPUT_TOGGLE_MASK ? M_TOGGLE : M_BUTTON));
+    displayDetailInputOutput();
+  }
 
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, (inputData.output[output] & INPUT_TOGGLE_MASK ? M_TOGGLE : M_BUTTON));
+
+  /** Display Input's Output details.
+   */
+  void displayDetailInputOutput()
+  {
+    int col = LCD_COL_INPUT_OUTPUT;
+
     lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
-    
-    offset = LCD_COL_INPUT_OUTPUT;
-    for (int output = 0; output < INPUT_OUTPUT_MAX; output++, offset += LCD_COL_INPUT_STEP)
+    for (int output = 0; output < INPUT_OUTPUT_MAX; output++, col += LCD_COL_INPUT_STEP)
     {
-      displayInputOutput(offset, inputData.output[output] & (output == 0 ? INPUT_OUTPUT_MASK : 0xff));
+      displayInputOutput(col, inputData.output[output] & (output == 0 ? INPUT_OUTPUT_MASK : 0xff));
     }
   }
   
 
   /** Show an output number (or disabled marker).
    */
-  void displayInputOutput(int aOffset, int aOutput)
+  void displayInputOutput(int aCol, int aOutput)
   {
     if (aOutput & INPUT_DISABLED_MASK)
     {
-      lcd.printAt(aOffset, LCD_ROW_BOT, M_DISABLED);
+      lcd.printAt(aCol, LCD_ROW_BOT, M_DISABLED);
     }
     else
     {
-      lcd.printAtHex(aOffset, LCD_ROW_BOT, aOutput, 2);
+      lcd.setCursor(aCol, LCD_ROW_BOT);
+      lcd.print(HEX_CHARS[(aOutput >> OUTPUT_MODULE_SHIFT) & OUTPUT_MODULE_MASK]);
+      lcd.print(HEX_CHARS[(aOutput                       ) & OUTPUT_OUTPUT_MASK]);
+    }
+  }
+
+
+  /** Display an Input's output settings, module and pin.
+   */
+  void displayInputEdit(int aIndex)
+  {
+    if (   (aIndex > 0)
+        && (inputData.output[aIndex] & INPUT_DISABLED_MASK))
+    {
+      lcd.printAt(LCD_COL_MODULE, LCD_ROW_BOT, CHAR_DOT);
+      lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, CHAR_DOT);
+    }
+    else
+    {
+      lcd.printAt(LCD_COL_MODULE, LCD_ROW_BOT, HEX_CHARS[(inputData.output[aIndex] >> OUTPUT_MODULE_SHIFT) & OUTPUT_MODULE_MASK]);
+      lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(inputData.output[aIndex]                       ) & OUTPUT_OUTPUT_MASK]);
     }
   }
   
@@ -209,21 +234,21 @@ class Configure
    */
   void displayOutputParams(int aMode)
   {
-    int offset = LCD_COL_OUTPUT_PARAM;
+    int col = LCD_COL_OUTPUT_PARAM;
 
     lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
     
     if (aMode == OUTPUT_MODE_NONE)
     {
-      lcd.clearRow(offset, LCD_ROW_BOT);
+      lcd.clearRow(col, LCD_ROW_BOT);
     }
     else
     {
-      lcd.printAtHex(offset, LCD_ROW_BOT, outputData.lo,   2);
-      offset += LCD_COL_OUTPUT_STEP;
-      lcd.printAtHex(offset, LCD_ROW_BOT, outputData.hi,   2);
-      offset += LCD_COL_OUTPUT_STEP;
-      lcd.printAtHex(offset, LCD_ROW_BOT, outputData.pace, 2);
+      lcd.printAtHex(col, LCD_ROW_BOT, outputData.lo,   2);
+      col += LCD_COL_OUTPUT_STEP;
+      lcd.printAtHex(col, LCD_ROW_BOT, outputData.hi,   2);
+      col += LCD_COL_OUTPUT_STEP;
+      lcd.printAtHex(col, LCD_ROW_BOT, outputData.pace, 2);
     }
   }
 
@@ -662,7 +687,7 @@ class Configure
                             }
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
-                            changed |= menuInputOutput();
+                            changed |= menuInputSelect();
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
       }
@@ -670,82 +695,180 @@ class Configure
   }
 
 
-  /** Process an Input's output definitions.
+  /** Select the Input Output to edit.
    */
-  boolean menuInputOutput()
+  boolean menuInputSelect()
   {
-    boolean changed = false;
-    int     offset  = LCD_COL_INPUT_OUTPUT;
-    int     index   = 0;
-    int     output  = inputData.output[index];
+    boolean finished = false;
+    boolean changed  = false;
 
-    markField(offset, LCD_ROW_BOT, 2, true);
+    int     index    = 0;
 
-    while (index >= 0)
+    lcd.clearRow(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT);
+    lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, EDIT_CHARS[index]);
+    displayInputEdit(index);
+    markField(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, 1, true);
+
+    while (!finished)
     {
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
-        case BUTTON_UP:     if (output & INPUT_DISABLED_MASK)
+        case BUTTON_UP:     index += 2;
+                            if (index > INPUT_OUTPUT_MAX)
                             {
-                              output ^= INPUT_DISABLED_MASK;
+                              index = 1;
                             }
-                            else
+        case BUTTON_DOWN:   index -= 1;
+                            if (index < 0)
                             {
-                              output = (output + 1) & INPUT_OUTPUT_MASK;
+                              index = INPUT_OUTPUT_MAX - 1;
                             }
-                            displayInputOutput(offset, output);
-                            changed = true;
-                            break;
-        case BUTTON_DOWN:   if (output & INPUT_DISABLED_MASK)
-                            {
-                              output ^= INPUT_DISABLED_MASK;
-                            }
-                            else
-                            {
-                              output = (output - 1) & INPUT_OUTPUT_MASK;
-                            }
-                            displayInputOutput(offset, output);
-                            changed = true;
+                            lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, EDIT_CHARS[index]);
+                            displayInputEdit(index);
                             break;
         case BUTTON_SELECT: if (index > 0)
                             {
                               changed = true;
-                              output ^= INPUT_DISABLED_MASK;
-                              displayInputOutput(offset, output);
+                              inputData.output[index] ^= INPUT_DISABLED_MASK;
+                              displayInputEdit(index);
                             }
                             break;
-        case BUTTON_LEFT:   inputData.output[index] = output;
-                            markField(offset, LCD_ROW_BOT, 2, false);
-                            index -= 1;
-                            if (index >= 0)
-                            {
-                              output = inputData.output[index];
-                              offset -= LCD_COL_INPUT_STEP;
-                              markField(offset, LCD_ROW_BOT, 2, true);
-                            }
+        case BUTTON_LEFT:   finished = true;
                             break;
-        case BUTTON_RIGHT:  inputData.output[index] = output;
-                            index += 1;
-                            if (index >= INPUT_OUTPUT_MAX)
-                            {
-                              index -= 1;
-                            }
-                            else
-                            {
-                              markField(offset, LCD_ROW_BOT, 2, false);
-                              output = inputData.output[index];
-                              offset += LCD_COL_INPUT_STEP;
-                              displayInputOutput(offset, output);
-                              markField(offset, LCD_ROW_BOT, 2, true);
-                            }
+        case BUTTON_RIGHT:  markField(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, 1, false);
+                            changed |= menuInputOutputModule(index);
+                            markField(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, 1, true);
                             break;
       }
     }
 
+    markField(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, 1, false);
+    displayDetailInputOutput();
+    
     return changed;
   }
 
+
+  /** Process an Input's Output's module.
+   */
+  boolean menuInputOutputModule(int aIndex)
+  {
+    boolean changed  = false;
+    boolean finished = false;
+
+    markField(LCD_COL_MODULE, LCD_ROW_BOT, 1, true);
+
+    while (!finished)
+    {
+      switch (waitForButton())
+      {
+        case BUTTON_NONE:   break;
+        case BUTTON_UP:     if (inputData.output[aIndex] & INPUT_DISABLED_MASK)
+                            {
+                              inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
+                            }
+                            else
+                            {
+                              // Increment the module number within the Input's output at this index.
+                              int mask1 = (inputData.output[aIndex] & ~ (OUTPUT_MODULE_MASK << OUTPUT_MODULE_SHIFT));
+                              int mask2 = (inputData.output[aIndex] >> OUTPUT_MODULE_SHIFT) + 1;
+                              int mask3 = mask2 & OUTPUT_MODULE_MASK;
+                              int mask4 = mask3 << OUTPUT_MODULE_SHIFT;
+                              int mask5 = mask2 | mask4;
+                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ (OUTPUT_MODULE_MASK << OUTPUT_MODULE_SHIFT)) | (((inputData.output[aIndex] >> OUTPUT_MODULE_SHIFT) + 1) & OUTPUT_MODULE_MASK) << OUTPUT_MODULE_SHIFT;
+                            }
+                            
+                            displayInputEdit(aIndex);
+                            break;
+        case BUTTON_DOWN:   if (inputData.output[aIndex] & INPUT_DISABLED_MASK)
+                            {
+                              inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
+                            }
+                            else
+                            {
+                              // Decrement the module number within the Input's output at this index.
+                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ (OUTPUT_MODULE_MASK << OUTPUT_MODULE_SHIFT)) | (((inputData.output[aIndex] >> OUTPUT_MODULE_SHIFT) - 1) & OUTPUT_MODULE_MASK) << OUTPUT_MODULE_SHIFT;
+                            }
+                            displayInputEdit(aIndex);
+                            break;
+        case BUTTON_SELECT: if (aIndex > 0)
+                            {
+                              changed = true;
+                              inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
+                              displayInputEdit(aIndex);
+                            }
+                            break;
+        case BUTTON_LEFT:   finished = true;
+                            break;
+        case BUTTON_RIGHT:  markField(LCD_COL_MODULE, LCD_ROW_BOT, 1, false);
+                            changed |= displayInputOutput(aIndex);
+                            markField(LCD_COL_MODULE, LCD_ROW_BOT, 1, true);
+                            break;
+      }
+    }
+
+    markField(LCD_COL_MODULE, LCD_ROW_BOT, 1, false);
+
+    return changed;
+  }
+
+
+  boolean displayInputOutput(int aIndex)
+  {
+    boolean finished = false;
+    boolean changed = false;
+
+    markField(LCD_COL_PIN, LCD_ROW_BOT, 1, true);
+
+    while (!finished)
+    {
+      switch (waitForButton())
+      {
+        case BUTTON_NONE:   break;
+        case BUTTON_UP:     if (inputData.output[aIndex] & INPUT_DISABLED_MASK)
+                            {
+                              inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
+                            }
+                            else
+                            {
+                              // Increment the pin number within the Input's output at this index.
+                              int mask1 = (inputData.output[aIndex] & ~ OUTPUT_OUTPUT_MASK);
+                              int mask2 = (inputData.output[aIndex] + 1);
+                              int mask3 = mask2  & OUTPUT_OUTPUT_MASK;
+                              int mask4 = mask1 | mask4;
+                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ OUTPUT_OUTPUT_MASK) | ((inputData.output[aIndex] + 1) & OUTPUT_OUTPUT_MASK);
+                            }
+                            displayInputEdit(aIndex);
+                            break;
+        case BUTTON_DOWN:   if (inputData.output[aIndex] & INPUT_DISABLED_MASK)
+                            {
+                              inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
+                            }
+                            else
+                            {
+                              // Decrement the pin number within the Input's output at this index.
+                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ OUTPUT_OUTPUT_MASK) | ((inputData.output[aIndex] - 1) & OUTPUT_OUTPUT_MASK);
+                            }
+                            displayInputEdit(aIndex);
+                            break;
+        case BUTTON_SELECT: if (aIndex > 0)
+                            {
+                              changed = true;
+                              inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
+                              displayInputEdit(aIndex);
+                            }
+                            break;
+        case BUTTON_LEFT:   finished = true;
+                            break;
+        case BUTTON_RIGHT:  break;
+      }
+    }
+
+    markField(LCD_COL_PIN, LCD_ROW_BOT, 1, false);
+    
+    return finished;
+  }
 
   /** Process Output menu.
    */
