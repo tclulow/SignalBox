@@ -354,6 +354,7 @@ class Configure
                               sysMenu = SYS_MAX - 1;
                             }
                             displayDetailSystem();
+                            markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
         case BUTTON_SELECT: if (changed)
                             {
