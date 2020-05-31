@@ -112,23 +112,23 @@ void initInputs()
     {
       lcd.print(HEX_CHARS[module]);
       Wire.beginTransmission(systemData.i2cInputBaseID + module); 
-      Wire.write(INPUT_PORTA_DIRECTION);
+      Wire.write(INPUT_IODIRA);
       Wire.write(0xFF);
       Wire.endTransmission();
 
       Wire.beginTransmission(systemData.i2cInputBaseID + module);  
-      Wire.write(INPUT_PORTB_DIRECTION);
+      Wire.write(INPUT_IODIRB);
       Wire.write(0xFF);
       Wire.endTransmission();
 
       Wire.beginTransmission(systemData.i2cInputBaseID + module);
-      Wire.write (INPUT_PORTA_PULLUPS);
-      Wire.write(0xFF);
+      Wire.write (INPUT_GPPUA);
+      Wire.write(INPUT_ALL_HIGH);
       Wire.endTransmission();  
        
       Wire.beginTransmission(systemData.i2cInputBaseID + module);
-      Wire.write(INPUT_PORTB_PULLUPS);
-      Wire.write(0xFF);
+      Wire.write(INPUT_GPPUB);
+      Wire.write(INPUT_ALL_HIGH);
       Wire.endTransmission();  
     }
     else
@@ -230,13 +230,13 @@ long readInputModule(int module)
   long value = 0;
   
   Wire.beginTransmission(module);    
-  Wire.write(INPUT_READ_DATA);
-  Wire.requestFrom(module, 2);  // read the current GPIO output latches
+  Wire.write(INPUT_GPIOA);
+  Wire.requestFrom(module, 2);  // read GPIO A & B
   value = Wire.read() << 8
         + Wire.read();
   if (Wire.endTransmission())
   {
-    value = -1;
+    value = -1;   // Pretend all inputs high if comms error.
   }
 
   #ifdef FAKE_MODULE
