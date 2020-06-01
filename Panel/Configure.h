@@ -795,12 +795,9 @@ class Configure
                             else
                             {
                               // Increment the module number within the Input's output at this index.
-                              int mask1 = (inputData.output[aIndex] & ~ (OUTPUT_MODULE_MASK << OUTPUT_MODULE_SHIFT));
-                              int mask2 = (inputData.output[aIndex] >> OUTPUT_MODULE_SHIFT) + 1;
-                              int mask3 = mask2 & OUTPUT_MODULE_MASK;
-                              int mask4 = mask3 << OUTPUT_MODULE_SHIFT;
-                              int mask5 = mask2 | mask4;
-                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ (OUTPUT_MODULE_MASK << OUTPUT_MODULE_SHIFT)) | (((inputData.output[aIndex] >> OUTPUT_MODULE_SHIFT) + 1) & OUTPUT_MODULE_MASK) << OUTPUT_MODULE_SHIFT;
+                              int next = (inputData.output[aIndex] >> OUTPUT_MODULE_SHIFT) & OUTPUT_MODULE_MASK;
+                              next = nextModule(next, 1, false);
+                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ (OUTPUT_MODULE_MASK << OUTPUT_MODULE_SHIFT)) | ((next & OUTPUT_MODULE_MASK) << OUTPUT_MODULE_SHIFT);
                             }
                             
                             displayInputEdit(aIndex);
@@ -812,7 +809,9 @@ class Configure
                             else
                             {
                               // Decrement the module number within the Input's output at this index.
-                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ (OUTPUT_MODULE_MASK << OUTPUT_MODULE_SHIFT)) | (((inputData.output[aIndex] >> OUTPUT_MODULE_SHIFT) - 1) & OUTPUT_MODULE_MASK) << OUTPUT_MODULE_SHIFT;
+                              int next = (inputData.output[aIndex] >> OUTPUT_MODULE_SHIFT) & OUTPUT_MODULE_MASK;
+                              next = nextModule(next, -1, false);
+                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ (OUTPUT_MODULE_MASK << OUTPUT_MODULE_SHIFT)) | ((next & OUTPUT_MODULE_MASK) << OUTPUT_MODULE_SHIFT);
                             }
                             displayInputEdit(aIndex);
                             break;
