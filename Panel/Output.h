@@ -88,7 +88,7 @@ void setOutputModulePresent(int aModule)
  */
 boolean isOutputModule(int aModule)
 {
-  return outputModules & (1 << aModule);
+  return (aModule < OUTPUT_MODULE_MAX) && (outputModules & (1 << aModule));
 }
 
 

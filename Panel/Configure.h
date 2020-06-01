@@ -44,8 +44,19 @@ class Configure
     {
       case TOP_SYSTEM: displaySystem();
                        break;
-      case TOP_INPUT:  
-      case TOP_OUTPUT: displayModule();
+      case TOP_INPUT:  pin &= INPUT_INPUT_MASK;
+                       if (!isInputModule(module))
+                       {
+                         module = nextModule(module, 1, INPUT_MODULE_MAX);
+                       }
+                       displayModule();
+                       break;
+      case TOP_OUTPUT: pin &= OUTPUT_OUTPUT_MASK;
+                       if (!isOutputModule(module))
+                       {
+                         module = nextModule(module, 1, OUTPUT_MODULE_MAX);
+                       }
+                       displayModule();
                        break;
       case TOP_REPORT: displaySystem();
                        break;
@@ -291,10 +302,6 @@ class Configure
                             {
                               topMenu = TOP_MAX - 1;
                             }
-                            // Ensure module and pin are in-range
-                            module = module & (topMenu == TOP_INPUT ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
-                            pin    = pin    & (topMenu == TOP_INPUT ? INPUT_INPUT_MASK  : OUTPUT_OUTPUT_MASK);
-
                             displayAll();
                             markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
                             break;
@@ -306,10 +313,13 @@ class Configure
                             {
                               menuSystem();
                             }
-                            else if (   (topMenu == TOP_INPUT)
-                                     || (topMenu == TOP_OUTPUT))
+                            else if (topMenu == TOP_INPUT)
                             {
-                              menuModule(topMenu == TOP_INPUT);
+                              menuModule(true);
+                            }
+                            else if (topMenu == TOP_OUTPUT)
+                            {
+                              menuModule(false);
                             }
                             else if (topMenu == TOP_REPORT)
                             {
@@ -534,22 +544,7 @@ class Configure
         case BUTTON_NONE:   break;
         case BUTTON_UP:     adjust += 2;     // Use +1 to compensate for the -1 that the code below will do.
         case BUTTON_DOWN:   adjust -= 1;
-                            for (int i = 0; i < (aIsInput ? INPUT_MODULE_MAX : OUTPUT_MODULE_MAX); i++)
-                            {
-                              module = (module + adjust) & (aIsInput ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
-                              if (   (aIsInput)
-                                  && (isInputModule(module)))
-                              {
-                                loadInput(module);
-                                break;
-                              }
-                              else if (   (!aIsInput)
-                                       && (isOutputModule(module)))
-                              {
-                                loadOutput(module);
-                                break;
-                              }
-                            }
+                            module = nextModule(module, adjust, aIsInput);
                             lcd.printAt(LCD_COL_MODULE, LCD_ROW_TOP, HEX_CHARS[module]);
                             displayDetail();
                             break;
@@ -567,6 +562,33 @@ class Configure
     markField(LCD_COL_MODULE, LCD_ROW_TOP, 1, false);
   }
 
+
+  /** Find the next (live) module in the given direction.
+   *  Load the module's data.
+   */
+  int nextModule(int aStart, int aAdjust, boolean aIsInput)
+  {
+    int next = aStart & (aIsInput ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
+    
+    for (int i = 0; i < (aIsInput ? INPUT_MODULE_MAX : OUTPUT_MODULE_MAX); i++)
+    {
+      next = (next + aAdjust) & (aIsInput ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
+      if (   (aIsInput)
+          && (isInputModule(next)))
+      {
+        loadInput(next, pin);
+        break;
+      }
+      else if (   (!aIsInput)
+               && (isOutputModule(next)))
+      {
+        loadOutput(next, pin);
+        break;
+      }
+    }
+
+    return next;
+  }
 
   /** Process Pin menu.
    */
@@ -1104,9 +1126,24 @@ class Configure
   }
 
 
+  /** Dump all the EEPROM memory.
+   */
   void dumpMemory()
   {
-    for (int base = 0; base < INPUT_END; base += 16)
+    dumpMemory(SYSTEM_BASE, SYSTEM_END);
+    Serial.println();
+    dumpMemory(OUTPUT_BASE, OUTPUT_END);
+    Serial.println();
+    dumpMemory(INPUT_BASE,  INPUT_END);
+    Serial.println();
+  }
+
+
+  /** Dump a range of the EEPROM memory.
+   */
+  void dumpMemory(int aStart, int aEnd)
+  {
+    for (int base = aStart; base < aEnd; base += 16)
     {
       printHex(base, 4);
       Serial.print(":");
@@ -1168,7 +1205,7 @@ class Configure
     
     for (int module = 0; module < OUTPUT_MODULE_MAX; module++)
     {
-      if (isInputModule(module))
+      if (isOutputModule(module))
       {
         for (int pin = 0; pin < OUTPUT_MODULE_SIZE; pin++)
         {

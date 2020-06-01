@@ -111,7 +111,7 @@ void setInputModulePresent(int aModule)
  */
 boolean isInputModule(int aModule)
 {
-  return inputModules & (1 << aModule);
+  return (aModule < INPUT_MODULE_MAX) && (inputModules & (1 << aModule));
 }
 
 
