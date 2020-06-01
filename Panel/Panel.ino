@@ -113,12 +113,12 @@ void initInputs()
       lcd.print(HEX_CHARS[module]);
       Wire.beginTransmission(systemData.i2cInputBaseID + module); 
       Wire.write(INPUT_IODIRA);
-      Wire.write(0xFF);
+      Wire.write(INPUT_ALL_HIGH);
       Wire.endTransmission();
 
       Wire.beginTransmission(systemData.i2cInputBaseID + module);  
       Wire.write(INPUT_IODIRB);
-      Wire.write(0xFF);
+      Wire.write(INPUT_ALL_HIGH);
       Wire.endTransmission();
 
       Wire.beginTransmission(systemData.i2cInputBaseID + module);
