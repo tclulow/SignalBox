@@ -3,17 +3,17 @@
 #ifndef _Output_h
 #define _Output_h
 
-// Output modules.
-#define OUTPUT_MODULE_SIZE   8      // 8 outputs to each module.
-#define OUTPUT_MODULE_MAX    16     // Maximum modules.
-#define OUTPUT_MODULE_MASK   0x0f   // 4 bits for 16 modules.
-#define OUTPUT_MODULE_SHIFT  3      // Shift output number this amount to get a module number.
-#define OUTPUT_OUTPUT_MASK   0x07   // Mask to get output number within a module.
+// Output nodes.
+#define OUTPUT_NODE_SIZE   8      // 8 outputs to each node.
+#define OUTPUT_NODE_MAX    16     // Maximum nodes.
+#define OUTPUT_NODE_MASK   0x0f   // 4 bits for 16 nodes.
+#define OUTPUT_NODE_SHIFT  3      // Shift output number this amount to get a node number.
+#define OUTPUT_OUTPUT_MASK   0x07   // Mask to get output number within a node.
 
 // OutputData saved in EEPROM
 #define OUTPUT_BASE  SYSTEM_END                                 // EEPROM base of OutputData.
 #define OUTPUT_SIZE  sizeof(OutputData)                         // Size of OutputData entry.
-#define OUTPUT_MAX   (OUTPUT_MODULE_SIZE * OUTPUT_MODULE_MAX)   // Maximum outputs (up to 128).
+#define OUTPUT_MAX   (OUTPUT_NODE_SIZE * OUTPUT_NODE_MAX)   // Maximum outputs (up to 128).
 #define OUTPUT_END   (OUTPUT_BASE + OUTPUT_SIZE * OUTPUT_MAX)   // End of OutputData EEPROM.
 
 // Mask for OUTPUT options
@@ -38,7 +38,7 @@ struct OutputData
 
 /** Variables for working with an Output.
  */
-int        outputModules = 0;   // Bit map of Output modules present.
+int        outputNodes = 0;   // Bit map of Output nodes present.
 int        outputNumber  = 0;   // Current Output number.
 OutputData outputData;          // Data describing current Output.
 
@@ -57,9 +57,9 @@ void loadOutput(int aOutput)
 
 /** Load an Output's data from EEPROM.
  */
-void loadOutput(int aModule, int aOutput)
+void loadOutput(int aNode, int aOutput)
 {
-  loadOutput((aModule << OUTPUT_MODULE_SHIFT) + (aOutput & OUTPUT_OUTPUT_MASK));
+  loadOutput((aNode << OUTPUT_NODE_SHIFT) + (aOutput & OUTPUT_OUTPUT_MASK));
 }
 
 
@@ -75,29 +75,29 @@ void saveOutput()
 }
 
 
-/** Record the presence of an OutputModule in the map.
+/** Record the presence of an OutputNode in the map.
  */
-void setOutputModulePresent(int aModule)
+void setOutputNodePresent(int aNode)
 {
-  outputModules |= (1 << aModule); 
+  outputNodes |= (1 << aNode); 
 }
 
 
-/** Is an Output module present?
- *  Look for Output's module in outputModules.
+/** Is an Output node present?
+ *  Look for Output's node in outputNodes.
  */
-boolean isOutputModule(int aModule)
+boolean isOutputNode(int aNode)
 {
-  return (aModule < OUTPUT_MODULE_MAX) && (outputModules & (1 << aModule));
+  return (aNode < OUTPUT_NODE_MAX) && (outputNodes & (1 << aNode));
 }
 
 
 /** Is an Output present?
- *  Look for output's module in outputModules.
+ *  Look for output's node in outputNodes.
  */
 boolean isOutput(int aOutput)
 {
-  return isOutputModule(aOutput >> OUTPUT_MODULE_SHIFT);
+  return isOutputNode(aOutput >> OUTPUT_NODE_SHIFT);
 }
 
 #endif

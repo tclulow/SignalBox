@@ -31,7 +31,7 @@ class Configure
   int topMenu = 0;      // Top menu being shown
   int sysMenu = 0;      // System menu being shown.
   int repMenu = 0;      // Report menu being shown.
-  int module  = 0;      // The module we're configuring.
+  int node  = 0;      // The node we're configuring.
   int pin     = 0;      // The pin we're configuring.
   
 
@@ -45,18 +45,18 @@ class Configure
       case TOP_SYSTEM: displaySystem();
                        break;
       case TOP_INPUT:  pin &= INPUT_INPUT_MASK;
-                       if (!isInputModule(module))
+                       if (!isInputNode(node))
                        {
-                         module = nextModule(module, 1, INPUT_MODULE_MAX);
+                         node = nextNode(node, 1, INPUT_NODE_MAX);
                        }
-                       displayModule();
+                       displayNode();
                        break;
       case TOP_OUTPUT: pin &= OUTPUT_OUTPUT_MASK;
-                       if (!isOutputModule(module))
+                       if (!isOutputNode(node))
                        {
-                         module = nextModule(module, 1, OUTPUT_MODULE_MAX);
+                         node = nextNode(node, 1, OUTPUT_NODE_MAX);
                        }
-                       displayModule();
+                       displayNode();
                        break;
       case TOP_REPORT: displaySystem();
                        break;
@@ -80,12 +80,12 @@ class Configure
   }
 
 
-  /** Display the module/pin selection line of the menu.
+  /** Display the node/pin selection line of the menu.
    */
-  void displayModule()
+  void displayNode()
   {
     lcd.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
-    lcd.printAt(LCD_COL_MODULE, LCD_ROW_TOP, HEX_CHARS[module]);
+    lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[node]);
     lcd.printAt(LCD_COL_PIN   , LCD_ROW_TOP, HEX_CHARS[pin]);
   }
 
@@ -208,25 +208,25 @@ class Configure
     else
     {
       lcd.setCursor(aCol, LCD_ROW_BOT);
-      lcd.print(HEX_CHARS[(aOutput >> OUTPUT_MODULE_SHIFT) & OUTPUT_MODULE_MASK]);
+      lcd.print(HEX_CHARS[(aOutput >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
       lcd.print(HEX_CHARS[(aOutput                       ) & OUTPUT_OUTPUT_MASK]);
     }
   }
 
 
-  /** Display an Input's output settings, module and pin.
+  /** Display an Input's output settings, node and pin.
    */
   void displayInputEdit(int aIndex)
   {
     if (   (aIndex > 0)
         && (inputData.output[aIndex] & INPUT_DISABLED_MASK))
     {
-      lcd.printAt(LCD_COL_MODULE, LCD_ROW_BOT, CHAR_DOT);
+      lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, CHAR_DOT);
       lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, CHAR_DOT);
     }
     else
     {
-      lcd.printAt(LCD_COL_MODULE, LCD_ROW_BOT, HEX_CHARS[(inputData.output[aIndex] >> OUTPUT_MODULE_SHIFT) & OUTPUT_MODULE_MASK]);
+      lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[(inputData.output[aIndex] >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
       lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(inputData.output[aIndex]                       ) & OUTPUT_OUTPUT_MASK]);
     }
   }
@@ -280,8 +280,8 @@ class Configure
     boolean finished = false;
 
     // Initialise state.
-    loadInput(module, pin);
-    loadOutput(module, pin);
+    loadInput(node, pin);
+    loadOutput(node, pin);
     
     lcd.clear();
     displayAll();
@@ -315,11 +315,11 @@ class Configure
                             }
                             else if (topMenu == TOP_INPUT)
                             {
-                              menuModule(true);
+                              menuNode(true);
                             }
                             else if (topMenu == TOP_OUTPUT)
                             {
-                              menuModule(false);
+                              menuNode(false);
                             }
                             else if (topMenu == TOP_REPORT)
                             {
@@ -527,13 +527,13 @@ class Configure
   }
   
 
-  /** Process Module menu for Input or Output.
+  /** Process Node menu for Input or Output.
    */
-  void menuModule(boolean aIsInput)
+  void menuNode(boolean aIsInput)
   {
     boolean finished = false;
 
-    markField(LCD_COL_MODULE, LCD_ROW_TOP, 1, true);
+    markField(LCD_COL_NODE, LCD_ROW_TOP, 1, true);
 
     while (!finished)
     {
@@ -544,43 +544,43 @@ class Configure
         case BUTTON_NONE:   break;
         case BUTTON_UP:     adjust += 2;     // Use +1 to compensate for the -1 that the code below will do.
         case BUTTON_DOWN:   adjust -= 1;
-                            module = nextModule(module, adjust, aIsInput);
-                            lcd.printAt(LCD_COL_MODULE, LCD_ROW_TOP, HEX_CHARS[module]);
+                            node = nextNode(node, adjust, aIsInput);
+                            lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[node]);
                             displayDetail();
                             break;
         case BUTTON_SELECT: break;
         case BUTTON_LEFT:   finished = true;
-                            markField(LCD_COL_MODULE, LCD_ROW_TOP, 1, false);
+                            markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
                             break;
-        case BUTTON_RIGHT:  markField(LCD_COL_MODULE, LCD_ROW_TOP, 1, false);
+        case BUTTON_RIGHT:  markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
                             menuPin(aIsInput);
-                            markField(LCD_COL_MODULE, LCD_ROW_TOP, 1, true);
+                            markField(LCD_COL_NODE, LCD_ROW_TOP, 1, true);
                             break;
       }
     }
 
-    markField(LCD_COL_MODULE, LCD_ROW_TOP, 1, false);
+    markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
   }
 
 
-  /** Find the next (live) module in the given direction.
-   *  Load the module's data.
+  /** Find the next (live) node in the given direction.
+   *  Load the node's data.
    */
-  int nextModule(int aStart, int aAdjust, boolean aIsInput)
+  int nextNode(int aStart, int aAdjust, boolean aIsInput)
   {
-    int next = aStart & (aIsInput ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
+    int next = aStart & (aIsInput ? INPUT_NODE_MASK : OUTPUT_NODE_MASK);
     
-    for (int i = 0; i < (aIsInput ? INPUT_MODULE_MAX : OUTPUT_MODULE_MAX); i++)
+    for (int i = 0; i < (aIsInput ? INPUT_NODE_MAX : OUTPUT_NODE_MAX); i++)
     {
-      next = (next + aAdjust) & (aIsInput ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
+      next = (next + aAdjust) & (aIsInput ? INPUT_NODE_MASK : OUTPUT_NODE_MASK);
       if (   (aIsInput)
-          && (isInputModule(next)))
+          && (isInputNode(next)))
       {
         loadInput(next, pin);
         break;
       }
       else if (   (!aIsInput)
-               && (isOutputModule(next)))
+               && (isOutputNode(next)))
       {
         loadOutput(next, pin);
         break;
@@ -604,23 +604,23 @@ class Configure
       {
         case BUTTON_NONE:   break;
         case BUTTON_UP:     pin += 2;     // Use +1 to compensate for the -1 that the code below will do.
-                            if (pin > (aIsInput ? INPUT_MODULE_SIZE : OUTPUT_MODULE_SIZE))
+                            if (pin > (aIsInput ? INPUT_NODE_SIZE : OUTPUT_NODE_SIZE))
                             {
                               pin = 1;
                             }
         case BUTTON_DOWN:   pin -= 1;
                             if (pin < 0)
                             {
-                              pin = aIsInput ? INPUT_MODULE_SIZE - 1 : OUTPUT_MODULE_SIZE - 1;
+                              pin = aIsInput ? INPUT_NODE_SIZE - 1 : OUTPUT_NODE_SIZE - 1;
                             }
                             lcd.printAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[pin]);
                             if (aIsInput)
                             {
-                              loadInput(module, pin);
+                              loadInput(node, pin);
                             }
                             else
                             {
-                              loadOutput(module, pin);
+                              loadOutput(node, pin);
                             }
                             displayDetail();
                             break;
@@ -761,7 +761,7 @@ class Configure
         case BUTTON_LEFT:   finished = true;
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, 1, false);
-                            changed |= menuInputOutputModule(index);
+                            changed |= menuInputOutputNode(index);
                             markField(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, 1, true);
                             break;
       }
@@ -774,14 +774,14 @@ class Configure
   }
 
 
-  /** Process an Input's Output's module.
+  /** Process an Input's Output's node.
    */
-  boolean menuInputOutputModule(int aIndex)
+  boolean menuInputOutputNode(int aIndex)
   {
     boolean changed  = false;
     boolean finished = false;
 
-    markField(LCD_COL_MODULE, LCD_ROW_BOT, 1, true);
+    markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
 
     while (!finished)
     {
@@ -794,10 +794,10 @@ class Configure
                             }
                             else
                             {
-                              // Increment the module number within the Input's output at this index.
-                              int next = (inputData.output[aIndex] >> OUTPUT_MODULE_SHIFT) & OUTPUT_MODULE_MASK;
-                              next = nextModule(next, 1, false);
-                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ (OUTPUT_MODULE_MASK << OUTPUT_MODULE_SHIFT)) | ((next & OUTPUT_MODULE_MASK) << OUTPUT_MODULE_SHIFT);
+                              // Increment the node number within the Input's output at this index.
+                              int next = (inputData.output[aIndex] >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK;
+                              next = nextNode(next, 1, false);
+                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ (OUTPUT_NODE_MASK << OUTPUT_NODE_SHIFT)) | ((next & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT);
                             }
                             
                             displayInputEdit(aIndex);
@@ -808,10 +808,10 @@ class Configure
                             }
                             else
                             {
-                              // Decrement the module number within the Input's output at this index.
-                              int next = (inputData.output[aIndex] >> OUTPUT_MODULE_SHIFT) & OUTPUT_MODULE_MASK;
-                              next = nextModule(next, -1, false);
-                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ (OUTPUT_MODULE_MASK << OUTPUT_MODULE_SHIFT)) | ((next & OUTPUT_MODULE_MASK) << OUTPUT_MODULE_SHIFT);
+                              // Decrement the node number within the Input's output at this index.
+                              int next = (inputData.output[aIndex] >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK;
+                              next = nextNode(next, -1, false);
+                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ (OUTPUT_NODE_MASK << OUTPUT_NODE_SHIFT)) | ((next & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT);
                             }
                             displayInputEdit(aIndex);
                             break;
@@ -824,14 +824,14 @@ class Configure
                             break;
         case BUTTON_LEFT:   finished = true;
                             break;
-        case BUTTON_RIGHT:  markField(LCD_COL_MODULE, LCD_ROW_BOT, 1, false);
+        case BUTTON_RIGHT:  markField(LCD_COL_NODE, LCD_ROW_BOT, 1, false);
                             changed |= displayInputOutput(aIndex);
-                            markField(LCD_COL_MODULE, LCD_ROW_BOT, 1, true);
+                            markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
                             break;
       }
     }
 
-    markField(LCD_COL_MODULE, LCD_ROW_BOT, 1, false);
+    markField(LCD_COL_NODE, LCD_ROW_BOT, 1, false);
 
     return changed;
   }
@@ -1033,7 +1033,7 @@ class Configure
       outputData.pace = params[2];
     }
 
-    displayModule();
+    displayNode();
     
     return changed;
   }
@@ -1162,17 +1162,17 @@ class Configure
   {
     Serial.println(PGMT(M_HEADER_INPUT));
 
-    for (int module = 0; module < INPUT_MODULE_MAX; module++)
+    for (int node = 0; node < INPUT_NODE_MAX; node++)
     {
-      if (isInputModule(module))
+      if (isInputNode(node))
       {
-        for (int pin = 0; pin < INPUT_MODULE_SIZE; pin++)
+        for (int pin = 0; pin < INPUT_NODE_SIZE; pin++)
         {
-          loadInput(module, pin);
+          loadInput(node, pin);
   
           Serial.print(PGMT(M_INPUT));
           Serial.print(CHAR_TAB);
-          printHex(module, 1);
+          printHex(node, 1);
           Serial.print(CHAR_TAB);
           printHex(pin, 1);
           Serial.print(CHAR_TAB);
@@ -1181,7 +1181,7 @@ class Configure
           for (int output = 0; output < INPUT_OUTPUT_MAX; output++)
           {
             Serial.print(CHAR_TAB);
-            printHex(((inputData.output[output] & INPUT_OUTPUT_MASK) >> OUTPUT_MODULE_SHIFT) & OUTPUT_MODULE_MASK, 1);
+            printHex(((inputData.output[output] & INPUT_OUTPUT_MASK) >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK, 1);
             Serial.print(CHAR_SPACE);
             printHex(((inputData.output[output] & INPUT_OUTPUT_MASK)                       ) & OUTPUT_OUTPUT_MASK, 1);
             if (   (output > 0)
@@ -1202,17 +1202,17 @@ class Configure
   {
     Serial.println(PGMT(M_HEADER_OUTPUT));
     
-    for (int module = 0; module < OUTPUT_MODULE_MAX; module++)
+    for (int node = 0; node < OUTPUT_NODE_MAX; node++)
     {
-      if (isOutputModule(module))
+      if (isOutputNode(node))
       {
-        for (int pin = 0; pin < OUTPUT_MODULE_SIZE; pin++)
+        for (int pin = 0; pin < OUTPUT_NODE_SIZE; pin++)
         {
-          loadOutput(module, pin);
+          loadOutput(node, pin);
   
           Serial.print(PGMT(M_OUTPUT));
           Serial.print(CHAR_TAB);
-          printHex(module, 1);
+          printHex(node, 1);
           Serial.print(CHAR_TAB);
           printHex(pin, 1);
           Serial.print(CHAR_TAB);

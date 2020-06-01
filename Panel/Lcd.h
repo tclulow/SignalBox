@@ -16,7 +16,7 @@
 #define LCD_COL_START         0   // Cols for LCD state messages.
 #define LCD_COL_MARK          6   // Marker when changing top-level option.
 #define LCD_COL_VERSION       8   // Where to put version number/date.
-#define LCD_COL_MODULE       11   // Module number.
+#define LCD_COL_NODE       11   // Node number.
 #define LCD_COL_PIN          14   // Pin number.
 // #define LCD_COL_STATE        14   // State of output.
 

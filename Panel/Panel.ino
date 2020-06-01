@@ -33,7 +33,7 @@
 
 
 // Record state of inputs.
-uint16_t currentInputState[INPUT_MODULE_MAX];    // Current state of inputs.
+uint16_t currentInputState[INPUT_NODE_MAX];    // Current state of inputs.
 
 
 /** Announce ourselves.
@@ -47,42 +47,42 @@ void announce()
 }
 
 
-/** Map the Output and Input modules.
+/** Map the Output and Input nodes.
  */
 void mapHardware()
 {
   lcd.clear();
-  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_SCAN_MODULES);
-  lcd.setCursor(LCD_COLS - INPUT_MODULE_MAX, 0);
+  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_SCAN_NODES);
+  lcd.setCursor(LCD_COLS - INPUT_NODE_MAX, 0);
   
-  // Scan for Input modules.
-  for (int module = 0; module < INPUT_MODULE_MAX; module++)
+  // Scan for Input nodes.
+  for (int node = 0; node < INPUT_NODE_MAX; node++)
   {
-    Wire.beginTransmission(systemData.i2cInputBaseID + module);
-    if (Wire.endTransmission()FAKE_MODULE)   
+    Wire.beginTransmission(systemData.i2cInputBaseID + node);
+    if (Wire.endTransmission()FAKE_NODE)   
     {
       lcd.print(CHAR_DOT); 
     }
     else
     {  
-      lcd.print(HEX_CHARS[module]);
-      setInputModulePresent(module);
+      lcd.print(HEX_CHARS[node]);
+      setInputNodePresent(node);
     }
   }
 
-  // Scan for Output modules.
+  // Scan for Output nodes.
   lcd.setCursor(0, 1);
-  for (int module = 0; module < OUTPUT_MODULE_MAX; module++)
+  for (int node = 0; node < OUTPUT_NODE_MAX; node++)
   {
-    Wire.beginTransmission(systemData.i2cOutputBaseID + module);
-    if (Wire.endTransmission()FAKE_MODULE)
+    Wire.beginTransmission(systemData.i2cOutputBaseID + node);
+    if (Wire.endTransmission()FAKE_NODE)
     {
       lcd.print(CHAR_DOT); 
     }
     else
     {
-      lcd.print(HEX_CHARS[module]);
-      setOutputModulePresent(module);  
+      lcd.print(HEX_CHARS[node]);
+      setOutputNodePresent(node);  
     }
   }
 
@@ -100,33 +100,33 @@ void initInputs()
   lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
   // Clear state of Inputs, all high.
-  for (int module = 0; module < INPUT_MODULE_MAX; module++)
+  for (int node = 0; node < INPUT_NODE_MAX; node++)
   {
-    currentInputState[module] = 0xffff;
+    currentInputState[node] = 0xffff;
   }
 
-  // For every Input module, set it's mode of operation.
-  for(int module = 0; module < INPUT_MODULE_MAX; module++)
+  // For every Input node, set it's mode of operation.
+  for(int node = 0; node < INPUT_NODE_MAX; node++)
   {
-    if (isInputModule(module))
+    if (isInputNode(node))
     {
-      lcd.print(HEX_CHARS[module]);
-      Wire.beginTransmission(systemData.i2cInputBaseID + module); 
+      lcd.print(HEX_CHARS[node]);
+      Wire.beginTransmission(systemData.i2cInputBaseID + node); 
       Wire.write(INPUT_IODIRA);
       Wire.write(INPUT_ALL_HIGH);
       Wire.endTransmission();
 
-      Wire.beginTransmission(systemData.i2cInputBaseID + module);  
+      Wire.beginTransmission(systemData.i2cInputBaseID + node);  
       Wire.write(INPUT_IODIRB);
       Wire.write(INPUT_ALL_HIGH);
       Wire.endTransmission();
 
-      Wire.beginTransmission(systemData.i2cInputBaseID + module);
+      Wire.beginTransmission(systemData.i2cInputBaseID + node);
       Wire.write (INPUT_GPPUA);
       Wire.write(INPUT_ALL_HIGH);
       Wire.endTransmission();  
        
-      Wire.beginTransmission(systemData.i2cInputBaseID + module);
+      Wire.beginTransmission(systemData.i2cInputBaseID + node);
       Wire.write(INPUT_GPPUB);
       Wire.write(INPUT_ALL_HIGH);
       Wire.endTransmission();  
@@ -193,45 +193,45 @@ void firstRun()
  */
 void scanInputs()
 { 
-  // Scan all the modules. 
-  for (int module = 0; module < INPUT_MODULE_MAX; module++)
+  // Scan all the nodes. 
+  for (int node = 0; node < INPUT_NODE_MAX; node++)
   {
-    if (isInputModule(module))                                        
+    if (isInputNode(node))                                        
     {
       // Read current state of pins and if successful and there's been a change
-      int pins = readInputModule(systemData.i2cInputBaseID + module);
+      int pins = readInputNode(systemData.i2cInputBaseID + node);
       if (   (pins >= 0)
-          && (pins != currentInputState[module]))
+          && (pins != currentInputState[node]))
       {
         // Process all the changed pins.
-        for (int pin = 0, mask = 1; pin < INPUT_MODULE_SIZE; pin++, mask <<= 1)
+        for (int pin = 0, mask = 1; pin < INPUT_NODE_SIZE; pin++, mask <<= 1)
         {
           int state = pins & mask;
-          if (state != (currentInputState[module] & mask))
+          if (state != (currentInputState[node] & mask))
           {
-            processInput(module, pin, state);
+            processInput(node, pin, state);
           }
         }
       
         // Record new state.
-        currentInputState[module] = pins;
+        currentInputState[node] = pins;
       }
     }
   }
 }
 
 
-/** Read the pins of a InputModule.
+/** Read the pins of a InputNode.
  *  Return the state of the pins, 16 bits, both ports.
  *  Return negative number if there's a communication error.
  */
-long readInputModule(int module)
+long readInputNode(int node)
 {
   long value = 0;
   
-  Wire.beginTransmission(module);    
+  Wire.beginTransmission(node);    
   Wire.write(INPUT_GPIOA);
-  Wire.requestFrom(module, 2);  // read GPIO A & B
+  Wire.requestFrom(node, 2);  // read GPIO A & B
   value = Wire.read() << 8
         + Wire.read();
   if (Wire.endTransmission())
@@ -239,7 +239,7 @@ long readInputModule(int module)
     value = -1;   // Pretend all inputs high if comms error.
   }
 
-  #ifdef FAKE_MODULE
+  #ifdef FAKE_NODE
   if ((millis() & 0x3ff) == 0)    // 1024 millisecs ~= 1 second.
   {
     value = millis() & 0xffff;
@@ -252,12 +252,12 @@ long readInputModule(int module)
 
 /** Process the changed input.
  */
-void processInput(int module, int pin, int state)
+void processInput(int node, int pin, int state)
 {
   #if DEBUG
   // Report the input
   Serial.print("Input  ");
-  Serial.print(HEX_CHARS[module & 0xf]);
+  Serial.print(HEX_CHARS[node & 0xf]);
   Serial.print(" ");
   Serial.print(HEX_CHARS[pin & 0xf]);
   Serial.print(" ");
@@ -266,12 +266,12 @@ void processInput(int module, int pin, int state)
 
 //  lcd.clear();
 //  lcd.printAt(LCD_COL_INPUT,  LCD_ROW_INPUT, M_INPUT);
-//  lcd.printAt(LCD_COL_MODULE, LCD_ROW_INPUT, HEX_CHARS[module]);
+//  lcd.printAt(LCD_COL_NODE, LCD_ROW_INPUT, HEX_CHARS[node]);
 //  lcd.printAt(LCD_COL_PIN,    LCD_ROW_INPUT, HEX_CHARS[pin]);
 //  lcd.printAt(LCD_COL_STATE,  LCD_ROW_INPUT, (state ? M_HI : M_LO));
   #endif
   
-  loadInput(module, pin);
+  loadInput(node, pin);
   int output = inputData.output[0] & INPUT_OUTPUT_MASK;
   loadOutput(output);
   
@@ -301,7 +301,7 @@ void processInput(int module, int pin, int state)
 }
 
 
-/** Send a command to an output module.
+/** Send a command to an output node.
  *  Return error code if any.
  */
 int sendOutputCommand()
@@ -309,7 +309,7 @@ int sendOutputCommand()
   #if DEBUG
   // Report output
   Serial.print("Output ");
-  Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_MODULE_SHIFT) & 0xf]);
+  Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & 0xf]);
   Serial.print(" ");
   Serial.print(HEX_CHARS[outputNumber & OUTPUT_OUTPUT_MASK & 0xf]);
   Serial.print(" ");
@@ -317,13 +317,13 @@ int sendOutputCommand()
   Serial.println();
 
 //  lcd.printAt(LCD_COL_OUTPUT,  LCD_ROW_OUTPUT, M_OUTPUT);
-//  lcd.printAt(LCD_COL_MODULE,  LCD_ROW_OUTPUT, HEX_CHARS[outputNumber << OUTPUT_MODULE_SHIFT]);
+//  lcd.printAt(LCD_COL_NODE,  LCD_ROW_OUTPUT, HEX_CHARS[outputNumber << OUTPUT_NODE_SHIFT]);
 //  lcd.printAt(LCD_COL_PIN,     LCD_ROW_OUTPUT, HEX_CHARS[outputNumber & OUTPUT_OUTPUT_MASK]);
 //  lcd.printAt(LCD_COL_STATE,   LCD_ROW_OUTPUT, ((outputData.mode & OUTPUT_STATE) ? M_HI : M_LO));
 //  delay(DELAY);
   #endif
   
-  Wire.beginTransmission(systemData.i2cOutputBaseID + (outputNumber << OUTPUT_MODULE_SHIFT));
+  Wire.beginTransmission(systemData.i2cOutputBaseID + (outputNumber << OUTPUT_NODE_SHIFT));
   Wire.write(outputNumber & OUTPUT_OUTPUT_MASK);
   if (outputData.mode & OUTPUT_STATE)
   {
@@ -377,16 +377,16 @@ void setup()
   }
 
   // Report abscence of hardware.
-  if (   (inputModules  == 0)
-      || (outputModules == 0))
+  if (   (inputNodes  == 0)
+      || (outputNodes == 0))
   {
     int row = LCD_ROW_TOP;
     lcd.clear();
-    if (inputModules == 0)
+    if (inputNodes == 0)
     {
       lcd.printAt(LCD_COL_START, row++, M_NO_INPUTS);
     }
-    if (outputModules == 0)
+    if (outputNodes == 0)
     {
       lcd.printAt(LCD_COL_START, row++, M_NO_OUTPUTS);
     }

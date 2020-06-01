@@ -17,9 +17,9 @@ const char M_CANCEL[]          PROGMEM = "Cancel?  Sel=Yes";
 const char M_SAVED[]           PROGMEM = "Change saved    ";
 const char M_CANCELLED[]       PROGMEM = "Change cancelled";
 
-const char M_SCAN_MODULES[]    PROGMEM = "Modules";
-const char M_NO_INPUTS[]       PROGMEM = "No input module";
-const char M_NO_OUTPUTS[]      PROGMEM = "No output module";
+const char M_SCAN_NODES[]    PROGMEM = "Nodes";
+const char M_NO_INPUTS[]       PROGMEM = "No input nodes";
+const char M_NO_OUTPUTS[]      PROGMEM = "No output nodes";
 const char M_INIT_INPUTS[]     PROGMEM = "Init inputs";
 
 const char M_FIRST_RUN[]       PROGMEM = "First run";
@@ -59,8 +59,8 @@ const char M_PACE[]            PROGMEM = "Spd";
 
 // Headers for the reports
 const char M_HEADER_SYSTEM[]   PROGMEM = "#System\tVersion\tDetail\tControl\tInput\tOutput";
-const char M_HEADER_INPUT[]    PROGMEM = "#Input\tModule\tPin\tType\tOutput1\tOutput2\tOutput3";
-const char M_HEADER_OUTPUT[]   PROGMEM = "#Output\tModule\tPin\tType\tLo\tHi\tSpd";
+const char M_HEADER_INPUT[]    PROGMEM = "#Input\tNode\tPin\tType\tOutput1\tOutput2\tOutput3";
+const char M_HEADER_OUTPUT[]   PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd";
 
 
 // Array of (pointers to) certain messages.

@@ -3,18 +3,18 @@
 #ifndef _Input_h
 #define _Input_h
 
-// Input modules.
-#define INPUT_MODULE_SIZE    16     // 16 inputs to each module.
-#define INPUT_MODULE_MAX     8      // Maximum modules.
-#define INPUT_MODULE_MASK    0x07   // 3 bits for 8 modules.
-#define INPUT_MODULE_SHIFT   4      // Shift input number this amount to get a module number.
-#define INPUT_INPUT_MASK     0x0f   // Mask to get input number within a module.
+// Input nodes.
+#define INPUT_NODE_SIZE    16     // 16 inputs to each node.
+#define INPUT_NODE_MAX     8      // Maximum nodes.
+#define INPUT_NODE_MASK    0x07   // 3 bits for 8 nodes.
+#define INPUT_NODE_SHIFT   4      // Shift input number this amount to get a node number.
+#define INPUT_INPUT_MASK     0x0f   // Mask to get input number within a node.
 #define INPUT_OUTPUT_MAX     3      // Number of outputs each input can control.
 
 // InputData saved in EEPROM
 #define INPUT_BASE   OUTPUT_END                                 // EEPROM base of Input data.
 #define INPUT_SIZE   sizeof(InputData)                          // Size of InputData entry.
-#define INPUT_MAX    (INPUT_MODULE_SIZE * INPUT_MODULE_MAX)     // Maximum inputs (up to 128).
+#define INPUT_MAX    (INPUT_NODE_SIZE * INPUT_NODE_MAX)     // Maximum inputs (up to 128).
 #define INPUT_END    (INPUT_BASE + INPUT_SIZE * INPUT_MAX)      // End of Input EEPROM.
 
 // Mask for Input options
@@ -61,7 +61,7 @@ struct InputData
 
 /** Variables for working with an Input.
  */
-int        inputModules = 0;    // Bit map of Input modules present.
+int        inputNodes = 0;    // Bit map of Input nodes present.
 int        inputNumber  = 0;    // Current Input number.
 InputData  inputData;           // Data describing current Servo.
 
@@ -80,9 +80,9 @@ void loadInput(int aInput)
 
 /** Load an Input's data from EEPROM.
  */
-void loadInput(int aModule, int aInput)
+void loadInput(int aNode, int aInput)
 {
-  loadInput((aModule << INPUT_MODULE_SHIFT) + (aInput & INPUT_INPUT_MASK));
+  loadInput((aNode << INPUT_NODE_SHIFT) + (aInput & INPUT_INPUT_MASK));
 }
 
 
@@ -98,29 +98,29 @@ void saveInput()
 }
 
 
-/** Record the presence of an InputModule in the map.
+/** Record the presence of an InputNode in the map.
  */
-void setInputModulePresent(int aModule)
+void setInputNodePresent(int aNode)
 {
-  inputModules |= (1 << aModule); 
+  inputNodes |= (1 << aNode); 
 }
 
 
-/** Is an Input module present?
- *  Look for input's module in inputModules.
+/** Is an Input node present?
+ *  Look for input's node in inputNodes.
  */
-boolean isInputModule(int aModule)
+boolean isInputNode(int aNode)
 {
-  return (aModule < INPUT_MODULE_MAX) && (inputModules & (1 << aModule));
+  return (aNode < INPUT_NODE_MAX) && (inputNodes & (1 << aNode));
 }
 
 
 /** Is an Input present?
- *  Look for input's module in inputModules.
+ *  Look for input's node in inputNodes.
  */
 boolean isInput(int aInput)
 {
-  return isInputModule(aInput >> INPUT_MODULE_SHIFT);
+  return isInputNode(aInput >> INPUT_NODE_SHIFT);
 }
 
 #endif
