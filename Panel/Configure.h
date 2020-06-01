@@ -517,8 +517,7 @@ class Configure
   }
   
 
-  /** Process Module menu.
-   *  For both input and output.
+  /** Process Module menu for Input or Output.
    */
   void menuModule(boolean aIsInput)
   {
@@ -528,28 +527,30 @@ class Configure
 
     while (!finished)
     {
+      int adjust = 0;
+      
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
-        case BUTTON_UP:     module += 2;     // Use +1 to compensate for the -1 that the code below will do.
-                            if (module > (aIsInput ? INPUT_MODULE_MAX : OUTPUT_MODULE_MAX))
+        case BUTTON_UP:     adjust += 2;     // Use +1 to compensate for the -1 that the code below will do.
+        case BUTTON_DOWN:   adjust -= 1;
+                            for (int i = 0; i < (aIsInput ? INPUT_MODULE_MAX : OUTPUT_MODULE_MAX); i++)
                             {
-                              module = 1;
-                            }
-        case BUTTON_DOWN:   module -= 1;
-                            if (module < 0)
-                            {
-                              module = aIsInput ? INPUT_MODULE_MAX - 1 : OUTPUT_MODULE_MAX - 1;
+                              module = (module + adjust) & (aIsInput ? INPUT_MODULE_MASK : OUTPUT_MODULE_MASK);
+                              if (   (aIsInput)
+                                  && (isInputModule(module)))
+                              {
+                                loadInput(module);
+                                break;
+                              }
+                              else if (   (!aIsInput)
+                                       && (isOutputModule(module)))
+                              {
+                                loadOutput(module);
+                                break;
+                              }
                             }
                             lcd.printAt(LCD_COL_MODULE, LCD_ROW_TOP, HEX_CHARS[module]);
-                            if (aIsInput)
-                            {
-                              loadInput(module, pin);
-                            }
-                            else
-                            {
-                              loadOutput(module, pin);
-                            }
                             displayDetail();
                             break;
         case BUTTON_SELECT: break;
@@ -566,7 +567,7 @@ class Configure
     markField(LCD_COL_MODULE, LCD_ROW_TOP, 1, false);
   }
 
-  
+
   /** Process Pin menu.
    */
   void menuPin(boolean aIsInput)
@@ -715,7 +716,7 @@ class Configure
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
-        case BUTTON_UP:     index += 2;
+        case BUTTON_UP:     index += 2;     // Use +1 to compensate for the -1 that the code below will do.
                             if (index > INPUT_OUTPUT_MAX)
                             {
                               index = 1;
@@ -1127,33 +1128,36 @@ class Configure
 
     for (int module = 0; module < INPUT_MODULE_MAX; module++)
     {
-      for (int pin = 0; pin < INPUT_MODULE_SIZE; pin++)
+      if (isInputModule(module))
       {
-        loadInput(module, pin);
-
-        Serial.print(PGMT(M_INPUT));
-        Serial.print(CHAR_TAB);
-        printHex(module, 1);
-        Serial.print(CHAR_TAB);
-        printHex(pin, 1);
-        Serial.print(CHAR_TAB);
-        Serial.print(PGMT(M_INPUT_TYPES[(inputData.output[0] & INPUT_TOGGLE_MASK ? 1 : 0)]));
-        
-        for (int output = 0; output < INPUT_OUTPUT_MAX; output++)
+        for (int pin = 0; pin < INPUT_MODULE_SIZE; pin++)
         {
+          loadInput(module, pin);
+  
+          Serial.print(PGMT(M_INPUT));
           Serial.print(CHAR_TAB);
-          printHex(((inputData.output[output] & INPUT_OUTPUT_MASK) >> OUTPUT_MODULE_SHIFT) & OUTPUT_MODULE_MASK, 1);
-          Serial.print(CHAR_SPACE);
-          printHex(((inputData.output[output] & INPUT_OUTPUT_MASK)                       ) & OUTPUT_OUTPUT_MASK, 1);
-          if (   (output > 0)
-              && (inputData.output[output] & INPUT_DISABLED_MASK))
+          printHex(module, 1);
+          Serial.print(CHAR_TAB);
+          printHex(pin, 1);
+          Serial.print(CHAR_TAB);
+          Serial.print(PGMT(M_INPUT_TYPES[(inputData.output[0] & INPUT_TOGGLE_MASK ? 1 : 0)]));
+          
+          for (int output = 0; output < INPUT_OUTPUT_MAX; output++)
           {
-            Serial.print(CHAR_STAR);
+            Serial.print(CHAR_TAB);
+            printHex(((inputData.output[output] & INPUT_OUTPUT_MASK) >> OUTPUT_MODULE_SHIFT) & OUTPUT_MODULE_MASK, 1);
+            Serial.print(CHAR_SPACE);
+            printHex(((inputData.output[output] & INPUT_OUTPUT_MASK)                       ) & OUTPUT_OUTPUT_MASK, 1);
+            if (   (output > 0)
+                && (inputData.output[output] & INPUT_DISABLED_MASK))
+            {
+              Serial.print(CHAR_STAR);
+            }
           }
+          Serial.println();
         }
         Serial.println();
       }
-      Serial.println();
     }
   }
 
@@ -1164,26 +1168,29 @@ class Configure
     
     for (int module = 0; module < OUTPUT_MODULE_MAX; module++)
     {
-      for (int pin = 0; pin < OUTPUT_MODULE_SIZE; pin++)
+      if (isInputModule(module))
       {
-        loadOutput(module, pin);
-
-        Serial.print(PGMT(M_OUTPUT));
-        Serial.print(CHAR_TAB);
-        printHex(module, 1);
-        Serial.print(CHAR_TAB);
-        printHex(pin, 1);
-        Serial.print(CHAR_TAB);
-        Serial.print(PGMT(M_OUTPUT_TYPES[outputData.mode & OUTPUT_MODE_MASK]));
-        Serial.print(CHAR_TAB);
-        printHex(outputData.lo, 2);
-        Serial.print(CHAR_TAB);
-        printHex(outputData.hi, 2);
-        Serial.print(CHAR_TAB);
-        printHex(outputData.pace, 2);
+        for (int pin = 0; pin < OUTPUT_MODULE_SIZE; pin++)
+        {
+          loadOutput(module, pin);
+  
+          Serial.print(PGMT(M_OUTPUT));
+          Serial.print(CHAR_TAB);
+          printHex(module, 1);
+          Serial.print(CHAR_TAB);
+          printHex(pin, 1);
+          Serial.print(CHAR_TAB);
+          Serial.print(PGMT(M_OUTPUT_TYPES[outputData.mode & OUTPUT_MODE_MASK]));
+          Serial.print(CHAR_TAB);
+          printHex(outputData.lo, 2);
+          Serial.print(CHAR_TAB);
+          printHex(outputData.hi, 2);
+          Serial.print(CHAR_TAB);
+          printHex(outputData.pace, 2);
+          Serial.println();
+        }
         Serial.println();
       }
-      Serial.println();
     }
   }
 
