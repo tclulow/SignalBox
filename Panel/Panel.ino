@@ -112,23 +112,23 @@ void initInputs()
     {
       lcd.print(HEX_CHARS[node]);
       Wire.beginTransmission(systemData.i2cInputBaseID + node); 
-      Wire.write(INPUT_IODIRA);
-      Wire.write(INPUT_ALL_HIGH);
+      Wire.write(MCP_IODIRA);
+      Wire.write(MCP_ALL_HIGH);
       Wire.endTransmission();
 
       Wire.beginTransmission(systemData.i2cInputBaseID + node);  
-      Wire.write(INPUT_IODIRB);
-      Wire.write(INPUT_ALL_HIGH);
+      Wire.write(MCP_IODIRB);
+      Wire.write(MCP_ALL_HIGH);
       Wire.endTransmission();
 
       Wire.beginTransmission(systemData.i2cInputBaseID + node);
-      Wire.write (INPUT_GPPUA);
-      Wire.write(INPUT_ALL_HIGH);
+      Wire.write (MCP_GPPUA);
+      Wire.write(MCP_ALL_HIGH);
       Wire.endTransmission();  
        
       Wire.beginTransmission(systemData.i2cInputBaseID + node);
-      Wire.write(INPUT_GPPUB);
-      Wire.write(INPUT_ALL_HIGH);
+      Wire.write(MCP_GPPUB);
+      Wire.write(MCP_ALL_HIGH);
       Wire.endTransmission();  
     }
     else
@@ -230,7 +230,7 @@ long readInputNode(int node)
   long value = 0;
   
   Wire.beginTransmission(node);    
-  Wire.write(INPUT_GPIOA);
+  Wire.write(MCP_GPIOA);
   Wire.requestFrom(node, 2);  // read GPIO A & B
   value = Wire.read() << 8
         + Wire.read();
