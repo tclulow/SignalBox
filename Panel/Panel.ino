@@ -311,7 +311,7 @@ int sendOutputCommand()
   Serial.print("Output ");
   Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & 0xf]);
   Serial.print(" ");
-  Serial.print(HEX_CHARS[outputNumber & OUTPUT_OUTPUT_MASK & 0xf]);
+  Serial.print(HEX_CHARS[outputNumber & OUTPUT_PIN_MASK & 0xf]);
   Serial.print(" ");
   Serial.print((outputData.mode & OUTPUT_STATE) ? "Hi" : "Lo");
   Serial.println();
@@ -324,7 +324,7 @@ int sendOutputCommand()
   #endif
   
   Wire.beginTransmission(systemData.i2cOutputBaseID + (outputNumber << OUTPUT_NODE_SHIFT));
-  Wire.write(outputNumber & OUTPUT_OUTPUT_MASK);
+  Wire.write(outputNumber & OUTPUT_PIN_MASK);
   if (outputData.mode & OUTPUT_STATE)
   {
     Wire.write(outputData.hi);
