@@ -8,7 +8,7 @@
 #define OUTPUT_NODE_MAX    16     // Maximum nodes.
 #define OUTPUT_NODE_MASK   0x0f   // 4 bits for 16 nodes.
 #define OUTPUT_NODE_SHIFT  3      // Shift output number this amount to get a node number.
-#define OUTPUT_OUTPUT_MASK   0x07   // Mask to get output number within a node.
+#define OUTPUT_PIN_MASK    0x07   // Mask to get output pin within a node.
 
 // OutputData saved in EEPROM
 #define OUTPUT_BASE  SYSTEM_END                                 // EEPROM base of OutputData.
@@ -24,6 +24,7 @@
 #define OUTPUT_MODE_SIGNAL  0x02
 #define OUTPUT_MODE_LED     0x03
 #define OUTPUT_MODE_MAX     0x04
+
 
 /** Data describing an Output's operation.
  */
@@ -59,7 +60,7 @@ void loadOutput(int aOutput)
  */
 void loadOutput(int aNode, int aOutput)
 {
-  loadOutput((aNode << OUTPUT_NODE_SHIFT) + (aOutput & OUTPUT_OUTPUT_MASK));
+  loadOutput((aNode << OUTPUT_NODE_SHIFT) + (aOutput & OUTPUT_PIN_MASK));
 }
 
 

@@ -8,8 +8,7 @@
 #define INPUT_NODE_MAX     8      // Maximum nodes.
 #define INPUT_NODE_MASK    0x07   // 3 bits for 8 nodes.
 #define INPUT_NODE_SHIFT   4      // Shift input number this amount to get a node number.
-#define INPUT_INPUT_MASK     0x0f   // Mask to get input number within a node.
-#define INPUT_OUTPUT_MAX     3      // Number of outputs each input can control.
+#define INPUT_PIN_MASK     0x0f   // Mask to get input pin within a node.
 
 // InputData saved in EEPROM
 #define INPUT_BASE   OUTPUT_END                                 // EEPROM base of Input data.
@@ -18,10 +17,10 @@
 #define INPUT_END    (INPUT_BASE + INPUT_SIZE * INPUT_MAX)      // End of Input EEPROM.
 
 // Mask for Input options
+#define INPUT_OUTPUT_MAX       3        // Number of outputs each input can control.
 #define INPUT_TOGGLE_MASK      0x80     // The input is a toggle rather than a button.
 #define INPUT_DISABLED_MASK    0x80     // The Input's output is disabled.
 #define INPUT_OUTPUT_MASK      0x7f     // mask to get the Input's output without the flags above.
-
 
 // Mask for none or all bits.
 #define MCP_ALL_LOW   0x00
@@ -50,8 +49,6 @@
 #define MCP_GPIOB     0x13
 #define MCP_OLATA     0x14    // Output latches (connected to GPIO pins).
 #define MCP_OLATB     0x15
-
-
 
 
 /** Data describing an Input's operation.
@@ -85,7 +82,7 @@ void loadInput(int aInput)
  */
 void loadInput(int aNode, int aInput)
 {
-  loadInput((aNode << INPUT_NODE_SHIFT) + (aInput & INPUT_INPUT_MASK));
+  loadInput((aNode << INPUT_NODE_SHIFT) + (aInput & INPUT_PIN_MASK));
 }
 
 

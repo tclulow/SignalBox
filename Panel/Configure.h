@@ -44,14 +44,14 @@ class Configure
     {
       case TOP_SYSTEM: displaySystem();
                        break;
-      case TOP_INPUT:  pin &= INPUT_INPUT_MASK;
+      case TOP_INPUT:  pin &= INPUT_PIN_MASK;
                        if (!isInputNode(node))
                        {
                          node = nextNode(node, 1, INPUT_NODE_MAX);
                        }
                        displayNode();
                        break;
-      case TOP_OUTPUT: pin &= OUTPUT_OUTPUT_MASK;
+      case TOP_OUTPUT: pin &= OUTPUT_PIN_MASK;
                        if (!isOutputNode(node))
                        {
                          node = nextNode(node, 1, OUTPUT_NODE_MAX);
@@ -192,7 +192,7 @@ class Configure
     lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
     for (int output = 0; output < INPUT_OUTPUT_MAX; output++, col += LCD_COL_INPUT_STEP)
     {
-      displayInputOutput(col, inputData.output[output] & (output == 0 ? INPUT_OUTPUT_MASK : 0xff));
+      displayInputOutput(col, inputData.output[output] & (output == 0 ? INPUT_PIN_MASK : 0xff));
     }
   }
   
@@ -209,7 +209,7 @@ class Configure
     {
       lcd.setCursor(aCol, LCD_ROW_BOT);
       lcd.print(HEX_CHARS[(aOutput >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-      lcd.print(HEX_CHARS[(aOutput                       ) & OUTPUT_OUTPUT_MASK]);
+      lcd.print(HEX_CHARS[(aOutput                       ) & OUTPUT_PIN_MASK]);
     }
   }
 
@@ -227,7 +227,7 @@ class Configure
     else
     {
       lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[(inputData.output[aIndex] >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-      lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(inputData.output[aIndex]                       ) & OUTPUT_OUTPUT_MASK]);
+      lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(inputData.output[aIndex]                       ) & OUTPUT_PIN_MASK]);
     }
   }
   
@@ -654,7 +654,7 @@ class Configure
     
     // Retrieve Toggle/Button flag and clear from data.
     int isToggle = inputData.output[0] & INPUT_TOGGLE_MASK;
-    inputData.output[0] &= INPUT_OUTPUT_MASK;
+    inputData.output[0] &= INPUT_PIN_MASK;
 
     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
     
@@ -856,11 +856,11 @@ class Configure
                             else
                             {
                               // Increment the pin number within the Input's output at this index.
-                              int mask1 = (inputData.output[aIndex] & ~ OUTPUT_OUTPUT_MASK);
+                              int mask1 = (inputData.output[aIndex] & ~ OUTPUT_PIN_MASK);
                               int mask2 = (inputData.output[aIndex] + 1);
-                              int mask3 = mask2  & OUTPUT_OUTPUT_MASK;
+                              int mask3 = mask2  & OUTPUT_PIN_MASK;
                               int mask4 = mask1 | mask4;
-                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ OUTPUT_OUTPUT_MASK) | ((inputData.output[aIndex] + 1) & OUTPUT_OUTPUT_MASK);
+                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ OUTPUT_PIN_MASK) | ((inputData.output[aIndex] + 1) & OUTPUT_PIN_MASK);
                             }
                             displayInputEdit(aIndex);
                             break;
@@ -871,7 +871,7 @@ class Configure
                             else
                             {
                               // Decrement the pin number within the Input's output at this index.
-                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ OUTPUT_OUTPUT_MASK) | ((inputData.output[aIndex] - 1) & OUTPUT_OUTPUT_MASK);
+                              inputData.output[aIndex] = (inputData.output[aIndex] & ~ OUTPUT_PIN_MASK) | ((inputData.output[aIndex] - 1) & OUTPUT_PIN_MASK);
                             }
                             displayInputEdit(aIndex);
                             break;
@@ -1194,9 +1194,9 @@ class Configure
           for (int output = 0; output < INPUT_OUTPUT_MAX; output++)
           {
             Serial.print(CHAR_TAB);
-            printHex(((inputData.output[output] & INPUT_OUTPUT_MASK) >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK, 1);
+            printHex(((inputData.output[output] & INPUT_PIN_MASK) >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK, 1);
             Serial.print(CHAR_SPACE);
-            printHex(((inputData.output[output] & INPUT_OUTPUT_MASK)                       ) & OUTPUT_OUTPUT_MASK, 1);
+            printHex(((inputData.output[output] & INPUT_PIN_MASK)                       ) & OUTPUT_PIN_MASK, 1);
             if (   (output > 0)
                 && (inputData.output[output] & INPUT_DISABLED_MASK))
             {
