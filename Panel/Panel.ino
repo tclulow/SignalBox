@@ -86,7 +86,7 @@ void mapHardware()
     }
   }
 
-  delay(DELAY);
+  delay(DELAY_READ);
   // lcd.clear();
 }
 
@@ -136,7 +136,7 @@ void initInputs()
       lcd.print(CHAR_DOT);
     }
   }   
-  delay(DELAY);
+  delay(DELAY_READ);
   // lcd.clear();  
 }
 
@@ -184,7 +184,7 @@ void firstRun()
 
   configure.run();
   
-  delay(DELAY);
+  delay(DELAY_READ);
 }
 
 
@@ -320,7 +320,7 @@ int sendOutputCommand()
 //  lcd.printAt(LCD_COL_NODE,  LCD_ROW_OUTPUT, HEX_CHARS[outputNumber << OUTPUT_NODE_SHIFT]);
 //  lcd.printAt(LCD_COL_PIN,     LCD_ROW_OUTPUT, HEX_CHARS[outputNumber & OUTPUT_OUTPUT_MASK]);
 //  lcd.printAt(LCD_COL_STATE,   LCD_ROW_OUTPUT, ((outputData.mode & OUTPUT_STATE) ? M_HI : M_LO));
-//  delay(DELAY);
+//  delay(DELAY_READ);
   #endif
   
   Wire.beginTransmission(systemData.i2cOutputBaseID + (outputNumber << OUTPUT_NODE_SHIFT));
@@ -390,7 +390,7 @@ void setup()
     {
       lcd.printAt(LCD_COL_START, row++, M_NO_OUTPUTS);
     }
-    delay(DELAY);
+    delay(DELAY_READ);
   }
 
   // Announce ourselves.

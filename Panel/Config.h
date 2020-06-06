@@ -5,7 +5,10 @@
 
 #define DEBUG true
 
-#define DELAY 2000    // Delay in msecs when the LCD may need to be read by an operator.
+#define DELAY_READ           2000    // Delay in msecs when the LCD may need to be read by an operator.
+#define DELAY_BUTTON_WAIT      10    // Delay when waiting for button state to change.
+#define DELAY_BUTTON_DELAY    250    // Delay before auto-repeating button.
+#define DELAY_BUTTON_REPEAT    10    // Auto-repeat button when held continuously.
 
 #define DEFAULT_I2C_CONTROLLER_ID   0x10    // Controller ID.
 #define DEFAULT_I2C_INPUT_BASE_ID   0x20    // Input nodes' base ID.

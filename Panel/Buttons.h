@@ -66,7 +66,7 @@ void waitForButtonRelease()
 {
   while (readButton())
   {
-    delay(100);
+    delay(DELAY_BUTTON_WAIT);
   }
 }
 
@@ -77,12 +77,13 @@ void waitForButtonRelease()
 int waitForButton()
 {
   int button;
+  
+  waitForButtonRelease();
+
   while ((button = readButton()) == 0)
   {
-    delay(100);
+    delay(DELAY_BUTTON_WAIT);
   }
-
-  waitForButtonRelease();
 
   return button;
 }

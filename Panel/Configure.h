@@ -372,7 +372,7 @@ class Configure
                               {
                                 saveSystemData();
                                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
-                                delay(DELAY);
+                                delay(DELAY_READ);
                                 displayDetailSystem();
                                 finished = true;
                               }
@@ -393,7 +393,7 @@ class Configure
                               {
                                 loadSystemData();
                                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
-                                delay(DELAY);
+                                delay(DELAY_READ);
                                 displayDetailSystem();
                                 finished = true;
                               }
@@ -675,7 +675,7 @@ class Configure
                                 inputData.output[0] |= isToggle;
                                 saveInput();
                                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
-                                delay(DELAY);
+                                delay(DELAY_READ);
                                 displayDetailInput();
                                 finished = true;
                               }
@@ -695,7 +695,7 @@ class Configure
                               if (cancel())
                               {
                                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
-                                delay(DELAY);
+                                delay(DELAY_READ);
                                 displayDetailInput();
                                 finished = true;
                               }
@@ -933,7 +933,7 @@ class Configure
                                 outputData.mode = outputMode | (outputData.mode & ~OUTPUT_MODE_MASK);
                                 saveOutput();
                                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
-                                delay(DELAY);
+                                delay(DELAY_READ);
                                 displayDetailOutput();
                                 finished = true;
                               }
@@ -953,7 +953,7 @@ class Configure
                               if (cancel())
                               {
                                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
-                                delay(DELAY);
+                                delay(DELAY_READ);
                                 displayDetailOutput();
                                 finished = true;
                               }
@@ -994,15 +994,28 @@ class Configure
 
     while (index >= 0)
     {
+      int autoRepeat = DELAY_BUTTON_DELAY;
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
-        case BUTTON_UP:     params[index] += 1;
-                            lcd.printAtHex(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
+        case BUTTON_UP:     do
+                            {
+                              params[index] += 1;
+                              lcd.printAtHex(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
+                              delay(autoRepeat);
+                              autoRepeat = DELAY_BUTTON_REPEAT;
+                            }
+                            while (readButton() != 0);
                             changed = true;
                             break;
-        case BUTTON_DOWN:   params[index] -= 1;
-                            lcd.printAtHex(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
+        case BUTTON_DOWN:   do
+                            {
+                              params[index] -= 1;
+                              lcd.printAtHex(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
+                              delay(autoRepeat);
+                              autoRepeat = DELAY_BUTTON_REPEAT;
+                            }
+                            while (readButton() != 0);
                             changed = true;
                             break;
         case BUTTON_SELECT: break;
