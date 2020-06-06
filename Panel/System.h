@@ -4,7 +4,7 @@
 #define _System_h
 
 // System Data saved in EEPROM
-#define SYSTEM_BASE  0                            // EEPROM base of System data.
+#define SYSTEM_BASE  INPUT_END                    // EEPROM base of System data.
 #define SYSTEM_SIZE  sizeof(SystemData)           // Size of System Data.
 #define SYSTEM_END   (SYSTEM_BASE + SYSTEM_SIZE)  // End of System EEPROM.
 

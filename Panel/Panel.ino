@@ -8,9 +8,9 @@
 #include "Panel.h"
 #include "Messages.h"
 #include "Lcd.h"
-#include "System.h"
 #include "Output.h"
 #include "Input.h"
+#include "System.h"
 #include "Buttons.h"
 #include "Configure.h"
 
@@ -311,7 +311,7 @@ int sendOutputCommand()
 
 //  lcd.printAt(LCD_COL_OUTPUT,  LCD_ROW_OUTPUT, M_OUTPUT);
 //  lcd.printAt(LCD_COL_NODE,  LCD_ROW_OUTPUT, HEX_CHARS[outputNumber << OUTPUT_NODE_SHIFT]);
-//  lcd.printAt(LCD_COL_PIN,     LCD_ROW_OUTPUT, HEX_CHARS[outputNumber & OUTPUT_OUTPUT_MASK]);
+//  lcd.printAt(LCD_COL_PIN,     LCD_ROW_OUTPUT, HEX_CHARS[outputNumber & OUTPUT_PIN_MASK]);
 //  lcd.printAt(LCD_COL_STATE,   LCD_ROW_OUTPUT, ((outputData.mode & OUTPUT_STATE) ? M_HI : M_LO));
 //  delay(DELAY_READ);
   #endif
