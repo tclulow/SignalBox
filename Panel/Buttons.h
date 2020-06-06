@@ -10,11 +10,49 @@
 
 // Button values.
 #define BUTTON_NONE   0
-#define BUTTON_RIGHT  1
-#define BUTTON_UP     2
+#define BUTTON_SELECT 1
+#define BUTTON_LEFT   2
 #define BUTTON_DOWN   3
-#define BUTTON_LEFT   4
-#define BUTTON_SELECT 5
+#define BUTTON_UP     4
+#define BUTTON_RIGHT  5
+#define BUTTON_LIMIT  5
+
+
+
+/** Calibrate the analog buttons.
+ *  Each marker is half-way between the values the buttons return.
+ */
+void calibrateButtons()
+{
+  int previous = 1024;
+  int value    = 0;
+  
+  lcd.clear();
+  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_CALIBRATE);
+  lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_PRESS);
+
+  // Marker for last button.
+  systemData.buttons[BUTTON_LIMIT] = 0;
+
+  // Request values for all buttons in turn.
+  for (int button = 0; button < BUTTON_LIMIT; button++)
+  {
+    lcd.clearRow(LCD_COL_CALIBRATE, LCD_ROW_BOT);
+    lcd.printAt(LCD_COL_CALIBRATE, LCD_ROW_BOT, M_BUTTONS[button]);
+
+    // Record average between this button and the previous.
+    while ((value = analogRead(0)) > 1000);
+    systemData.buttons[button] = (previous + value) / 2;
+    previous = value;
+
+    // Wait for button to be released.
+    while (analogRead(0) < 1000);
+  }
+
+  lcd.clear();
+}
+
+
 
 
 /** Read the input button pressed.
@@ -34,29 +72,17 @@ int readButton()
     Serial.println(value);
   }
   #endif
-  
-  if (value < 60) 
+
+  for (int button = 0; button < BUTTON_LIMIT; button++)
   {
-    return BUTTON_RIGHT;
-  }
-  else if (value < 200)
-  {
-    return BUTTON_UP;
-  }
-  else if (value < 400)
-  {
-    return BUTTON_DOWN;
-  }
-  else if (value < 600)
-  {
-    return BUTTON_LEFT;
-  }
-  else if (value < 800)
-  {
-    return BUTTON_SELECT;
+    if (value >= systemData.buttons[button])
+    {
+      return button;
+    }
   }
 
-  return BUTTON_NONE;
+  // Shouldn't get here, but return end case.
+  return BUTTON_RIGHT;
 }
 
 

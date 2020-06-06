@@ -17,7 +17,15 @@ const char M_CANCEL[]          PROGMEM = "Cancel?  Sel=Yes";
 const char M_SAVED[]           PROGMEM = "Change saved    ";
 const char M_CANCELLED[]       PROGMEM = "Change cancelled";
 
-const char M_SCAN_NODES[]    PROGMEM = "Nodes";
+const char M_CALIBRATE[]       PROGMEM = "Calibrate button";
+const char M_PRESS[]           PROGMEM = "Press";
+const char M_SELECT[]          PROGMEM = "Select";
+const char M_LEFT[]            PROGMEM = "Left";
+const char M_DOWN[]            PROGMEM = "Down";
+const char M_UP[]              PROGMEM = "Up";
+const char M_RIGHT[]           PROGMEM = "Right";
+
+const char M_SCAN_NODES[]      PROGMEM = "Nodes";
 const char M_NO_INPUTS[]       PROGMEM = "No input nodes";
 const char M_NO_OUTPUTS[]      PROGMEM = "No output nodes";
 const char M_INIT_INPUTS[]     PROGMEM = "Init inputs";
@@ -72,6 +80,7 @@ const char* const M_I2C_PROMPTS[]    = { M_ID_CONSOLE, M_ID_INPUT, M_ID_OUTPUT }
 const char* const M_OUTPUT_PROMPTS[] = { M_LO, M_HI, M_PACE };
 const char* const M_INPUT_TYPES[]    = { M_BUTTON, M_TOGGLE };
 const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED };
+const char* const M_BUTTONS[]        = { M_SELECT, M_LEFT, M_DOWN, M_UP, M_RIGHT };
 
 
 /** Gets a PROGMEM message and copies it to a buffer

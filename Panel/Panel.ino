@@ -1,21 +1,4 @@
-/** 
- *  Control panel.
- *  
- *  LCD constants and functions.
- *
- * The circuit:
- * LCD RS pin to digital pin 12m
- * LCD Enable pin to digital pin 11
- * LCD D4 pin to digital pin 5
- * LCD D5 pin to digital pin 4
- * LCD D6 pin to digital pin 3
- * LCD D7 pin to digital pin 2
- * LCD R/W pin to ground
- * LCD VSS pin to ground
- * LCD VCC pin to 5V
- * 10K resistor:
- * ends to +5V and ground
- * wiper to LCD VO pin (pin 3)
+/** Control panel.
  */
 
 #include <EEPROM.h>
@@ -155,6 +138,16 @@ void firstRun()
   systemData.i2cControllerID = DEFAULT_I2C_CONTROLLER_ID;
   systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
   systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
+
+  #if DEBUG
+  systemData.buttons[0] = 840;    // Suitable values that should work.
+  systemData.buttons[1] = 540;
+  systemData.buttons[2] = 340;
+  systemData.buttons[3] = 180;
+  systemData.buttons[4] =  55;
+  #else
+  calibrateButtons();
+  #endif
 
   saveSystemData();
 

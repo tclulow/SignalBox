@@ -26,9 +26,9 @@ class SystemData
   uint8_t i2cOutputBaseID = 0;
   uint8_t filler1         = 0;    // Filler for word boundary.
 
-  //int   buttons[5];             // Configuration of analog buttons.
+  int     buttons[6];             // Configuration of analog buttons.
   
-  uint8_t rfu[20];                // RFU - object is 32 bytes.
+  char    rfu[8]          = "RFU rfu";                 // RFU. 32 bytes in all.
 };
 
 

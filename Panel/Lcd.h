@@ -1,4 +1,19 @@
 /** LCD extension of LiquidCrystal
+ *  
+ * The circuit:
+ * LCD RS pin to digital pin 12m
+ * LCD Enable pin to digital pin 11
+ * LCD D4 pin to digital pin 5
+ * LCD D5 pin to digital pin 4
+ * LCD D6 pin to digital pin 3
+ * LCD D7 pin to digital pin 2
+ * LCD R/W pin to ground
+ * LCD VSS pin to ground
+ * LCD VCC pin to 5V
+ * 10K resistor:
+ * ends to +5V and ground
+ * wiper to LCD VO pin (pin 3)
+ * 
  */
 #ifndef _LCD_h
 #define _LCD_h
@@ -7,16 +22,17 @@
 #include <LiquidCrystal.h>
 
 
-#define LCD_COLS 16         // LCD is 16 columns
-#define LCD_ROWS  2         // by 2 rows.
+#define LCD_COLS             16   // LCD is 16 columns
+#define LCD_ROWS              2   // by 2 rows.
 
-#define LCD_ROW_TOP     0   // Rows for LCD state messages.
-#define LCD_ROW_BOT     1
+#define LCD_ROW_TOP           0   // Rows for LCD state messages.
+#define LCD_ROW_BOT           1
 
 #define LCD_COL_START         0   // Cols for LCD state messages.
 #define LCD_COL_MARK          6   // Marker when changing top-level option.
 #define LCD_COL_VERSION       8   // Where to put version number/date.
-#define LCD_COL_NODE       11   // Node number.
+#define LCD_COL_CALIBRATE     6   // Button to press.
+#define LCD_COL_NODE         11   // Node number.
 #define LCD_COL_PIN          14   // Pin number.
 // #define LCD_COL_STATE        14   // State of output.
 
