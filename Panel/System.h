@@ -24,7 +24,7 @@ class SystemData
   uint8_t i2cControllerID = 0;    // I2C node IDs.
   uint8_t i2cInputBaseID  = 0;
   uint8_t i2cOutputBaseID = 0;
-  uint8_t filler1         = 0;    // Filler for word boundary.
+  int8_t  debugLevel      = 0;    // Debug messages.
 
   int     buttons[6];             // Configuration of analog buttons.
   

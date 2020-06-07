@@ -10,7 +10,6 @@
 const char M_SOFTWARE[]        PROGMEM = "Panel";
 const char M_VERSION[]         PROGMEM = "v0.1";
 const char M_VERSION_DATE[]    PROGMEM = "May 2020";
-//const char M_TODO[]            PROGMEM = "TODO - detail";
 
 const char M_CONFIRM[]         PROGMEM = "Confirm? Sel=Yes";
 const char M_CANCEL[]          PROGMEM = "Cancel?  Sel=Yes";
@@ -40,13 +39,19 @@ const char M_SYSTEM[]          PROGMEM = "System";
 const char M_OUTPUT[]          PROGMEM = "Output";
 const char M_INPUT[]           PROGMEM = "Input ";
 const char M_REPORT[]          PROGMEM = "Report";
+const char M_ALL[]             PROGMEM = "All   ";
 
 const char M_SYS_I2C[]         PROGMEM = "i2cID ";
-const char M_ALL[]             PROGMEM = "All   ";
+const char M_DEBUG[]           PROGMEM = "Debug ";
 
 const char M_ID_CONSOLE[]      PROGMEM = "Con";
 const char M_ID_INPUT[]        PROGMEM = "Inp";
 const char M_ID_OUTPUT[]       PROGMEM = "Out";
+
+const char M_OFF[]             PROGMEM = "Off  ";
+const char M_LOW[]             PROGMEM = "Low  ";
+const char M_HIGH[]            PROGMEM = "High ";
+const char M_PAUSE[]           PROGMEM = "Pause";
 
 const char M_MOD[]             PROGMEM = "Mod";
 const char M_PIN[]             PROGMEM = "Pin";
@@ -72,15 +77,17 @@ const char M_HEADER_OUTPUT[]   PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd"
 
 
 // Array of (pointers to) certain messages.
+const char* const M_BUTTONS[]        = { M_SELECT, M_LEFT, M_DOWN, M_UP, M_RIGHT };
 const char* const M_TOP_MENU[]       = { M_SYSTEM, M_INPUT, M_OUTPUT, M_REPORT };
-const char* const M_SYS_TYPES[]      = { M_SYS_I2C };
+const char* const M_SYS_TYPES[]      = { M_SYS_I2C, M_DEBUG };
 const char* const M_REPORT_TYPES[]   = { M_ALL, M_SYSTEM, M_INPUT, M_OUTPUT };
-
 const char* const M_I2C_PROMPTS[]    = { M_ID_CONSOLE, M_ID_INPUT, M_ID_OUTPUT };
+const char* const M_DEBUG_PROMPTS[]  = { M_OFF, M_LOW, M_HIGH, M_PAUSE };
+
 const char* const M_OUTPUT_PROMPTS[] = { M_LO, M_HI, M_PACE };
 const char* const M_INPUT_TYPES[]    = { M_BUTTON, M_TOGGLE };
 const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED };
-const char* const M_BUTTONS[]        = { M_SELECT, M_LEFT, M_DOWN, M_UP, M_RIGHT };
+
 
 
 /** Gets a PROGMEM message and copies it to a buffer

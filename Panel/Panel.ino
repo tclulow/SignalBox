@@ -5,13 +5,14 @@
 #include <Wire.h>
 
 #include "Config.h"
-#include "Panel.h"
 #include "Messages.h"
+#include "Panel.h"
 #include "Lcd.h"
 #include "Output.h"
 #include "Input.h"
 #include "System.h"
 #include "Buttons.h"
+#include "Debug.h"
 #include "Configure.h"
 
 
@@ -70,7 +71,6 @@ void mapHardware()
   }
 
   delay(DELAY_READ);
-  // lcd.clear();
 }
 
 
@@ -120,7 +120,6 @@ void initInputs()
     }
   }   
   delay(DELAY_READ);
-  // lcd.clear();  
 }
 
 
@@ -130,6 +129,7 @@ void firstRun()
 {
   lcd.clear();
   lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_FIRST_RUN);
+  delay(DELAY_READ);
 
   // Initialise SystemData.
   systemData.magic   = MAGIC_NUMBER;
@@ -262,12 +262,14 @@ void processInput(int aNode, int aPin, int aState)
   Serial.println();
   #endif
 
-  lcd.clear();
-  lcd.printAt(LCD_COL_START,  LCD_ROW_TOP, M_INPUT);
-  lcd.printAt(LCD_COL_STATE,  LCD_ROW_TOP, (aState ? M_HI : M_LO));
-  lcd.printAt(LCD_COL_NODE,   LCD_ROW_TOP, HEX_CHARS[aNode]);
-  lcd.printAt(LCD_COL_PIN,    LCD_ROW_TOP, HEX_CHARS[aPin]);
-  delay(DELAY_READ);
+  if (debugEnabled(DEBUG_LOW))
+  {
+    lcd.clear();
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT);
+    lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (aState ? M_HI : M_LO));
+    lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[aNode]);
+    lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[aPin]);
+  }
 
   loadInput(aNode, aPin);
   boolean isToggle = inputData.output[0] & INPUT_TOGGLE_MASK;
@@ -318,20 +320,23 @@ int sendOutputCommand()
   #if DEBUG
   // Report output
   Serial.print("Output ");
+  Serial.print((outputData.mode & OUTPUT_STATE) ? "Hi" : "Lo");
+  Serial.print(" ");
   Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
   Serial.print(" ");
   Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
-  Serial.print(" ");
-  Serial.print((outputData.mode & OUTPUT_STATE) ? "Hi" : "Lo");
   Serial.println();
   #endif
 
-  lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-  lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT);
-  lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, ((outputData.mode & OUTPUT_STATE) ? M_HI : M_LO));
-  lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-  lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
-  delay(DELAY_READ);
+  if (debugEnabled(DEBUG_LOW))
+  {
+    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+    lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT);
+    lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, ((outputData.mode & OUTPUT_STATE) ? M_HI : M_LO));
+    lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
+    lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
+    debugPause();
+  }
   
   Wire.beginTransmission(systemData.i2cOutputBaseID + (outputNumber << OUTPUT_NODE_SHIFT));
   Wire.write(outputNumber & OUTPUT_PIN_MASK);
