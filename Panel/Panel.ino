@@ -176,8 +176,6 @@ void firstRun()
 //  }
 
   configure.run();
-  
-  delay(DELAY_READ);
 }
 
 
@@ -186,15 +184,21 @@ void firstRun()
  */
 void scanInputs()
 { 
+  #if DEBUG
+  processInput(3, 4, 0x00);
+  processInput(3, 4, 0x80);
+  processInput(3, 5, 0x00);
+  processInput(3, 5, 0x80);
+  #endif 
+
   // Scan all the nodes. 
   for (int node = 0; node < INPUT_NODE_MAX; node++)
   {
     if (isInputNode(node))                                        
     {
       // Read current state of pins and if successful and there's been a change
-      int pins = readInputNode(systemData.i2cInputBaseID + node);
-      if (   (pins >= 0)
-          && (pins != currentInputState[node]))
+      int pins = readInputNode(node);
+      if (pins != currentInputState[node])
       {
         // Process all the changed pins.
         for (int pin = 0, mask = 1; pin < INPUT_NODE_SIZE; pin++, mask <<= 1)
@@ -218,25 +222,25 @@ void scanInputs()
  *  Return the state of the pins, 16 bits, both ports.
  *  Return negative number if there's a communication error.
  */
-long readInputNode(int node)
+int readInputNode(int node)
 {
-  long value = 0;
+  int value = 0;
   
-  Wire.beginTransmission(node);    
+  Wire.beginTransmission(systemData.i2cInputBaseID + node);    
   Wire.write(MCP_GPIOA);
-  Wire.requestFrom(node, 2);  // read GPIO A & B
+  Wire.requestFrom(node, 2);          // read GPIO A & B
   value = Wire.read() << 8
         + Wire.read();
   if (Wire.endTransmission())
   {
-    value = -1;   // Pretend all inputs high if comms error.
+    value = currentInputState[node];  // Pretend no change if comms error.
   }
 
   #ifdef FAKE_NODE
-  if ((millis() & 0x3ff) == 0)    // 1024 millisecs ~= 1 second.
-  {
-    value = millis() & 0xffff;
-  }
+//  if ((millis() & 0x3ff) == 0)        // 1024 millisecs ~= 1 second.
+//  {
+//    value = millis() & 0xffff;
+//  }
   #endif
   
   return value;
@@ -245,50 +249,62 @@ long readInputNode(int node)
 
 /** Process the changed input.
  */
-void processInput(int node, int pin, int state)
+void processInput(int aNode, int aPin, int aState)
 {
   #if DEBUG
   // Report the input
   Serial.print("Input  ");
-  Serial.print(HEX_CHARS[node & 0xf]);
+  Serial.print(aState ? "Hi" : "Lo");
   Serial.print(" ");
-  Serial.print(HEX_CHARS[pin & 0xf]);
+  Serial.print(HEX_CHARS[aNode & 0xf]);
   Serial.print(" ");
-  Serial.print(state ? "Hi" : "Lo");
+  Serial.print(HEX_CHARS[aPin & 0xf]);
   Serial.println();
-
-//  lcd.clear();
-//  lcd.printAt(LCD_COL_INPUT,  LCD_ROW_INPUT, M_INPUT);
-//  lcd.printAt(LCD_COL_NODE, LCD_ROW_INPUT, HEX_CHARS[node]);
-//  lcd.printAt(LCD_COL_PIN,    LCD_ROW_INPUT, HEX_CHARS[pin]);
-//  lcd.printAt(LCD_COL_STATE,  LCD_ROW_INPUT, (state ? M_HI : M_LO));
   #endif
-  
-  loadInput(node, pin);
-  int output = inputData.output[0] & INPUT_OUTPUT_MASK;
-  loadOutput(output);
-  
-  if (inputData.output[0] & INPUT_TOGGLE_MASK)
+
+  lcd.clear();
+  lcd.printAt(LCD_COL_START,  LCD_ROW_TOP, M_INPUT);
+  lcd.printAt(LCD_COL_STATE,  LCD_ROW_TOP, (aState ? M_HI : M_LO));
+  lcd.printAt(LCD_COL_NODE,   LCD_ROW_TOP, HEX_CHARS[aNode]);
+  lcd.printAt(LCD_COL_PIN,    LCD_ROW_TOP, HEX_CHARS[aPin]);
+  delay(DELAY_READ);
+
+  loadInput(aNode, aPin);
+  boolean isToggle = inputData.output[0] & INPUT_TOGGLE_MASK;
+
+  // Process all the Input's outputs (if they're not disabled.
+  for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
   {
-    if (state)
+    if (   (index == 0)
+        || (!(inputData.output[index] & INPUT_DISABLED_MASK)))
     {
-      outputData.mode |= OUTPUT_STATE;    // Set output state
-    }
-    else
-    {
-      outputData.mode &= ~OUTPUT_STATE;   // Clear output state
-    }
-    
-    sendOutputCommand();                  // Send change state to match that of the input.
-    saveOutput();
-  }
-  else  // button input
-  {
-    if (state)      // Send change state when button pressed, not when released.
-    {
-      outputData.mode ^= OUTPUT_STATE;    // Toggle the state.
-      sendOutputCommand();                // Send to Output.
-      saveOutput();
+      int output = inputData.output[index] & INPUT_OUTPUT_MASK;
+      if (isToggle)
+      {
+        loadOutput(output);
+
+        if (aState)
+        {
+          outputData.mode |= OUTPUT_STATE;    // Set output state
+        }
+        else
+        {
+          outputData.mode &= ~OUTPUT_STATE;   // Clear output state
+        }
+        
+        sendOutputCommand();                  // Send change state to match that of the input.
+        saveOutput();
+      }
+      else  // button input
+      {
+        if (!aState)      // Send change state when button pressed (goes low), not when released (goes high).
+        {
+          loadOutput(output);
+          outputData.mode ^= OUTPUT_STATE;    // Toggle the state.
+          sendOutputCommand();                // Send to Output.
+          saveOutput();
+        }
+      }
     }
   }
 }
@@ -302,19 +318,20 @@ int sendOutputCommand()
   #if DEBUG
   // Report output
   Serial.print("Output ");
-  Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & 0xf]);
+  Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
   Serial.print(" ");
-  Serial.print(HEX_CHARS[outputNumber & OUTPUT_PIN_MASK & 0xf]);
+  Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
   Serial.print(" ");
   Serial.print((outputData.mode & OUTPUT_STATE) ? "Hi" : "Lo");
   Serial.println();
-
-//  lcd.printAt(LCD_COL_OUTPUT,  LCD_ROW_OUTPUT, M_OUTPUT);
-//  lcd.printAt(LCD_COL_NODE,  LCD_ROW_OUTPUT, HEX_CHARS[outputNumber << OUTPUT_NODE_SHIFT]);
-//  lcd.printAt(LCD_COL_PIN,     LCD_ROW_OUTPUT, HEX_CHARS[outputNumber & OUTPUT_PIN_MASK]);
-//  lcd.printAt(LCD_COL_STATE,   LCD_ROW_OUTPUT, ((outputData.mode & OUTPUT_STATE) ? M_HI : M_LO));
-//  delay(DELAY_READ);
   #endif
+
+  lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+  lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT);
+  lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, ((outputData.mode & OUTPUT_STATE) ? M_HI : M_LO));
+  lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
+  lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
+  delay(DELAY_READ);
   
   Wire.beginTransmission(systemData.i2cOutputBaseID + (outputNumber << OUTPUT_NODE_SHIFT));
   Wire.write(outputNumber & OUTPUT_PIN_MASK);
@@ -354,6 +371,49 @@ void setup()
   Serial.print(INPUT_END, HEX);
   Serial.println();
   #endif
+
+  #if DEBUG
+  loadInput(3, 4);
+  inputData.output[0] = (0x1 << OUTPUT_NODE_SHIFT) | 7 | INPUT_TOGGLE_MASK; 
+  inputData.output[1] = (0xc << OUTPUT_NODE_SHIFT) | 5;
+  inputData.output[2] = INPUT_DISABLED_MASK;
+  saveInput();
+
+  loadInput(3, 5);
+  inputData.output[0] = (0x9 << OUTPUT_NODE_SHIFT) | 3; 
+  inputData.output[1] = INPUT_DISABLED_MASK;
+  inputData.output[2] = (0x6 << OUTPUT_NODE_SHIFT) | 1;
+  saveInput();
+
+  loadOutput(0x1, 7);
+  outputData.mode = OUTPUT_MODE_NONE;
+  outputData.lo   = 0x17;
+  outputData.hi   = 0x22;
+  outputData.pace = 0x33;
+  saveOutput();
+
+  loadOutput(0xc, 5);
+  outputData.mode = OUTPUT_MODE_SERVO;
+  outputData.lo   = 0xc5;
+  outputData.hi   = 0x44;
+  outputData.pace = 0x55;
+  saveOutput();
+
+  loadOutput(0x9, 3);
+  outputData.mode = OUTPUT_MODE_SIGNAL;
+  outputData.lo   = 0x93;
+  outputData.hi   = 0x66;
+  outputData.pace = 0x77;
+  saveOutput();
+  
+  loadOutput(0x6, 1);
+  outputData.mode = OUTPUT_MODE_LED;
+  outputData.lo   = 0x61;
+  outputData.hi   = 0x88;
+  outputData.pace = 0xaa;
+  saveOutput();
+  #endif
+
 
   // Initialise subsystems.
   lcd.begin(LCD_COLS, LCD_ROWS);            // LCD panel.
