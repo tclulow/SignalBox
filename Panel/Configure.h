@@ -336,6 +336,9 @@ class Configure
                             break;
       }
     }
+    
+    lcd.clear();
+    waitForButtonRelease();
   }
 
 
