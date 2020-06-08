@@ -32,7 +32,7 @@ class Configure
   int topMenu = 0;      // Top menu being shown
   int sysMenu = 0;      // System menu being shown.
   int repMenu = 0;      // Report menu being shown.
-  int node  = 0;      // The node we're configuring.
+  int node    = 0;      // The node we're configuring.
   int pin     = 0;      // The pin we're configuring.
   
 

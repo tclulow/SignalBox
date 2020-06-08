@@ -18,13 +18,17 @@
 #define OUTPUT_END   (OUTPUT_BASE + OUTPUT_SIZE * OUTPUT_MAX)   // End of OutputData EEPROM.
 
 // Mask for OUTPUT options
-#define OUTPUT_STATE        0x80
-#define OUTPUT_MODE_MASK    0x0f
-#define OUTPUT_MODE_NONE    0x00
-#define OUTPUT_MODE_SERVO   0x01
-#define OUTPUT_MODE_SIGNAL  0x02
-#define OUTPUT_MODE_LED     0x03
-#define OUTPUT_MODE_MAX     0x04
+#define OUTPUT_STATE        0x80    // On or off, switched or not switched, 0 = lo, 1 = hi.
+#define OUTPUT_MODE_MASK    0x0f    // Only four bits are used for the type of output.
+#define OUTPUT_MODE_NONE    0x00    // Output not configured.
+#define OUTPUT_MODE_SERVO   0x01    // Output is a servo.
+#define OUTPUT_MODE_SIGNAL  0x02    // Output is a signal.
+#define OUTPUT_MODE_LED     0x03    // Output is a LED or other IO device.
+#define OUTPUT_MODE_MAX     0x04    // Limit of output types.
+
+#define OUTPUT_PACE_SHIFT   3       // Pace is shifted by this amount (multiplied by 8).
+#define OUTPUT_PACE_OFFSET  4       // Pace is offset by this amount (add 4).
+
 
 /** Data describing an Output's operation.
  */

@@ -5,6 +5,7 @@
 #include <Wire.h>
 
 #include "Config.h"
+#include "EzyBus.h"
 #include "Messages.h"
 #include "Panel.h"
 #include "Lcd.h"
@@ -170,31 +171,58 @@ void firstRun()
 
   saveSystemData();
 
-//  // Inialise all inputs to have one output with the same number.
-//  lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_DEFAULT_INPUTS);
-//  for (int input = 0; input < INPUT_MAX; input++)
-//  {
-//    loadInput(input);
-//    inputData.output[0] = (((input % 2) == 0) ? INPUT_TOGGLE_MASK : 0) | input;
-//    inputData.output[1] = INPUT_DISABLED_MASK; 
-//    inputData.output[2] = INPUT_DISABLED_MASK; 
-//    saveInput();
-//  }
-//
-//  // Inialise all outputs.
-//  lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-//  lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_DEFAULT_OUTPUTS);
-//  for (int output = 0; output < OUTPUT_MAX; output++)
-//  {
-//    loadOutput(output);
-//    outputData.mode  = output % OUTPUT_MODE_MAX;
-//    outputData.lo    = output;
-//    outputData.hi    = 180;
-//    outputData.pace  = 61;
-//    saveOutput();
-//  }
+  // Decide if EzyBus conversion required.
+  if (EEPROM.read(EZY_MAGIC_ADDR) == EZY_MAGIC)
+  {
+    lcd.clear();
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_FOUND);
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_EZY_UPDATE);
 
+    while (waitForButton() != BUTTON_SELECT)
+    {
+      lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_EZY_MANDATORY);
+      delay(DELAY_READ);
+      lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_EZY_UPDATE);
+    }
+      
+    lcd.clear();
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_UPDATING);
+    convertEzyBus();
+    
+    delay(DELAY_READ);
+  }
+
+  // Run configuration menus.
   configure.run();
+}
+
+
+/** Convert EzyBus configuration.
+ */
+void convertEzyBus()
+{
+  int input = 0;
+  lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+  
+  for (int node = 0; node < OUTPUT_NODE_MAX; node++)
+  {
+    lcd.print(HEX_CHARS[node]);
+    for (int pin = 0; pin < OUTPUT_NODE_SIZE; pin++)
+    {
+      // Convert the output.
+      loadOutput(node, pin);
+      outputData.mode += 1;                   // Convert Servo/Signal/LED
+      outputData.pace >>= OUTPUT_PACE_SHIFT;  // Pace was in steps of 4 (2-bits), drop one bit
+      saveOutput();
+
+      // Create an input.
+      loadInput(input++);
+      inputData.output[0] = INPUT_TOGGLE_MASK | (node << OUTPUT_NODE_SHIFT) | pin;
+      inputData.output[1] = INPUT_DISABLED_MASK;
+      inputData.output[2] = INPUT_DISABLED_MASK;
+      saveInput();
+    }
+  }
 }
 
 

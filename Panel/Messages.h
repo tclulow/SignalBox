@@ -24,6 +24,11 @@ const char M_DOWN[]            PROGMEM = "Down";
 const char M_UP[]              PROGMEM = "Up";
 const char M_RIGHT[]           PROGMEM = "Right";
 
+const char M_EZY_FOUND[]       PROGMEM = "EzyBus  detected";
+const char M_EZY_UPDATE[]      PROGMEM = "Update?  Sel=Yes";
+const char M_EZY_UPDATING[]    PROGMEM = "EzyBus  updating";
+const char M_EZY_MANDATORY[]   PROGMEM = "Update mandatory";
+
 const char M_SCAN_NODES[]      PROGMEM = "Nodes";
 const char M_NO_INPUTS[]       PROGMEM = "No input nodes";
 const char M_NO_OUTPUTS[]      PROGMEM = "No output nodes";
