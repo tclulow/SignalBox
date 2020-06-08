@@ -69,59 +69,35 @@ InputData  inputData;         // Data describing current Servo.
 
 /** Load an Input's data from EEPROM.
  */
-void loadInput(int aInput)
-{
-  if (aInput < INPUT_MAX)
-  {
-    inputNumber = aInput;
-    EEPROM.get(INPUT_BASE + inputNumber * INPUT_SIZE, inputData);
-  }
-}
+void loadInput(int aInput);
 
 
 /** Load an Input's data from EEPROM.
  */
-void loadInput(int aNode, int aInput)
-{
-  loadInput((aNode << INPUT_NODE_SHIFT) + (aInput & INPUT_PIN_MASK));
-}
+void loadInput(int aNode, int aInput);
 
 
 /** Save an Input's data to EEPROM.
  *  Data in inputNumber and inputData.
  */
-void saveInput()
-{
-  if (inputNumber < INPUT_MAX)
-  {
-    EEPROM.put(INPUT_BASE + inputNumber * INPUT_SIZE, inputData);
-  }
-}
+void saveInput();
 
 
 /** Record the presence of an InputNode in the map.
  */
-void setInputNodePresent(int aNode)
-{
-  inputNodes |= (1 << aNode); 
-}
+void setInputNodePresent(int aNode);
 
 
 /** Is an Input node present?
  *  Look for input's node in inputNodes.
  */
-boolean isInputNode(int aNode)
-{
-  return (aNode < INPUT_NODE_MAX) && (inputNodes & (1 << aNode));
-}
+boolean isInputNode(int aNode);
 
 
 /** Is an Input present?
  *  Look for input's node in inputNodes.
  */
-boolean isInput(int aInput)
-{
-  return isInputNode(aInput >> INPUT_NODE_SHIFT);
-}
+boolean isInput(int aInput);
+
 
 #endif
