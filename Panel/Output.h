@@ -26,6 +26,7 @@
 #define OUTPUT_MODE_LED     0x03    // Output is a LED or other IO device.
 #define OUTPUT_MODE_MAX     0x04    // Limit of output types.
 
+#define OUTPUT_PACE_MASK    0x0f    // Pace is in right-most nibble of output.pace.
 #define OUTPUT_PACE_SHIFT   3       // Pace is shifted by this amount (multiplied by 8).
 #define OUTPUT_PACE_OFFSET  4       // Pace is offset by this amount (add 4).
 

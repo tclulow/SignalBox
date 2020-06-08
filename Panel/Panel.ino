@@ -372,6 +372,13 @@ int sendOutputCommand()
   Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
   Serial.print(" ");
   Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
+  Serial.print(" ");
+  Serial.print(((outputData.mode & OUTPUT_STATE) ? outputData.hi : outputData.lo), HEX);
+  Serial.print(" ");
+  Serial.print(HEX_CHARS[outputData.pace & OUTPUT_PACE_MASK]);
+  Serial.print("(");
+  Serial.print(((outputData.pace & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT) + OUTPUT_PACE_OFFSET);
+  Serial.print(")");
   Serial.println();
   #endif
 
