@@ -14,7 +14,7 @@
 
 /** Data describing an Output's operation.
  */
-class SystemData
+struct SystemData
 {
   public:
   
@@ -40,19 +40,12 @@ SystemData systemData;
 /** Load SystemData from EEPROM
  *  Return true if valid
  */
-boolean loadSystemData()
-{
-  EEPROM.get(SYSTEM_BASE, systemData);
-  return systemData.magic == MAGIC_NUMBER;
-}
+boolean loadSystemData();
 
 
 /** Save SystemData.
  */
-void saveSystemData()
-{
-  EEPROM.put(SYSTEM_BASE, systemData);
-}
+void saveSystemData();
 
 
 #endif
