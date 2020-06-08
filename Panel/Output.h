@@ -4,11 +4,12 @@
 #define _Output_h
 
 // Output nodes.
-#define OUTPUT_NODE_SIZE   8      // 8 outputs to each node.
-#define OUTPUT_NODE_MAX    16     // Maximum nodes.
-#define OUTPUT_NODE_MASK   0x0f   // 4 bits for 16 nodes.
-#define OUTPUT_NODE_SHIFT  3      // Shift output number this amount to get a node number.
-#define OUTPUT_PIN_MASK    0x07   // Mask to get output pin within a node.
+#define OUTPUT_NODE_SIZE     8      // 8 outputs to each node.
+#define OUTPUT_NODE_MAX      16     // Maximum nodes.
+#define OUTPUT_NODE_ALL_MASK 0xffff // All output nodes present.
+#define OUTPUT_NODE_MASK     0x0f   // 4 bits for 16 nodes.
+#define OUTPUT_NODE_SHIFT    3      // Shift output number this amount to get a node number.
+#define OUTPUT_PIN_MASK      0x07   // Mask to get output pin within a node.
 
 // OutputData saved in EEPROM
 #define OUTPUT_BASE  0                                          // EEPROM base of OutputData.
@@ -38,9 +39,9 @@ struct OutputData
 
 /** Variables for working with an Output.
  */
-int        outputNodes = 0;   // Bit map of Output nodes present.
-int        outputNumber  = 0;   // Current Output number.
-OutputData outputData;          // Data describing current Output.
+int        outputNodes  = 0;   // Bit map of Output nodes present.
+int        outputNumber = 0;   // Current Output number.
+OutputData outputData;         // Data describing current Output.
 
 
 /** Load an Output's data from EEPROM.

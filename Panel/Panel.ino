@@ -43,7 +43,7 @@ void mapHardware()
   for (int node = 0; node < INPUT_NODE_MAX; node++)
   {
     Wire.beginTransmission(systemData.i2cInputBaseID + node);
-    if (Wire.endTransmission()FAKE_NODE)   
+    if (Wire.endTransmission())   // FAKE_NODE)   
     {
       lcd.print(CHAR_DOT); 
     }
@@ -59,7 +59,7 @@ void mapHardware()
   for (int node = 0; node < OUTPUT_NODE_MAX; node++)
   {
     Wire.beginTransmission(systemData.i2cOutputBaseID + node);
-    if (Wire.endTransmission()FAKE_NODE)
+    if (Wire.endTransmission())   // FAKE_NODE)
     {
       lcd.print(CHAR_DOT); 
     }
@@ -71,6 +71,25 @@ void mapHardware()
   }
 
   delay(DELAY_READ);
+
+  // Report abscence of hardware (and default to all if necessary).
+  if (   (inputNodes  == 0)
+      || (outputNodes == 0))
+  {
+    int row = LCD_ROW_TOP;
+    lcd.clear();
+    if (inputNodes == 0)
+    {
+      lcd.printAt(LCD_COL_START, row++, M_NO_INPUTS);
+      inputNodes  = INPUT_NODE_ALL_MASK;
+    }
+    if (outputNodes == 0)
+    {
+      lcd.printAt(LCD_COL_START, row++, M_NO_OUTPUTS);
+      outputNodes = OUTPUT_NODE_ALL_MASK;
+    }
+    delay(DELAY_READ);
+  }
 }
 
 
@@ -441,23 +460,6 @@ void setup()
     {
       calibrateButtons();
     }
-  }
-
-  // Report abscence of hardware.
-  if (   (inputNodes  == 0)
-      || (outputNodes == 0))
-  {
-    int row = LCD_ROW_TOP;
-    lcd.clear();
-    if (inputNodes == 0)
-    {
-      lcd.printAt(LCD_COL_START, row++, M_NO_INPUTS);
-    }
-    if (outputNodes == 0)
-    {
-      lcd.printAt(LCD_COL_START, row++, M_NO_OUTPUTS);
-    }
-    delay(DELAY_READ);
   }
 
   // Announce ourselves.

@@ -4,11 +4,12 @@
 #define _Input_h
 
 // Input nodes.
-#define INPUT_NODE_SIZE    16     // 16 inputs to each node.
-#define INPUT_NODE_MAX     8      // Maximum nodes.
-#define INPUT_NODE_MASK    0x07   // 3 bits for 8 nodes.
-#define INPUT_NODE_SHIFT   4      // Shift input number this amount to get a node number.
-#define INPUT_PIN_MASK     0x0f   // Mask to get input pin within a node.
+#define INPUT_NODE_SIZE      16     // 16 inputs to each node.
+#define INPUT_NODE_MAX       8      // Maximum nodes.
+#define INPUT_NODE_ALL_MASK  0xff   // All input nodes present.
+#define INPUT_NODE_MASK      0x07   // 3 bits for 8 nodes.
+#define INPUT_NODE_SHIFT     4      // Shift input number this amount to get a node number.
+#define INPUT_PIN_MASK       0x0f   // Mask to get input pin within a node.
 
 // InputData saved in EEPROM
 #define INPUT_BASE   OUTPUT_END                                 // EEPROM base of Input data.
@@ -61,9 +62,9 @@ struct InputData
 
 /** Variables for working with an Input.
  */
-int        inputNodes = 0;    // Bit map of Input nodes present.
-int        inputNumber  = 0;    // Current Input number.
-InputData  inputData;           // Data describing current Servo.
+int        inputNodes  = 0;   // Bit map of Input nodes present.
+int        inputNumber = 0;   // Current Input number.
+InputData  inputData;         // Data describing current Servo.
 
 
 /** Load an Input's data from EEPROM.

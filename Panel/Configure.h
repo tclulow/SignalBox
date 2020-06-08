@@ -45,14 +45,16 @@ class Configure
     {
       case TOP_SYSTEM: displaySystem();
                        break;
-      case TOP_INPUT:  pin &= INPUT_PIN_MASK;
+      case TOP_INPUT:  pin  &= INPUT_PIN_MASK;
+                       node &= INPUT_NODE_MASK;
                        if (!isInputNode(node))
                        {
                          node = nextNode(node, 1, INPUT_NODE_MAX);
                        }
                        displayNode();
                        break;
-      case TOP_OUTPUT: pin &= OUTPUT_PIN_MASK;
+      case TOP_OUTPUT: pin  &= OUTPUT_PIN_MASK;
+                       node &= OUTPUT_NODE_MASK;
                        if (!isOutputNode(node))
                        {
                          node = nextNode(node, 1, OUTPUT_NODE_MAX);
