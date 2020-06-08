@@ -422,7 +422,7 @@ void setup()
 
   // Initialise subsystems.
   lcd.begin(LCD_COLS, LCD_ROWS);            // LCD panel.
-  Wire.begin(systemData.i2cControllerID);   // I2C network    
+  Wire.begin(systemData.i2cControllerID);   // I2C network
 
   // Discover and initialise attached hardware.
   mapHardware();                            // Scan for attached hardware.
@@ -432,6 +432,15 @@ void setup()
   if (!loadSystemData())
   {
     firstRun();
+  }
+  else
+  {
+    // Check for a calibration request.
+    pinMode(PIN_CALIBRATE, INPUT_PULLUP);
+    if (digitalRead(PIN_CALIBRATE) == 0)
+    {
+      calibrateButtons();
+    }
   }
 
   // Report abscence of hardware.

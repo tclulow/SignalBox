@@ -3,10 +3,12 @@
 #ifndef _Panel_h
 #define _Panel_h
 
+// A pin that will force calibration at start-up
+#define PIN_CALIBRATE    11
+
+// Useful characters
 const char CHAR_SPACE   = ' ';
 const char CHAR_TAB     = '\t';
-//const char CHAR_PLUS    = '+';
-//const char CHAR_MINUS   = '-';
 const char CHAR_DOT     = '.';
 const char CHAR_LEFT    = '<';
 const char CHAR_RIGHT   = '>';
