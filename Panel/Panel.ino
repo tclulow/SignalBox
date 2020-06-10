@@ -402,7 +402,7 @@ int sendOutputCommand()
   {
     Wire.write(outputData.lo);
   }
-  Wire.write(outputData.pace);
+  Wire.write(((outputData.pace & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT) + OUTPUT_PACE_OFFSET);
   Wire.write((outputData.mode & OUTPUT_STATE) ? 1 : 0);
   return Wire.endTransmission();
 }
