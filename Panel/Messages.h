@@ -15,6 +15,7 @@ const char M_CONFIRM[]         PROGMEM = "Confirm? Sel=Yes";
 const char M_CANCEL[]          PROGMEM = "Cancel?  Sel=Yes";
 const char M_SAVED[]           PROGMEM = "Change saved    ";
 const char M_CANCELLED[]       PROGMEM = "Change cancelled";
+const char M_FAILURE[]         PROGMEM = "System error";
 
 const char M_CALIBRATE[]       PROGMEM = "Calibrate button";
 const char M_PRESS[]           PROGMEM = "Press";

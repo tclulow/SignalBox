@@ -45,16 +45,16 @@ int readButton()
 {
   int value = analogRead(BUTTON_ANALOG);
 
-  #if DEBUG
-  static int previous = 0;
-  if (value != previous)
-  {
-    previous = value;
-    Serial.print(millis());
-    Serial.print(" ");
-    Serial.println(value);
-  }
-  #endif
+//  #if DEBUG
+//  static int previous = 0;
+//  if (value != previous)
+//  {
+//    previous = value;
+//    Serial.print(millis());
+//    Serial.print(" ");
+//    Serial.println(value);
+//  }
+//  #endif
 
   for (int button = 0; button < BUTTON_LIMIT; button++)
   {

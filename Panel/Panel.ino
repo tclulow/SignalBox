@@ -11,8 +11,8 @@
 #include "Lcd.h"
 #include "Output.h"
 #include "Input.h"
-#include "System.h"
 #include "Buttons.h"
+#include "System.h"
 #include "Debug.h"
 #include "Configure.h"
 
@@ -298,16 +298,16 @@ int readInputNode(int node)
  */
 void processInput(int aNode, int aPin, int aState)
 {
-  #if DEBUG
-  // Report the input
-  Serial.print("Input  ");
-  Serial.print(aState ? "Hi" : "Lo");
-  Serial.print(" ");
-  Serial.print(HEX_CHARS[aNode & 0xf]);
-  Serial.print(" ");
-  Serial.print(HEX_CHARS[aPin & 0xf]);
-  Serial.println();
-  #endif
+//  #if DEBUG
+//  // Report the input
+//  Serial.print("Input  ");
+//  Serial.print(aState ? "Hi" : "Lo");
+//  Serial.print(" ");
+//  Serial.print(HEX_CHARS[aNode & 0xf]);
+//  Serial.print(" ");
+//  Serial.print(HEX_CHARS[aPin & 0xf]);
+//  Serial.println();
+//  #endif
 
   if (debugEnabled(DEBUG_LOW))
   {
@@ -364,23 +364,23 @@ void processInput(int aNode, int aPin, int aState)
  */
 int sendOutputCommand()
 {
-  #if DEBUG
-  // Report output
-  Serial.print("Output ");
-  Serial.print((outputData.mode & OUTPUT_STATE) ? "Hi" : "Lo");
-  Serial.print(" ");
-  Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-  Serial.print(" ");
-  Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
-  Serial.print(" ");
-  Serial.print(((outputData.mode & OUTPUT_STATE) ? outputData.hi : outputData.lo), HEX);
-  Serial.print(" ");
-  Serial.print(HEX_CHARS[outputData.pace & OUTPUT_PACE_MASK]);
-  Serial.print("(");
-  Serial.print(((outputData.pace & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT) + OUTPUT_PACE_OFFSET);
-  Serial.print(")");
-  Serial.println();
-  #endif
+//  #if DEBUG
+//  // Report output
+//  Serial.print("Output ");
+//  Serial.print((outputData.mode & OUTPUT_STATE) ? "Hi" : "Lo");
+//  Serial.print(" ");
+//  Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
+//  Serial.print(" ");
+//  Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
+//  Serial.print(" ");
+//  Serial.print(((outputData.mode & OUTPUT_STATE) ? outputData.hi : outputData.lo), HEX);
+//  Serial.print(" ");
+//  Serial.print(HEX_CHARS[outputData.pace & OUTPUT_PACE_MASK]);
+//  Serial.print("(");
+//  Serial.print(((outputData.pace & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT) + OUTPUT_PACE_OFFSET);
+//  Serial.print(")");
+//  Serial.println();
+//  #endif
 
   if (debugEnabled(DEBUG_LOW))
   {
@@ -408,70 +408,86 @@ int sendOutputCommand()
 }
 
 
+//uint8_t * heapPtr, * stackPtr;
+//
+//void checkMem(char* aMessage)
+//{
+//  stackPtr = (uint8_t *)malloc(4);  // use stackPtr temporarily
+//  heapPtr = stackPtr;                  // save value of heap pointer
+//  free(stackPtr);                        // free up the memory again (sets stackPtr to 0)
+//  stackPtr =  (uint8_t *)(SP);       // save value of stack pointer
+//  Serial.print(aMessage);
+//  Serial.print(" ");
+//  Serial.print((int)heapPtr);
+//  Serial.print(" ");
+//  Serial.println((int)stackPtr);
+//}
+
+  
 /** Setup the Arduino.
  */
 void setup()
 {
-  #if DEBUG
   Serial.begin(115200);           // Serial IO.
-  Serial.print("System  ");
-  Serial.print(SYSTEM_BASE, HEX);
-  Serial.print(" to ");
-  Serial.print(SYSTEM_END, HEX);
-  Serial.println();
-  Serial.print("Outputs ");
-  Serial.print(OUTPUT_BASE, HEX);
-  Serial.print(" to ");
-  Serial.print(OUTPUT_END, HEX);
-  Serial.println();
-  Serial.print("Inputs  ");
-  Serial.print(INPUT_BASE, HEX);
-  Serial.print(" to ");
-  Serial.print(INPUT_END, HEX);
-  Serial.println();
-  #endif
+//  #if DEBUG
+//  Serial.print("System  ");
+//  Serial.print(SYSTEM_BASE, HEX);
+//  Serial.print(" to ");
+//  Serial.print(SYSTEM_END, HEX);
+//  Serial.println();
+//  Serial.print("Outputs ");
+//  Serial.print(OUTPUT_BASE, HEX);
+//  Serial.print(" to ");
+//  Serial.print(OUTPUT_END, HEX);
+//  Serial.println();
+//  Serial.print("Inputs  ");
+//  Serial.print(INPUT_BASE, HEX);
+//  Serial.print(" to ");
+//  Serial.print(INPUT_END, HEX);
+//  Serial.println();
+//  #endif
 
-  #if DEBUG
-  loadInput(3, 4);
-  inputData.output[0] = (0x1 << OUTPUT_NODE_SHIFT) | 7 | INPUT_TOGGLE_MASK; 
-  inputData.output[1] = (0xc << OUTPUT_NODE_SHIFT) | 5;
-  inputData.output[2] = INPUT_DISABLED_MASK;
-  saveInput();
-
-  loadInput(3, 5);
-  inputData.output[0] = (0x9 << OUTPUT_NODE_SHIFT) | 3; 
-  inputData.output[1] = INPUT_DISABLED_MASK;
-  inputData.output[2] = (0x6 << OUTPUT_NODE_SHIFT) | 1;
-  saveInput();
-
-  loadOutput(0x1, 7);
-  outputData.mode = OUTPUT_MODE_NONE;
-  outputData.lo   = 0x17;
-  outputData.hi   = 0x22;
-  outputData.pace = 0x33;
-  saveOutput();
-
-  loadOutput(0xc, 5);
-  outputData.mode = OUTPUT_MODE_SERVO;
-  outputData.lo   = 0xc5;
-  outputData.hi   = 0x44;
-  outputData.pace = 0x55;
-  saveOutput();
-
-  loadOutput(0x9, 3);
-  outputData.mode = OUTPUT_MODE_SIGNAL;
-  outputData.lo   = 0x93;
-  outputData.hi   = 0x66;
-  outputData.pace = 0x77;
-  saveOutput();
-  
-  loadOutput(0x6, 1);
-  outputData.mode = OUTPUT_MODE_LED;
-  outputData.lo   = 0x61;
-  outputData.hi   = 0x88;
-  outputData.pace = 0xaa;
-  saveOutput();
-  #endif
+//  #if DEBUG
+//  loadInput(3, 4);
+//  inputData.output[0] = (0x1 << OUTPUT_NODE_SHIFT) | 7 | INPUT_TOGGLE_MASK; 
+//  inputData.output[1] = (0xc << OUTPUT_NODE_SHIFT) | 5;
+//  inputData.output[2] = INPUT_DISABLED_MASK;
+//  saveInput();
+//
+//  loadInput(3, 5);
+//  inputData.output[0] = (0x9 << OUTPUT_NODE_SHIFT) | 3; 
+//  inputData.output[1] = INPUT_DISABLED_MASK;
+//  inputData.output[2] = (0x6 << OUTPUT_NODE_SHIFT) | 1;
+//  saveInput();
+//
+//  loadOutput(0x1, 7);
+//  outputData.mode = OUTPUT_MODE_NONE;
+//  outputData.lo   = 0x17;
+//  outputData.hi   = 0x22;
+//  outputData.pace = 0x33;
+//  saveOutput();
+//
+//  loadOutput(0xc, 5);
+//  outputData.mode = OUTPUT_MODE_SERVO;
+//  outputData.lo   = 0xc5;
+//  outputData.hi   = 0x44;
+//  outputData.pace = 0x55;
+//  saveOutput();
+//
+//  loadOutput(0x9, 3);
+//  outputData.mode = OUTPUT_MODE_SIGNAL;
+//  outputData.lo   = 0x93;
+//  outputData.hi   = 0x66;
+//  outputData.pace = 0x77;
+//  saveOutput();
+//  
+//  loadOutput(0x6, 1);
+//  outputData.mode = OUTPUT_MODE_LED;
+//  outputData.lo   = 0x61;
+//  outputData.hi   = 0x88;
+//  outputData.pace = 0xaa;
+//  saveOutput();
+//  #endif
 
 
   // Initialise subsystems.

@@ -357,10 +357,7 @@ class Configure
                             }
                             else
                             {
-                              #if DEBUG
-                              Serial.print("menuTop: unexpected case: ");
-                              Serial.println(topMenu);
-                              #endif
+                              systemFail(M_CONFIG, topMenu);
                             }
                             markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
                             break;
@@ -452,10 +449,7 @@ class Configure
                             }
                             else
                             {
-                              #if DEBUG
-                              Serial.print("menuSystem: unexpected case: ");
-                              Serial.println(sysMenu);
-                              #endif
+                              systemFail(M_SYSTEM, sysMenu);
                             }
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
@@ -613,16 +607,11 @@ class Configure
   {
     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
 
-    runit();
+    delay(DELAY_READ);
     
     lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
   }
 
-
-  void runit()
-  {
-    
-  }
 
   /** Process Node menu for Input or Output.
    */
@@ -1206,10 +1195,7 @@ class Configure
                         break;
       case EXP_OUTPUTS: printOutputs();
                         break;
-      #if DEBUG
-      default:          Serial.print("printExport: unexpected case: ");
-                        Serial.println(aExport);
-      #endif
+      default:          systemFail(M_EXPORT, aExport);
     }
 
     lcd.clearRow(LCD_COL_EXP_STATUS, LCD_ROW_BOT);
@@ -1238,41 +1224,41 @@ class Configure
     Serial.println();
     Serial.println();
 
-    dumpMemory();
+    // dumpMemory();
   }
 
 
-  /** Dump all the EEPROM memory.
-   */
-  void dumpMemory()
-  {
-    dumpMemory(SYSTEM_BASE, SYSTEM_END);
-    Serial.println();
-    dumpMemory(OUTPUT_BASE, OUTPUT_END);
-    Serial.println();
-    dumpMemory(INPUT_BASE,  INPUT_END);
-    Serial.println();
-  }
+//  /** Dump all the EEPROM memory.
+//   */
+//  void dumpMemory()
+//  {
+//    dumpMemory(SYSTEM_BASE, SYSTEM_END);
+//    Serial.println();
+//    dumpMemory(OUTPUT_BASE, OUTPUT_END);
+//    Serial.println();
+//    dumpMemory(INPUT_BASE,  INPUT_END);
+//    Serial.println();
+//  }
 
 
-  /** Dump a range of the EEPROM memory.
-   */
-  void dumpMemory(int aStart, int aEnd)
-  {
-    for (int base = aStart; base < aEnd; base += 16)
-    {
-      printHex(base, 4);
-      Serial.print(":");
-      
-      for (int offs = 0; offs < 16; offs++)
-      {
-        Serial.print(CHAR_SPACE);
-        printHex(EEPROM.read(base + offs), 2);
-      }
-
-      Serial.println();
-    }
-  }
+//  /** Dump a range of the EEPROM memory.
+//   */
+//  void dumpMemory(int aStart, int aEnd)
+//  {
+//    for (int base = aStart; base < aEnd; base += 16)
+//    {
+//      printHex(base, 4);
+//      Serial.print(":");
+//      
+//      for (int offs = 0; offs < 16; offs++)
+//      {
+//        Serial.print(CHAR_SPACE);
+//        printHex(EEPROM.read(base + offs), 2);
+//      }
+//
+//      Serial.println();
+//    }
+//  }
 
 
   void printInputs()
