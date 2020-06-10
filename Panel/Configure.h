@@ -7,8 +7,9 @@
 #define TOP_SYSTEM   0
 #define TOP_INPUT    1
 #define TOP_OUTPUT   2
-#define TOP_REPORT   3
-#define TOP_MAX      4
+#define TOP_EXPORT   3
+#define TOP_IMPORT   4
+#define TOP_MAX      5
 
 // Sys menu states.
 #define SYS_I2C      0
@@ -16,11 +17,11 @@
 #define SYS_MAX      2
 
 // Rep menu states.
-#define REP_ALL      0
-#define REP_SYSTEM   1
-#define REP_INPUTS   2
-#define REP_OUTPUTS  3
-#define REP_MAX      4
+#define EXP_ALL      0
+#define EXP_SYSTEM   1
+#define EXP_INPUTS   2
+#define EXP_OUTPUTS  3
+#define EXP_MAX      4
 
 
 /** Configure the system.
@@ -31,7 +32,7 @@ class Configure
 
   int topMenu = 0;      // Top menu being shown
   int sysMenu = 0;      // System menu being shown.
-  int repMenu = 0;      // Report menu being shown.
+  int expMenu = 0;      // Report menu being shown.
   int node    = 0;      // The node we're configuring.
   int pin     = 0;      // The pin we're configuring.
   
@@ -61,7 +62,8 @@ class Configure
                        }
                        displayNode();
                        break;
-      case TOP_REPORT: displaySystem();
+      case TOP_EXPORT: 
+      case TOP_IMPORT: displaySystem();
                        break;
       #if DEBUG
       default:         Serial.print("displayAll: unexpected case: ");
@@ -106,7 +108,9 @@ class Configure
                        break;
       case TOP_OUTPUT: displayDetailOutput();
                        break;
-      case TOP_REPORT: displayDetailReport();
+      case TOP_EXPORT: displayDetailExport();
+                       break;
+      case TOP_IMPORT: displayDetailImport();
                        break;
       #if DEBUG
       default:         Serial.print("displayDetail: unexpected case: ");
@@ -180,11 +184,19 @@ class Configure
   }
 
 
-  /** Display Report menu.
+  /** Display Export detail menu.
    */
-  void displayDetailReport()
+  void displayDetailExport()
   {
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_REPORT_TYPES[repMenu]);
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_REPORT_TYPES[expMenu]);
+  }
+  
+
+  /** Display Import detail menu.
+   */
+  void displayDetailImport()
+  {
+    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
   }
   
 
@@ -335,9 +347,13 @@ class Configure
                             {
                               menuNode(false);
                             }
-                            else if (topMenu == TOP_REPORT)
+                            else if (topMenu == TOP_EXPORT)
                             {
-                              menuReport();
+                              menuExport();
+                            }
+                            else if (topMenu == TOP_IMPORT)
+                            {
+                              menuImport();
                             }
                             else
                             {
@@ -551,9 +567,9 @@ class Configure
   }
 
 
-  /** Process Report menu.
+  /** Process Export menu.
    */
-  void menuReport()
+  void menuExport()
   {
     boolean finished = false;
     
@@ -564,23 +580,23 @@ class Configure
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
-        case BUTTON_UP:     repMenu += 2;     // Use +1 to compensate for the -1 that the code below will do.
-                            if (repMenu > REP_MAX)
+        case BUTTON_UP:     expMenu += 2;     // Use +1 to compensate for the -1 that the code below will do.
+                            if (expMenu > EXP_MAX)
                             {
-                              repMenu = 1;
+                              expMenu = 1;
                             }
-        case BUTTON_DOWN:   repMenu -= 1;
-                            if (repMenu < 0)
+        case BUTTON_DOWN:   expMenu -= 1;
+                            if (expMenu < 0)
                             {
-                              repMenu = REP_MAX - 1;
+                              expMenu = EXP_MAX - 1;
                             }
-                            displayDetailReport();
+                            displayDetailExport();
                             break;
         case BUTTON_SELECT: break;
         case BUTTON_LEFT:   finished = true;
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
-                            printReport(repMenu);
+                            printExport(expMenu);
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
       }
@@ -588,7 +604,25 @@ class Configure
 
     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
   }
-  
+
+
+  /** Process the Import menu (which doesn't exist).
+   *  Just run the import.
+   */
+  void menuImport()
+  {
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
+
+    runit();
+    
+    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+  }
+
+
+  void runit()
+  {
+    
+  }
 
   /** Process Node menu for Input or Output.
    */
@@ -1154,27 +1188,27 @@ class Configure
   }
 
 
-  /** Print selected report.
+  /** Print selected export.
    */
-  void printReport(int aReport)
+  void printExport(int aExport)
   {
     lcd.printAt(LCD_COL_EXP_STATUS, LCD_ROW_BOT, M_EXPORTING);
 
-    switch(aReport)
+    switch(aExport)
     {
-      case REP_ALL:     printSystem();
+      case EXP_ALL:     printSystem();
                         printInputs();
                         printOutputs();
                         break;
-      case REP_SYSTEM:  printSystem();
+      case EXP_SYSTEM:  printSystem();
                         break;
-      case REP_INPUTS:  printInputs();
+      case EXP_INPUTS:  printInputs();
                         break;
-      case REP_OUTPUTS: printOutputs();
+      case EXP_OUTPUTS: printOutputs();
                         break;
       #if DEBUG
-      default:          Serial.print("printReport: unexpected case: ");
-                        Serial.println(aReport);
+      default:          Serial.print("printExport: unexpected case: ");
+                        Serial.println(aExport);
       #endif
     }
 
