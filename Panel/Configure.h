@@ -1158,7 +1158,7 @@ class Configure
    */
   void printReport(int aReport)
   {
-    lcd.printAt(LCD_COL_REP_STATUS, LCD_ROW_BOT, M_PRINTING);
+    lcd.printAt(LCD_COL_EXP_STATUS, LCD_ROW_BOT, M_EXPORTING);
 
     switch(aReport)
     {
@@ -1178,7 +1178,7 @@ class Configure
       #endif
     }
 
-    lcd.clearRow(LCD_COL_REP_STATUS, LCD_ROW_BOT);
+    lcd.clearRow(LCD_COL_EXP_STATUS, LCD_ROW_BOT);
   }
 
 
@@ -1188,7 +1188,7 @@ class Configure
    */
   void printSystem()
   {
-    Serial.println(PGMT(M_HEADER_SYSTEM));
+    Serial.println(PGMT(M_EXPORT_SYSTEM));
     
     Serial.print(PGMT(M_SYSTEM));
     Serial.print(CHAR_TAB);
@@ -1243,7 +1243,7 @@ class Configure
 
   void printInputs()
   {
-    Serial.println(PGMT(M_HEADER_INPUT));
+    Serial.println(PGMT(M_EXPORT_INPUT));
 
     for (int node = 0; node < INPUT_NODE_MAX; node++)
     {
@@ -1283,7 +1283,7 @@ class Configure
 
   void printOutputs()
   {
-    Serial.println(PGMT(M_HEADER_OUTPUT));
+    Serial.println(PGMT(M_EXPORT_OUTPUT));
     
     for (int node = 0; node < OUTPUT_NODE_MAX; node++)
     {

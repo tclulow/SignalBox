@@ -37,13 +37,13 @@ const char M_INIT_INPUTS[]     PROGMEM = "Init inputs";
 const char M_FIRST_RUN[]       PROGMEM = "First run";
 const char M_DEFAULT_INPUTS[]  PROGMEM = "Default inputs";
 const char M_DEFAULT_OUTPUTS[] PROGMEM = "Default outputs";
-const char M_PRINTING[]        PROGMEM = "Printing";
+const char M_EXPORTING[]       PROGMEM = "Exporting";
 
 const char M_CONFIG[]          PROGMEM = "Configure";
 const char M_SYSTEM[]          PROGMEM = "System";
 const char M_OUTPUT[]          PROGMEM = "Output";
 const char M_INPUT[]           PROGMEM = "Input ";
-const char M_REPORT[]          PROGMEM = "Report";
+const char M_EXPORT[]          PROGMEM = "Export";
 const char M_ALL[]             PROGMEM = "All   ";
 
 const char M_SYS_I2C[]         PROGMEM = "i2cID ";
@@ -75,15 +75,15 @@ const char M_LO[]              PROGMEM = "Lo";
 const char M_PACE[]            PROGMEM = "Spd";
 
 
-// Headers for the reports
-const char M_HEADER_SYSTEM[]   PROGMEM = "#System\tVersion\tDetail\tControl\tInput\tOutput";
-const char M_HEADER_INPUT[]    PROGMEM = "#Input\tNode\tPin\tType\tOutput1\tOutput2\tOutput3";
-const char M_HEADER_OUTPUT[]   PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd";
+// Headers for the exports
+const char M_EXPORT_SYSTEM[]   PROGMEM = "#System\tVersion\tDetail\tControl\tInput\tOutput";
+const char M_EXPORT_INPUT[]    PROGMEM = "#Input\tNode\tPin\tType\tOutput1\tOutput2\tOutput3";
+const char M_EXPORT_OUTPUT[]   PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd";
 
 
 // Array of (pointers to) certain messages.
 const char* const M_BUTTONS[]        = { M_SELECT, M_LEFT, M_DOWN, M_UP, M_RIGHT };
-const char* const M_TOP_MENU[]       = { M_SYSTEM, M_INPUT, M_OUTPUT, M_REPORT };
+const char* const M_TOP_MENU[]       = { M_SYSTEM, M_INPUT, M_OUTPUT, M_EXPORT };
 const char* const M_SYS_TYPES[]      = { M_SYS_I2C, M_DEBUG };
 const char* const M_REPORT_TYPES[]   = { M_ALL, M_SYSTEM, M_INPUT, M_OUTPUT };
 const char* const M_I2C_PROMPTS[]    = { M_ID_CONSOLE, M_ID_INPUT, M_ID_OUTPUT };

@@ -41,7 +41,7 @@
 #define LCD_COL_I2C_STEP      3   // Three columns per parameter.
 #define LCD_COL_DEBUG_PARAM   8   // Debug parameter.
 #define LCD_COL_DEBUG_LENGTH  5   // Debug parameter length.
-#define LCD_COL_REP_STATUS    8   // Report status.
+#define LCD_COL_EXP_STATUS    7   // Export status.
 #define LCD_COL_INPUT_OUTPUT  8   // Input's outputs(3) start at this col.
 #define LCD_COL_INPUT_STEP    3   // Three columns per output.
 #define LCD_COL_OUTPUT_PARAM  7   // Output's parameters(3) start at this col.
