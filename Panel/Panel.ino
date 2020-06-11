@@ -525,7 +525,7 @@ void setup()
 void loop()
 {
   int  loops    = 0;
-  char active[] = "-\\|/";
+  long lastLoop = millis();
 
   // Loop forever
   while (true)
@@ -541,7 +541,19 @@ void loop()
     scanInputs();           
 
     // Show activity.
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, active[loops++ & 0x3]);
+    if (millis() - lastLoop > 200)
+    {
+      if (loops > 7)
+      {
+        loops = 0;
+      }
+      lcd.printAt((loops    ) & 0x7, LCD_ROW_BOT, CHAR_DOT);
+      lcd.printAt((loops + 4) & 0x7, LCD_ROW_BOT, CHAR_SPACE);
+      loops += 1;
+
+      // lcd.printAt(LCD_COL_START, LCD_ROW_BOT, active[loops++ & 0x3]);
+      lastLoop = millis();
+    }
   }
 }
  
