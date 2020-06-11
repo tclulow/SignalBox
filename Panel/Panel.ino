@@ -545,7 +545,7 @@ void setup()
   initInputs();                             // Initialise all inputs.
 
   // Deal with first run (software has never been run before).
-  if (!loadSystemData() || ezyBusDetected() || true)
+  if (!loadSystemData() || ezyBusDetected())
   {
     firstRun();
   }
