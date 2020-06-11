@@ -30,6 +30,7 @@ const char M_EZY_FOUND[]       PROGMEM = "EzyBus  detected";
 const char M_EZY_UPDATE[]      PROGMEM = "Update?  Sel=Yes";
 const char M_EZY_UPDATING[]    PROGMEM = "EzyBus  updating";
 const char M_EZY_MANDATORY[]   PROGMEM = "Update mandatory";
+const char M_INITIALISING[]    PROGMEM = "Initialising";
 
 const char M_SCAN_NODES[]      PROGMEM = "Nodes";
 const char M_NO_INPUTS[]       PROGMEM = "No input nodes";
@@ -71,7 +72,6 @@ const char M_BUTTON[]          PROGMEM = "Button";
 const char M_TOGGLE[]          PROGMEM = "Toggle";
 const char M_DISABLED[]        PROGMEM = "..";
 
-const char M_NONE[]            PROGMEM = "None  ";
 const char M_SERVO[]           PROGMEM = "Servo ";
 const char M_SIGNAL[]          PROGMEM = "Signal";
 const char M_LED[]             PROGMEM = "LED   ";
@@ -97,7 +97,7 @@ const char* const M_DEBUG_PROMPTS[]  = { M_OFF, M_LOW, M_HIGH, M_PAUSE };
 
 const char* const M_OUTPUT_PROMPTS[] = { M_LO, M_HI, M_PACE };
 const char* const M_INPUT_TYPES[]    = { M_BUTTON, M_TOGGLE };
-const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED };
+const char* const M_OUTPUT_TYPES[]   = { M_SERVO, M_SIGNAL, M_LED };
 
 
 

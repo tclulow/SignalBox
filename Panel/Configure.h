@@ -265,19 +265,11 @@ class Configure
     int col = LCD_COL_OUTPUT_PARAM;
 
     lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
-    
-    if (aMode == OUTPUT_MODE_NONE)
-    {
-      lcd.clearRow(col, LCD_ROW_BOT);
-    }
-    else
-    {
-      lcd.printAtHex(col, LCD_ROW_BOT, outputData.lo,   2);
-      col += LCD_COL_OUTPUT_STEP;
-      lcd.printAtHex(col, LCD_ROW_BOT, outputData.hi,   2);
-      col += LCD_COL_OUTPUT_STEP;
-      lcd.printAtHex(col, LCD_ROW_BOT, outputData.pace, 2);
-    }
+    lcd.printAtHex(col, LCD_ROW_BOT, outputData.lo,   2);
+    col += LCD_COL_OUTPUT_STEP;
+    lcd.printAtHex(col, LCD_ROW_BOT, outputData.hi,   2);
+    col += LCD_COL_OUTPUT_STEP;
+    lcd.printAtHex(col, LCD_ROW_BOT, outputData.pace, 2);
   }
 
 
@@ -1053,12 +1045,9 @@ class Configure
                               finished = true;
                             }
                             break;
-        case BUTTON_RIGHT:  if (outputMode != OUTPUT_MODE_NONE)
-                            {
-                              markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
-                              changed |= menuOutputParms();
-                              markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
-                            }
+        case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+                            changed |= menuOutputParms();
+                            markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
       }
     }

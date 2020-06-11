@@ -185,23 +185,29 @@ void firstRun()
       lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_EZY_UPDATE);
     }
       
-    lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_UPDATING);
     convertEzyBus();
-    
-    delay(DELAY_READ);
   }
+  else
+  {
+    defaultSetup();
+  }
+    
+  delay(DELAY_READ);
 
   // Run configuration menus.
   configure.run();
 }
 
 
-/** Convert EzyBus configuration.
+/** Set the default initial setup
+ *  Servos with mid-position and mid-pace.
  */
-void convertEzyBus()
+void defaultSetup()
 {
   int input = 0;
+
+  lcd.clear();
+  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INITIALISING);
   lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
   
   for (int node = 0; node < OUTPUT_NODE_MAX; node++)
@@ -211,7 +217,41 @@ void convertEzyBus()
     {
       // Convert the output.
       loadOutput(node, pin);
-      outputData.mode += 1;                   // Convert Servo/Signal/LED
+      outputData.mode = OUTPUT_MODE_SERVO;
+      outputData.lo   = OUTPUT_DEFAULT_LO;
+      outputData.hi   = OUTPUT_DEFAULT_HI;
+      outputData.pace = OUTPUT_DEFAULT_PACE;
+      saveOutput();
+
+      // Create an input.
+      loadInput(input++);
+      inputData.output[0] = (node << OUTPUT_NODE_SHIFT) | pin;
+      inputData.output[1] = INPUT_DISABLED_MASK;
+      inputData.output[2] = INPUT_DISABLED_MASK;
+      saveInput();
+    }
+  }
+}
+
+
+/** Convert EzyBus configuration.
+ */
+void convertEzyBus()
+{
+  int input = 0;
+  
+  lcd.clear();
+  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_UPDATING);
+  lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+  
+  for (int node = 0; node < OUTPUT_NODE_MAX; node++)
+  {
+    lcd.print(HEX_CHARS[node]);
+    for (int pin = 0; pin < OUTPUT_NODE_SIZE; pin++)
+    {
+      // Convert the output.
+      loadOutput(node, pin);
+      // outputData.mode += 1;                   // Convert Servo/Signal/LED
       outputData.pace >>= OUTPUT_PACE_SHIFT;  // Pace was in steps of 4 (2-bits), drop one bit
       saveOutput();
 
@@ -505,7 +545,7 @@ void setup()
   initInputs();                             // Initialise all inputs.
 
   // Deal with first run (software has never been run before).
-  if (!loadSystemData() || ezyBusDetected())
+  if (!loadSystemData() || ezyBusDetected() || true)
   {
     firstRun();
   }

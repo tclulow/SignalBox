@@ -4,12 +4,12 @@
 #define _Output_h
 
 // Output nodes.
-#define OUTPUT_NODE_SIZE     8      // 8 outputs to each node.
-#define OUTPUT_NODE_MAX      16     // Maximum nodes.
-#define OUTPUT_NODE_ALL_MASK 0xffff // All output nodes present.
-#define OUTPUT_NODE_MASK     0x0f   // 4 bits for 16 nodes.
-#define OUTPUT_NODE_SHIFT    3      // Shift output number this amount to get a node number.
-#define OUTPUT_PIN_MASK      0x07   // Mask to get output pin within a node.
+#define OUTPUT_NODE_SIZE          8   // 8 outputs to each node.
+#define OUTPUT_NODE_MAX          16   // Maximum nodes.
+#define OUTPUT_NODE_ALL_MASK 0xffff   // All output nodes present.
+#define OUTPUT_NODE_MASK       0x0f   // 4 bits for 16 nodes.
+#define OUTPUT_NODE_SHIFT         3   // Shift output number this amount to get a node number.
+#define OUTPUT_PIN_MASK        0x07   // Mask to get output pin within a node.
 
 // OutputData saved in EEPROM
 #define OUTPUT_BASE  0                                          // EEPROM base of OutputData.
@@ -18,17 +18,20 @@
 #define OUTPUT_END   (OUTPUT_BASE + OUTPUT_SIZE * OUTPUT_MAX)   // End of OutputData EEPROM.
 
 // Mask for OUTPUT options
-#define OUTPUT_STATE        0x80    // On or off, switched or not switched, 0 = lo, 1 = hi.
-#define OUTPUT_MODE_MASK    0x0f    // Only four bits are used for the type of output.
-#define OUTPUT_MODE_NONE    0x00    // Output not configured.
-#define OUTPUT_MODE_SERVO   0x01    // Output is a servo.
-#define OUTPUT_MODE_SIGNAL  0x02    // Output is a signal.
-#define OUTPUT_MODE_LED     0x03    // Output is a LED or other IO device.
-#define OUTPUT_MODE_MAX     0x04    // Limit of output types.
+#define OUTPUT_STATE           0x80   // On or off, switched or not switched, 0 = lo, 1 = hi.
+#define OUTPUT_MODE_MASK       0x0f   // Only four bits are used for the type of output.
+#define OUTPUT_MODE_SERVO      0x00   // Output is a servo.
+#define OUTPUT_MODE_SIGNAL     0x01   // Output is a signal.
+#define OUTPUT_MODE_LED        0x02   // Output is a LED or other IO device.
+#define OUTPUT_MODE_MAX        0x03   // Limit of output types.
 
-#define OUTPUT_PACE_MASK    0x0f    // Pace is in right-most nibble of output.pace.
-#define OUTPUT_PACE_SHIFT   3       // Pace is shifted by this amount (multiplied by 8).
-#define OUTPUT_PACE_OFFSET  4       // Pace is offset by this amount (add 4).
+#define OUTPUT_PACE_MASK       0x0f   // Pace is in right-most nibble of output.pace.
+#define OUTPUT_PACE_SHIFT         3   // Pace is shifted by this amount (multiplied by 8).
+#define OUTPUT_PACE_OFFSET        4   // Pace is offset by this amount (add 4).
+
+#define OUTPUT_DEFAULT_LO        90   // Default low position is 90 degrees.
+#define OUTPUT_DEFAULT_HI        90   // Default high position is 90 degrees.
+#define OUTPUT_DEFAULT_PACE       8   // Default pace is mid-range.
 
 
 /** Data describing an Output's operation.
