@@ -12,8 +12,8 @@
 #define TOP_MAX      5
 
 // Sys menu states.
-#define SYS_I2C      0
-#define SYS_DEBUG    1
+#define SYS_DEBUG    0
+#define SYS_I2C      1
 #define SYS_MAX      2
 
 // Rep menu states.
@@ -65,11 +65,8 @@ class Configure
       case TOP_EXPORT: 
       case TOP_IMPORT: displaySystem();
                        break;
-      #if DEBUG
-      default:         Serial.print("displayAll: unexpected case: ");
-                       Serial.println(topMenu);
+      default:         systemFail(M_ALL, topMenu);
                        break;
-      #endif
     }
 
     displayDetail();
@@ -112,11 +109,8 @@ class Configure
                        break;
       case TOP_IMPORT: displayDetailImport();
                        break;
-      #if DEBUG
-      default:         Serial.print("displayDetail: unexpected case: ");
-                       Serial.println(topMenu);
+      default:         systemFail(M_DETAIL, topMenu);
                        break;
-      #endif
     }
   }
 
@@ -136,15 +130,12 @@ class Configure
   {
     switch (sysMenu)
     {
-      case SYS_I2C:    displaySystemI2cParams();
-                       break;
       case SYS_DEBUG:  displaySystemDebugParams();
                        break;
-      #if DEBUG
-      default:         Serial.print("displaySystemParams: unexpected case: ");
-                       Serial.println(sysMenu);
+      case SYS_I2C:    displaySystemI2cParams();
                        break;
-      #endif
+      default:         systemFail(M_PARAMS, topMenu);
+                       break;
     }
   }
 
@@ -439,13 +430,13 @@ class Configure
                             }
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
-                            if (sysMenu == SYS_I2C)
-                            {
-                              changed = menuSystemI2c();
-                            }
-                            else if (sysMenu = SYS_DEBUG)
+                            if (sysMenu == SYS_DEBUG)
                             {
                               changed = menuSystemDebug();
+                            }
+                            else if (sysMenu == SYS_I2C)
+                            {
+                              changed = menuSystemI2c();
                             }
                             else
                             {
@@ -457,6 +448,48 @@ class Configure
     }
 
     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+  }
+
+
+  /** Process System debug menu.
+   *  Reurn true if changes made.
+   */
+  boolean menuSystemDebug()
+  {
+    boolean finished = false;
+    boolean changed = false;
+    int index = 0;
+
+    markField(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, LCD_COL_DEBUG_LENGTH, true);
+
+    while (!finished)
+    {
+      switch (waitForButton())
+      {
+        case BUTTON_NONE:   break;
+        case BUTTON_UP:     systemData.debugLevel += 2;
+                            if (systemData.debugLevel > DEBUG_MAX)
+                            {
+                              systemData.debugLevel = 1;
+                            }
+        case BUTTON_DOWN:   systemData.debugLevel -= 1;
+                            if (systemData.debugLevel < 0)
+                            {
+                              systemData.debugLevel = DEBUG_MAX - 1;
+                            }
+                            lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel]);
+                            changed = true;
+                            break;
+        case BUTTON_SELECT: break;
+        case BUTTON_LEFT:   finished = true;
+                            break;
+        case BUTTON_RIGHT:  break;
+      }
+    }
+
+    markField(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, 5, false);
+    
+    return changed;
   }
 
 
@@ -514,48 +547,6 @@ class Configure
     }
 
     displaySystem();
-    
-    return changed;
-  }
-
-
-  /** Process System debug menu.
-   *  Reurn true if changes made.
-   */
-  boolean menuSystemDebug()
-  {
-    boolean finished = false;
-    boolean changed = false;
-    int index = 0;
-
-    markField(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, LCD_COL_DEBUG_LENGTH, true);
-
-    while (!finished)
-    {
-      switch (waitForButton())
-      {
-        case BUTTON_NONE:   break;
-        case BUTTON_UP:     systemData.debugLevel += 2;
-                            if (systemData.debugLevel > DEBUG_MAX)
-                            {
-                              systemData.debugLevel = 1;
-                            }
-        case BUTTON_DOWN:   systemData.debugLevel -= 1;
-                            if (systemData.debugLevel < 0)
-                            {
-                              systemData.debugLevel = DEBUG_MAX - 1;
-                            }
-                            lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel]);
-                            changed = true;
-                            break;
-        case BUTTON_SELECT: break;
-        case BUTTON_LEFT:   finished = true;
-                            break;
-        case BUTTON_RIGHT:  break;
-      }
-    }
-
-    markField(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, 5, false);
     
     return changed;
   }
