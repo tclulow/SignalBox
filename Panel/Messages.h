@@ -10,7 +10,6 @@
 const char M_SOFTWARE[]        PROGMEM = "Panel";
 const char M_VERSION[]         PROGMEM = "v0.1";
 const char M_VERSION_DATE[]    PROGMEM = "May 2020";
-const char M_STARTUP[]         PROGMEM = "Startup";
 
 const char M_CONFIRM[]         PROGMEM = "Confirm? Sel=Yes";
 const char M_CANCEL[]          PROGMEM = "Cancel?  Sel=Yes";
@@ -26,18 +25,17 @@ const char M_DOWN[]            PROGMEM = "Down";
 const char M_UP[]              PROGMEM = "Up";
 const char M_RIGHT[]           PROGMEM = "Right";
 
+const char M_SETUP[]           PROGMEM = "Setup";
+const char M_INITIALISING[]    PROGMEM = "Initialising";
 const char M_EZY_FOUND[]       PROGMEM = "EzyBus  detected";
 const char M_EZY_UPDATE[]      PROGMEM = "Update?  Sel=Yes";
 const char M_EZY_UPDATING[]    PROGMEM = "EzyBus  updating";
-const char M_EZY_MANDATORY[]   PROGMEM = "Update mandatory";
-const char M_INITIALISING[]    PROGMEM = "Initialising";
 
 const char M_SCAN_NODES[]      PROGMEM = "Nodes";
 const char M_NO_INPUTS[]       PROGMEM = "No input nodes";
 const char M_NO_OUTPUTS[]      PROGMEM = "No output nodes";
 const char M_INIT_INPUTS[]     PROGMEM = "Init inputs";
 
-const char M_FIRST_RUN[]       PROGMEM = "First run";
 const char M_DEFAULT_INPUTS[]  PROGMEM = "Default inputs";
 const char M_DEFAULT_OUTPUTS[] PROGMEM = "Default outputs";
 const char M_EXPORTING[]       PROGMEM = "Exporting";

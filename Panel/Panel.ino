@@ -148,7 +148,7 @@ void initInputs()
 void firstRun()
 {
   lcd.clear();
-  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_FIRST_RUN);
+  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_SETUP);
   delay(DELAY_READ);
 
   // Initialise SystemData.
@@ -159,17 +159,7 @@ void firstRun()
   systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
   systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
 
-//  #if DEBUG
-//  systemData.buttons[0] = 840;    // Suitable values that should work.
-//  systemData.buttons[1] = 540;
-//  systemData.buttons[2] = 340;
-//  systemData.buttons[3] = 180;
-//  systemData.buttons[4] =  55;
-//  #else
   calibrateButtons();
-//  #endif
-
-  saveSystemData();
 
   // Decide if EzyBus conversion required.
   if (ezyBusDetected())
@@ -178,20 +168,21 @@ void firstRun()
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_FOUND);
     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_EZY_UPDATE);
 
-    while (waitForButton() != BUTTON_SELECT)
+    if (waitForButton() == BUTTON_SELECT)
     {
-      lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_EZY_MANDATORY);
-      delay(DELAY_READ);
-      lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_EZY_UPDATE);
+      convertEzyBus();
     }
-      
-    convertEzyBus();
+    else
+    {
+      defaultSetup();
+    }
   }
   else
   {
     defaultSetup();
   }
     
+  saveSystemData();
   delay(DELAY_READ);
 
   // Run configuration menus.
@@ -537,7 +528,6 @@ void setup()
 
   // Announce ourselves.
   announce();
-  lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_STARTUP);
   delay(DELAY_READ);
 
   // Discover and initialise attached hardware.
