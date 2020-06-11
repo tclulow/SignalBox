@@ -268,8 +268,8 @@ class Configure
     lcd.printAtHex(col, LCD_ROW_BOT, outputData.lo,   2);
     col += LCD_COL_OUTPUT_STEP;
     lcd.printAtHex(col, LCD_ROW_BOT, outputData.hi,   2);
-    col += LCD_COL_OUTPUT_STEP;
-    lcd.printAtHex(col, LCD_ROW_BOT, outputData.pace, 2);
+    col += LCD_COL_OUTPUT_STEP + 1;
+    lcd.printAtHex(col, LCD_ROW_BOT, outputData.pace & OUTPUT_PACE_MASK, 1);
   }
 
 
@@ -1100,11 +1100,17 @@ class Configure
                               markField(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
                             }
                             break;
-        case BUTTON_RIGHT:  if (index < 2)
+        case BUTTON_RIGHT:  if (index <= OUTPUT_PACE_INDEX)
                             {
                               markField(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, false);
                               index += 1;
                               displayOutputPrompt(index);
+                              if (index == OUTPUT_PACE_INDEX)
+                              {
+                                changed = menuOutputPace(); 
+                                index -= 1;
+                                displayOutputPrompt(index);
+                              }
                               markField(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
                             }
                             break;
@@ -1116,11 +1122,45 @@ class Configure
     {
       outputData.lo   = params[0];
       outputData.hi   = params[1];
-      outputData.pace = params[2];
     }
 
     displayNode();
     
+    return changed;
+  }
+
+
+  /** Process the Output's Pace parameter.
+   */
+  boolean menuOutputPace()
+  {
+    boolean finished = false;
+    boolean changed  = false;
+
+    markField(LCD_COL_OUTPUT_PARAM + OUTPUT_PACE_INDEX * LCD_COL_OUTPUT_STEP + 1, LCD_ROW_BOT, 1, true);
+
+    while (!finished)
+    {
+      switch (waitForButton())
+      {
+        case BUTTON_NONE:   break;
+        case BUTTON_UP:     outputData.pace = (outputData.pace + 1) & OUTPUT_PACE_MASK;
+                            lcd.printAt(LCD_COL_OUTPUT_PARAM + OUTPUT_PACE_INDEX * LCD_COL_OUTPUT_STEP + 1, LCD_ROW_BOT, HEX_CHARS[outputData.pace]);
+                            changed = true;
+                            break;
+        case BUTTON_DOWN:   outputData.pace = (outputData.pace - 1) & OUTPUT_PACE_MASK;
+                            lcd.printAt(LCD_COL_OUTPUT_PARAM + OUTPUT_PACE_INDEX * LCD_COL_OUTPUT_STEP + 1, LCD_ROW_BOT, HEX_CHARS[outputData.pace]);
+                            changed = true;
+                            break;
+        case BUTTON_SELECT: break;
+        case BUTTON_LEFT:   finished = true;
+                            break;
+        case BUTTON_RIGHT:  break;
+      }
+    }
+
+    markField(LCD_COL_OUTPUT_PARAM + OUTPUT_PACE_INDEX * LCD_COL_OUTPUT_STEP + 1, LCD_ROW_BOT, 1, false);
+
     return changed;
   }
 

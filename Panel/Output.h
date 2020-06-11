@@ -28,9 +28,11 @@
 #define OUTPUT_PACE_MASK       0x0f   // Pace is in right-most nibble of output.pace.
 #define OUTPUT_PACE_SHIFT         3   // Pace is shifted by this amount (multiplied by 8).
 #define OUTPUT_PACE_OFFSET        4   // Pace is offset by this amount (add 4).
+#define OUTPUT_PACE_INDEX         2   // Index of the Pace parameter
+#define OUTPUT_DELAY_MASK      0xf0   // Delay will be in right-most nibble of output.pace.
 
-#define OUTPUT_DEFAULT_LO        90   // Default low position is 90 degrees.
-#define OUTPUT_DEFAULT_HI        90   // Default high position is 90 degrees.
+#define OUTPUT_DEFAULT_LO        89   // Default low  position is 90 degrees - 1.
+#define OUTPUT_DEFAULT_HI        91   // Default high position is 90 degrees + 1.
 #define OUTPUT_DEFAULT_PACE       8   // Default pace is mid-range.
 
 
