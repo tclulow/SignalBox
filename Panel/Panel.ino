@@ -159,20 +159,20 @@ void firstRun()
   systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
   systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
 
-  #if DEBUG
-  systemData.buttons[0] = 840;    // Suitable values that should work.
-  systemData.buttons[1] = 540;
-  systemData.buttons[2] = 340;
-  systemData.buttons[3] = 180;
-  systemData.buttons[4] =  55;
-  #else
+//  #if DEBUG
+//  systemData.buttons[0] = 840;    // Suitable values that should work.
+//  systemData.buttons[1] = 540;
+//  systemData.buttons[2] = 340;
+//  systemData.buttons[3] = 180;
+//  systemData.buttons[4] =  55;
+//  #else
   calibrateButtons();
-  #endif
+//  #endif
 
   saveSystemData();
 
   // Decide if EzyBus conversion required.
-  if (EEPROM.read(EZY_MAGIC_ADDR) == EZY_MAGIC)
+  if (ezyBusDetected())
   {
     lcd.clear();
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_FOUND);
@@ -428,7 +428,7 @@ int sendOutputCommand()
  */
 void setup()
 {
-  Serial.begin(115200);           // Serial IO.
+  Serial.begin(19200);           // Serial IO.
 //  #if DEBUG
 //  Serial.print("System  ");
 //  Serial.print(SYSTEM_BASE, HEX);
@@ -495,12 +495,17 @@ void setup()
   Wire.begin(systemData.i2cControllerID);   // I2C network
   pinMode(PIN_CALIBRATE, INPUT_PULLUP);     // Calibration input pin (11).
 
+  // Announce ourselves.
+  announce();
+  lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_STARTUP);
+  delay(DELAY_READ);
+
   // Discover and initialise attached hardware.
   mapHardware();                            // Scan for attached hardware.
   initInputs();                             // Initialise all inputs.
 
   // Deal with first run (software has never been run before).
-  if (!loadSystemData())
+  if (!loadSystemData() || ezyBusDetected())
   {
     firstRun();
   }

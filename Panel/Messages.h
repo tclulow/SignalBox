@@ -10,6 +10,7 @@
 const char M_SOFTWARE[]        PROGMEM = "Panel";
 const char M_VERSION[]         PROGMEM = "v0.1";
 const char M_VERSION_DATE[]    PROGMEM = "May 2020";
+const char M_STARTUP[]         PROGMEM = "Startup";
 
 const char M_CONFIRM[]         PROGMEM = "Confirm? Sel=Yes";
 const char M_CANCEL[]          PROGMEM = "Cancel?  Sel=Yes";
