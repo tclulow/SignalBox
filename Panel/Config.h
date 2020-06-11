@@ -15,8 +15,4 @@
 #define DEFAULT_I2C_OUTPUT_BASE_ID  0x50    // Output nodes' base ID.
 
 
-// Define some fake nodes (every third one).
-#define FAKE_NODE    && (node % 3)
-
-
 #endif

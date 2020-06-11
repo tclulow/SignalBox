@@ -44,7 +44,7 @@ void mapHardware()
   for (int node = 0; node < INPUT_NODE_MAX; node++)
   {
     Wire.beginTransmission(systemData.i2cInputBaseID + node);
-    if (Wire.endTransmission())   // FAKE_NODE)   
+    if (Wire.endTransmission())   
     {
       lcd.print(CHAR_DOT); 
     }
@@ -60,7 +60,7 @@ void mapHardware()
   for (int node = 0; node < OUTPUT_NODE_MAX; node++)
   {
     Wire.beginTransmission(systemData.i2cOutputBaseID + node);
-    if (Wire.endTransmission())   // FAKE_NODE)
+    if (Wire.endTransmission())
     {
       lcd.print(CHAR_DOT); 
     }
@@ -313,13 +313,6 @@ int readInputNode(int node)
   {
     value = currentInputState[node];  // Pretend no change if comms error.
   }
-
-  #ifdef FAKE_NODE
-//  if ((millis() & 0x3ff) == 0)        // 1024 millisecs ~= 1 second.
-//  {
-//    value = millis() & 0xffff;
-//  }
-  #endif
   
   return value;
 }
