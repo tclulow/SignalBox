@@ -43,28 +43,11 @@ class ImportExport
     }
     else
     {
-      // Report unrecognised import line.
-      lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
-      lcd.print(wordBuffer);
-      lcd.print("?");
-  
-      // Wait for user-input. BUTTON_RIGHT will continue, others will abort import.
-      if (waitForButton() == BUTTON_RIGHT)
-      {
-        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
-        waitForButtonRelease();
-      }
-      else
-      {
-        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-      }
+      importError();
     }
   
     // Skip rest of line.
-    while (!endOfLine())
-    {
-      readWord();
-    }
+    skipLine();
   }
   
   
@@ -85,6 +68,14 @@ class ImportExport
     if (!strcmp_P(wordBuffer, M_TOGGLE))
     {
       mask = INPUT_TOGGLE_MASK;
+    }
+    else if (!strcmp_P(wordBuffer, M_BUTTON))
+    {
+      mask = 0;
+    }
+    else
+    {
+      importError();
     }
   
     for (int i = 0; i < INPUT_OUTPUT_MAX; i++)
@@ -128,6 +119,10 @@ class ImportExport
     else if (!strcmp_P(wordBuffer, M_IMPORT_LED))
     {
       outputData.mode = (outputData.mode & ~OUTPUT_NODE_MASK) | OUTPUT_MODE_LED;
+    }
+    else
+    {
+      importError();
     }
   
     outputData.lo   = readData();
@@ -187,12 +182,13 @@ class ImportExport
   }
   
   
-  /** Skip whole line
+  /** Skip rest of line
    */
   void skipLine()
   {
-    while ((lastChar = Serial.read()) != CHAR_NEWLINE)
+    while (lastChar != CHAR_NEWLINE)
     {
+      lastChar = Serial.read();
       if (readButton())
       {
         return;
@@ -244,6 +240,30 @@ class ImportExport
     return index; 
   }
 
+
+  /** Report an import error.
+   */
+  void importError()
+  {
+      // Report unrecognised import line.
+      lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+      lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+      lcd.print(wordBuffer);
+      lcd.print("?");
+  
+      // Wait for user-input. BUTTON_RIGHT will continue, others will abort import.
+      if (waitForButton() == BUTTON_RIGHT)
+      {
+        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
+        waitForButtonRelease();
+        skipLine();
+      }
+      else
+      {
+        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+      }
+  }
 
   /** Export the system parameters.
    */
