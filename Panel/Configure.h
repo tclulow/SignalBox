@@ -1343,7 +1343,9 @@ class Configure
           Serial.print(CHAR_TAB);
           printHex(outputData.hi, 2);
           Serial.print(CHAR_TAB);
-          printHex(outputData.pace, 2);
+          printHex((outputData.pace >> OUTPUT_DELAY_SHIFT) & OUTPUT_DELAY_MASK, 1);
+          Serial.print(CHAR_SPACE);
+          printHex((outputData.pace                      ) & OUTPUT_PACE_MASK,  1);
           Serial.println();
         }
         Serial.println();
