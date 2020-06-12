@@ -9,6 +9,11 @@
 // Useful characters
 const char CHAR_SPACE   = ' ';
 const char CHAR_TAB     = '\t';
+const char CHAR_NEWLINE = '\n';
+const char CHAR_RETURN  = '\r';
+const char CHAR_NULL    = 0;
+
+const char CHAR_HASH    = '#';
 const char CHAR_DOT     = '.';
 const char CHAR_LEFT    = '<';
 const char CHAR_RIGHT   = '>';
