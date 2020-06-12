@@ -33,7 +33,7 @@ void announce()
 }
 
 
-/** Map the Output and Input nodes.
+/** Map the Input and Output nodes.
  */
 void mapHardware()
 {
@@ -299,7 +299,8 @@ void scanInputs()
 
 /** Read the pins of a InputNode.
  *  Return the state of the pins, 16 bits, both ports.
- *  Return negative number if there's a communication error.
+ *  Return current state if there's a communication error, 
+ *  this will prevent any actions being performed.
  */
 int readInputNode(int node)
 {
@@ -346,7 +347,7 @@ void processInput(int aNode, int aPin, int aState)
   loadInput(aNode, aPin);
   boolean isToggle = inputData.output[0] & INPUT_TOGGLE_MASK;
 
-  // Process all the Input's outputs (if they're not disabled.
+  // Process all the Input's outputs (if they're not disabled).
   for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
   {
     if (   (index == 0)
@@ -417,7 +418,7 @@ int sendOutputCommand()
     debugPause();
   }
   
-  Wire.beginTransmission(systemData.i2cOutputBaseID + (outputNumber << OUTPUT_NODE_SHIFT));
+  Wire.beginTransmission(systemData.i2cOutputBaseID + ((outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK));
   Wire.write(outputNumber & OUTPUT_PIN_MASK);
   if (outputData.mode & OUTPUT_STATE)
   {
@@ -438,9 +439,9 @@ int sendOutputCommand()
 //void checkMem(char* aMessage)
 //{
 //  stackPtr = (uint8_t *)malloc(4);  // use stackPtr temporarily
-//  heapPtr = stackPtr;                  // save value of heap pointer
-//  free(stackPtr);                        // free up the memory again (sets stackPtr to 0)
-//  stackPtr =  (uint8_t *)(SP);       // save value of stack pointer
+//  heapPtr = stackPtr;               // save value of heap pointer
+//  free(stackPtr);                   // free up the memory again (sets stackPtr to 0)
+//  stackPtr =  (uint8_t *)(SP);      // save value of stack pointer
 //  Serial.print(aMessage);
 //  Serial.print(" ");
 //  Serial.print((int)heapPtr);
@@ -575,7 +576,6 @@ void loop()
       lcd.printAt((loops + 4) & 0x7, LCD_ROW_BOT, CHAR_SPACE);
       loops += 1;
 
-      // lcd.printAt(LCD_COL_START, LCD_ROW_BOT, active[loops++ & 0x3]);
       lastLoop = millis();
     }
   }
