@@ -16,13 +16,6 @@
 #define SYS_I2C      1
 #define SYS_MAX      2
 
-// Rep menu states.
-#define EXP_ALL      0
-#define EXP_SYSTEM   1
-#define EXP_INPUTS   2
-#define EXP_OUTPUTS  3
-#define EXP_MAX      4
-
 
 /** Configure the system.
  */
@@ -573,7 +566,7 @@ class Configure
         case BUTTON_LEFT:   finished = true;
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
-                            printExport(expMenu);
+                            importExport.doExport(expMenu);
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
       }
@@ -588,7 +581,7 @@ class Configure
    */
   void menuImport()
   {
-    doImport();
+    importExport.doImport();
   }
 
 
@@ -1192,177 +1185,6 @@ class Configure
     return waitForButton() == BUTTON_SELECT;
   }
 
-
-  /** Print selected export.
-   */
-  void printExport(int aExport)
-  {
-    lcd.printAt(LCD_COL_EXP_STATUS, LCD_ROW_BOT, M_EXPORTING);
-
-    switch(aExport)
-    {
-      case EXP_ALL:     printSystem();
-                        printInputs();
-                        printOutputs();
-                        break;
-      case EXP_SYSTEM:  printSystem();
-                        break;
-      case EXP_INPUTS:  printInputs();
-                        break;
-      case EXP_OUTPUTS: printOutputs();
-                        break;
-      default:          systemFail(M_EXPORT, aExport);
-    }
-
-    lcd.clearRow(LCD_COL_EXP_STATUS, LCD_ROW_BOT);
-  }
-
-
-
-
-  /** Print the system parameters.
-   */
-  void printSystem()
-  {
-    Serial.println(PGMT(M_EXPORT_SYSTEM));
-    
-    Serial.print(PGMT(M_SYSTEM));
-    Serial.print(CHAR_TAB);
-    Serial.print(PGMT(M_VERSION));
-    Serial.print(CHAR_TAB);
-    Serial.print(PGMT(M_SYS_I2C));
-    Serial.print(CHAR_TAB);
-    printHex(systemData.i2cControllerID, 2);
-    Serial.print(CHAR_TAB);
-    printHex(systemData.i2cInputBaseID,  2);
-    Serial.print(CHAR_TAB);
-    printHex(systemData.i2cOutputBaseID, 2);
-    Serial.println();
-    Serial.println();
-
-    // dumpMemory();
-  }
-
-
-//  /** Dump all the EEPROM memory.
-//   */
-//  void dumpMemory()
-//  {
-//    dumpMemory(SYSTEM_BASE, SYSTEM_END);
-//    Serial.println();
-//    dumpMemory(OUTPUT_BASE, OUTPUT_END);
-//    Serial.println();
-//    dumpMemory(INPUT_BASE,  INPUT_END);
-//    Serial.println();
-//  }
-
-
-//  /** Dump a range of the EEPROM memory.
-//   */
-//  void dumpMemory(int aStart, int aEnd)
-//  {
-//    for (int base = aStart; base < aEnd; base += 16)
-//    {
-//      printHex(base, 4);
-//      Serial.print(":");
-//      
-//      for (int offs = 0; offs < 16; offs++)
-//      {
-//        Serial.print(CHAR_SPACE);
-//        printHex(EEPROM.read(base + offs), 2);
-//      }
-//
-//      Serial.println();
-//    }
-//  }
-
-
-  void printInputs()
-  {
-    Serial.println(PGMT(M_EXPORT_INPUT));
-
-    for (int node = 0; node < INPUT_NODE_MAX; node++)
-    {
-      if (isInputNode(node))
-      {
-        for (int pin = 0; pin < INPUT_NODE_SIZE; pin++)
-        {
-          loadInput(node, pin);
-  
-          Serial.print(PGMT(M_INPUT));
-          Serial.print(CHAR_TAB);
-          printHex(node, 1);
-          Serial.print(CHAR_TAB);
-          printHex(pin, 1);
-          Serial.print(CHAR_TAB);
-          Serial.print(PGMT(M_INPUT_TYPES[(inputData.output[0] & INPUT_TOGGLE_MASK ? 1 : 0)]));
-          
-          for (int output = 0; output < INPUT_OUTPUT_MAX; output++)
-          {
-            Serial.print(CHAR_TAB);
-            printHex((inputData.output[output] >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK, 1);
-            Serial.print(CHAR_SPACE);
-            printHex((inputData.output[output]                     ) & OUTPUT_PIN_MASK,  1);
-            if (   (output > 0)
-                && (inputData.output[output] & INPUT_DISABLED_MASK))
-            {
-              Serial.print(CHAR_STAR);
-            }
-          }
-          Serial.println();
-        }
-        Serial.println();
-      }
-    }
-  }
-
-
-  void printOutputs()
-  {
-    Serial.println(PGMT(M_EXPORT_OUTPUT));
-    
-    for (int node = 0; node < OUTPUT_NODE_MAX; node++)
-    {
-      if (isOutputNode(node))
-      {
-        for (int pin = 0; pin < OUTPUT_NODE_SIZE; pin++)
-        {
-          loadOutput(node, pin);
-  
-          Serial.print(PGMT(M_OUTPUT));
-          Serial.print(CHAR_TAB);
-          printHex(node, 1);
-          Serial.print(CHAR_TAB);
-          printHex(pin, 1);
-          Serial.print(CHAR_TAB);
-          Serial.print(PGMT(M_OUTPUT_TYPES[outputData.mode & OUTPUT_MODE_MASK]));
-          Serial.print(CHAR_TAB);
-          printHex(outputData.lo, 2);
-          Serial.print(CHAR_TAB);
-          printHex(outputData.hi, 2);
-          Serial.print(CHAR_TAB);
-          printHex((outputData.pace >> OUTPUT_DELAY_SHIFT) & OUTPUT_DELAY_MASK, 1);
-          Serial.print(CHAR_SPACE);
-          printHex((outputData.pace                      ) & OUTPUT_PACE_MASK,  1);
-          Serial.println();
-        }
-        Serial.println();
-      }
-    }
-  }
-
-  /** Print a number as a string of hex digits.
-   *  Padded with leading zeros to length aDigits.
-   */
-  void printHex(int aValue, int aDigits)
-  {
-    for (int digit = aDigits - 1; digit >= 0; digit--)
-    {
-      Serial.print(HEX_CHARS[(aValue >> (digit << 2)) & 0xf]);
-    }
-  }
-
-  
   
   public:
   
