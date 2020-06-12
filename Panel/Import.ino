@@ -48,7 +48,7 @@ void importLine()
   {
     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SYSTEM);
   }
-  else if (!strcmp_P(wordBuffer, M_INPUT2))
+  else if (!strcmp_P(wordBuffer, M_IMPORT_INPUT))
   {
     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT);
     importInput();
@@ -134,17 +134,17 @@ void importOutput()
   loadOutput(node, pin);
   
   readWord();
-  if (!strcmp_P(wordBuffer, M_SERVO))
+  if (!strcmp_P(wordBuffer, M_IMPORT_SERVO))
   {
-    outputData.mode = OUTPUT_MODE_SERVO;
+    outputData.mode = (outputData.mode & ~OUTPUT_NODE_MASK) | OUTPUT_MODE_SERVO;
   }
-  else if (!strcmp_P(wordBuffer, M_SIGNAL))
+  else if (!strcmp_P(wordBuffer, M_IMPORT_SIGNAL))
   {
-    outputData.mode = OUTPUT_MODE_SIGNAL;
+    outputData.mode = (outputData.mode & ~OUTPUT_NODE_MASK) | OUTPUT_MODE_SIGNAL;
   }
-  else if (!strcmp_P(wordBuffer, M_LED))
+  else if (!strcmp_P(wordBuffer, M_IMPORT_LED))
   {
-    outputData.mode = OUTPUT_MODE_LED;
+    outputData.mode = (outputData.mode & ~OUTPUT_NODE_MASK) | OUTPUT_MODE_LED;
   }
 
   outputData.lo   = readData();
@@ -213,7 +213,6 @@ void skipLine()
       return;
     }
   }
-  Serial.println("Skip line");
 }
 
 
@@ -256,8 +255,6 @@ int readWord()
 
   // Add terminator to word.
   wordBuffer[index] = CHAR_NULL; 
-  Serial.print("Read ");
-  Serial.println(wordBuffer);
   
   return index; 
 }

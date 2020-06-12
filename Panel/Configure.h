@@ -1289,7 +1289,7 @@ class Configure
         {
           loadInput(node, pin);
   
-          Serial.print(PGMT(M_INPUT2));
+          Serial.print(PGMT(M_INPUT));
           Serial.print(CHAR_TAB);
           printHex(node, 1);
           Serial.print(CHAR_TAB);
