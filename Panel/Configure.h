@@ -179,7 +179,6 @@ class Configure
    */
   void displayDetailExport()
   {
-    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_REPORT_TYPES[expMenu]);
   }
   
@@ -569,7 +568,6 @@ class Configure
                               expMenu = EXP_MAX - 1;
                             }
                             displayDetailExport();
-                            markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
         case BUTTON_SELECT: break;
         case BUTTON_LEFT:   finished = true;
@@ -1291,7 +1289,7 @@ class Configure
         {
           loadInput(node, pin);
   
-          Serial.print(PGMT(M_INPUT));
+          Serial.print(PGMT(M_INPUT2));
           Serial.print(CHAR_TAB);
           printHex(node, 1);
           Serial.print(CHAR_TAB);

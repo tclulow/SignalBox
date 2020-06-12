@@ -46,10 +46,11 @@ const char M_SYSTEM[]          PROGMEM = "System";
 const char M_DETAIL[]          PROGMEM = "Detail";
 const char M_PARAMS[]          PROGMEM = "Params";
 const char M_OUTPUT[]          PROGMEM = "Output";
-const char M_INPUT[]           PROGMEM = "Input";
+const char M_INPUT[]           PROGMEM = "Input ";
+const char M_INPUT2[]          PROGMEM = "Input";     // For use when trailing space mustn't be present.
 const char M_EXPORT[]          PROGMEM = "Export";
 const char M_IMPORT[]          PROGMEM = "Import";
-const char M_ALL[]             PROGMEM = "All";
+const char M_ALL[]             PROGMEM = "All   ";
 
 const char M_DEBUG[]           PROGMEM = "Debug ";
 const char M_SYS_I2C[]         PROGMEM = "i2cID ";

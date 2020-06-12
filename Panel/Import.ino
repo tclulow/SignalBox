@@ -48,7 +48,7 @@ void importLine()
   {
     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SYSTEM);
   }
-  else if (!strcmp_P(wordBuffer, M_INPUT))
+  else if (!strcmp_P(wordBuffer, M_INPUT2))
   {
     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT);
     importInput();
