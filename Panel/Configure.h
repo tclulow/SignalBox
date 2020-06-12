@@ -179,6 +179,7 @@ class Configure
    */
   void displayDetailExport()
   {
+    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_REPORT_TYPES[expMenu]);
   }
   
@@ -568,6 +569,7 @@ class Configure
                               expMenu = EXP_MAX - 1;
                             }
                             displayDetailExport();
+                            markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
         case BUTTON_SELECT: break;
         case BUTTON_LEFT:   finished = true;
@@ -588,11 +590,7 @@ class Configure
    */
   void menuImport()
   {
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
-
-    delay(DELAY_READ);
-    
-    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+    doImport();
   }
 
 
