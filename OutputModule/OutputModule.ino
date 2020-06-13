@@ -50,7 +50,7 @@ uint8_t servoState[SERVO_MAX] = { 90, 90, 90, 90, 90, 90, 90, 90 };
  */
 void setup()
 {
-  Serial.begin(19200);           // Serial IO.
+  Serial.begin(115200);           // Serial IO.
 
   // Configure the Jumper pins for input.
   for (int pin = 0; pin < JUMPER_PINS; pin++)
@@ -102,9 +102,9 @@ void setup()
   Serial.print("Module ID: 0x");
   Serial.println(moduleID, HEX);
 
-//  // Test-move a Servo
-//  delay(2000);
-//  moveServo(0, 0, 126, 1);
+  // Test-move a Servo
+  delay(2000);
+  moveServo(0, 0, 100, 1);
 }
 
 
@@ -209,14 +209,14 @@ void loop()
         Serial.println();
       }
       
-//      // Test code to move servo back to zero when complete.
-//      if (servos[servo].step == servos[servo].steps)
-//      {
-//        if (servos[servo].target == 0)
-//        {
-//          moveServo(servo, 180, 0, 0);
-//        }
-//      }
+      // Test code to move servo back to zero when complete.
+      if (servos[servo].step == servos[servo].steps)
+      {
+        if (servos[servo].target == 0)
+        {
+          moveServo(servo, 179, 0, 0);
+        }
+      }
     }
   }
 
