@@ -54,6 +54,10 @@ void setup()
     pinMode(pin, OUTPUT);
   }
 
+  // Configure the on-board LED pin for output
+  pinMode(LED_BUILTIN, OUTPUT);
+
+
   // Configure i2c from jumpers.
   for (int pin = 0; pin < JUMPER_PINS; pin++)
   {
@@ -77,7 +81,7 @@ void setup()
   Serial.println(moduleID, HEX);
 
   // Test-move a Servo
-  moveServo(0, 180, 127, 1);
+  moveServo(0, 0, 126, 1);
 }
 
 
@@ -108,6 +112,7 @@ void moveServo(uint8_t aServo, uint8_t aTarget, uint8_t aPace, uint8_t aState)
   // Action the IO flag immediately.
   digitalWrite(ioPins[aServo], aState);
 
+  // Report action request
   Serial.print(millis());
   Serial.print("\tMove: servo=");
   Serial.print(aServo);
@@ -138,14 +143,24 @@ void loop()
   {
     if (servos[servo].step < servos[servo].steps)
     {
+      // Indicate work in progress
+      digitalWrite(LED_BUILTIN, HIGH);
+      
       servos[servo].step += 1;
       angle = servos[servo].start 
             +   (servos[servo].target - servos[servo].start)
               * servos[servo].step / servos[servo].steps;
       servos[servo].servo.write(servos[servo].start + (servos[servo].target - servos[servo].start) * servos[servo].step / servos[servo].steps);
 
-      if (   (servos[servo].step == 1)
-          || (servos[servo].step == servos[servo].steps))
+      if (servos[servo].step == servos[servo].steps)
+      {
+        // Indicate work complete
+        digitalWrite(LED_BUILTIN, LOW);
+      }
+
+      // Test code to report activity.
+//      if (   (servos[servo].step == 1)
+//          || (servos[servo].step == servos[servo].steps))
       {
         Serial.print(millis());
         Serial.print("\tStep: servo=");
@@ -166,9 +181,9 @@ void loop()
       // Test code to move servo back to zero when complete.
       if (servos[servo].step == servos[servo].steps)
       {
-        if (servos[servo].target != 0)
+        if (servos[servo].target == 0)
         {
-          moveServo(servo, 0, 0, 0);
+          moveServo(servo, 180, 0, 0);
         }
       }
     }
