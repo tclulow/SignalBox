@@ -61,7 +61,7 @@ void mapHardware()
   for (int node = 0; node < OUTPUT_NODE_MAX; node++)
   {
     Wire.beginTransmission(systemData.i2cOutputBaseID + node);
-    if (Wire.endTransmission() && node != 0xf)
+    if (Wire.endTransmission())
     {
       lcd.print(CHAR_DOT); 
     }
@@ -441,7 +441,7 @@ int sendOutputCommand(int aValue, int aPace, int aState)
  */
 void setup()
 {
-  Serial.begin(19200);           // Serial IO.
+  Serial.begin(115200);           // Serial IO.
 //  #if DEBUG
 //  Serial.print("System  ");
 //  Serial.print(SYSTEM_BASE, HEX);
