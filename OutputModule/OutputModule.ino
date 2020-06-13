@@ -2,8 +2,14 @@
  */
 
 
+#include <EEPROM.h>
 #include <Servo.h>
 #include <Wire.h>
+
+
+// Servo state saved in EEPROM
+#define SERVO_BASE  0                    // EEPROM base of Servo data.
+#define SERVO_SIZE  sizeof(servoState)   // Size of Servo data
 
 
 #define I2C_BASE_ID    0x50   // Output nodes' base ID.
@@ -35,6 +41,10 @@ struct
   uint8_t step   = 0;       // The current step.
 } servos[SERVO_MAX];
 
+// EEPROM persistance of Servo values
+uint8_t servoState[SERVO_MAX] = { 90, 90, 90, 90, 90, 90, 90, 90 };
+
+
 
 /** Setup the Arduino.
  */
@@ -65,10 +75,22 @@ void setup()
   }
   moduleID |= I2C_BASE_ID;
 
+  // Recover Servo state from EEPROM
+  EEPROM.get(SERVO_BASE, servoState);
+  for (int servo = 0; servo < SERVO_MAX; servo++)
+  {
+    Serial.print("Init servo ");
+    Serial.print(servo);
+    Serial.print(" to ");
+    Serial.print(servoState[servo]);
+    Serial.println();
+  }
+
   // Attach all servos to their pins.
   for (int i = 0, pin = SERVO_BASE_PIN; i < SERVO_MAX; i++, pin++)
   {
     pinMode(pin, OUTPUT);
+    servos[i].servo.write(servoState[i]);
     servos[i].servo.attach(pin);
     delay(20);
   }
@@ -80,20 +102,24 @@ void setup()
   Serial.print("Module ID: 0x");
   Serial.println(moduleID, HEX);
 
-  // Test-move a Servo
-  moveServo(0, 0, 126, 1);
+//  // Test-move a Servo
+//  delay(2000);
+//  moveServo(0, 0, 126, 1);
 }
 
 
 /** Upon receipt of a request, store it in the corresponding Servo's state.
  */
-void processRequest(int aRequests)
+void processRequest(int aLen)
 {
   uint8_t pin   = Wire.read();
   uint8_t angle = Wire.read();
   uint8_t pace  = Wire.read();
   uint8_t state = Wire.read();   
 
+  Serial.print("Req: ");
+  Serial.println(aLen);
+  
   moveServo(pin, angle, pace, state);
 }
 
@@ -137,6 +163,7 @@ void moveServo(uint8_t aServo, uint8_t aTarget, uint8_t aPace, uint8_t aState)
 void loop()
 {
   int angle;
+  boolean stateChanged = false;
   
   // Move any Servos that need moving.
   for (int servo = 0; servo < SERVO_MAX; servo++)
@@ -156,11 +183,15 @@ void loop()
       {
         // Indicate work complete
         digitalWrite(LED_BUILTIN, LOW);
+
+        // Record Servo's state.
+        stateChanged = true;
+        servoState[servo] = servos[servo].servo.read();
       }
 
       // Test code to report activity.
-//      if (   (servos[servo].step == 1)
-//          || (servos[servo].step == servos[servo].steps))
+      if (   (servos[servo].step == 1)
+          || (servos[servo].step == servos[servo].steps))
       {
         Serial.print(millis());
         Serial.print("\tStep: servo=");
@@ -178,15 +209,20 @@ void loop()
         Serial.println();
       }
       
-      // Test code to move servo back to zero when complete.
-      if (servos[servo].step == servos[servo].steps)
-      {
-        if (servos[servo].target == 0)
-        {
-          moveServo(servo, 180, 0, 0);
-        }
-      }
+//      // Test code to move servo back to zero when complete.
+//      if (servos[servo].step == servos[servo].steps)
+//      {
+//        if (servos[servo].target == 0)
+//        {
+//          moveServo(servo, 180, 0, 0);
+//        }
+//      }
     }
+  }
+
+  if (stateChanged)
+  {
+    EEPROM.put(SERVO_BASE, servoState);
   }
 
   // Wait a clock tick.
