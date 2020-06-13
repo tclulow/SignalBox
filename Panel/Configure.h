@@ -1053,6 +1053,7 @@ class Configure
 
     displayOutputPrompt(index);
     markField(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, 2, true);
+    sendOutputCommand(params[index], outputData.pace, outputData.mode & OUTPUT_STATE);
 
     while (index >= 0)
     {
@@ -1089,6 +1090,7 @@ class Configure
                             {
                               displayOutputPrompt(index);
                               markField(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
+                              sendOutputCommand(params[index], outputData.pace, outputData.mode & OUTPUT_STATE);
                             }
                             break;
         case BUTTON_RIGHT:  if (index <= OUTPUT_PACE_INDEX)
@@ -1101,6 +1103,10 @@ class Configure
                                 changed = menuOutputPace(); 
                                 index -= 1;
                                 displayOutputPrompt(index);
+                              }
+                              else
+                              {
+                                sendOutputCommand(params[index], outputData.pace, outputData.mode & OUTPUT_STATE);
                               }
                               markField(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
                             }
