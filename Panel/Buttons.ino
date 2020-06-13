@@ -36,8 +36,6 @@ void calibrateButtons()
 }
 
 
-
-
 /** Read the input button pressed.
  *  Return one of the constants above.
  */

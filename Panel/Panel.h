@@ -23,4 +23,10 @@ const char HEX_CHARS[]  = "0123456789abcdef";
 const char EDIT_CHARS[] = "ABC";
 
 
+/** Send a command to an output node.
+ *  Return error code if any.
+ *  Forward reference required for Configure class.
+ */
+int sendOutputCommand(int aValue, int aPace, int aState);
+
 #endif

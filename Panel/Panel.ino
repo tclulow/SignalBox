@@ -61,7 +61,7 @@ void mapHardware()
   for (int node = 0; node < OUTPUT_NODE_MAX; node++)
   {
     Wire.beginTransmission(systemData.i2cOutputBaseID + node);
-    if (Wire.endTransmission())
+    if (Wire.endTransmission() && node != 0xf)
     {
       lcd.print(CHAR_DOT); 
     }
@@ -185,9 +185,6 @@ void firstRun()
     
   saveSystemData();
   delay(DELAY_READ);
-
-  // Run configuration menus.
-  configure.run();
 }
 
 
@@ -263,12 +260,12 @@ void convertEzyBus()
  */
 void scanInputs()
 { 
-  #if DEBUG
-  processInput(3, 4, 0x00);
-  processInput(3, 4, 0x80);
-  processInput(3, 5, 0x00);
-  processInput(3, 5, 0x80);
-  #endif 
+//  #if DEBUG
+//  processInput(3, 4, 0x00);
+//  processInput(3, 4, 0x80);
+//  processInput(3, 5, 0x00);
+//  processInput(3, 5, 0x80);
+//  #endif 
 
   // Scan all the nodes. 
   for (int node = 0; node < INPUT_NODE_MAX; node++)
@@ -367,7 +364,7 @@ void processInput(int aNode, int aPin, int aState)
           outputData.mode &= ~OUTPUT_STATE;   // Clear output state
         }
         
-        sendOutputCommand();                  // Send change state to match that of the input.
+        sendOutputCommand((outputData.mode & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.mode & OUTPUT_STATE);
         saveOutput();
       }
       else  // button input
@@ -376,7 +373,7 @@ void processInput(int aNode, int aPin, int aState)
         {
           loadOutput(output);
           outputData.mode ^= OUTPUT_STATE;    // Toggle the state.
-          sendOutputCommand();                // Send to Output.
+          sendOutputCommand((outputData.mode & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.mode & OUTPUT_STATE);
           saveOutput();
         }
       }
@@ -388,23 +385,20 @@ void processInput(int aNode, int aPin, int aState)
 /** Send a command to an output node.
  *  Return error code if any.
  */
-int sendOutputCommand()
+int sendOutputCommand(int aValue, int aPace, int aState)
 {
 //  #if DEBUG
 //  // Report output
 //  Serial.print("Output ");
-//  Serial.print((outputData.mode & OUTPUT_STATE) ? "Hi" : "Lo");
+//  Serial.print(aState ? "Hi" : "Lo");
 //  Serial.print(" ");
 //  Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
 //  Serial.print(" ");
 //  Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
 //  Serial.print(" ");
-//  Serial.print(((outputData.mode & OUTPUT_STATE) ? outputData.hi : outputData.lo), HEX);
+//  Serial.print(aValue, HEX);
 //  Serial.print(" ");
-//  Serial.print(HEX_CHARS[outputData.pace & OUTPUT_PACE_MASK]);
-//  Serial.print("(");
-//  Serial.print(((outputData.pace & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT) + OUTPUT_PACE_OFFSET);
-//  Serial.print(")");
+//  Serial.print(HEX_CHARS[pace & OUTPUT_PACE_MASK]);
 //  Serial.println();
 //  #endif
 
@@ -412,7 +406,7 @@ int sendOutputCommand()
   {
     lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
     lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT);
-    lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, ((outputData.mode & OUTPUT_STATE) ? M_HI : M_LO));
+    lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, (aState ? M_HI : M_LO));
     lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
     lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
     debugPause();
@@ -420,16 +414,9 @@ int sendOutputCommand()
   
   Wire.beginTransmission(systemData.i2cOutputBaseID + ((outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK));
   Wire.write(outputNumber & OUTPUT_PIN_MASK);
-  if (outputData.mode & OUTPUT_STATE)
-  {
-    Wire.write(outputData.hi);
-  }
-  else
-  {
-    Wire.write(outputData.lo);
-  }
-  Wire.write(((outputData.pace & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT) + OUTPUT_PACE_OFFSET);
-  Wire.write((outputData.mode & OUTPUT_STATE) ? 1 : 0);
+  Wire.write(aValue);
+  Wire.write(((aPace & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT) + OUTPUT_PACE_OFFSET);
+  Wire.write(aState ? 1 : 0);
   return Wire.endTransmission();
 }
 
@@ -525,10 +512,6 @@ void setup()
   announce();
   delay(DELAY_READ);
 
-  // Discover and initialise attached hardware.
-  mapHardware();                            // Scan for attached hardware.
-  initInputs();                             // Initialise all inputs.
-
   // Deal with first run (software has never been run before).
   if (!loadSystemData() || ezyBusDetected())
   {
@@ -538,7 +521,12 @@ void setup()
   {
     // Calibration requested.
     calibrateButtons();
+    saveSystemData();
   }
+
+  // Discover and initialise attached hardware.
+  mapHardware();                            // Scan for attached hardware.
+  initInputs();                             // Initialise all inputs.
 
   // Announce ourselves.
   announce();

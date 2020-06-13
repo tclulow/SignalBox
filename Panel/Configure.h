@@ -43,7 +43,7 @@ class Configure
                        node &= INPUT_NODE_MASK;
                        if (!isInputNode(node))
                        {
-                         node = nextNode(node, 1, INPUT_NODE_MAX);
+                         node = nextNode(node, 1, true);
                        }
                        displayNode();
                        break;
@@ -51,7 +51,7 @@ class Configure
                        node &= OUTPUT_NODE_MASK;
                        if (!isOutputNode(node))
                        {
-                         node = nextNode(node, 1, OUTPUT_NODE_MAX);
+                         node = nextNode(node, 1, false);
                        }
                        displayNode();
                        break;
@@ -592,7 +592,7 @@ class Configure
     boolean finished = false;
 
     markField(LCD_COL_NODE, LCD_ROW_TOP, 1, true);
-
+    
     while (!finished)
     {
       int adjust = 0;
@@ -1049,7 +1049,7 @@ class Configure
   {
     boolean changed  = false;
     int     index    = 0;
-    int     params[] = { outputData.lo, outputData.hi, outputData.pace }; 
+    int     params[] = { outputData.lo, outputData.hi }; 
 
     displayOutputPrompt(index);
     markField(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, 2, true);
@@ -1068,6 +1068,7 @@ class Configure
                               autoRepeat = DELAY_BUTTON_REPEAT;
                             }
                             while (readButton() != 0);
+                            sendOutputCommand(params[index], outputData.pace, outputData.mode & OUTPUT_STATE);
                             changed = true;
                             break;
         case BUTTON_DOWN:   do
@@ -1078,6 +1079,7 @@ class Configure
                               autoRepeat = DELAY_BUTTON_REPEAT;
                             }
                             while (readButton() != 0);
+                            sendOutputCommand(params[index], outputData.pace, outputData.mode & OUTPUT_STATE);
                             changed = true;
                             break;
         case BUTTON_SELECT: break;
