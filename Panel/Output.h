@@ -24,6 +24,7 @@
 #define OUTPUT_MODE_SIGNAL     0x01   // Output is a signal.
 #define OUTPUT_MODE_LED        0x02   // Output is a LED or other IO device.
 #define OUTPUT_MODE_MAX        0x03   // Limit of output types.
+#define OUTPUT_PARAM_MAX        180   // Maximum value an output parameter can take.
 
 #define OUTPUT_PACE_MASK       0x0f   // Pace is in right-most nibble of output.pace.
 #define OUTPUT_PACE_SHIFT         3   // Pace is shifted by this amount (multiplied by 8).

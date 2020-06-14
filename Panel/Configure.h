@@ -1035,7 +1035,7 @@ class Configure
                             }
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
-                            changed |= menuOutputParms();
+                            changed |= menuOutputParams();
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
       }
@@ -1045,7 +1045,7 @@ class Configure
 
   /** Process Output's parameters menu.
    */
-  boolean menuOutputParms()
+  boolean menuOutputParams()
   {
     boolean changed  = false;
     int     index    = 0;
@@ -1064,6 +1064,10 @@ class Configure
         case BUTTON_UP:     do
                             {
                               params[index] += 1;
+                              if (params[index] > OUTPUT_PARAM_MAX)
+                              {
+                                params[index] = 0;
+                              }
                               lcd.printAtHex(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
                               delay(autoRepeat);
                               autoRepeat = DELAY_BUTTON_REPEAT;
@@ -1075,6 +1079,10 @@ class Configure
         case BUTTON_DOWN:   do
                             {
                               params[index] -= 1;
+                              if (params[index] < 0)
+                              {
+                                params[index] = OUTPUT_PARAM_MAX;
+                              }
                               lcd.printAtHex(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
                               delay(autoRepeat);
                               autoRepeat = DELAY_BUTTON_REPEAT;
