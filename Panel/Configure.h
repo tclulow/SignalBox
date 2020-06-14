@@ -1122,6 +1122,7 @@ class Configure
     }
 
     displayNode();
+    sendOutputCommand(outputData.mode & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace, outputData.mode & OUTPUT_STATE);
     
     return changed;
   }

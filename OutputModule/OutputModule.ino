@@ -126,13 +126,15 @@ void processRequest(int aLen)
 
 /** Move a Servo from its current position to the desired one
  *  at the pace indicated.
+ *  Steps to move the whole range adjusted by the partial range required
+ *  and for the pace at which to run (faster = fewer steps).
  */
 void moveServo(uint8_t aServo, uint8_t aTarget, uint8_t aPace, uint8_t aState)
 {
   // Set the Servo's movement.
   servos[aServo].start  = servos[aServo].servo.read();
   servos[aServo].target = aTarget;
-  servos[aServo].steps  = (127 - aPace) + 1;
+  servos[aServo].steps  = (128 - aPace) * abs((aTarget - servos[aServo].start)) / 128 + 1;
   servos[aServo].step   = 0;
 
   // Action the IO flag immediately.
@@ -162,7 +164,6 @@ void moveServo(uint8_t aServo, uint8_t aTarget, uint8_t aPace, uint8_t aState)
  */
 void loop()
 {
-  int angle;
   boolean stateChanged = false;
   
   // Move any Servos that need moving.
@@ -174,19 +175,23 @@ void loop()
       digitalWrite(LED_BUILTIN, HIGH);
       
       servos[servo].step += 1;
-      angle = servos[servo].start 
-            +   (servos[servo].target - servos[servo].start)
-              * servos[servo].step / servos[servo].steps;
-      servos[servo].servo.write(servos[servo].start + (servos[servo].target - servos[servo].start) * servos[servo].step / servos[servo].steps);
-
+      
       if (servos[servo].step == servos[servo].steps)
       {
+        // Last step, make sure to hit the target bang-on.
+        servos[servo].servo.write(servos[servo].target);
+
         // Indicate work complete
         digitalWrite(LED_BUILTIN, LOW);
 
         // Record Servo's state.
         stateChanged = true;
         servoState[servo] = servos[servo].servo.read();
+      }
+      else
+      {
+        // Intermediate step, move proportionately (step/steps) along the range (start to target).
+        servos[servo].servo.write(servos[servo].start + (servos[servo].target - servos[servo].start) * servos[servo].step / servos[servo].steps);
       }
 
       // Test code to report activity.
