@@ -119,8 +119,9 @@ void processRequest(int aLen)
 
   Serial.print("Req: ");
   Serial.println(aLen);
-  
-  moveServo(pin, angle, pace, state);
+
+//  // Test - move a Servo
+//  moveServo(pin, angle, pace, state);
 }
 
 
@@ -214,14 +215,14 @@ void loop()
         Serial.println();
       }
       
-      // Test code to move servo back to zero when complete.
-      if (servos[servo].step == servos[servo].steps)
-      {
-        if (servos[servo].target == 0)
-        {
-          moveServo(servo, 179, 0, 0);
-        }
-      }
+//      // Test code to move servo back to zero when complete.
+//      if (servos[servo].step == servos[servo].steps)
+//      {
+//        if (servos[servo].target == 0)
+//        {
+//          moveServo(servo, 179, 0, 0);
+//        }
+//      }
     }
   }
 
