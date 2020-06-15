@@ -112,12 +112,12 @@ void setup()
  */
 void processRequest(int aLen)
 {
-  if (aLen != 4)
+  if (aLen < 4)
   {
     Serial.print("Len: ");
     Serial.print(aLen);
   }
-  else if (Wire.available() != 4)
+  else if (Wire.available() < 4)
   {
     Serial.print("Avail: ");
     Serial.print(Wire.available());
@@ -133,6 +133,12 @@ void processRequest(int aLen)
     uint8_t state = Wire.read();   
   
     moveServo(pin, angle, pace, state);
+  }
+
+  // Consume unexpected data.
+  while (Wire.available())
+  {
+    Wire.read();
   }
 }
 
