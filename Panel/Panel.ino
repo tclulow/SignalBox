@@ -301,23 +301,22 @@ void scanInputs()
 int readInputNode(int node)
 {
   int value = 0;
-  
+
   Wire.beginTransmission(systemData.i2cInputBaseID + node);    
   Wire.write(MCP_GPIOA);
-  value = Wire.requestFrom(node, 2);  Exoect two bytes
-  if (value != 2)
+  if (Wire.endTransmission())
   {
-    value = currentInputState[node];     // Pretend no change if wrong byte-count returned
+    value = currentInputState[node];  // Pretend no change if comms error.
+  }
+  else if (Wire.requestFrom(node, 2) != 2)
+  {
+    value = currentInputState[node];  // Pretend no change if comms error.
   }
   else
   {
     // Read the two bytes.
     value = Wire.read() << 8
           + Wire.read();
-    if (Wire.endTransmission())
-    {
-      value = currentInputState[node];  // Pretend no change if comms error.
-    }
   }
 
   return value;
