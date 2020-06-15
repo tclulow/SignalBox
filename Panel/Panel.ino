@@ -204,7 +204,7 @@ void defaultSetup()
     lcd.print(HEX_CHARS[node]);
     for (int pin = 0; pin < OUTPUT_NODE_SIZE; pin++)
     {
-      // Convert the output.
+      // Create the output.
       loadOutput(node, pin);
       outputData.mode = OUTPUT_MODE_SERVO;
       outputData.lo   = OUTPUT_DEFAULT_LO;
@@ -240,7 +240,6 @@ void convertEzyBus()
     {
       // Convert the output.
       loadOutput(node, pin);
-      // outputData.mode += 1;                   // Convert Servo/Signal/LED
       outputData.pace >>= OUTPUT_PACE_SHIFT;  // Pace was in steps of 4 (2-bits), drop one bit
       saveOutput();
 
