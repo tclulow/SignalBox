@@ -102,9 +102,9 @@ void setup()
   Serial.print("Module ID: 0x");
   Serial.println(moduleID, HEX);
 
-  // Test-move a Servo
-  delay(2000);
-  moveServo(0, 0, 100, 1);
+//  // Test-move a Servo
+//  delay(2000);
+//  moveServo(0, 0, 100, 1);
 }
 
 
@@ -112,16 +112,28 @@ void setup()
  */
 void processRequest(int aLen)
 {
-  uint8_t pin   = Wire.read();
-  uint8_t angle = Wire.read();
-  uint8_t pace  = Wire.read();
-  uint8_t state = Wire.read();   
-
-  Serial.print("Req: ");
-  Serial.println(aLen);
-
-//  // Test - move a Servo
-//  moveServo(pin, angle, pace, state);
+  if (aLen != 4)
+  {
+    Serial.print("Len: ");
+    Serial.print(aLen);
+  }
+  else if (Wire.available() != 4)
+  {
+    Serial.print("Avail: ");
+    Serial.print(Wire.available());
+  }
+  else
+  {
+    Serial.print("Req: ");
+    Serial.println(aLen);
+  
+    uint8_t pin   = Wire.read();
+    uint8_t angle = Wire.read();
+    uint8_t pace  = Wire.read();
+    uint8_t state = Wire.read();   
+  
+    moveServo(pin, angle, pace, state);
+  }
 }
 
 
@@ -215,12 +227,12 @@ void loop()
         Serial.println();
       }
       
-//      // Test code to move servo back to zero when complete.
+//      // Test code to move servo back to 180 when complete.
 //      if (servos[servo].step == servos[servo].steps)
 //      {
 //        if (servos[servo].target == 0)
 //        {
-//          moveServo(servo, 179, 0, 0);
+//          moveServo(servo, 180, 0, 0);
 //        }
 //      }
     }
