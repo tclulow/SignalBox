@@ -3,10 +3,6 @@
 #ifndef _System_h
 #define _System_h
 
-// System Data saved in EEPROM
-#define SYSTEM_BASE  INPUT_END                    // EEPROM base of System data.
-#define SYSTEM_SIZE  sizeof(SystemData)           // Size of System Data.
-#define SYSTEM_END   (SYSTEM_BASE + SYSTEM_SIZE)  // End of System EEPROM.
 
 #define MAGIC_NUMBER 0x50616f6e                   // Majic number.
 #define VERSION      0x0001                       // Version number of software.

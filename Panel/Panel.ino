@@ -5,6 +5,7 @@
 #include <Wire.h>
 
 #include "Config.h"
+#include "Memory.h"
 #include "EzyBus.h"
 #include "Messages.h"
 #include "Panel.h"
@@ -423,6 +424,7 @@ int sendOutputCommand(int aValue, int aPace, int aState)
   Wire.write(aValue);
   Wire.write(((aPace & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT) + OUTPUT_PACE_OFFSET);
   Wire.write(aState ? 1 : 0);
+  Wire.write(0xaa);
   return Wire.endTransmission();
 }
 

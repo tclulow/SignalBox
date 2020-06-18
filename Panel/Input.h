@@ -11,12 +11,6 @@
 #define INPUT_NODE_SHIFT     4      // Shift input number this amount to get a node number.
 #define INPUT_PIN_MASK       0x0f   // Mask to get input pin within a node.
 
-// InputData saved in EEPROM
-#define INPUT_BASE   OUTPUT_END                                 // EEPROM base of Input data.
-#define INPUT_SIZE   sizeof(InputData)                          // Size of InputData entry.
-#define INPUT_MAX    (INPUT_NODE_SIZE * INPUT_NODE_MAX)     // Maximum inputs (up to 128).
-#define INPUT_END    (INPUT_BASE + INPUT_SIZE * INPUT_MAX)      // End of Input EEPROM.
-
 // Mask for Input options
 #define INPUT_OUTPUT_MAX       3        // Number of outputs each input can control.
 #define INPUT_TOGGLE_MASK      0x80     // The input is a toggle rather than a button.

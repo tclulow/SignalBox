@@ -11,12 +11,6 @@
 #define OUTPUT_NODE_SHIFT         3   // Shift output number this amount to get a node number.
 #define OUTPUT_PIN_MASK        0x07   // Mask to get output pin within a node.
 
-// OutputData saved in EEPROM
-#define OUTPUT_BASE  0                                          // EEPROM base of OutputData.
-#define OUTPUT_SIZE  sizeof(OutputData)                         // Size of OutputData entry.
-#define OUTPUT_MAX   (OUTPUT_NODE_SIZE * OUTPUT_NODE_MAX)       // Maximum outputs (up to 128).
-#define OUTPUT_END   (OUTPUT_BASE + OUTPUT_SIZE * OUTPUT_MAX)   // End of OutputData EEPROM.
-
 // Mask for OUTPUT options
 #define OUTPUT_STATE           0x80   // On or off, switched or not switched, 0 = lo, 1 = hi.
 #define OUTPUT_MODE_MASK       0x0f   // Only four bits are used for the type of output.
