@@ -292,8 +292,8 @@ class Configure
     lcd.printAt(LCD_COL_OUTPUT_PACE  - 1, LCD_ROW_TOP, M_PACE);
 
     lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT);
-    lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[(outputData.pace >> OUTPUT_DELAY_SHIFT) & OUTPUT_DELAY_MASK]);
-    lcd.printAt(LCD_COL_OUTPUT_PACE,  LCD_ROW_BOT, HEX_CHARS[(outputData.pace                      ) & OUTPUT_PACE_MASK]);
+    lcd.printAt(LCD_COL_OUTPUT_PACE,  LCD_ROW_BOT, HEX_CHARS[(outputData.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK]);
+    lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[(outputData.pace                     ) & OUTPUT_DELAY_MASK]);
   }
   
 
@@ -595,6 +595,8 @@ class Configure
     }
 
     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+    loadInput(node, pin);
+    loadOutput(node, pin);
   }
 
 
@@ -1217,7 +1219,7 @@ class Configure
   {
     boolean finished = false;
     boolean changed  = false;
-    int value = outputData.pace & OUTPUT_PACE_MASK;
+    int value = (outputData.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK;
 
     displayOutputDelayPace();
     markField(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, 1, true);
@@ -1245,7 +1247,7 @@ class Configure
       }
     }
 
-    outputData.pace = (outputData.pace & ~ OUTPUT_PACE_MASK) | value & OUTPUT_PACE_MASK;
+    outputData.pace = (outputData.pace & OUTPUT_DELAY_MASK) | ((value & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT);
     markField(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, 1, false);
 
     return changed;
@@ -1258,7 +1260,7 @@ class Configure
   {
     boolean finished = false;
     boolean changed  = false;
-    int value = (outputData.pace >> OUTPUT_DELAY_SHIFT) & OUTPUT_DELAY_MASK;
+    int value = outputData.pace & OUTPUT_DELAY_MASK;
 
     markField(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, 1, true);
 
@@ -1282,7 +1284,7 @@ class Configure
       }
     }
 
-    outputData.pace = (outputData.pace & ~ OUTPUT_DELAY_MASK) | ((value & OUTPUT_PACE_MASK) << OUTPUT_DELAY_SHIFT);
+    outputData.pace = (outputData.pace & ~ OUTPUT_DELAY_MASK) | value & OUTPUT_DELAY_MASK;
     markField(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, 1, false);
 
     return changed;

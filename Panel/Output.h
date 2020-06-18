@@ -23,12 +23,11 @@
 #define OUTPUT_ANGLE_SIZE         3   // Maximum digits in an andgl display.
 
 // Masks and size for the pace and delay options withing the outputData.pace element.
-#define OUTPUT_PACE_MASK       0x0f   // Pace is in right-most nibble of output.pace.
+#define OUTPUT_PACE_SHIFT         4   // Pace is in the left-most nibble.
+#define OUTPUT_PACE_MASK       0x0f   // Pace is 4 bits.
 #define OUTPUT_PACE_MULT          3   // Pace is shifted by this amount (multiplied by 8).
 #define OUTPUT_PACE_OFFSET        4   // Pace is offset by this amount (add 4).
-#define OUTPUT_PACE_INDEX         2   // Index of the Pace parameter
-#define OUTPUT_DELAY_MASK       0xf   // Delay will be a nibble of output.pace.
-#define OUTPUT_DELAY_SHIFT        4   // Delay will be in left-most nibble of output.pace.
+#define OUTPUT_DELAY_MASK       0xf   // Delay will be right-most nibble of output.pace.
 
 // Defaults when initialising
 #define OUTPUT_DEFAULT_LO        89   // Default low  position is 90 degrees - 1.
