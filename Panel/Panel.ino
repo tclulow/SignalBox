@@ -241,7 +241,10 @@ void convertEzyBus()
     {
       // Convert the output.
       loadOutput(node, pin);
-      outputData.pace >>= OUTPUT_PACE_MULT;  // Pace was in steps of 4 (2-bits), drop one bit
+      
+      // Pace was in steps of 4 (2-bits), drop one bit, store in left-most nibble
+      outputData.pace = ((outputData.pace >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT;
+      
       saveOutput();
 
       // Create an input.
@@ -405,7 +408,7 @@ int sendOutputCommand(int aValue, int aPace, int aState)
 //  Serial.print(" ");
 //  Serial.print(aValue, HEX);
 //  Serial.print(" ");
-//  Serial.print(HEX_CHARS[pace & OUTPUT_PACE_MASK]);
+//  Serial.print(aPace);
 //  Serial.println();
 //  #endif
 
@@ -422,9 +425,12 @@ int sendOutputCommand(int aValue, int aPace, int aState)
   Wire.beginTransmission(systemData.i2cOutputBaseID + ((outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK));
   Wire.write(outputNumber & OUTPUT_PIN_MASK);
   Wire.write(aValue);
-  Wire.write(((aPace & OUTPUT_PACE_MASK) << OUTPUT_PACE_MULT) + OUTPUT_PACE_OFFSET);
+  Wire.write((((aPace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_MULT) + OUTPUT_PACE_OFFSET);
   Wire.write(aState ? 1 : 0);
-  Wire.write(0xaa);
+  if (aPace & OUTPUT_DELAY_MASK)
+  {
+      Wire.write(aPace & OUTPUT_DELAY_MASK);
+  }
   return Wire.endTransmission();
 }
 

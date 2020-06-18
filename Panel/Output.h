@@ -32,7 +32,7 @@
 // Defaults when initialising
 #define OUTPUT_DEFAULT_LO        89   // Default low  position is 90 degrees - 1.
 #define OUTPUT_DEFAULT_HI        91   // Default high position is 90 degrees + 1.
-#define OUTPUT_DEFAULT_PACE       8   // Default pace is mid-range, no delay.
+#define OUTPUT_DEFAULT_PACE    0x80   // Default pace is mid-range, no delay.
 
 
 /** Data describing an Output's operation.
