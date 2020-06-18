@@ -18,18 +18,22 @@
 #define OUTPUT_MODE_SIGNAL     0x01   // Output is a signal.
 #define OUTPUT_MODE_LED        0x02   // Output is a LED or other IO device.
 #define OUTPUT_MODE_MAX        0x03   // Limit of output types.
-#define OUTPUT_PARAM_MAX        180   // Maximum value an output parameter can take.
 
+#define OUTPUT_ANGLE_MAX        180   // Maximum value an angle output parameter can take.
+#define OUTPUT_ANGLE_SIZE         3   // Maximum digits in an andgl display.
+
+// Masks and size for the pace and delay options withing the outputData.pace element.
 #define OUTPUT_PACE_MASK       0x0f   // Pace is in right-most nibble of output.pace.
-#define OUTPUT_PACE_SHIFT         3   // Pace is shifted by this amount (multiplied by 8).
+#define OUTPUT_PACE_MULT          3   // Pace is shifted by this amount (multiplied by 8).
 #define OUTPUT_PACE_OFFSET        4   // Pace is offset by this amount (add 4).
 #define OUTPUT_PACE_INDEX         2   // Index of the Pace parameter
 #define OUTPUT_DELAY_MASK       0xf   // Delay will be a nibble of output.pace.
 #define OUTPUT_DELAY_SHIFT        4   // Delay will be in left-most nibble of output.pace.
 
+// Defaults when initialising
 #define OUTPUT_DEFAULT_LO        89   // Default low  position is 90 degrees - 1.
 #define OUTPUT_DEFAULT_HI        91   // Default high position is 90 degrees + 1.
-#define OUTPUT_DEFAULT_PACE       8   // Default pace is mid-range.
+#define OUTPUT_DEFAULT_PACE       8   // Default pace is mid-range, no delay.
 
 
 /** Data describing an Output's operation.

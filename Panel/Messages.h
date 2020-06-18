@@ -16,6 +16,7 @@ const char M_CANCEL[]          PROGMEM = "Cancel?  Sel=Yes";
 const char M_SAVED[]           PROGMEM = "Change saved    ";
 const char M_CANCELLED[]       PROGMEM = "Change cancelled";
 const char M_FAILURE[]         PROGMEM = "System error";
+const char M_TODO[]            PROGMEM = "TODO";
 
 const char M_CALIBRATE[]       PROGMEM = "Calibrate button";
 const char M_PRESS[]           PROGMEM = "Press";
@@ -82,6 +83,8 @@ const char M_LED[]             PROGMEM = "LED   ";
 const char M_HI[]              PROGMEM = "Hi";
 const char M_LO[]              PROGMEM = "Lo";
 const char M_PACE[]            PROGMEM = "Spd";
+const char M_DELAY[]           PROGMEM = "Delay";
+
 
 
 // Headers for the exports
