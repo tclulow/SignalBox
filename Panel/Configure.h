@@ -261,17 +261,39 @@ class Configure
     lcd.printAtHex(col, LCD_ROW_BOT, outputData.lo,   2);
     col += LCD_COL_OUTPUT_STEP;
     lcd.printAtHex(col, LCD_ROW_BOT, outputData.hi,   2);
-    col += LCD_COL_OUTPUT_STEP + 1;
-    lcd.printAtHex(col, LCD_ROW_BOT, outputData.pace & OUTPUT_PACE_MASK, 1);
+    col += LCD_COL_OUTPUT_STEP;
+    lcd.printAtHex(col, LCD_ROW_BOT, outputData.pace, 2);
+//    lcd.printAtHex(col, LCD_ROW_BOT, outputData.pace & OUTPUT_PACE_MASK, 1);
+//    col += LCD_COL_OUTPUT_STEP - 1;
+//    lcd.printAtHex(col, LCD_ROW_BOT, (outputData.pace >> OUTPUT_DELAY_SHIFT) & OUTPUT_DELAY_MASK, 1);
   }
 
 
-  /** Display an Output parameter's prompt above it.
+  /** Display Output's angles with suitable prompts above.
    */
-  void displayOutputPrompt(int aParam)
+  void displayOutputAngles()
   {
     lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_TOP);
-    lcd.printAt(LCD_COL_OUTPUT_PARAM + aParam * LCD_COL_OUTPUT_STEP, LCD_ROW_TOP, M_OUTPUT_PROMPTS[aParam]);
+    lcd.printAt(LCD_COL_OUTPUT_LO + OUTPUT_ANGLE_SIZE - sizeof(M_LO) + 1, LCD_ROW_TOP, M_LO);
+    lcd.printAt(LCD_COL_OUTPUT_HI + OUTPUT_ANGLE_SIZE - sizeof(M_HI) + 1, LCD_ROW_TOP, M_HI);
+
+    lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT);
+    lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputData.lo, OUTPUT_ANGLE_SIZE);
+    lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputData.hi, OUTPUT_ANGLE_SIZE);
+  }
+
+
+  /** Display Output's delay and pace parameters with suitable prompts.
+   */
+  void displayOutputDelayPace()
+  {
+    lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_TOP);
+    lcd.printAt(LCD_COL_OUTPUT_DELAY - 2, LCD_ROW_TOP, M_DELAY);
+    lcd.printAt(LCD_COL_OUTPUT_PACE  - 1, LCD_ROW_TOP, M_PACE);
+
+    lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT);
+    lcd.printAt(LCD_COL_OUTPUT_PACE,  LCD_ROW_BOT, HEX_CHARS[(outputData.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK]);
+    lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[(outputData.pace                     ) & OUTPUT_DELAY_MASK]);
   }
   
 
@@ -573,6 +595,8 @@ class Configure
     }
 
     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+    loadInput(node, pin);
+    loadOutput(node, pin);
   }
 
 
@@ -1035,27 +1059,42 @@ class Configure
                             }
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
-                            changed |= menuOutputParams();
+                            if (   (outputMode == OUTPUT_MODE_SERVO)
+                                || (outputMode == OUTPUT_MODE_SIGNAL))
+                            {
+                              changed |= menuOutputLo();
+                            }
+                            else if (outputMode == OUTPUT_MODE_LED)
+                            {
+                              lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
+                              lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_TODO);
+                              delay(DELAY_READ);
+                            }
+                            else
+                            {
+                              systemFail(M_OUTPUT, outputMode);
+                            }
+                            
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
       }
     }
+    markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
   }
 
 
-  /** Process Output's parameters menu.
+  /** Process Output's Lo parameter (0-180) menu.
    */
-  boolean menuOutputParams()
+  boolean menuOutputLo()
   {
+    boolean finished = false;
     boolean changed  = false;
-    int     index    = 0;
-    int     params[] = { outputData.lo, outputData.hi }; 
 
-    displayOutputPrompt(index);
-    markField(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, 2, true);
-    sendOutputCommand(params[index], outputData.pace, outputData.mode & OUTPUT_STATE);
+    displayOutputAngles();
+    markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, true);
+    sendOutputCommand(outputData.lo, outputData.pace, outputData.mode & OUTPUT_STATE);
 
-    while (index >= 0)
+    while (!finished)
     {
       int autoRepeat = DELAY_BUTTON_DELAY;
       switch (waitForButton())
@@ -1063,75 +1102,113 @@ class Configure
         case BUTTON_NONE:   break;
         case BUTTON_UP:     do
                             {
-                              params[index] += 1;
-                              if (params[index] > OUTPUT_PARAM_MAX)
+                              outputData.lo += 1;
+                              if (outputData.lo > OUTPUT_ANGLE_MAX)
                               {
-                                params[index] = 0;
+                                outputData.lo = 0;
                               }
-                              lcd.printAtHex(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
+                              lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputData.lo, OUTPUT_ANGLE_SIZE);
                               delay(autoRepeat);
                               autoRepeat = DELAY_BUTTON_REPEAT;
                             }
                             while (readButton() != 0);
-                            sendOutputCommand(params[index], outputData.pace, outputData.mode & OUTPUT_STATE);
+                            sendOutputCommand(outputData.lo, outputData.pace, outputData.mode & OUTPUT_STATE);
                             changed = true;
                             break;
         case BUTTON_DOWN:   do
                             {
-                              params[index] -= 1;
-                              if (params[index] < 0)
+                              outputData.lo -= 1;
+                              if (outputData.lo > OUTPUT_ANGLE_MAX)
                               {
-                                params[index] = OUTPUT_PARAM_MAX;
+                                outputData.lo = OUTPUT_ANGLE_MAX;
                               }
-                              lcd.printAtHex(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, params[index], 2);
+                              lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputData.lo, OUTPUT_ANGLE_SIZE);
                               delay(autoRepeat);
                               autoRepeat = DELAY_BUTTON_REPEAT;
                             }
                             while (readButton() != 0);
-                            sendOutputCommand(params[index], outputData.pace, outputData.mode & OUTPUT_STATE);
+                            sendOutputCommand(outputData.lo, outputData.pace, outputData.mode & OUTPUT_STATE);
                             changed = true;
                             break;
         case BUTTON_SELECT: break;
-        case BUTTON_LEFT:   markField(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, false);
-                            index -= 1;
-                            if (index >= 0)
-                            {
-                              displayOutputPrompt(index);
-                              markField(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
-                              sendOutputCommand(params[index], outputData.pace, outputData.mode & OUTPUT_STATE);
-                            }
+        case BUTTON_LEFT:   finished = true;
                             break;
-        case BUTTON_RIGHT:  if (index <= OUTPUT_PACE_INDEX)
-                            {
-                              markField(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, false);
-                              index += 1;
-                              displayOutputPrompt(index);
-                              if (index == OUTPUT_PACE_INDEX)
-                              {
-                                changed = menuOutputPace(); 
-                                index -= 1;
-                                displayOutputPrompt(index);
-                              }
-                              else
-                              {
-                                sendOutputCommand(params[index], outputData.pace, outputData.mode & OUTPUT_STATE);
-                              }
-                              markField(LCD_COL_OUTPUT_PARAM + index * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, 2, true);
-                            }
+        case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
+                            changed |= menuOutputHi();
+                            markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, true);
+                            sendOutputCommand(outputData.lo, outputData.pace, outputData.mode & OUTPUT_STATE);
                             break;
       }
     }
 
-    // Update outputData if changes have been made.
-    if (changed)
-    {
-      outputData.lo   = params[0];
-      outputData.hi   = params[1];
-    }
-
     displayNode();
+    // markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
+    displayOutputParams(outputData.mode & OUTPUT_MODE_MASK);
     sendOutputCommand(outputData.mode & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace, outputData.mode & OUTPUT_STATE);
     
+    return changed;
+  }
+
+
+  /** Process the Output Hi parameter.
+   */
+  boolean menuOutputHi()
+  {
+    boolean finished = false;
+    boolean changed  = false;
+
+    markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, true);
+    sendOutputCommand(outputData.hi, outputData.pace, outputData.mode & OUTPUT_STATE);
+
+    while (!finished)
+    {
+      int autoRepeat = DELAY_BUTTON_DELAY;
+      switch (waitForButton())
+      {
+        case BUTTON_NONE:   break;
+        case BUTTON_UP:     do
+                            {
+                              outputData.hi += 1;
+                              if (outputData.hi > OUTPUT_ANGLE_MAX)
+                              {
+                                outputData.hi = 0;
+                              }
+                              lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputData.hi, OUTPUT_ANGLE_SIZE);
+                              delay(autoRepeat);
+                              autoRepeat = DELAY_BUTTON_REPEAT;
+                            }
+                            while (readButton() != 0);
+                            sendOutputCommand(outputData.hi, outputData.pace, outputData.mode & OUTPUT_STATE);
+                            changed = true;
+                            break;
+        case BUTTON_DOWN:   do
+                            {
+                              outputData.hi -= 1;
+                              if (outputData.hi > OUTPUT_ANGLE_MAX)
+                              {
+                                outputData.hi = OUTPUT_ANGLE_MAX;
+                              }
+                              lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputData.hi, OUTPUT_ANGLE_SIZE);
+                              delay(autoRepeat);
+                              autoRepeat = DELAY_BUTTON_REPEAT;
+                            }
+                            while (readButton() != 0);
+                            sendOutputCommand(outputData.hi, outputData.pace, outputData.mode & OUTPUT_STATE);
+                            changed = true;
+                            break;
+        case BUTTON_SELECT: break;
+        case BUTTON_LEFT:   finished = true;
+                            break;
+        case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
+                            changed |= menuOutputPace();
+                            displayOutputAngles();
+                            markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, true);
+                            break;
+      }
+    }
+
+    markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
+        
     return changed;
   }
 
@@ -1142,20 +1219,62 @@ class Configure
   {
     boolean finished = false;
     boolean changed  = false;
+    int value = (outputData.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK;
 
-    markField(LCD_COL_OUTPUT_PARAM + OUTPUT_PACE_INDEX * LCD_COL_OUTPUT_STEP + 1, LCD_ROW_BOT, 1, true);
+    displayOutputDelayPace();
+    markField(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, 1, true);
 
     while (!finished)
     {
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
-        case BUTTON_UP:     outputData.pace = (outputData.pace + 1) & OUTPUT_PACE_MASK;
-                            lcd.printAt(LCD_COL_OUTPUT_PARAM + OUTPUT_PACE_INDEX * LCD_COL_OUTPUT_STEP + 1, LCD_ROW_BOT, HEX_CHARS[outputData.pace]);
+        case BUTTON_UP:     value = value + 1 & OUTPUT_PACE_MASK;
+                            lcd.printAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, HEX_CHARS[value]);
                             changed = true;
                             break;
-        case BUTTON_DOWN:   outputData.pace = (outputData.pace - 1) & OUTPUT_PACE_MASK;
-                            lcd.printAt(LCD_COL_OUTPUT_PARAM + OUTPUT_PACE_INDEX * LCD_COL_OUTPUT_STEP + 1, LCD_ROW_BOT, HEX_CHARS[outputData.pace]);
+        case BUTTON_DOWN:   value = value - 1 & OUTPUT_PACE_MASK;
+                            lcd.printAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, HEX_CHARS[value]);
+                            changed = true;
+                            break;
+        case BUTTON_SELECT: break;
+        case BUTTON_LEFT:   finished = true;
+                            break;
+        case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, 1, false);
+                            changed |= menuOutputDelay();
+                            markField(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, 1, true);
+                            break;
+      }
+    }
+
+    outputData.pace = (outputData.pace & OUTPUT_DELAY_MASK) | ((value & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT);
+    markField(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, 1, false);
+
+    return changed;
+  }
+
+
+  /** Process the Output's Pace parameter.
+   */
+  boolean menuOutputDelay()
+  {
+    boolean finished = false;
+    boolean changed  = false;
+    int value = outputData.pace & OUTPUT_DELAY_MASK;
+
+    markField(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, 1, true);
+
+    while (!finished)
+    {
+      switch (waitForButton())
+      {
+        case BUTTON_NONE:   break;
+        case BUTTON_UP:     value = value + 1 & OUTPUT_DELAY_MASK;
+                            lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[value]);
+                            changed = true;
+                            break;
+        case BUTTON_DOWN:   value = value - 1 & OUTPUT_DELAY_MASK;
+                            lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[value]);
                             changed = true;
                             break;
         case BUTTON_SELECT: break;
@@ -1165,7 +1284,8 @@ class Configure
       }
     }
 
-    markField(LCD_COL_OUTPUT_PARAM + OUTPUT_PACE_INDEX * LCD_COL_OUTPUT_STEP + 1, LCD_ROW_BOT, 1, false);
+    outputData.pace = (outputData.pace & ~ OUTPUT_DELAY_MASK) | value & OUTPUT_DELAY_MASK;
+    markField(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, 1, false);
 
     return changed;
   }

@@ -16,6 +16,7 @@ const char M_CANCEL[]          PROGMEM = "Cancel?  Sel=Yes";
 const char M_SAVED[]           PROGMEM = "Change saved    ";
 const char M_CANCELLED[]       PROGMEM = "Change cancelled";
 const char M_FAILURE[]         PROGMEM = "System error";
+const char M_TODO[]            PROGMEM = "TODO";
 
 const char M_CALIBRATE[]       PROGMEM = "Calibrate button";
 const char M_PRESS[]           PROGMEM = "Press";
@@ -82,12 +83,14 @@ const char M_LED[]             PROGMEM = "LED   ";
 const char M_HI[]              PROGMEM = "Hi";
 const char M_LO[]              PROGMEM = "Lo";
 const char M_PACE[]            PROGMEM = "Spd";
+const char M_DELAY[]           PROGMEM = "Delay";
+
 
 
 // Headers for the exports
 const char M_EXPORT_SYSTEM[]   PROGMEM = "#System\tVersion\tDetail\tControl\tInput\tOutput";
 const char M_EXPORT_INPUT[]    PROGMEM = "#Input\tNode\tPin\tType\tOutput1\tOutput2\tOutput3";
-const char M_EXPORT_OUTPUT[]   PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd";
+const char M_EXPORT_OUTPUT[]   PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd\tDelay";
 
 
 // Array of (pointers to) certain messages.
