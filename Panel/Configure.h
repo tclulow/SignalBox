@@ -1360,12 +1360,16 @@ class Configure
    */
   void run()
   {
+    int8_t debugLevel = systemData.debugLevel;
+    
     lcd.clear();
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_CONFIG);
     waitForButtonRelease();
 
-    menuTop();
-
+    systemData.debugLevel = 0;            // Disable debug whilst configuring.
+    menuTop();                            // Run top-level config menu
+    systemData.debugLevel = debugLevel;   // Re-establish debug.
+    
     lcd.clear();
   }
 };
