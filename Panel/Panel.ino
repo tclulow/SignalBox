@@ -429,7 +429,7 @@ int sendOutputCommand(int aValue, int aPace, int aState)
   Wire.write(aState ? 1 : 0);
   if (aPace & OUTPUT_DELAY_MASK)
   {
-      Wire.write(aPace & OUTPUT_DELAY_MASK);
+    Wire.write(aPace & OUTPUT_DELAY_MASK);
   }
   return Wire.endTransmission();
 }
