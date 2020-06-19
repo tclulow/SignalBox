@@ -384,7 +384,7 @@ void processInput(int aNode, int aPin, int aState)
         {
           loadOutput(output);
           outputData.mode ^= OUTPUT_STATE;    // Toggle the state.
-          sendOutputCommand((outputData.mode & OUTPUT_STATE ? outputData.lo : outputData.hi), outputData.pace, outputData.mode & OUTPUT_STATE);
+          sendOutputCommand((outputData.mode & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.mode & OUTPUT_STATE);
           saveOutput();
         }
       }
