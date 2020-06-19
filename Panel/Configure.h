@@ -337,25 +337,28 @@ class Configure
                             {
                               menuSystem();
                             }
-                            else if (topMenu == TOP_INPUT)
-                            {
-                              menuNode(true);
-                            }
-                            else if (topMenu == TOP_OUTPUT)
-                            {
-                              menuNode(false);
-                            }
-                            else if (topMenu == TOP_EXPORT)
-                            {
-                              menuExport();
-                            }
-                            else if (topMenu == TOP_IMPORT)
-                            {
-                              menuImport();
-                            }
                             else
                             {
-                              systemFail(M_CONFIG, topMenu);
+                              int8_t debugLevel = systemData.debugLevel;
+
+                              // Disable debug whilst configuring.
+                              systemData.debugLevel = 0;
+
+                              switch (topMenu)
+                              {
+                                case TOP_INPUT:  menuNode(true);
+                                                 break;
+                                case TOP_OUTPUT: menuNode(false);
+                                                 break;
+                                case TOP_EXPORT: menuExport();
+                                                 break;
+                                case TOP_IMPORT: menuImport();
+                                                 break;
+                                default:         systemFail(M_CONFIG, topMenu);
+                              }
+
+                              // Re-establish debug.
+                              systemData.debugLevel = debugLevel;
                             }
                             markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
                             break;
@@ -1360,15 +1363,11 @@ class Configure
    */
   void run()
   {
-    int8_t debugLevel = systemData.debugLevel;
-    
     lcd.clear();
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_CONFIG);
     waitForButtonRelease();
 
-    systemData.debugLevel = 0;            // Disable debug whilst configuring.
-    menuTop();                            // Run top-level config menu
-    systemData.debugLevel = debugLevel;   // Re-establish debug.
+    menuTop();
     
     lcd.clear();
   }
