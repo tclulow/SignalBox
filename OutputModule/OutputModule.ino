@@ -11,15 +11,16 @@
 #define SERVO_BASE  0                    // EEPROM base of Servo data.
 #define SERVO_SIZE  sizeof(servoState)   // Size of Servo data
 
+#define I2C_BASE_ID       0x50   // Output nodes' base ID.
+#define DELAY_STEP          50   // Delay (msecs) between steps of a Servo.
 
-#define I2C_BASE_ID    0x50   // Output nodes' base ID.
-#define DELAY_STEP       50   // Delay (msecs) between steps of a Servo.
+#define SERVO_MAX            8   // Maximum number of servos
+#define SERVO_BASE_PIN       4   // Servos attached to this pin and the next 7 more.
 
-#define SERVO_MAX         8   // Maximum number of servos
-#define SERVO_BASE_PIN    4   // Servos attached to this pin and the next 7 more.
+#define JUMPER_PINS          4   // Four jumpers.
+#define IO_PINS              8   // Eight IO pins.
 
-#define JUMPER_PINS       4   // Four jumpers.
-#define IO_PINS           8   // Eight IO pins.
+#define DELAY_MULTIPLIER  1000   // Multiply delay values by this amount (convert to seconds).
 
 
 // The i2c ID of the module.
@@ -39,11 +40,12 @@ struct
   uint8_t target = 0;       // The angle we want to reach.
   uint8_t steps  = 0;       // The number of steps to take.
   uint8_t step   = 0;       // The current step.
+  uint8_t state  = 0;       // The state to set the output to.
+  long    delay  = 0;       // Delay start to this time.
 } servos[SERVO_MAX];
 
 // EEPROM persistance of Servo values
 uint8_t servoState[SERVO_MAX] = { 90, 90, 90, 90, 90, 90, 90, 90 };
-
 
 
 /** Setup the Arduino.
@@ -130,9 +132,14 @@ void processRequest(int aLen)
     uint8_t pin   = Wire.read();
     uint8_t angle = Wire.read();
     uint8_t pace  = Wire.read();
-    uint8_t state = Wire.read();   
+    uint8_t state = Wire.read();  
+    uint8_t delay = 0;
+    if (Wire.available())
+    {
+      delay = Wire.read();
+    }
   
-    moveServo(pin, angle, pace, state);
+    moveServo(pin, angle, pace, state, delay);
   }
 
   // Consume unexpected data.
@@ -148,17 +155,16 @@ void processRequest(int aLen)
  *  Steps to move the whole range adjusted by the partial range required
  *  and for the pace at which to run (faster = fewer steps).
  */
-void moveServo(uint8_t aServo, uint8_t aTarget, uint8_t aPace, uint8_t aState)
+void moveServo(uint8_t aServo, uint8_t aTarget, uint8_t aPace, uint8_t aState, uint8_t aDelay)
 {
   // Set the Servo's movement.
   servos[aServo].start  = servos[aServo].servo.read();
   servos[aServo].target = aTarget;
   servos[aServo].steps  = (128 - aPace) * abs((aTarget - servos[aServo].start)) / 128 + 1;
   servos[aServo].step   = 0;
-
-  // Action the IO flag immediately.
-  digitalWrite(ioPins[aServo], aState);
-
+  servos[aServo].state  = aState;
+  servos[aServo].delay  = millis() + DELAY_MULTIPLIER * aDelay;
+  
   // Report action request
   Serial.print(millis());
   Serial.print("\tMove: servo=");
@@ -174,7 +180,9 @@ void moveServo(uint8_t aServo, uint8_t aTarget, uint8_t aPace, uint8_t aState)
   Serial.print(", steps=");
   Serial.print(servos[aServo].steps);
   Serial.print(", state=");
-  Serial.print(aState);
+  Serial.print(servos[aServo].state);
+  Serial.print(", delay=");
+  Serial.print(servos[aServo].delay);
   Serial.println();
 }
 
@@ -188,59 +196,73 @@ void loop()
   // Move any Servos that need moving.
   for (int servo = 0; servo < SERVO_MAX; servo++)
   {
-    if (servos[servo].step < servos[servo].steps)
-    {
-      // Indicate work in progress
-      digitalWrite(LED_BUILTIN, HIGH);
-      
-      servos[servo].step += 1;
-      
-      if (servos[servo].step == servos[servo].steps)
+    if (   (servos[servo].delay == 0)
+        || (servos[servo].delay <= millis()))
+    {    
+      if (servos[servo].step < servos[servo].steps)
       {
-        // Last step, make sure to hit the target bang-on.
-        servos[servo].servo.write(servos[servo].target);
+        // Indicate work in progress
+        digitalWrite(LED_BUILTIN, HIGH);
 
-        // Indicate work complete
-        digitalWrite(LED_BUILTIN, LOW);
-
-        // Record Servo's state.
-        stateChanged = true;
-        servoState[servo] = servos[servo].servo.read();
-      }
-      else
-      {
-        // Intermediate step, move proportionately (step/steps) along the range (start to target).
-        servos[servo].servo.write(servos[servo].start + (servos[servo].target - servos[servo].start) * servos[servo].step / servos[servo].steps);
-      }
-
-      // Test code to report activity.
-      if (   (servos[servo].step == 1)
-          || (servos[servo].step == servos[servo].steps))
-      {
-        Serial.print(millis());
-        Serial.print("\tStep: servo=");
-        Serial.print(servo);
-        Serial.print(", start=");
-        Serial.print(servos[servo].start);
-        Serial.print(", angle=");
-        Serial.print(servos[servo].servo.read());
-        Serial.print(", target=");
-        Serial.print(servos[servo].target);
-        Serial.print(", step=");
-        Serial.print(servos[servo].step);
-        Serial.print(", steps=");
-        Serial.print(servos[servo].steps);
-        Serial.println();
-      }
+        if (servos[servo].step == 0)
+        {
+          // Action the IO flag at the start.
+          digitalWrite(ioPins[servo], servos[servo].state);
+        }
+        
+        servos[servo].step += 1;
+        
+        if (servos[servo].step == servos[servo].steps)
+        {
+          // Last step, make sure to hit the target bang-on.
+          servos[servo].servo.write(servos[servo].target);
+  
+          // Indicate work complete
+          digitalWrite(LED_BUILTIN, LOW);
+  
+          // Record Servo's state.
+          stateChanged = true;
+          servoState[servo] = servos[servo].servo.read();
+        }
+        else
+        {
+          // Intermediate step, move proportionately (step/steps) along the range (start to target).
+          servos[servo].servo.write(servos[servo].start + (servos[servo].target - servos[servo].start) * servos[servo].step / servos[servo].steps);
+        }
+  
+        // Test code to report activity.
+        if (   (servos[servo].step == 1)
+            || (servos[servo].step == servos[servo].steps))
+        {
+          Serial.print(millis());
+          Serial.print("\tStep: servo=");
+          Serial.print(servo);
+          Serial.print(", start=");
+          Serial.print(servos[servo].start);
+          Serial.print(", angle=");
+          Serial.print(servos[servo].servo.read());
+          Serial.print(", target=");
+          Serial.print(servos[servo].target);
+          Serial.print(", step=");
+          Serial.print(servos[servo].step);
+          Serial.print(", steps=");
+          Serial.print(servos[servo].steps);
+          Serial.print(", state=");
+          Serial.print(servos[servo].state);
+          Serial.print(", delay=");
+          Serial.print(servos[servo].delay);
+          Serial.println();
+        }
       
-//      // Test code to move servo back to 180 when complete.
-//      if (servos[servo].step == servos[servo].steps)
-//      {
-//        if (servos[servo].target == 0)
+//        // Test code to move servo back to 180 when complete.
+//        if (servos[servo].step == servos[servo].steps)
 //        {
-//          moveServo(servo, 180, 0, 0);
+//          if (servos[servo].target == 0)
+//          {
+//            moveServo(servo, 180, 0, 0);
+//          }
 //        }
-//      }
+      }
     }
   }
 
