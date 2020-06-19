@@ -285,6 +285,7 @@ void scanInputs()
           int state = pins & mask;
           if (state != (currentInputState[node] & mask))
           {
+            loadInput(node, pin);
             processInput(node, pin, state);
           }
         }
@@ -351,9 +352,8 @@ void processInput(int aNode, int aPin, int aState)
     lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[aPin]);
   }
 
-  loadInput(aNode, aPin);
   boolean isToggle = inputData.output[0] & INPUT_TOGGLE_MASK;
-
+  
   // Process all the Input's outputs (if they're not disabled).
   for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
   {
@@ -361,6 +361,7 @@ void processInput(int aNode, int aPin, int aState)
         || (!(inputData.output[index] & INPUT_DISABLED_MASK)))
     {
       int output = inputData.output[index] & INPUT_OUTPUT_MASK;
+
       if (isToggle)
       {
         loadOutput(output);
@@ -383,7 +384,7 @@ void processInput(int aNode, int aPin, int aState)
         {
           loadOutput(output);
           outputData.mode ^= OUTPUT_STATE;    // Toggle the state.
-          sendOutputCommand((outputData.mode & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.mode & OUTPUT_STATE);
+          sendOutputCommand((outputData.mode & OUTPUT_STATE ? outputData.lo : outputData.hi), outputData.pace, outputData.mode & OUTPUT_STATE);
           saveOutput();
         }
       }

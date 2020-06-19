@@ -23,6 +23,12 @@ const char HEX_CHARS[]  = "0123456789abcdef";
 const char EDIT_CHARS[] = "ABC";
 
 
+/** Process the changed input.
+ *  Forward reference required for Configure class.
+ */
+void processInput(int aNode, int aPin, int aState);
+
+
 /** Send a command to an output node.
  *  Return error code if any.
  *  Forward reference required for Configure class.

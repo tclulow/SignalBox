@@ -839,7 +839,11 @@ class Configure
                             lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, EDIT_CHARS[index]);
                             displayInputEdit(index);
                             break;
-        case BUTTON_SELECT: if (index > 0)
+        case BUTTON_SELECT: if (index == 0)
+                            {
+                              testInput();
+                            }
+                            else
                             {
                               changed = true;
                               inputData.output[index] ^= INPUT_DISABLED_MASK;
@@ -905,8 +909,13 @@ class Configure
                             displayInputEdit(aIndex);
                             changed = true;
                             break;
-        case BUTTON_SELECT: if (aIndex > 0)
+        case BUTTON_SELECT: if (aIndex == 0)
                             {
+                              testInput();
+                            }
+                            else
+                            {
+                              // Enable/disable this output.
                               changed = true;
                               inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
                               displayInputEdit(aIndex);
@@ -915,7 +924,7 @@ class Configure
         case BUTTON_LEFT:   finished = true;
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_NODE, LCD_ROW_BOT, 1, false);
-                            changed |= displayInputOutput(aIndex);
+                            changed |= menuInputOutputPin(aIndex);
                             markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
                             break;
       }
@@ -927,7 +936,7 @@ class Configure
   }
 
 
-  boolean displayInputOutput(int aIndex)
+  boolean menuInputOutputPin(int aIndex)
   {
     boolean finished = false;
     boolean changed = false;
@@ -963,7 +972,11 @@ class Configure
                             displayInputEdit(aIndex);
                             changed = true;
                             break;
-        case BUTTON_SELECT: if (aIndex > 0)
+        case BUTTON_SELECT: if (aIndex == 0)
+                            {
+                              testInput();
+                            }
+                            else
                             {
                               changed = true;
                               inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
@@ -980,6 +993,17 @@ class Configure
     
     return finished;
   }
+
+
+  /** Operate the current input to test if it works.
+   */
+  void testInput()
+  {
+    processInput(node, pin, 0);
+    waitForButtonRelease();
+    processInput(node, pin, 0);
+  }
+
 
   /** Process Output menu.
    */
