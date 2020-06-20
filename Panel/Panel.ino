@@ -359,8 +359,7 @@ void processInput(int aNode, int aPin, int aState)
   // Process all the Input's outputs (if they're not disabled).
   for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
   {
-    if (   (index == 0)     // TODO - no longer necessary to treat index 0 differently.
-        || (!(inputData.output[index] & INPUT_DISABLED_MASK)))
+    if (!(inputData.output[index] & INPUT_DISABLED_MASK))
     {
       int output = inputData.output[index] & INPUT_OUTPUT_MASK;
 
@@ -380,15 +379,21 @@ void processInput(int aNode, int aPin, int aState)
         sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.type & OUTPUT_STATE);
         saveOutput();
       }
-      else  // TODO - all the different button types.
+      else if (!aState)      // Send change state when button pressed (goes low), not when released (goes high).
       {
-        if (!aState)      // Send change state when button pressed (goes low), not when released (goes high).
+        loadOutput(output);
+        switch (inputType)
         {
-          loadOutput(output);
-          outputData.type ^= OUTPUT_STATE;    // Toggle the state.
-          sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.type & OUTPUT_STATE);
-          saveOutput();
+          case INPUT_TYPE_ON_OFF: outputData.type ^=  OUTPUT_STATE;   // Toggle the state.
+                                  break;
+          case INPUT_TYPE_ON:     outputData.type |=  OUTPUT_STATE;   // Set the state.
+                                  break;
+          case INPUT_TYPE_OFF:    outputData.type &= ~OUTPUT_STATE;   // Clear the state.
+                                  break;
         }
+        
+        sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.type & OUTPUT_STATE);
+        saveOutput();
       }
     }
   }
