@@ -252,21 +252,28 @@ class Configure
 
 
   /** Display Output's parameters depending on type.
-   *  TODO - remove redundant parameter.
    */
   void displayOutputParams(int aType)
   {
     int col = LCD_COL_OUTPUT_PARAM;
+    
+    lcd.clearRow(col, LCD_ROW_BOT);
 
-    lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
-    lcd.printAtHex(col, LCD_ROW_BOT, outputData.lo,   2);
-    col += LCD_COL_OUTPUT_STEP;
-    lcd.printAtHex(col, LCD_ROW_BOT, outputData.hi,   2);
-    col += LCD_COL_OUTPUT_STEP;
-    lcd.printAtHex(col, LCD_ROW_BOT, outputData.pace, 2);
-//    lcd.printAtHex(col, LCD_ROW_BOT, outputData.pace & OUTPUT_PACE_MASK, 1);
-//    col += LCD_COL_OUTPUT_STEP - 1;
-//    lcd.printAtHex(col, LCD_ROW_BOT, (outputData.pace >> OUTPUT_DELAY_SHIFT) & OUTPUT_DELAY_MASK, 1);
+    if (aType != OUTPUT_TYPE_LED)
+    {
+      lcd.printAtHex(col, LCD_ROW_BOT, outputData.lo,   2);
+      col += LCD_COL_OUTPUT_STEP;
+      lcd.printAtHex(col, LCD_ROW_BOT, outputData.hi,   2);
+      col += LCD_COL_OUTPUT_STEP;
+    }
+    else
+    {
+      col = LCD_COL_OUTPUT_PARAM + 2 * LCD_COL_OUTPUT_STEP;
+    }
+
+    lcd.printAtHex(col, LCD_ROW_BOT, (outputData.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK,  1);
+    col += LCD_COL_OUTPUT_STEP - 1;
+    lcd.printAtHex(col, LCD_ROW_BOT, (outputData.pace                     ) & OUTPUT_DELAY_MASK, 1);
   }
 
 
@@ -453,6 +460,8 @@ class Configure
                             {
                               systemFail(M_SYSTEM, sysMenu);
                             }
+
+                            displaySystem();
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
       }
@@ -557,8 +566,6 @@ class Configure
       systemData.i2cOutputBaseID = params[2];
     }
 
-    displaySystem();
-    
     return changed;
   }
 
@@ -802,6 +809,7 @@ class Configure
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
                             changed |= menuInputSelect();
+                            displayDetailInputOutput();
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
       }
@@ -867,7 +875,6 @@ class Configure
     }
 
     markField(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, 1, false);
-    displayDetailInputOutput();
     
     return changed;
   }
@@ -1097,19 +1104,20 @@ class Configure
                             }
                             else if (outputType == OUTPUT_TYPE_LED)
                             {
-                              lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
-                              lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_TODO);
-                              delay(DELAY_READ);
+                              changed |= menuOutputPace();
                             }
                             else
                             {
                               systemFail(M_OUTPUT, outputType);
                             }
-                            
+
+                            displayNode();
+                            displayOutputParams(outputData.type & OUTPUT_TYPE_MASK);
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             break;
       }
     }
+    
     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
   }
 
@@ -1172,9 +1180,7 @@ class Configure
       }
     }
 
-    displayNode();
-    // markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
-    displayOutputParams(outputData.type & OUTPUT_TYPE_MASK);
+    markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
     sendOutputCommand(outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, outputData.type & OUTPUT_STATE);
     
     return changed;
