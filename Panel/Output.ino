@@ -6,19 +6,16 @@
  */
 void loadOutput(int aOutput)
 {
-  if (aOutput < OUTPUT_MAX)
-  {
-    outputNumber = aOutput;
-    EEPROM.get(OUTPUT_BASE + outputNumber * OUTPUT_SIZE, outputData); 
-  }
+  loadOutput((aOutput >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK, aOutput & OUTPUT_PIN_MASK);
 }
 
 
 /** Load an Output's data from EEPROM.
  */
-void loadOutput(int aNode, int aOutput)
+void loadOutput(int aNode, int aPin)
 {
-  loadOutput((aNode << OUTPUT_NODE_SHIFT) + (aOutput & OUTPUT_PIN_MASK));
+  outputNumber = ((aNode & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT) + (aPin & OUTPUT_PIN_MASK);
+  EEPROM.get(OUTPUT_BASE + outputNumber * OUTPUT_SIZE, outputData); 
 }
 
 

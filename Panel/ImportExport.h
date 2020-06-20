@@ -65,33 +65,33 @@ class ImportExport
     loadInput(node, pin);
   
     readWord();
-    if (!strcmp_P(wordBuffer, M_TOGGLE))
+    for (inputType = 0; inputType < INPUT_TYPE_MAX; inputType++)
     {
-      mask = INPUT_TOGGLE_MASK;
+      if (!strcmp_P(wordBuffer, M_IMP_INP_TYPES[inputType]))
+      {
+        break;
+      }
     }
-    else if (!strcmp_P(wordBuffer, M_BUTTON))
-    {
-      mask = 0;
-    }
-    else
+
+    if (inputType >= INPUT_TYPE_MAX)
     {
       importError();
     }
-  
-    for (int i = 0; i < INPUT_OUTPUT_MAX; i++)
-    {
-      inputData.output[i] = readData();
-      inputData.output[i] = (((inputData.output[i] >> 4) & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT) | (inputData.output[i] & OUTPUT_PIN_MASK);
-      if (   (i > 0)
-          && (wordBuffer[strlen(wordBuffer) - 1] == CHAR_STAR))
+    else
+    {  
+      for (int i = 0; i < INPUT_OUTPUT_MAX; i++)
       {
-        inputData.output[i] |= INPUT_DISABLED_MASK;    
+        inputData.output[i] = readData();
+        inputData.output[i] = (((inputData.output[i] >> 4) & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT) | (inputData.output[i] & OUTPUT_PIN_MASK);
+        if (   (i > 0)
+            && (wordBuffer[strlen(wordBuffer) - 1] == CHAR_STAR))
+        {
+          inputData.output[i] |= INPUT_DISABLED_MASK;    
+        }
       }
+
+      saveInput();
     }
-  
-    inputData.output[0] |= mask;
-  
-    saveInput();
   }
   
   
@@ -108,28 +108,26 @@ class ImportExport
     loadOutput(node, pin);
     
     readWord();
-    if (!strcmp_P(wordBuffer, M_IMPORT_SERVO))
+    for (outputData.type = 0; outputData.type < OUTPUT_TYPE_MAX; outputData.type++)
     {
-      outputData.mode = (outputData.mode & ~OUTPUT_NODE_MASK) | OUTPUT_MODE_SERVO;
+      if (!strcmp_P(wordBuffer, M_IMP_OUT_TYPES[outputData.type]))
+      {
+        break;
+      }
     }
-    else if (!strcmp_P(wordBuffer, M_IMPORT_SIGNAL))
-    {
-      outputData.mode = (outputData.mode & ~OUTPUT_NODE_MASK) | OUTPUT_MODE_SIGNAL;
-    }
-    else if (!strcmp_P(wordBuffer, M_IMPORT_LED))
-    {
-      outputData.mode = (outputData.mode & ~OUTPUT_NODE_MASK) | OUTPUT_MODE_LED;
-    }
-    else
+
+    if (outputData.type >= OUTPUT_TYPE_MAX)
     {
       importError();
     }
-  
-    outputData.lo   = readData();
-    outputData.hi   = readData();
-    outputData.pace = readData();
-  
-    saveOutput();
+    else
+    {
+      outputData.lo   = readData();
+      outputData.hi   = readData();
+      outputData.pace = readData();
+    
+      saveOutput();
+    }
   }
   
   
@@ -285,41 +283,43 @@ class ImportExport
     Serial.println();
     Serial.println();
   
-    // dumpMemory();
+    dumpMemory();
   }
   
   
-//  /** Dump all the EEPROM memory.
-//   */
-//  void dumpMemory()
-//  {
-//    dumpMemory(SYSTEM_BASE, SYSTEM_END);
-//    Serial.println();
-//    dumpMemory(OUTPUT_BASE, OUTPUT_END);
-//    Serial.println();
-//    dumpMemory(INPUT_BASE,  INPUT_END);
-//    Serial.println();
-//  }
-//  
-//  
-//  /** Dump a range of the EEPROM memory.
-//   */
-//  void dumpMemory(int aStart, int aEnd)
-//  {
-//    for (int base = aStart; base < aEnd; base += 16)
-//    {
-//      printHex(base, 4);
-//      Serial.print(":");
-//      
-//      for (int offs = 0; offs < 16; offs++)
-//      {
-//        Serial.print(CHAR_SPACE);
-//        printHex(EEPROM.read(base + offs), 2);
-//      }
-//  
-//      Serial.println();
-//    }
-//  }
+  /** Dump all the EEPROM memory.
+   */
+  void dumpMemory()
+  {
+    dumpMemory(SYSTEM_BASE, SYSTEM_END);
+    Serial.println();
+    dumpMemory(OUTPUT_BASE, OUTPUT_END);
+    Serial.println();
+    dumpMemory(INPUT_BASE,  INPUT_END);
+    Serial.println();
+    dumpMemory(TYPES_BASE,  TYPES_END);
+    Serial.println();
+  }
+  
+  
+  /** Dump a range of the EEPROM memory.
+   */
+  void dumpMemory(int aStart, int aEnd)
+  {
+    for (int base = aStart; base < aEnd; base += 16)
+    {
+      printHex(base, 4);
+      Serial.print(":");
+      
+      for (int offs = 0; offs < 16; offs++)
+      {
+        Serial.print(CHAR_SPACE);
+        printHex(EEPROM.read(base + offs), 2);
+      }
+  
+      Serial.println();
+    }
+  }
   
   
   void exportInputs()
@@ -340,7 +340,7 @@ class ImportExport
           Serial.print(CHAR_TAB);
           printHex(pin, 1);
           Serial.print(CHAR_TAB);
-          Serial.print(PGMT(M_INPUT_TYPES[(inputData.output[0] & INPUT_TOGGLE_MASK ? 1 : 0)]));
+          Serial.print(PGMT(M_INPUT_TYPES[inputType]));
           
           for (int output = 0; output < INPUT_OUTPUT_MAX; output++)
           {
@@ -382,7 +382,7 @@ class ImportExport
           Serial.print(CHAR_TAB);
           printHex(pin, 1);
           Serial.print(CHAR_TAB);
-          Serial.print(PGMT(M_OUTPUT_TYPES[outputData.mode & OUTPUT_MODE_MASK]));
+          Serial.print(PGMT(M_OUTPUT_TYPES[outputData.type & OUTPUT_TYPE_MASK]));
           Serial.print(CHAR_TAB);
           printHex(outputData.lo, 2);
           Serial.print(CHAR_TAB);

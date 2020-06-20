@@ -203,11 +203,13 @@ void defaultSetup()
   for (int node = 0; node < OUTPUT_NODE_MAX; node++)
   {
     lcd.print(HEX_CHARS[node]);
+    
+    inputTypes = 0;
     for (int pin = 0; pin < OUTPUT_NODE_SIZE; pin++)
     {
       // Create the output.
       loadOutput(node, pin);
-      outputData.mode = OUTPUT_MODE_SERVO;
+      outputData.type = OUTPUT_TYPE_SERVO;
       outputData.lo   = OUTPUT_DEFAULT_LO;
       outputData.hi   = OUTPUT_DEFAULT_HI;
       outputData.pace = OUTPUT_DEFAULT_PACE;
@@ -218,6 +220,7 @@ void defaultSetup()
       inputData.output[0] = (node << OUTPUT_NODE_SHIFT) | pin;
       inputData.output[1] = INPUT_DISABLED_MASK;
       inputData.output[2] = INPUT_DISABLED_MASK;
+      inputType = INPUT_TYPE_ON_OFF;
       saveInput();
     }
   }
@@ -249,9 +252,10 @@ void convertEzyBus()
 
       // Create an input.
       loadInput(input++);
-      inputData.output[0] = INPUT_TOGGLE_MASK | (node << OUTPUT_NODE_SHIFT) | pin;
+      inputData.output[0] = (node << OUTPUT_NODE_SHIFT) | pin;
       inputData.output[1] = INPUT_DISABLED_MASK;
       inputData.output[2] = INPUT_DISABLED_MASK;
+      inputType = INPUT_TYPE_TOGGLE;
       saveInput();
     }
   }
@@ -352,39 +356,37 @@ void processInput(int aNode, int aPin, int aState)
     lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[aPin]);
   }
 
-  boolean isToggle = inputData.output[0] & INPUT_TOGGLE_MASK;
-  
   // Process all the Input's outputs (if they're not disabled).
   for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
   {
-    if (   (index == 0)
+    if (   (index == 0)     // TODO - no longer necessary to treat index 0 differently.
         || (!(inputData.output[index] & INPUT_DISABLED_MASK)))
     {
       int output = inputData.output[index] & INPUT_OUTPUT_MASK;
 
-      if (isToggle)
+      if (inputType == INPUT_TYPE_TOGGLE)
       {
         loadOutput(output);
 
         if (aState)
         {
-          outputData.mode |= OUTPUT_STATE;    // Set output state
+          outputData.type |= OUTPUT_STATE;    // Set output state
         }
         else
         {
-          outputData.mode &= ~OUTPUT_STATE;   // Clear output state
+          outputData.type &= ~OUTPUT_STATE;   // Clear output state
         }
         
-        sendOutputCommand((outputData.mode & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.mode & OUTPUT_STATE);
+        sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.type & OUTPUT_STATE);
         saveOutput();
       }
-      else  // button input
+      else  // TODO - all the different button types.
       {
         if (!aState)      // Send change state when button pressed (goes low), not when released (goes high).
         {
           loadOutput(output);
-          outputData.mode ^= OUTPUT_STATE;    // Toggle the state.
-          sendOutputCommand((outputData.mode & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.mode & OUTPUT_STATE);
+          outputData.type ^= OUTPUT_STATE;    // Toggle the state.
+          sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.type & OUTPUT_STATE);
           saveOutput();
         }
       }
@@ -489,28 +491,28 @@ void setup()
 //  saveInput();
 //
 //  loadOutput(0x1, 7);
-//  outputData.mode = OUTPUT_MODE_NONE;
+//  outputData.type = OUTPUT_TYPE_NONE;
 //  outputData.lo   = 0x17;
 //  outputData.hi   = 0x22;
 //  outputData.pace = 0x33;
 //  saveOutput();
 //
 //  loadOutput(0xc, 5);
-//  outputData.mode = OUTPUT_MODE_SERVO;
+//  outputData.type = OUTPUT_TYPE_SERVO;
 //  outputData.lo   = 0xc5;
 //  outputData.hi   = 0x44;
 //  outputData.pace = 0x55;
 //  saveOutput();
 //
 //  loadOutput(0x9, 3);
-//  outputData.mode = OUTPUT_MODE_SIGNAL;
+//  outputData.type = OUTPUT_TYPE_SIGNAL;
 //  outputData.lo   = 0x93;
 //  outputData.hi   = 0x66;
 //  outputData.pace = 0x77;
 //  saveOutput();
 //  
 //  loadOutput(0x6, 1);
-//  outputData.mode = OUTPUT_MODE_LED;
+//  outputData.type = OUTPUT_TYPE_LED;
 //  outputData.lo   = 0x61;
 //  outputData.hi   = 0x88;
 //  outputData.pace = 0xaa;

@@ -4,24 +4,35 @@
 #define _Input_h
 
 // Input nodes.
-#define INPUT_NODE_SIZE      16     // 16 inputs to each node.
-#define INPUT_NODE_MAX       8      // Maximum nodes.
-#define INPUT_NODE_ALL_MASK  0xff   // All input nodes present.
-#define INPUT_NODE_MASK      0x07   // 3 bits for 8 nodes.
-#define INPUT_NODE_SHIFT     4      // Shift input number this amount to get a node number.
-#define INPUT_PIN_MASK       0x0f   // Mask to get input pin within a node.
+#define INPUT_NODE_SIZE          16     // 16 inputs to each node.
+#define INPUT_NODE_MAX            8     // Maximum nodes.
+#define INPUT_NODE_ALL_MASK    0xff     // All input nodes present.
+#define INPUT_NODE_MASK        0x07     // 3 bits for 8 nodes.
+#define INPUT_NODE_SHIFT          4     // Shift input number this amount to get a node number.
+#define INPUT_PIN_MASK         0x0f     // Mask to get input pin within a node.
 
 // Mask for Input options
-#define INPUT_OUTPUT_MAX       3        // Number of outputs each input can control.
-#define INPUT_TOGGLE_MASK      0x80     // The input is a toggle rather than a button.
+#define INPUT_OUTPUT_MAX          3     // Number of outputs each input can control.
 #define INPUT_DISABLED_MASK    0x80     // The Input's output is disabled.
-#define INPUT_OUTPUT_MASK      0x7f     // mask to get the Input's output without the flags above.
+#define INPUT_OUTPUT_MASK      0x7f     // Mask to get the Input's output without the flag above.
 
-// Mask for none or all bits.
+// Input types
+#define INPUT_TYPE_MASK        0x03     // Input types take 2 bits each.
+#define INPUT_TYPE_MULT           2     // Input type multiplied by 2 bits per pin.
+#define INPUT_TYPE_SHIFT          1     // Input type shifted by 1 bit = multiplied by 2.
+
+#define INPUT_TYPE_TOGGLE         0     // A Toggle Input.
+#define INPUT_TYPE_ON_OFF         1     // An on/off Input.
+#define INPUT_TYPE_ON             2     // An on Input.
+#define INPUT_TYPE_OFF            3     // An off Input.
+#define INPUT_TYPE_MAX            4     // Limit of Input types.
+
+
+// Mask for MCP device none or all bits.
 #define MCP_ALL_LOW   0x00
 #define MCP_ALL_HIGH  0xFF
 
-// Input message commands.
+// MCP message commands.
 #define MCP_IODIRA    0x00    // IO direction, High = input.
 #define MCP_IODIRB    0x01
 #define MCP_IPOLA     0x02    // Polarity, High = GPIO reversed.
@@ -58,7 +69,9 @@ struct InputData
  */
 int        inputNodes  = 0;   // Bit map of Input nodes present.
 int        inputNumber = 0;   // Current Input number.
-InputData  inputData;         // Data describing current Servo.
+InputData  inputData;         // Data describing current Input.
+uint32_t   inputTypes  = 0L;  // The types of the Inputs. 2 bits per pin, 16 pins per node = 32 bits.
+int        inputType   = 0;   // Type of the current Input (2 bits, INPUT_TYPE_MASK).
 
 
 /** Load an Input's data from EEPROM.

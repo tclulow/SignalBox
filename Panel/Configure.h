@@ -188,7 +188,7 @@ class Configure
    */
   void displayDetailInput()
   {
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, (inputData.output[0] & INPUT_TOGGLE_MASK ? M_TOGGLE : M_BUTTON));
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT_TYPES[inputType]);
     displayDetailInputOutput();
   }
 
@@ -246,14 +246,15 @@ class Configure
    */
   void displayDetailOutput()
   {
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputData.mode & OUTPUT_MODE_MASK]);
-    displayOutputParams(outputData.mode & OUTPUT_MODE_MASK);
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputData.type & OUTPUT_TYPE_MASK]);
+    displayOutputParams(outputData.type & OUTPUT_TYPE_MASK);
   }
 
 
-  /** Display Output's parameters depending on mode.
+  /** Display Output's parameters depending on type.
+   *  TODO - remove redundant parameter.
    */
-  void displayOutputParams(int aMode)
+  void displayOutputParams(int aType)
   {
     int col = LCD_COL_OUTPUT_PARAM;
 
@@ -737,10 +738,6 @@ class Configure
     boolean finished = false;
     boolean changed  = false;
     
-    // Retrieve Toggle/Button flag and clear from data.
-    int isToggle = inputData.output[0] & INPUT_TOGGLE_MASK;
-    inputData.output[0] &= INPUT_OUTPUT_MASK;
-
     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
     
     while (!finished)
@@ -748,16 +745,23 @@ class Configure
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
-        case BUTTON_UP:
-        case BUTTON_DOWN:   isToggle ^= INPUT_TOGGLE_MASK;
-                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, (isToggle ? M_TOGGLE : M_BUTTON));
+        case BUTTON_UP:     inputType += 2;     // Use +1 to compensate for the -1 that the code below will do.
+                            if (inputType > INPUT_TYPE_MAX)
+                            {
+                              inputType = 1;
+                            }
+        case BUTTON_DOWN:   inputType -= 1;
+                            if (inputType < 0)
+                            {
+                              inputType = INPUT_TYPE_MAX - 1;
+                            }
+                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT_TYPES[inputType]);
                             changed = true;
                             break;
         case BUTTON_SELECT: if (changed)
                             {
                               if (confirm())
                               {
-                                inputData.output[0] |= isToggle;
                                 saveInput();
                                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
                                 delay(DELAY_READ);
@@ -1016,7 +1020,7 @@ class Configure
     boolean changed  = false;
     
     // Retrieve type
-    int outputMode = outputData.mode & OUTPUT_MODE_MASK;
+    int outputType = outputData.type & OUTPUT_TYPE_MASK;
 
     // Mark the field.
     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
@@ -1026,18 +1030,18 @@ class Configure
       switch (waitForButton())
       {
         case BUTTON_NONE:   break;
-        case BUTTON_UP:     outputMode += 2;     // Use +1 to compensate for the -1 that the code below will do.
-                            if (outputMode > OUTPUT_MODE_MAX)
+        case BUTTON_UP:     outputType += 2;     // Use +1 to compensate for the -1 that the code below will do.
+                            if (outputType > OUTPUT_TYPE_MAX)
                             {
-                              outputMode = 1;
+                              outputType = 1;
                             }
-        case BUTTON_DOWN:   outputMode -= 1;
-                            if (outputMode < 0)
+        case BUTTON_DOWN:   outputType -= 1;
+                            if (outputType < 0)
                             {
-                              outputMode = OUTPUT_MODE_MAX - 1;
+                              outputType = OUTPUT_TYPE_MAX - 1;
                             }
-                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputMode]);
-                            displayOutputParams(outputMode);
+                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputType]);
+                            displayOutputParams(outputType);
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             changed = true;
                             break;
@@ -1045,7 +1049,7 @@ class Configure
                             {
                               if (confirm())
                               {
-                                outputData.mode = outputMode | (outputData.mode & ~OUTPUT_MODE_MASK);
+                                outputData.type = outputType | (outputData.type & ~OUTPUT_TYPE_MASK);
                                 saveOutput();
                                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
                                 delay(DELAY_READ);
@@ -1075,7 +1079,7 @@ class Configure
                               }
                               else
                               {
-                                outputData.mode = outputMode | (outputData.mode & ~OUTPUT_MODE_MASK);
+                                outputData.type = outputType | (outputData.type & ~OUTPUT_TYPE_MASK);
                                 displayDetailOutput();
                                 markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                               }
@@ -1086,12 +1090,12 @@ class Configure
                             }
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
-                            if (   (outputMode == OUTPUT_MODE_SERVO)
-                                || (outputMode == OUTPUT_MODE_SIGNAL))
+                            if (   (outputType == OUTPUT_TYPE_SERVO)
+                                || (outputType == OUTPUT_TYPE_SIGNAL))
                             {
                               changed |= menuOutputLo();
                             }
-                            else if (outputMode == OUTPUT_MODE_LED)
+                            else if (outputType == OUTPUT_TYPE_LED)
                             {
                               lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
                               lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_TODO);
@@ -1099,7 +1103,7 @@ class Configure
                             }
                             else
                             {
-                              systemFail(M_OUTPUT, outputMode);
+                              systemFail(M_OUTPUT, outputType);
                             }
                             
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
@@ -1170,8 +1174,8 @@ class Configure
 
     displayNode();
     // markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
-    displayOutputParams(outputData.mode & OUTPUT_MODE_MASK);
-    sendOutputCommand(outputData.mode & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, outputData.mode & OUTPUT_STATE);
+    displayOutputParams(outputData.type & OUTPUT_TYPE_MASK);
+    sendOutputCommand(outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, outputData.type & OUTPUT_STATE);
     
     return changed;
   }

@@ -13,11 +13,11 @@
 
 // Mask for OUTPUT options
 #define OUTPUT_STATE           0x80   // On or off, switched or not switched, 0 = lo, 1 = hi.
-#define OUTPUT_MODE_MASK       0x0f   // Only four bits are used for the type of output.
-#define OUTPUT_MODE_SERVO      0x00   // Output is a servo.
-#define OUTPUT_MODE_SIGNAL     0x01   // Output is a signal.
-#define OUTPUT_MODE_LED        0x02   // Output is a LED or other IO device.
-#define OUTPUT_MODE_MAX        0x03   // Limit of output types.
+#define OUTPUT_TYPE_MASK       0x0f   // Only four bits are used for the type of output.
+#define OUTPUT_TYPE_SERVO      0x00   // Output is a servo.
+#define OUTPUT_TYPE_SIGNAL     0x01   // Output is a signal.
+#define OUTPUT_TYPE_LED        0x02   // Output is a LED or other IO device.
+#define OUTPUT_TYPE_MAX        0x03   // Limit of output types.
 
 #define OUTPUT_ANGLE_MAX        180   // Maximum value an angle output parameter can take.
 #define OUTPUT_ANGLE_SIZE         3   // Maximum digits in an andgl display.
@@ -39,7 +39,7 @@
  */
 struct OutputData
 {
-  uint8_t mode  = 0;
+  uint8_t type  = 0;
   uint8_t lo    = 0;
   uint8_t hi    = 0;
   uint8_t pace  = 0;

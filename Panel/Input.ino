@@ -6,19 +6,36 @@
  */
 void loadInput(int aInput)
 {
-  if (aInput < INPUT_MAX)
-  {
-    inputNumber = aInput;
-    EEPROM.get(INPUT_BASE + inputNumber * INPUT_SIZE, inputData);
-  }
+  loadInput((aInput >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK, aInput & INPUT_PIN_MASK);
 }
 
 
 /** Load an Input's data from EEPROM.
  */
-void loadInput(int aNode, int aInput)
+void loadInput(int aNode, int aPin)
 {
-  loadInput((aNode << INPUT_NODE_SHIFT) + (aInput & INPUT_PIN_MASK));
+  uint32_t mask = ((long)INPUT_TYPE_MASK) << (aPin << INPUT_TYPE_SHIFT);
+
+  inputNumber = ((aNode & INPUT_NODE_MASK) << INPUT_NODE_SHIFT) | (aPin & INPUT_PIN_MASK);
+
+  EEPROM.get(INPUT_BASE + (inputNumber * INPUT_SIZE), inputData);
+  EEPROM.get(TYPES_BASE + (aNode       * TYPES_SIZE), inputTypes);
+  inputType = (inputTypes >> (aPin << INPUT_TYPE_SHIFT)) & INPUT_TYPE_MASK;
+  
+//  Serial.print("Load inputTypes[");
+//  Serial.print(inputNumber, HEX);
+//  Serial.print(": ");
+//  Serial.print(aNode, HEX);
+//  Serial.print(",");
+//  Serial.print(aPin, HEX);
+//  Serial.print("] @");
+//  Serial.print(TYPES_BASE + (aNode * TYPES_SIZE), HEX);
+//  Serial.print(" = ");
+//  Serial.print(inputTypes, HEX);
+//  Serial.print(" (");
+//  Serial.print(inputType, HEX);
+//  Serial.print(")");
+//  Serial.println();
 }
 
 
@@ -29,7 +46,30 @@ void saveInput()
 {
   if (inputNumber < INPUT_MAX)
   {
-    EEPROM.put(INPUT_BASE + inputNumber * INPUT_SIZE, inputData);
+    int      node = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
+    int      pin  = (inputNumber                    ) & INPUT_PIN_MASK;
+    uint32_t mask = ((long)INPUT_TYPE_MASK) << (pin << INPUT_TYPE_SHIFT);
+    
+    inputTypes = (inputTypes & ~mask) | ((((long)inputType) << (pin << INPUT_TYPE_SHIFT)) & mask);
+    EEPROM.put(INPUT_BASE + (inputNumber * INPUT_SIZE), inputData);
+    EEPROM.put(TYPES_BASE + (node        * TYPES_SIZE), inputTypes);
+
+//    Serial.print("Save inputTypes[");
+//    Serial.print(inputNumber, HEX);
+//    Serial.print(": ");
+//    Serial.print(node, HEX);
+//    Serial.print(",");
+//    Serial.print(pin, HEX);
+//    Serial.print("] @");
+//    Serial.print(TYPES_BASE + (node * TYPES_SIZE), HEX);
+//    Serial.print(", mask=");
+//    Serial.print(mask, HEX);
+//    Serial.print(" = ");
+//    Serial.print(inputTypes, HEX);
+//    Serial.print(" (");
+//    Serial.print(inputType, HEX);
+//    Serial.print(")");
+//    Serial.println();
   }
 }
 
