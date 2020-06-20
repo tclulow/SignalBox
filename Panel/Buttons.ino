@@ -21,7 +21,7 @@ void calibrateButtons()
   for (int button = 0; button < BUTTON_LIMIT; button++)
   {
     lcd.clearRow(LCD_COL_CALIBRATE, LCD_ROW_BOT);
-    lcd.printAt(LCD_COL_CALIBRATE, LCD_ROW_BOT, M_BUTTONS[button]);
+    lcd.printAt(LCD_COL_CALIBRATE, LCD_ROW_BOT, M_BUTTONS[button], LCD_LEN_OPTION);
 
     // Record average between this button and the previous.
     while ((value = analogRead(0)) > 1000);

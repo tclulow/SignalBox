@@ -47,30 +47,21 @@ const char M_SYSTEM[]          PROGMEM = "System";
 const char M_DETAIL[]          PROGMEM = "Detail";
 const char M_PARAMS[]          PROGMEM = "Params";
 const char M_OUTPUT[]          PROGMEM = "Output";
-const char M_INPUT[]           PROGMEM = "Input ";
+const char M_INPUT[]           PROGMEM = "Input";
 const char M_EXPORT[]          PROGMEM = "Export";
 const char M_IMPORT[]          PROGMEM = "Import";
-const char M_ALL[]             PROGMEM = "All   ";
+const char M_ALL[]             PROGMEM = "All";
 
-const char M_DEBUG[]           PROGMEM = "Debug ";
-const char M_SYS_I2C[]         PROGMEM = "i2cID ";
-
-const char M_IMPORT_INPUT[]    PROGMEM = "Input";
-const char M_IMPORT_SERVO[]    PROGMEM = "Servo";
-const char M_IMPORT_SIGNAL[]   PROGMEM = "Signal";
-const char M_IMPORT_LED[]      PROGMEM = "LED";
-const char M_IMPORT_TOGGLE[]   PROGMEM = "Toggle";
-const char M_IMPORT_ON_OFF[]   PROGMEM = "On/Off";
-const char M_IMPORT_ON[]       PROGMEM = "On";
-const char M_IMPORT_OFF[]      PROGMEM = "Off";
+const char M_DEBUG[]           PROGMEM = "Debug";
+const char M_SYS_I2C[]         PROGMEM = "i2cID";
 
 const char M_ID_CONSOLE[]      PROGMEM = "Con";
 const char M_ID_INPUT[]        PROGMEM = "Inp";
 const char M_ID_OUTPUT[]       PROGMEM = "Out";
 
-const char M_NONE[]            PROGMEM = "None ";
-const char M_LOW[]             PROGMEM = "Low  ";
-const char M_HIGH[]            PROGMEM = "High ";
+const char M_NONE[]            PROGMEM = "None";
+const char M_LOW[]             PROGMEM = "Low";
+const char M_HIGH[]            PROGMEM = "High";
 const char M_PAUSE[]           PROGMEM = "Pause";
 
 const char M_MOD[]             PROGMEM = "Mod";
@@ -78,19 +69,18 @@ const char M_PIN[]             PROGMEM = "Pin";
 
 const char M_TOGGLE[]          PROGMEM = "Toggle";
 const char M_ON_OFF[]          PROGMEM = "On/Off";
-const char M_ON[]              PROGMEM = "On    ";
-const char M_OFF[]             PROGMEM = "Off   ";
+const char M_ON[]              PROGMEM = "On";
+const char M_OFF[]             PROGMEM = "Off";
 const char M_DISABLED[]        PROGMEM = "..";
 
-const char M_SERVO[]           PROGMEM = "Servo ";
+const char M_SERVO[]           PROGMEM = "Servo";
 const char M_SIGNAL[]          PROGMEM = "Signal";
-const char M_LED[]             PROGMEM = "LED   ";
+const char M_LED[]             PROGMEM = "LED";
 
 const char M_HI[]              PROGMEM = "Hi";
 const char M_LO[]              PROGMEM = "Lo";
 const char M_PACE[]            PROGMEM = "Spd";
 const char M_DELAY[]           PROGMEM = "Delay";
-
 
 
 // Headers for the exports
@@ -108,11 +98,7 @@ const char* const M_I2C_PROMPTS[]    = { M_ID_CONSOLE, M_ID_INPUT, M_ID_OUTPUT }
 const char* const M_DEBUG_PROMPTS[]  = { M_NONE, M_LOW, M_HIGH, M_PAUSE };
 
 const char* const M_INPUT_TYPES[]    = { M_TOGGLE, M_ON_OFF, M_ON, M_OFF };
-//const char* const M_OUTPUT_PROMPTS[] = { M_LO, M_HI, M_PACE };
-const char* const M_OUTPUT_TYPES[]   = { M_SERVO, M_SIGNAL, M_LED };
-
-const char* const M_IMP_INP_TYPES[]  = { M_IMPORT_TOGGLE, M_IMPORT_ON_OFF, M_IMPORT_ON, M_IMPORT_OFF };
-const char* const M_IMP_OUT_TYPES[]  = { M_IMPORT_SERVO, M_IMPORT_SIGNAL, M_IMPORT_LED };
+const char* const M_OUTPUT_TYPES[]   = { M_SERVO,  M_SIGNAL, M_LED };
 
 
 /** Gets a PROGMEM message and copies it to a buffer

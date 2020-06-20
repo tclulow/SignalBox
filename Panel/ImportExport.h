@@ -31,7 +31,7 @@ class ImportExport
     {
       lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SYSTEM);
     }
-    else if (!strcmp_P(wordBuffer, M_IMPORT_INPUT))
+    else if (!strcmp_P(wordBuffer, M_INPUT))
     {
       lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT);
       importInput();
@@ -67,7 +67,7 @@ class ImportExport
     readWord();
     for (inputType = 0; inputType < INPUT_TYPE_MAX; inputType++)
     {
-      if (!strcmp_P(wordBuffer, M_IMP_INP_TYPES[inputType]))
+      if (!strcmp_P(wordBuffer, M_INPUT_TYPES[inputType]))
       {
         break;
       }
@@ -110,7 +110,7 @@ class ImportExport
     readWord();
     for (outputData.type = 0; outputData.type < OUTPUT_TYPE_MAX; outputData.type++)
     {
-      if (!strcmp_P(wordBuffer, M_IMP_OUT_TYPES[outputData.type]))
+      if (!strcmp_P(wordBuffer, M_OUTPUT_TYPES[outputData.type]))
       {
         break;
       }

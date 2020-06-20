@@ -34,7 +34,7 @@ class Configure
    */
   void displayAll()
   {
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_TOP_MENU[topMenu]);
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_TOP_MENU[topMenu], LCD_LEN_OPTION);
     switch (topMenu)
     {
       case TOP_SYSTEM: displaySystem();
@@ -80,8 +80,8 @@ class Configure
   void displayNode()
   {
     lcd.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
-    lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[node]);
-    lcd.printAt(LCD_COL_PIN   , LCD_ROW_TOP, HEX_CHARS[pin]);
+    lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[node]);
+    lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[pin]);
   }
 
 
@@ -112,7 +112,7 @@ class Configure
    */
   void displayDetailSystem()
   {
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SYS_TYPES[sysMenu]);
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SYS_TYPES[sysMenu], LCD_LEN_OPTION);
     displaySystemParams();
   }
 
@@ -155,7 +155,7 @@ class Configure
   void displayI2cPrompt(int aParam)
   {
     lcd.clearRow(LCD_COL_I2C_PARAM, LCD_ROW_TOP);
-    lcd.printAt(LCD_COL_I2C_PARAM + aParam * LCD_COL_I2C_STEP, LCD_ROW_TOP, M_I2C_PROMPTS[aParam]);
+    lcd.printAt(LCD_COL_I2C_PARAM + aParam * LCD_COL_I2C_STEP, LCD_ROW_TOP, M_I2C_PROMPTS[aParam], LCD_LEN_OPTION);
   }
 
 
@@ -164,7 +164,7 @@ class Configure
   void displaySystemDebugParams()
   {
     lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
-    lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel]);    
+    lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_LEN_OPTION);    
   }
 
 
@@ -172,7 +172,7 @@ class Configure
    */
   void displayDetailExport()
   {
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_REPORT_TYPES[expMenu]);
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_REPORT_TYPES[expMenu], LCD_LEN_OPTION);
   }
   
 
@@ -188,7 +188,7 @@ class Configure
    */
   void displayDetailInput()
   {
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT_TYPES[inputType]);
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT_TYPES[inputType], LCD_LEN_OPTION);
     displayDetailInputOutput();
   }
 
@@ -246,7 +246,7 @@ class Configure
    */
   void displayDetailOutput()
   {
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputData.type & OUTPUT_TYPE_MASK]);
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputData.type & OUTPUT_TYPE_MASK], LCD_LEN_OPTION);
     displayOutputParams(outputData.type & OUTPUT_TYPE_MASK);
   }
 
@@ -497,7 +497,7 @@ class Configure
                             {
                               systemData.debugLevel = DEBUG_MAX - 1;
                             }
-                            lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel]);
+                            lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_COL_DEBUG_LENGTH);
                             changed = true;
                             break;
         case BUTTON_SELECT: break;
@@ -762,7 +762,7 @@ class Configure
                             {
                               inputType = INPUT_TYPE_MAX - 1;
                             }
-                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT_TYPES[inputType]);
+                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT_TYPES[inputType], LCD_LEN_OPTION);
                             changed = true;
                             break;
         case BUTTON_SELECT: if (changed)
@@ -1047,7 +1047,7 @@ class Configure
                             {
                               outputType = OUTPUT_TYPE_MAX - 1;
                             }
-                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputType]);
+                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputType], LCD_LEN_OPTION);
                             displayOutputParams(outputType);
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                             changed = true;

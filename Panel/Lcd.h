@@ -28,6 +28,8 @@
 #define LCD_ROW_TOP           0   // Rows for LCD state messages.
 #define LCD_ROW_BOT           1
 
+#define LCD_LEN_OPTION        6   // Command menu options are (padded to) this length.
+
 #define LCD_COL_START         0   // Cols for LCD state messages.
 #define LCD_COL_MARK          6   // Marker when changing top-level option.
 #define LCD_COL_VERSION       8   // Where to put version number/date.
@@ -75,20 +77,35 @@ class LCD: public LiquidCrystal
 
   
   /** Print a PROGMEM message to the LCD.
-   *  Return length of message printed.
+   *  Pad with spaces to aSize.
    */
-  void print_P(PGM_P messagePtr)
+  void print_P(PGM_P messagePtr, int aSize)
   {
     print(PGMT(messagePtr));
+    int padding = aSize - strlen_P(messagePtr);
+    while (padding-- > 0)
+    {
+      print(CHAR_SPACE);
+    }
   }
 
+
   /** Print a message at a particular location.
-   *  Return the length of the message printed.
+   *  Pad with spaces to aSize.
+   */
+  void printAt(int col, int row, PGM_P messagePtr, int aSize)
+  {
+    setCursor(col, row);
+    print_P(messagePtr, aSize);
+  }
+
+
+  /** Print a message at a particular location.
+   *  No padding.
    */
   void printAt(int col, int row, PGM_P messagePtr)
   {
-    setCursor(col, row);
-    print_P(messagePtr);
+    printAt(col, row, messagePtr, 0);
   }
 
 
