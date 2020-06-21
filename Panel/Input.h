@@ -13,6 +13,7 @@
 
 // Mask for Input options
 #define INPUT_OUTPUT_MAX          3     // Number of outputs each input can control.
+#define INPUT_REVERSE_MASK     0x80     // The Input's outputs are send in reverse.
 #define INPUT_DISABLED_MASK    0x80     // The Input's output is disabled.
 #define INPUT_OUTPUT_MASK      0x7f     // Mask to get the Input's output without the flag above.
 

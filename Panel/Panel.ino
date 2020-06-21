@@ -275,7 +275,7 @@ void scanInputs()
 //  #endif 
 
   // Scan all the nodes. 
-  for (int node = 0; node < INPUT_NODE_MAX; node++)
+  for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
   {
     if (isInputNode(node))                                        
     {
@@ -284,13 +284,34 @@ void scanInputs()
       if (pins != currentInputState[node])
       {
         // Process all the changed pins.
-        for (int pin = 0, mask = 1; pin < INPUT_NODE_SIZE; pin++, mask <<= 1)
+        for (uint8_t pin = 0, mask = 1; pin < INPUT_NODE_SIZE; pin++, mask <<= 1)
         {
           int state = pins & mask;
           if (state != (currentInputState[node] & mask))
           {
             loadInput(node, pin);
-            processInput(node, pin, state);
+
+//            #if DEBUG
+//            // Report the input
+//            Serial.print("Input  ");
+//            Serial.print(state ? "Hi" : "Lo");
+//            Serial.print(" ");
+//            Serial.print(HEX_CHARS[node & 0xf]);
+//            Serial.print(" ");
+//            Serial.print(HEX_CHARS[pin & 0xf]);
+//            Serial.println();
+//            #endif
+          
+            if (debugEnabled(DEBUG_LOW))
+            {
+              lcd.clear();
+              lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT);
+              lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (state ? M_HI : M_LO));
+              lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[node]);
+              lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[pin]);
+            }
+            
+            processInput(state);
           }
         }
       
@@ -334,68 +355,85 @@ int readInputNode(int node)
 
 /** Process the changed input.
  */
-void processInput(int aNode, int aPin, int aState)
+void processInput(int aState)
 {
-//  #if DEBUG
-//  // Report the input
-//  Serial.print("Input  ");
-//  Serial.print(aState ? "Hi" : "Lo");
-//  Serial.print(" ");
-//  Serial.print(HEX_CHARS[aNode & 0xf]);
-//  Serial.print(" ");
-//  Serial.print(HEX_CHARS[aPin & 0xf]);
-//  Serial.println();
-//  #endif
-
-  if (debugEnabled(DEBUG_LOW))
+  uint8_t newState = 0;
+  uint8_t reverse  = inputData.output[0] & INPUT_REVERSE_MASK;
+  
+  // Process all input state changes for Toggles, only going low for other Input types.
+  if (   (aState == 0)
+      || (inputType == INPUT_TYPE_TOGGLE))
   {
-    lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT);
-    lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (aState ? M_HI : M_LO));
-    lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[aNode]);
-    lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[aPin]);
-  }
-
-  // Process all the Input's outputs (if they're not disabled).
-  for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
-  {
-    if (!(inputData.output[index] & INPUT_DISABLED_MASK))
+    // Set desired new state based on Input's type/state and Output's state.
+    switch (inputType)
     {
-      int output = inputData.output[index] & INPUT_OUTPUT_MASK;
-
-      if (inputType == INPUT_TYPE_TOGGLE)
-      {
-        loadOutput(output);
-
-        if (aState)
-        {
-          outputData.type |= OUTPUT_STATE;    // Set output state
-        }
-        else
-        {
-          outputData.type &= ~OUTPUT_STATE;   // Clear output state
-        }
-        
-        sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.type & OUTPUT_STATE);
-        saveOutput();
-      }
-      else if (!aState)      // Send change state when button pressed (goes low), not when released (goes high).
-      {
-        loadOutput(output);
-        switch (inputType)
-        {
-          case INPUT_TYPE_ON_OFF: outputData.type ^=  OUTPUT_STATE;   // Toggle the state.
-                                  break;
-          case INPUT_TYPE_ON:     outputData.type |=  OUTPUT_STATE;   // Set the state.
-                                  break;
-          case INPUT_TYPE_OFF:    outputData.type &= ~OUTPUT_STATE;   // Clear the state.
-                                  break;
-        }
-        
-        sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.type & OUTPUT_STATE);
-        saveOutput();
-      }
+      case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE : 0;   // Set state to that of the Toggle.
+                              break;
+      case INPUT_TYPE_ON_OFF: loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
+                              if (outputData.type & OUTPUT_STATE)     // Change the state.
+                              {
+                                newState = 0;
+                              }
+                              else
+                              {
+                                newState = OUTPUT_STATE;
+                              }
+                              break;
+      case INPUT_TYPE_ON:     newState = OUTPUT_STATE;                // Set the state.
+                              break;
+      case INPUT_TYPE_OFF:    newState = 0;                           // Clear the state.
+                              break;
     }
+
+    processInputOutputs(aState, reverse);
+  }
+}
+
+
+/** Process all the Input's Outputs.
+ *  In reverse if so commanded.
+ */
+void processInputOutputs(uint8_t aNewState, boolean aReverse)
+{
+  // Process all the Input's outputs.
+  if (aNewState == 0 && aReverse)
+  {
+    for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
+    {
+      processInputOutput(index, aNewState);
+    }
+  }
+  else
+  {
+    for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
+    {
+      processInputOutput(index, aNewState);
+    }
+  }
+}
+
+
+/** Process an Input's n'th Output, setting it to the given state.
+ */
+void processInputOutput(int aIndex, uint8_t aNewState)
+{
+  // Process the Input's zeroth Output, and others if not disabled.
+  if (   (aIndex == 0)
+      || (!(inputData.output[aIndex] & INPUT_DISABLED_MASK)))
+  {
+    loadOutput(inputData.output[aIndex] & INPUT_OUTPUT_MASK);
+
+    if (aNewState)
+    {
+      outputData.type |= OUTPUT_STATE;    // Set output state
+    }
+    else
+    {
+      outputData.type &= ~OUTPUT_STATE;   // Clear output state
+    }
+      
+    sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.type & OUTPUT_STATE);
+    saveOutput();
   }
 }
 

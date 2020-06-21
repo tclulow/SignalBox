@@ -1013,29 +1013,15 @@ class Configure
    */
   void testInput()
   {
-    // Move all the Input's Outputs.
-    for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
-    {
-      if (!(inputData.output[index] & INPUT_DISABLED_MASK))
-      {
-        loadOutput(inputData.output[index] & INPUT_OUTPUT_MASK);
-        boolean currentState = outputData.type & OUTPUT_STATE;
-        sendOutputCommand((currentState ? outputData.lo : outputData.hi), outputData.pace, currentState ? 0 : OUTPUT_STATE);
-      }
-    }
+    uint8_t currentState = 0;
+    boolean reverse = inputData.output[0] & INPUT_REVERSE_MASK;
+    
+    loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
+    currentState = outputData.type & OUTPUT_STATE;
 
+    processInputOutputs(currentState ? 0 : OUTPUT_STATE, reverse);
     waitForButtonRelease();
-
-    // Reset all the Input's Outputs.
-    for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
-    {
-      if (!(inputData.output[index] & INPUT_DISABLED_MASK))
-      {
-        loadOutput(inputData.output[index] & INPUT_OUTPUT_MASK);
-        boolean currentState = outputData.type & OUTPUT_STATE;
-        sendOutputCommand((currentState ? outputData.hi : outputData.lo), outputData.pace, currentState ? OUTPUT_STATE : 0);
-      }
-    }
+    processInputOutputs(currentState, reverse);
   }
 
 

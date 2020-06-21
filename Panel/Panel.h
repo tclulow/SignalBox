@@ -23,10 +23,10 @@ const char HEX_CHARS[]  = "0123456789abcdef";
 const char EDIT_CHARS[] = "ABC";
 
 
-/** Process the changed input.
- *  Forward reference required for Configure class.
+/** Process all the Input's Outputs.
+ *  In reverse if so commanded.
  */
-void processInput(int aNode, int aPin, int aState);
+void processInputOutputs(uint8_t aNewState, boolean aReverse);
 
 
 /** Send a command to an output node.
@@ -34,5 +34,6 @@ void processInput(int aNode, int aPin, int aState);
  *  Forward reference required for Configure class.
  */
 int sendOutputCommand(int aValue, int aPace, int aState);
+
 
 #endif
