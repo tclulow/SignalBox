@@ -1014,14 +1014,13 @@ class Configure
   void testInput()
   {
     uint8_t currentState = 0;
-    boolean reverse = inputData.output[0] & INPUT_REVERSE_MASK;
     
     loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
     currentState = outputData.type & OUTPUT_STATE;
 
-    processInputOutputs(currentState ? 0 : OUTPUT_STATE, reverse);
+    processInputOutputs(currentState ? 0 : OUTPUT_STATE);
     waitForButtonRelease();
-    processInputOutputs(currentState, reverse);
+    processInputOutputs(currentState);
   }
 
 
@@ -1137,7 +1136,7 @@ class Configure
 
     displayOutputAngles();
     markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, true);
-    sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0);
+    sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, outputData.pace & OUTPUT_DELAY_MASK, 0);
 
     while (!finished)
     {
@@ -1157,7 +1156,7 @@ class Configure
                               autoRepeat = DELAY_BUTTON_REPEAT;
                             }
                             while (readButton() != 0);
-                            sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0);
+                            sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, outputData.pace & OUTPUT_DELAY_MASK, 0);
                             changed = true;
                             break;
         case BUTTON_DOWN:   do
@@ -1172,7 +1171,7 @@ class Configure
                               autoRepeat = DELAY_BUTTON_REPEAT;
                             }
                             while (readButton() != 0);
-                            sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0);
+                            sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, outputData.pace & OUTPUT_DELAY_MASK, 0);
                             changed = true;
                             break;
         case BUTTON_SELECT: break;
@@ -1181,13 +1180,13 @@ class Configure
         case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
                             changed |= menuOutputHi();
                             markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, true);
-                            sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0);
+                            sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, outputData.pace & OUTPUT_DELAY_MASK, 0);
                             break;
       }
     }
 
     markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
-    sendOutputCommand(outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, outputData.type & OUTPUT_STATE);
+    sendOutputCommand(outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, outputData.pace & OUTPUT_DELAY_MASK, outputData.type & OUTPUT_STATE);
     
     return changed;
   }
@@ -1201,7 +1200,7 @@ class Configure
     boolean changed  = false;
 
     markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, true);
-    sendOutputCommand(outputData.hi, outputData.pace & ~ OUTPUT_DELAY_MASK, OUTPUT_STATE);
+    sendOutputCommand(outputData.hi, outputData.pace & ~ OUTPUT_DELAY_MASK, outputData.pace & OUTPUT_DELAY_MASK, OUTPUT_STATE);
 
     while (!finished)
     {
@@ -1221,7 +1220,7 @@ class Configure
                               autoRepeat = DELAY_BUTTON_REPEAT;
                             }
                             while (readButton() != 0);
-                            sendOutputCommand(outputData.hi, outputData.pace & ~ OUTPUT_DELAY_MASK, OUTPUT_STATE);
+                            sendOutputCommand(outputData.hi, outputData.pace & ~ OUTPUT_DELAY_MASK, outputData.pace & OUTPUT_DELAY_MASK, OUTPUT_STATE);
                             changed = true;
                             break;
         case BUTTON_DOWN:   do
@@ -1236,7 +1235,7 @@ class Configure
                               autoRepeat = DELAY_BUTTON_REPEAT;
                             }
                             while (readButton() != 0);
-                            sendOutputCommand(outputData.hi, outputData.pace & ~ OUTPUT_DELAY_MASK, OUTPUT_STATE);
+                            sendOutputCommand(outputData.hi, outputData.pace & ~ OUTPUT_DELAY_MASK, outputData.pace & OUTPUT_DELAY_MASK, OUTPUT_STATE);
                             changed = true;
                             break;
         case BUTTON_SELECT: break;

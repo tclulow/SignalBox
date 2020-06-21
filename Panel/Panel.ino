@@ -358,7 +358,6 @@ int readInputNode(int node)
 void processInput(int aState)
 {
   uint8_t newState = 0;
-  uint8_t reverse  = inputData.output[0] & INPUT_REVERSE_MASK;
   
   // Process all input state changes for Toggles, only going low for other Input types.
   if (   (aState == 0)
@@ -385,29 +384,31 @@ void processInput(int aState)
                               break;
     }
 
-    processInputOutputs(aState, reverse);
+    processInputOutputs(aState);
   }
 }
 
 
 /** Process all the Input's Outputs.
- *  In reverse if so commanded.
  */
-void processInputOutputs(uint8_t aNewState, boolean aReverse)
+void processInputOutputs(uint8_t aNewState)
 {
+  uint8_t delay = 0;
+  
   // Process all the Input's outputs.
-  if (aNewState == 0 && aReverse)
+  // In reverse order if setting lo.
+  if (aNewState)
   {
-    for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
+    for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
     {
-      processInputOutput(index, aNewState);
+      delay = processInputOutput(index, aNewState, delay);
     }
   }
   else
   {
-    for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
+    for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
     {
-      processInputOutput(index, aNewState);
+      delay = processInputOutput(index, aNewState, delay);
     }
   }
 }
@@ -415,13 +416,22 @@ void processInputOutputs(uint8_t aNewState, boolean aReverse)
 
 /** Process an Input's n'th Output, setting it to the given state.
  */
-void processInputOutput(int aIndex, uint8_t aNewState)
+uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
 {
+  uint8_t delay = aDelay;
+  
   // Process the Input's zeroth Output, and others if not disabled.
   if (   (aIndex == 0)
       || (!(inputData.output[aIndex] & INPUT_DISABLED_MASK)))
   {
     loadOutput(inputData.output[aIndex] & INPUT_OUTPUT_MASK);
+    delay += outputData.pace & OUTPUT_DELAY_MASK;
+
+    // Can't delay beyond the maximum possible.
+    if (delay > OUTPUT_DELAY_MASK)
+    {
+      delay = OUTPUT_DELAY_MASK;
+    }
 
     if (aNewState)
     {
@@ -432,16 +442,18 @@ void processInputOutput(int aIndex, uint8_t aNewState)
       outputData.type &= ~OUTPUT_STATE;   // Clear output state
     }
       
-    sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, outputData.type & OUTPUT_STATE);
+    sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, delay, outputData.type & OUTPUT_STATE);
     saveOutput();
   }
+
+  return delay;
 }
 
 
 /** Send a command to an output node.
  *  Return error code if any.
  */
-int sendOutputCommand(int aValue, int aPace, int aState)
+int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aState)
 {
 //  #if DEBUG
 //  // Report output
@@ -473,9 +485,9 @@ int sendOutputCommand(int aValue, int aPace, int aState)
   Wire.write(aValue);
   Wire.write((((aPace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_MULT) + OUTPUT_PACE_OFFSET);
   Wire.write(aState ? 1 : 0);
-  if (aPace & OUTPUT_DELAY_MASK)
+  if (aDelay & OUTPUT_DELAY_MASK)
   {
-    Wire.write(aPace & OUTPUT_DELAY_MASK);
+    Wire.write(aDelay & OUTPUT_DELAY_MASK);
   }
   return Wire.endTransmission();
 }

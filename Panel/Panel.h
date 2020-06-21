@@ -24,16 +24,15 @@ const char EDIT_CHARS[] = "ABC";
 
 
 /** Process all the Input's Outputs.
- *  In reverse if so commanded.
  */
-void processInputOutputs(uint8_t aNewState, boolean aReverse);
+void processInputOutputs(uint8_t aNewState);
 
 
 /** Send a command to an output node.
  *  Return error code if any.
  *  Forward reference required for Configure class.
  */
-int sendOutputCommand(int aValue, int aPace, int aState);
+int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aState);
 
 
 #endif
