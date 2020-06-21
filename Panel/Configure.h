@@ -1174,7 +1174,8 @@ class Configure
                             sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, 0);
                             changed = true;
                             break;
-        case BUTTON_SELECT: break;
+        case BUTTON_SELECT: testOutput(false, true);
+                            break;
         case BUTTON_LEFT:   finished = true;
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
@@ -1238,7 +1239,8 @@ class Configure
                             sendOutputCommand(outputData.hi, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE);
                             changed = true;
                             break;
-        case BUTTON_SELECT: break;
+        case BUTTON_SELECT: testOutput(false, false);
+                            break;
         case BUTTON_LEFT:   finished = true;
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
@@ -1279,7 +1281,8 @@ class Configure
                             lcd.printAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, HEX_CHARS[value]);
                             changed = true;
                             break;
-        case BUTTON_SELECT: break;
+        case BUTTON_SELECT: testOutput(false, false);
+                            break;
         case BUTTON_LEFT:   finished = true;
                             break;
         case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, 1, false);
@@ -1319,7 +1322,8 @@ class Configure
                             lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[value]);
                             changed = true;
                             break;
-        case BUTTON_SELECT: break;
+        case BUTTON_SELECT: testOutput(true, false);
+                            break;
         case BUTTON_LEFT:   finished = true;
                             break;
         case BUTTON_RIGHT:  break;
@@ -1330,6 +1334,16 @@ class Configure
     markField(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, 1, false);
 
     return changed;
+  }
+
+
+  /** Test the current Configuration.
+   */
+  void testOutput(boolean aIncludeDelay, boolean aDirectionHi)
+  {
+    sendOutputCommand(aDirectionHi ? outputData.hi : outputData.lo, outputData.pace, aIncludeDelay ? outputData.pace & OUTPUT_DELAY_MASK : 0, OUTPUT_STATE);
+    waitForButtonRelease();
+    sendOutputCommand(aDirectionHi ? outputData.lo : outputData.hi, outputData.pace, aIncludeDelay ? outputData.pace & OUTPUT_DELAY_MASK : 0, 0);
   }
 
 
