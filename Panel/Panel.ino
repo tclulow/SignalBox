@@ -290,27 +290,6 @@ void scanInputs()
           if (state != (currentInputState[node] & mask))
           {
             loadInput(node, pin);
-
-//            #if DEBUG
-//            // Report the input
-//            Serial.print("Input  ");
-//            Serial.print(state ? "Hi" : "Lo");
-//            Serial.print(" ");
-//            Serial.print(HEX_CHARS[node & 0xf]);
-//            Serial.print(" ");
-//            Serial.print(HEX_CHARS[pin & 0xf]);
-//            Serial.println();
-//            #endif
-          
-            if (debugEnabled(DEBUG_LOW))
-            {
-              lcd.clear();
-              lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT);
-              lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (state ? M_HI : M_LO));
-              lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[node]);
-              lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[pin]);
-            }
-            
             processInput(state);
           }
         }
@@ -359,6 +338,26 @@ void processInput(int aState)
 {
   uint8_t newState = 0;
   
+//  #if DEBUG
+//  // Report the input
+//  Serial.print("Input  ");
+//  Serial.print(aState ? "Hi" : "Lo");
+//  Serial.print(" ");
+//  Serial.print(HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
+//  Serial.print(" ");
+//  Serial.print(HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
+//  Serial.println();
+//  #endif
+
+  if (debugEnabled(DEBUG_LOW))
+  {
+    lcd.clear();
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT);
+    lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (aState ? M_HI : M_LO));
+    lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
+    lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
+  }
+            
   // Process all input state changes for Toggles, only going low for other Input types.
   if (   (aState == 0)
       || (inputType == INPUT_TYPE_TOGGLE))
