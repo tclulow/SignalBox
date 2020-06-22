@@ -1274,10 +1274,12 @@ class Configure
       {
         case BUTTON_NONE:   break;
         case BUTTON_UP:     value = value + 1 & OUTPUT_PACE_MASK;
+                            outputData.pace = (outputData.pace & OUTPUT_DELAY_MASK) | ((value & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT);
                             lcd.printAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, HEX_CHARS[value]);
                             changed = true;
                             break;
         case BUTTON_DOWN:   value = value - 1 & OUTPUT_PACE_MASK;
+                            outputData.pace = (outputData.pace & OUTPUT_DELAY_MASK) | ((value & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT);
                             lcd.printAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, HEX_CHARS[value]);
                             changed = true;
                             break;
@@ -1292,7 +1294,6 @@ class Configure
       }
     }
 
-    outputData.pace = (0) | ((value & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT);
     markField(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, 1, false);
 
     return changed;
@@ -1315,10 +1316,12 @@ class Configure
       {
         case BUTTON_NONE:   break;
         case BUTTON_UP:     value = value + 1 & OUTPUT_DELAY_MASK;
+                            outputData.pace = (outputData.pace & ~ OUTPUT_DELAY_MASK) | value & OUTPUT_DELAY_MASK;
                             lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[value]);
                             changed = true;
                             break;
         case BUTTON_DOWN:   value = value - 1 & OUTPUT_DELAY_MASK;
+                            outputData.pace = (outputData.pace & ~ OUTPUT_DELAY_MASK) | value & OUTPUT_DELAY_MASK;
                             lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[value]);
                             changed = true;
                             break;
@@ -1330,7 +1333,6 @@ class Configure
       }
     }
 
-    outputData.pace = (outputData.pace & ~ OUTPUT_DELAY_MASK) | value & OUTPUT_DELAY_MASK;
     markField(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, 1, false);
 
     return changed;
