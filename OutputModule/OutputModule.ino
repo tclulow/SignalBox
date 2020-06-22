@@ -12,7 +12,10 @@
 #define SERVO_SIZE  sizeof(servoState)   // Size of Servo data
 
 #define I2C_BASE_ID       0x50   // Output nodes' base ID.
+
 #define DELAY_STEP          50   // Delay (msecs) between steps of a Servo.
+#define MAX_PACE           124   // Maximum pace value.
+#define PACE_STEPS         128   // Pace adjustment when converting to steps.
 
 #define SERVO_BASE_PIN       4   // Servos attached to this pin and the next 7 more.
 
@@ -149,8 +152,7 @@ void processRequest(int aLen)
 }
 
 
-/** Move a Servo from its current position to the desired one
- *  at the pace indicated.
+/** Move a Servo from its current position to the desired one at the pace indicated.
  *  Steps to move the whole range adjusted by the partial range required
  *  and for the pace at which to run (faster = fewer steps).
  */
@@ -159,7 +161,7 @@ void moveServo(uint8_t aServo, uint8_t aTarget, uint8_t aPace, uint8_t aState, u
   // Set the Servo's movement.
   outputs[aServo].start  = outputs[aServo].servo.read();
   outputs[aServo].target = aTarget;
-  outputs[aServo].steps  = (128 - aPace) * abs((aTarget - outputs[aServo].start)) / 128 + 1;
+  outputs[aServo].steps  = (MAX_PACE - (aPace > MAX_PACE ? MAX_PACE : aPace)) * abs((aTarget - outputs[aServo].start)) / PACE_STEPS + 1;
   outputs[aServo].step   = 0;
   outputs[aServo].state  = aState;
   outputs[aServo].delay  = millis() + DELAY_MULTIPLIER * aDelay;
@@ -252,29 +254,29 @@ void loop()
             outputs[servo].servo.write(outputs[servo].start + (outputs[servo].target - outputs[servo].start) * outputs[servo].step / outputs[servo].steps);
           }
     
-//          // Test code to report activity.
-//          if (   (outputs[servo].step == 1)
-//              || (outputs[servo].step == outputs[servo].steps))
-//          {
-//            Serial.print(now);
-//            Serial.print("\tStep: servo=");
-//            Serial.print(servo);
-//            Serial.print(", start=");
-//            Serial.print(outputs[servo].start);
-//            Serial.print(", angle=");
-//            Serial.print(outputs[servo].servo.read());
-//            Serial.print(", target=");
-//            Serial.print(outputs[servo].target);
-//            Serial.print(", step=");
-//            Serial.print(outputs[servo].step);
-//            Serial.print(", steps=");
-//            Serial.print(outputs[servo].steps);
-//            Serial.print(", state=");
-//            Serial.print(outputs[servo].state);
-//            Serial.print(", delay=");
-//            Serial.print(outputs[servo].delay);
-//            Serial.println();
-//          }
+          // Test code to report activity.
+          if (   (outputs[servo].step == 1)
+              || (outputs[servo].step == outputs[servo].steps))
+          {
+            Serial.print(now);
+            Serial.print("\tStep: servo=");
+            Serial.print(servo);
+            Serial.print(", start=");
+            Serial.print(outputs[servo].start);
+            Serial.print(", angle=");
+            Serial.print(outputs[servo].servo.read());
+            Serial.print(", target=");
+            Serial.print(outputs[servo].target);
+            Serial.print(", step=");
+            Serial.print(outputs[servo].step);
+            Serial.print(", steps=");
+            Serial.print(outputs[servo].steps);
+            Serial.print(", state=");
+            Serial.print(outputs[servo].state);
+            Serial.print(", delay=");
+            Serial.print(outputs[servo].delay);
+            Serial.println();
+          }
         }
       }
     }
