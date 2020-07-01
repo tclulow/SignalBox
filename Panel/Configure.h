@@ -1109,7 +1109,9 @@ class Configure
                             }
                             else if (outputType == OUTPUT_TYPE_LED)
                             {
+                              sendOutputCommand(outputData.hi,                                                  outputData.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE);
                               changed |= menuOutputPace();
+                              sendOutputCommand(outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, outputData.type & OUTPUT_STATE);
                             }
                             else
                             {
@@ -1343,9 +1345,9 @@ class Configure
    */
   void testOutput(boolean aIncludeDelay, boolean aDirectionHi)
   {
-    sendOutputCommand(aDirectionHi ? outputData.hi : outputData.lo, outputData.pace, aIncludeDelay ? outputData.pace & OUTPUT_DELAY_MASK : 0, OUTPUT_STATE);
+    sendOutputCommand(aDirectionHi ? outputData.hi : outputData.lo, outputData.pace, aIncludeDelay ? outputData.pace & OUTPUT_DELAY_MASK : 0, aDirectionHi ? OUTPUT_STATE : 0);
     waitForButtonRelease();
-    sendOutputCommand(aDirectionHi ? outputData.lo : outputData.hi, outputData.pace, aIncludeDelay ? outputData.pace & OUTPUT_DELAY_MASK : 0, 0);
+    sendOutputCommand(aDirectionHi ? outputData.lo : outputData.hi, outputData.pace, aIncludeDelay ? outputData.pace & OUTPUT_DELAY_MASK : 0, aDirectionHi ? 0 : OUTPUT_STATE);
   }
 
 

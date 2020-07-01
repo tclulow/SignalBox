@@ -16,11 +16,8 @@ struct SystemData
   uint8_t i2cControllerID = 0;    // I2C node IDs.
   uint8_t i2cInputBaseID  = 0;
   uint8_t i2cOutputBaseID = 0;
-  int8_t  debugLevel      = 0;    // Debug messages.
-
-  int     buttons[6];             // Configuration of analog buttons.
   
-  char    rfu[8]          = "RFU rfu";                 // RFU. 32 bytes in all.
+  char    rfu[21]         = "RFU rfu OutputModule";                 // RFU. 32 bytes in all.
 };
 
 
@@ -38,16 +35,6 @@ boolean loadSystemData();
 /** Save SystemData.
  */
 void saveSystemData();
-
-
-/** Report a system failure.
- */
-void systemFail(PGM_P aMessage, int aValue);
-
-
-/** Is an EzyBus setup detected?
- */
-boolean ezyBusDetected();
 
 
 #endif

@@ -6,12 +6,15 @@
 #include <Servo.h>
 #include <Wire.h>
 
+#include "Common.h"
+#include "System.h"
+
 
 // Servo state saved in EEPROM
-#define SERVO_BASE  0                    // EEPROM base of Servo data.
-#define SERVO_SIZE  sizeof(servoState)   // Size of Servo data
+#define SYSTEM_BASE   0                                   // SystemData goes here
+#define SERVO_BASE    SYSTEM_BASE + sizeof(systemData)    // EEPROM base of Servo data.
+#define EEPROM_END    SERVO_BASE  + sizeof(servoState)    // Size of EEPROM
 
-#define I2C_BASE_ID       0x50   // Output nodes' base ID.
 
 #define DELAY_STEP          50   // Delay (msecs) between steps of a Servo.
 #define MAX_PACE           124   // Maximum pace value.
@@ -50,11 +53,52 @@ struct
 uint8_t servoState[IO_PINS] = { 90, 90, 90, 90, 90, 90, 90, 90 };
 
 
+/** Load SystemData from EEPROM
+ *  Return true if valid
+ */
+boolean loadSystemData()
+{
+  EEPROM.get(SYSTEM_BASE, systemData);
+  return systemData.magic == MAGIC_NUMBER;
+}
+
+
+/** Save SystemData.
+ */
+void saveSystemData()
+{
+  EEPROM.put(SYSTEM_BASE, systemData);
+}
+
+
+void firstRun()
+{
+  // Initialise SystemData.
+  systemData.magic   = MAGIC_NUMBER;
+  systemData.version = VERSION;
+
+  systemData.i2cControllerID = DEFAULT_I2C_CONTROLLER_ID;
+  systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
+  systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
+
+  saveSystemData();
+}
+
+
 /** Setup the Arduino.
  */
 void setup()
 {
   Serial.begin(115200);           // Serial IO.
+
+  if (!loadSystemData())
+  {
+    Serial.println("FirstRun");
+    firstRun();
+  }
+  
+  // Configure the on-board LED pin for output
+  pinMode(LED_BUILTIN, OUTPUT);
 
   // Configure the Jumper pins for input.
   for (int pin = 0; pin < JUMPER_PINS; pin++)
@@ -68,16 +112,12 @@ void setup()
     pinMode(pin, OUTPUT);
   }
 
-  // Configure the on-board LED pin for output
-  pinMode(LED_BUILTIN, OUTPUT);
-
-
   // Configure i2c from jumpers.
   for (int pin = 0; pin < JUMPER_PINS; pin++)
   {
     moduleID |= digitalRead(ioPins[pin]) << pin;
   }
-  moduleID |= I2C_BASE_ID;
+  moduleID |= systemData.i2cOutputBaseID;
 
   // Recover Servo state from EEPROM
   EEPROM.get(SERVO_BASE, servoState);
@@ -132,6 +172,7 @@ void processRequest(int aLen)
     Serial.println(aLen);
   
     uint8_t pin   = Wire.read();
+    uint8_t type  = (pin >> OUTPUT_TYPE_SHIFT) & OUTPUT_TYPE_MASK;
     uint8_t angle = Wire.read();
     uint8_t pace  = Wire.read();
     uint8_t state = Wire.read();  
@@ -140,6 +181,8 @@ void processRequest(int aLen)
     {
       delay = Wire.read();
     }
+    
+    pin &= OUTPUT_PIN_MASK;
   
     moveServo(pin, angle, pace, state, delay);
   }
