@@ -53,7 +53,7 @@ void loadOutput(int aOutput);
 
 /** Load an Output's data from EEPROM.
  */
-void loadOutput(int aNode, int aOutput);
+void loadOutput(int aNode, int aPin);
 
 
 /** Save an Output's data to EEPROM.

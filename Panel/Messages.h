@@ -37,8 +37,8 @@ const char M_NO_INPUTS[]       PROGMEM = "No input nodes";
 const char M_NO_OUTPUTS[]      PROGMEM = "No output nodes";
 const char M_INIT_INPUTS[]     PROGMEM = "Init inputs";
 
-const char M_DEFAULT_INPUTS[]  PROGMEM = "Default inputs";
-const char M_DEFAULT_OUTPUTS[] PROGMEM = "Default outputs";
+// const char M_DEFAULT_INPUTS[]  PROGMEM = "Default inputs";
+// const char M_DEFAULT_OUTPUTS[] PROGMEM = "Default outputs";
 const char M_EXPORTING[]       PROGMEM = "Exporting";
 const char M_WAITING[]         PROGMEM = "Waiting";
 
@@ -55,7 +55,7 @@ const char M_ALL[]             PROGMEM = "All";
 const char M_DEBUG[]           PROGMEM = "Debug";
 const char M_SYS_I2C[]         PROGMEM = "i2cID";
 
-const char M_ID_CONSOLE[]      PROGMEM = "Con";
+const char M_ID_CONTROLLER[]   PROGMEM = "Con";
 const char M_ID_INPUT[]        PROGMEM = "Inp";
 const char M_ID_OUTPUT[]       PROGMEM = "Out";
 
@@ -94,7 +94,7 @@ const char* const M_BUTTONS[]        = { M_SELECT, M_LEFT, M_DOWN, M_UP, M_RIGHT
 const char* const M_TOP_MENU[]       = { M_SYSTEM, M_INPUT, M_OUTPUT, M_EXPORT, M_IMPORT };
 const char* const M_SYS_TYPES[]      = { M_DEBUG, M_SYS_I2C };
 const char* const M_REPORT_TYPES[]   = { M_ALL, M_SYSTEM, M_INPUT, M_OUTPUT };
-const char* const M_I2C_PROMPTS[]    = { M_ID_CONSOLE, M_ID_INPUT, M_ID_OUTPUT };
+const char* const M_I2C_PROMPTS[]    = { M_ID_CONTROLLER, M_ID_INPUT, M_ID_OUTPUT };
 const char* const M_DEBUG_PROMPTS[]  = { M_NONE, M_LOW, M_HIGH, M_PAUSE };
 
 const char* const M_INPUT_TYPES[]    = { M_TOGGLE, M_ON_OFF, M_ON, M_OFF };

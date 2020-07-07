@@ -20,6 +20,7 @@
 #define OUTPUT_TYPE_SIGNAL     0x01   // Output is a signal.
 #define OUTPUT_TYPE_LED        0x02   // Output is a LED or other IO device.
 #define OUTPUT_TYPE_MAX        0x03   // Limit of output types.
+#define OUTPUT_TYPE_NONE       0x0f   // Placeholder to mark "no type".
 #define OUTPUT_TYPE_SHIFT         3   // Output type is shifted 3 bits when communicating to the OutputModule.
 #define OUTPUT_PIN_MASK        0x07   // Mask to get output pin within a node.
 

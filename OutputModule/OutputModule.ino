@@ -12,8 +12,10 @@
 
 // Servo state saved in EEPROM
 #define SYSTEM_BASE   0                                   // SystemData goes here
-#define SERVO_BASE    SYSTEM_BASE + sizeof(systemData)    // EEPROM base of Servo data.
-#define EEPROM_END    SERVO_BASE  + sizeof(servoState)    // Size of EEPROM
+#define TYPE_BASE     SYSTEM_BASE + sizeof(systemData)    // Base of Output type data.
+#define STATE_BASE    TYPE_BASE   + sizeof(outputTypes)   // Base of Output state data.
+#define IO_BASE       STATE_BASE  + sizeof(outputStates)  // Base of IO states data. 
+#define EEPROM_END    IO_BASE     + sizeof(ioStates)      // Size of EEPROM
 
 
 #define DELAY_STEP          50   // Delay (msecs) between steps of a Servo.
@@ -28,16 +30,28 @@
 #define DELAY_MULTIPLIER  1000   // Multiply delay values by this amount (convert to seconds).
 
 
+// The module jumpers
+const uint8_t jumpers[JUMPER_PINS] = { 1, 0, A6, A7 };
+
+// The digital IO pins.
+const uint8_t ioPins[IO_PINS]      = { 3, 2, A3, A2, A1, A0, 13, 12 };
+
+
+// EEPROM persistance of output pin types.
+uint8_t outputTypes[IO_PINS] = { OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, 
+                                 OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE };
+
+// EEPROM persistance of Output states.
+uint8_t outputStates[IO_PINS] = { 90, 90, 90, 90, 90, 90, 90, 90 };
+
+// EEPROM persistance of IO states.
+uint8_t ioStates[IO_PINS]     = { 0, 0, 0, 0, 0, 0, 0, 0 }; 
+
+
 // The i2c ID of the module.
 uint8_t moduleID = 0;
 
-// The module jumpers
-uint8_t jumpers[JUMPER_PINS] = { 1, 0, A6, A7 };
-
-// The digital IO pins.
-uint8_t ioPins[IO_PINS]      = { 3, 2, A3, A2, A1, A0, 13, 12 };
-
-// An Array of Servo control structures.
+// An Array of Output control structures.
 struct 
 {
   Servo   servo;            // The Servo.
@@ -49,28 +63,9 @@ struct
   long    delay  = 0;       // Delay start to this time.
 } outputs[IO_PINS];
 
-// EEPROM persistance of Servo values
-uint8_t servoState[IO_PINS] = { 90, 90, 90, 90, 90, 90, 90, 90 };
 
-
-/** Load SystemData from EEPROM
- *  Return true if valid
+/** Initialise data when first run.
  */
-boolean loadSystemData()
-{
-  EEPROM.get(SYSTEM_BASE, systemData);
-  return systemData.magic == MAGIC_NUMBER;
-}
-
-
-/** Save SystemData.
- */
-void saveSystemData()
-{
-  EEPROM.put(SYSTEM_BASE, systemData);
-}
-
-
 void firstRun()
 {
   // Initialise SystemData.
@@ -81,7 +76,42 @@ void firstRun()
   systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
   systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
 
-  saveSystemData();
+  // Initialise EEPROM with suitable data.
+  EEPROM.put(TYPE_BASE,   outputTypes);
+  EEPROM.put(STATE_BASE,  outputStates);
+  EEPROM.put(IO_BASE,     ioStates);
+  
+  EEPROM.put(SYSTEM_BASE, systemData);
+}
+
+
+/** Set the Type of a pin.
+ *  Remove/disconnect previous type if necessary.
+ */
+void setPinType(int aPin, uint8_t aType)
+{
+  if (aType != outputTypes[aPin])
+  {
+    // Remove/disable old type.
+    if (   (outputTypes[aPin] == OUTPUT_TYPE_SERVO)
+        || (outputTypes[aPin] == OUTPUT_TYPE_SIGNAL))
+    {
+      // Detach servo.
+      outputs[aPin].servo.detach();
+    }
+
+    // Record the change.
+    outputTypes[aPin] = aType;
+    EEPROM.put(TYPE_BASE, outputTypes);
+  }
+
+  // Establish new type.
+  if (   (aType == OUTPUT_TYPE_SERVO)
+      || (aType == OUTPUT_TYPE_SIGNAL))
+  {
+    outputs[aPin].servo.write(outputStates[aPin]);
+    outputs[aPin].servo.attach(SERVO_BASE_PIN + aPin);
+  }
 }
 
 
@@ -91,25 +121,48 @@ void setup()
 {
   Serial.begin(115200);           // Serial IO.
 
-  if (!loadSystemData())
+  // Load SystemData from EEPROM and check it's valid.
+  EEPROM.get(SYSTEM_BASE, systemData);
+  if (systemData.magic != MAGIC_NUMBER)
   {
     Serial.println("FirstRun");
     firstRun();
   }
+  else
+  {
+    // Recover state from EEPROM.
+    EEPROM.get(TYPE_BASE,  outputTypes);
+    EEPROM.get(STATE_BASE, outputStates);
+    EEPROM.get(IO_BASE,    ioStates);
+  }
   
+  // Report state from EEPROM
+  for (int pin = 0; pin < IO_PINS; pin++)
+  {
+    Serial.print("Init ");
+    Serial.print(pin);
+    Serial.print(" type 0x");
+    Serial.print(outputTypes[pin], HEX);
+    Serial.print(" state ");
+    Serial.print(outputStates[pin]);
+    Serial.print(" io ");
+    Serial.print(ioStates[pin] ? "Hi" : "Lo");
+    Serial.println();\
+  }
+
   // Configure the on-board LED pin for output
   pinMode(LED_BUILTIN, OUTPUT);
 
   // Configure the Jumper pins for input.
   for (int pin = 0; pin < JUMPER_PINS; pin++)
   {
-    pinMode(pin, INPUT_PULLUP);
+    pinMode(jumpers[pin], INPUT_PULLUP);
   }
 
   // Configure the IO pins for output.
   for (int pin = 0; pin < IO_PINS; pin++)
   {
-    pinMode(pin, OUTPUT);
+    pinMode(ioPins[pin], OUTPUT);
   }
 
   // Configure i2c from jumpers.
@@ -119,40 +172,22 @@ void setup()
   }
   moduleID |= systemData.i2cOutputBaseID;
 
-  // Recover Servo state from EEPROM
-  EEPROM.get(SERVO_BASE, servoState);
-  for (int servo = 0; servo < IO_PINS; servo++)
+  // Initialise all the outputs (from state saved in EEPROM).
+  for (int pin = 0; pin < IO_PINS; pin++)
   {
-    Serial.print("Init servo ");
-    Serial.print(servo);
-    Serial.print(" to ");
-    Serial.print(servoState[servo]);
-    Serial.println();
+    setPinType(pin, outputTypes[pin]);  
   }
-
-  // Attach all servos to their pins.
-  for (int i = 0, pin = SERVO_BASE_PIN; i < IO_PINS; i++, pin++)
-  {
-    pinMode(pin, OUTPUT);
-    outputs[i].servo.write(servoState[i]);
-    outputs[i].servo.attach(pin);
-    delay(20);
-  }
-
+  
   // Start i2c communications.
   Wire.begin(moduleID);
   Wire.onReceive(processRequest);
 
   Serial.print("Module ID: 0x");
   Serial.println(moduleID, HEX);
-
-//  // Test-move a Servo
-//  delay(2000);
-//  moveServo(0, 0, 100, 1);
 }
 
 
-/** Upon receipt of a request, store it in the corresponding Servo's state.
+/** Upon receipt of a request, store it in the corresponding Output's state.
  */
 void processRequest(int aLen)
 {
@@ -172,7 +207,7 @@ void processRequest(int aLen)
     Serial.println(aLen);
   
     uint8_t pin   = Wire.read();
-    uint8_t type  = (pin >> OUTPUT_TYPE_SHIFT) & OUTPUT_TYPE_MASK;
+    uint8_t type  = 0;
     uint8_t angle = Wire.read();
     uint8_t pace  = Wire.read();
     uint8_t state = Wire.read();  
@@ -181,10 +216,43 @@ void processRequest(int aLen)
     {
       delay = Wire.read();
     }
-    
+
+    // Extract type and pin from the combined type/pin byte.
+    type = (pin >> OUTPUT_TYPE_SHIFT) & OUTPUT_TYPE_MASK;
     pin &= OUTPUT_PIN_MASK;
-  
-    moveServo(pin, angle, pace, state, delay);
+
+    Serial.print("pin=");
+    Serial.print(pin, HEX);    
+    Serial.print(", type=0x");
+    Serial.print(type, HEX);    
+    Serial.print(", angle=");
+    Serial.print(angle);    
+    Serial.print(", pace=");
+    Serial.print(pace, HEX);    
+    Serial.print(", state=");
+    Serial.print(state, HEX);    
+    Serial.print(", delay=");
+    Serial.print(delay, HEX);
+    Serial.println();
+
+    // If the pin's type has changed, action it.
+    if (type != outputTypes[pin])
+    {
+      setPinType(pin, type);
+    }
+
+    // Arrange for Servos to move to requested angle.
+    if (   (type == OUTPUT_TYPE_SERVO)
+        || (type == OUTPUT_TYPE_SIGNAL))
+    {
+      moveServo(pin, angle, pace, state, delay);
+    }
+
+    // TODO - handle LEDs.
+    if (type == OUTPUT_TYPE_LED)
+    {
+      Serial.println("TODO - LED");
+    }
   }
 
   // Consume unexpected data.
@@ -230,19 +298,77 @@ void moveServo(uint8_t aServo, uint8_t aTarget, uint8_t aPace, uint8_t aState, u
   Serial.println();
 }
 
+
+/** Step a servo to its next angle.
+ *  Return true if Servo state changed.
+ */
+void stepServo(int aPin)
+{
+  if (outputs[aPin].step < outputs[aPin].steps)
+  {
+    // Indicate work in progress
+    digitalWrite(LED_BUILTIN, HIGH);
+
+    outputs[aPin].step += 1;
+    
+    if (outputs[aPin].step == outputs[aPin].steps)
+    {
+      // Last step, make sure to hit the target bang-on.
+      outputs[aPin].servo.write(outputs[aPin].target);
+
+      // Indicate work complete
+      digitalWrite(LED_BUILTIN, LOW);
+
+      // Record Servo's state.
+      outputStates[aPin] = outputs[aPin].servo.read();
+      EEPROM.put(STATE_BASE, outputStates);
+    }
+    else
+    {
+      // Intermediate step, move proportionately (step/steps) along the range (start to target).
+      outputs[aPin].servo.write(outputs[aPin].start + (outputs[aPin].target - outputs[aPin].start) * outputs[aPin].step / outputs[aPin].steps);
+    }
+
+    // Test code to report activity.
+    if (   (outputs[aPin].step == 1)
+        || (outputs[aPin].step == outputs[aPin].steps))
+    {
+      Serial.print(millis());
+      Serial.print("\tStep: pin=");
+      Serial.print(aPin);
+      Serial.print(", start=");
+      Serial.print(outputs[aPin].start);
+      Serial.print(", angle=");
+      Serial.print(outputs[aPin].servo.read());
+      Serial.print(", target=");
+      Serial.print(outputs[aPin].target);
+      Serial.print(", step=");
+      Serial.print(outputs[aPin].step);
+      Serial.print(", steps=");
+      Serial.print(outputs[aPin].steps);
+      Serial.print(", state=");
+      Serial.print(outputs[aPin].state);
+      Serial.print(", delay=");
+      Serial.print(outputs[aPin].delay);
+      Serial.println();
+    }
+  }
+}
+
+
 //// Metrics.
 //long start = 0;
 //long count = 0;
 
 // Ticking
-long tick  = 0;
-long now   = 0;
+long tick = 0;
+long now  = 0;
+
 
 /** Main loop.
  */
 void loop()
 {
-  boolean stateChanged = false;
 
   // Record the time now
   now = millis();
@@ -267,73 +393,27 @@ void loop()
     tick = now;
     
     // Move any Servos that need moving.
-    for (int servo = 0; servo < IO_PINS; servo++)
+    for (int pin = 0; pin < IO_PINS; pin++)
     {
-      if (   (outputs[servo].delay == 0)
-          || (outputs[servo].delay <= now))
-      {    
-        if (outputs[servo].step < outputs[servo].steps)
+      if (   (outputTypes[pin] == OUTPUT_TYPE_SERVO)
+          || (outputTypes[pin] == OUTPUT_TYPE_SIGNAL))
+      {
+        if (   (outputs[pin].delay == 0)
+            || (outputs[pin].delay <= now))
         {
-          // Indicate work in progress
-          digitalWrite(LED_BUILTIN, HIGH);
-  
-          outputs[servo].step += 1;
-          
-          if (outputs[servo].step == outputs[servo].steps)
-          {
-            // Last step, make sure to hit the target bang-on.
-            outputs[servo].servo.write(outputs[servo].target);
-    
-            // Indicate work complete
-            digitalWrite(LED_BUILTIN, LOW);
-    
-            // Record Servo's state.
-            stateChanged = true;
-            servoState[servo] = outputs[servo].servo.read();
-          }
-          else
-          {
-            // Intermediate step, move proportionately (step/steps) along the range (start to target).
-            outputs[servo].servo.write(outputs[servo].start + (outputs[servo].target - outputs[servo].start) * outputs[servo].step / outputs[servo].steps);
-          }
-    
-          // Test code to report activity.
-          if (   (outputs[servo].step == 1)
-              || (outputs[servo].step == outputs[servo].steps))
-          {
-            Serial.print(now);
-            Serial.print("\tStep: servo=");
-            Serial.print(servo);
-            Serial.print(", start=");
-            Serial.print(outputs[servo].start);
-            Serial.print(", angle=");
-            Serial.print(outputs[servo].servo.read());
-            Serial.print(", target=");
-            Serial.print(outputs[servo].target);
-            Serial.print(", step=");
-            Serial.print(outputs[servo].step);
-            Serial.print(", steps=");
-            Serial.print(outputs[servo].steps);
-            Serial.print(", state=");
-            Serial.print(outputs[servo].state);
-            Serial.print(", delay=");
-            Serial.print(outputs[servo].delay);
-            Serial.println();
-          }
+          stepServo(pin);
         }
       }
-    }
-
-    // If any Servos moved, record their new position
-    if (stateChanged)
-    {
-      EEPROM.put(SERVO_BASE, servoState);
     }
   }
   
   // Set IO Outputs based on their intensity state, using the clock to generate a PWM signal.
-  for (int output = 0; output < IO_PINS; output++)
+  for (int pin = 0; pin < IO_PINS; pin++)
   {
-    digitalWrite(ioPins[output], outputs[output].state > (now & 0xff));
+    if (outputTypes[pin] == OUTPUT_TYPE_LED)
+    {
+      digitalWrite(SERVO_BASE_PIN + pin, outputs[pin].state >= (now & 0xff));
+      digitalWrite(ioPins[pin],          outputs[pin].state <= (now & 0xff));
+    }
   }
 }

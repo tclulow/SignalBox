@@ -481,7 +481,7 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
   }
   
   Wire.beginTransmission(systemData.i2cOutputBaseID + ((outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK));
-  Wire.write((outputData.type & OUTPUT_TYPE_MASK << OUTPUT_TYPE_SHIFT) | (outputNumber & OUTPUT_PIN_MASK));
+  Wire.write(((outputData.type & OUTPUT_TYPE_MASK) << OUTPUT_TYPE_SHIFT) | (outputNumber & OUTPUT_PIN_MASK));
   Wire.write(aValue);
   Wire.write((((aPace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_MULT) + OUTPUT_PACE_OFFSET);
   Wire.write(aState ? 1 : 0);

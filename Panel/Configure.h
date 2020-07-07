@@ -1052,6 +1052,8 @@ class Configure
                             {
                               outputType = OUTPUT_TYPE_MAX - 1;
                             }
+                            outputData.type = outputType | (outputData.type & ~OUTPUT_TYPE_MASK);
+                            
                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputType], LCD_LEN_OPTION);
                             displayOutputParams(outputType);
                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
@@ -1061,7 +1063,6 @@ class Configure
                             {
                               if (confirm())
                               {
-                                outputData.type = outputType | (outputData.type & ~OUTPUT_TYPE_MASK);
                                 saveOutput();
                                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
                                 delay(DELAY_READ);
