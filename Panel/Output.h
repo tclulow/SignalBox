@@ -12,8 +12,9 @@
 
 // Mask for OUTPUT options
 #define OUTPUT_STATE           0x80   // On or off, switched or not switched, 0 = lo, 1 = hi.
-#define OUTPUT_ANGLE_MAX        180   // Maximum value an angle output parameter can take.
-#define OUTPUT_ANGLE_SIZE         3   // Maximum digits in an andgl display.
+#define OUTPUT_SERVO_MAX        180   // Maximum value an angle output parameter can take.
+#define OUTPUT_LED_MAX          255   // Maximum value a LED can take.
+#define OUTPUT_HI_LO_SIZE         3   // Maximum digits in a Hi/Lo display.
 
 // Masks and size for the pace and delay options withing the outputData.pace element.
 #define OUTPUT_PACE_SHIFT         4   // Pace is in the left-most nibble.

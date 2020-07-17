@@ -309,7 +309,7 @@ class ImportExport
     for (int base = aStart; base < aEnd; base += 16)
     {
       printHex(base, 4);
-      Serial.print(":");
+      Serial.print(CHAR_COLON);
       
       for (int offs = 0; offs < 16; offs++)
       {

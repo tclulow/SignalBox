@@ -258,19 +258,10 @@ class Configure
     int col = LCD_COL_OUTPUT_PARAM;
     
     lcd.clearRow(col, LCD_ROW_BOT);
-
-    if (aType != OUTPUT_TYPE_LED)
-    {
-      lcd.printAtHex(col, LCD_ROW_BOT, outputData.lo,   2);
-      col += LCD_COL_OUTPUT_STEP;
-      lcd.printAtHex(col, LCD_ROW_BOT, outputData.hi,   2);
-      col += LCD_COL_OUTPUT_STEP;
-    }
-    else
-    {
-      col = LCD_COL_OUTPUT_PARAM + 2 * LCD_COL_OUTPUT_STEP;
-    }
-
+    lcd.printAtHex(col, LCD_ROW_BOT, outputData.lo,   2);
+    col += LCD_COL_OUTPUT_STEP;
+    lcd.printAtHex(col, LCD_ROW_BOT, outputData.hi,   2);
+    col += LCD_COL_OUTPUT_STEP;
     lcd.printAtHex(col, LCD_ROW_BOT, (outputData.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK,  1);
     col += LCD_COL_OUTPUT_STEP - 1;
     lcd.printAtHex(col, LCD_ROW_BOT, (outputData.pace                     ) & OUTPUT_DELAY_MASK, 1);
@@ -282,12 +273,12 @@ class Configure
   void displayOutputAngles()
   {
     lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_TOP);
-    lcd.printAt(LCD_COL_OUTPUT_LO + OUTPUT_ANGLE_SIZE - sizeof(M_LO) + 1, LCD_ROW_TOP, M_LO);
-    lcd.printAt(LCD_COL_OUTPUT_HI + OUTPUT_ANGLE_SIZE - sizeof(M_HI) + 1, LCD_ROW_TOP, M_HI);
+    lcd.printAt(LCD_COL_OUTPUT_LO + OUTPUT_HI_LO_SIZE - sizeof(M_LO) + 1, LCD_ROW_TOP, M_LO);
+    lcd.printAt(LCD_COL_OUTPUT_HI + OUTPUT_HI_LO_SIZE - sizeof(M_HI) + 1, LCD_ROW_TOP, M_HI);
 
     lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT);
-    lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputData.lo, OUTPUT_ANGLE_SIZE);
-    lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputData.hi, OUTPUT_ANGLE_SIZE);
+    lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputData.lo, OUTPUT_HI_LO_SIZE);
+    lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputData.hi, OUTPUT_HI_LO_SIZE);
   }
 
 
@@ -1085,6 +1076,7 @@ class Configure
                               if (cancel())
                               {
                                 loadOutput(node, pin);
+                                sendOutputCommand(outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, outputData.type & OUTPUT_STATE);
                                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
                                 delay(DELAY_READ);
                                 displayDetailOutput();
@@ -1106,13 +1098,14 @@ class Configure
                             if (   (outputType == OUTPUT_TYPE_SERVO)
                                 || (outputType == OUTPUT_TYPE_SIGNAL))
                             {
-                              changed |= menuOutputLo();
+                              changed |= menuOutputLo(OUTPUT_SERVO_MAX);
                             }
                             else if (outputType == OUTPUT_TYPE_LED)
                             {
-                              sendOutputCommand(outputData.hi,                                                  outputData.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE);
-                              changed |= menuOutputPace();
-                              sendOutputCommand(outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, outputData.type & OUTPUT_STATE);
+                              changed |= menuOutputLo(OUTPUT_LED_MAX);
+//                              sendOutputCommand(outputData.hi,                                                  outputData.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE);
+//                              changed |= menuOutputPace();
+//                              sendOutputCommand(outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, outputData.type & OUTPUT_STATE);
                             }
                             else
                             {
@@ -1132,13 +1125,13 @@ class Configure
 
   /** Process Output's Lo parameter (0-180) menu.
    */
-  boolean menuOutputLo()
+  boolean menuOutputLo(int aLimit)
   {
     boolean finished = false;
     boolean changed  = false;
 
     displayOutputAngles();
-    markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, true);
+    markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
     sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, 0);
 
     while (!finished)
@@ -1150,11 +1143,11 @@ class Configure
         case BUTTON_UP:     do
                             {
                               outputData.lo += 1;
-                              if (outputData.lo > OUTPUT_ANGLE_MAX)
+                              if (outputData.lo > aLimit)
                               {
                                 outputData.lo = 0;
                               }
-                              lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputData.lo, OUTPUT_ANGLE_SIZE);
+                              lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputData.lo, OUTPUT_HI_LO_SIZE);
                               delay(autoRepeat);
                               autoRepeat = DELAY_BUTTON_REPEAT;
                             }
@@ -1165,11 +1158,11 @@ class Configure
         case BUTTON_DOWN:   do
                             {
                               outputData.lo -= 1;
-                              if (outputData.lo > OUTPUT_ANGLE_MAX)
+                              if (outputData.lo > aLimit)
                               {
-                                outputData.lo = OUTPUT_ANGLE_MAX;
+                                outputData.lo = aLimit;
                               }
-                              lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputData.lo, OUTPUT_ANGLE_SIZE);
+                              lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputData.lo, OUTPUT_HI_LO_SIZE);
                               delay(autoRepeat);
                               autoRepeat = DELAY_BUTTON_REPEAT;
                             }
@@ -1181,15 +1174,15 @@ class Configure
                             break;
         case BUTTON_LEFT:   finished = true;
                             break;
-        case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
-                            changed |= menuOutputHi();
-                            markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, true);
+        case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
+                            changed |= menuOutputHi(aLimit);
+                            markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
                             sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, 0);
                             break;
       }
     }
 
-    markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
+    markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
     sendOutputCommand(outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, outputData.type & OUTPUT_STATE);
     
     return changed;
@@ -1198,12 +1191,12 @@ class Configure
 
   /** Process the Output Hi parameter.
    */
-  boolean menuOutputHi()
+  boolean menuOutputHi(int aLimit)
   {
     boolean finished = false;
     boolean changed  = false;
 
-    markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, true);
+    markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
     sendOutputCommand(outputData.hi, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE);
 
     while (!finished)
@@ -1215,11 +1208,11 @@ class Configure
         case BUTTON_UP:     do
                             {
                               outputData.hi += 1;
-                              if (outputData.hi > OUTPUT_ANGLE_MAX)
+                              if (outputData.hi > aLimit)
                               {
                                 outputData.hi = 0;
                               }
-                              lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputData.hi, OUTPUT_ANGLE_SIZE);
+                              lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputData.hi, OUTPUT_HI_LO_SIZE);
                               delay(autoRepeat);
                               autoRepeat = DELAY_BUTTON_REPEAT;
                             }
@@ -1230,11 +1223,11 @@ class Configure
         case BUTTON_DOWN:   do
                             {
                               outputData.hi -= 1;
-                              if (outputData.hi > OUTPUT_ANGLE_MAX)
+                              if (outputData.hi > aLimit)
                               {
-                                outputData.hi = OUTPUT_ANGLE_MAX;
+                                outputData.hi = aLimit;
                               }
-                              lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputData.hi, OUTPUT_ANGLE_SIZE);
+                              lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputData.hi, OUTPUT_HI_LO_SIZE);
                               delay(autoRepeat);
                               autoRepeat = DELAY_BUTTON_REPEAT;
                             }
@@ -1246,15 +1239,15 @@ class Configure
                             break;
         case BUTTON_LEFT:   finished = true;
                             break;
-        case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
+        case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
                             changed |= menuOutputPace();
                             displayOutputAngles();
-                            markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, true);
+                            markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
                             break;
       }
     }
 
-    markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_ANGLE_SIZE, false);
+    markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
         
     return changed;
   }

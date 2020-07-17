@@ -15,6 +15,7 @@ const char CHAR_NULL    = 0;
 
 const char CHAR_HASH    = '#';
 const char CHAR_DOT     = '.';
+const char CHAR_COLON   = ':';
 const char CHAR_LEFT    = '<';
 const char CHAR_RIGHT   = '>';
 const char CHAR_STAR    = '*';

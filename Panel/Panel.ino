@@ -154,7 +154,7 @@ void firstRun()
   lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_SETUP);
   delay(DELAY_READ);
 
-  // Initialise SystemData.d
+  // Initialise SystemData.
   systemData.magic   = MAGIC_NUMBER;
   systemData.version = VERSION;
 
@@ -280,7 +280,7 @@ void scanInputs()
   {
     if (isInputNode(node))                                        
     {
-      // Read current state of pins and if successful and there's been a change
+      // Read current state of pins and if there's been a change
       int pins = readInputNode(node);
       if (pins != currentInputState[node])
       {
