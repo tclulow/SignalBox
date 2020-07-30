@@ -314,19 +314,21 @@ int readInputNode(int node)
 
   Wire.beginTransmission(systemData.i2cInputBaseID + node);    
   Wire.write(MCP_GPIOA);
-  if (Wire.endTransmission())
+  value = Wire.endTransmission();
+  if (value)
   {
+    systemFail(M_MCP_ERROR, value);
     value = currentInputState[node];  // Pretend no change if comms error.
   }
-  else if (Wire.requestFrom(node, 2) != 2)
+  else if ((value = Wire.requestFrom(systemData.i2cInputBaseID + node, 2)) != 2)
   {
+    systemFail(M_MCP_COMMS, value);
     value = currentInputState[node];  // Pretend no change if comms error.
   }
   else
   {
-    // Read the two bytes.
-    value = Wire.read() << 8
-          + Wire.read();
+    value = Wire.read()
+          + (Wire.read() << 8);
   }
 
   return value;
