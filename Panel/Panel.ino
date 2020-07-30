@@ -285,7 +285,7 @@ void scanInputs()
       if (pins != currentInputState[node])
       {
         // Process all the changed pins.
-        for (uint8_t pin = 0, mask = 1; pin < INPUT_NODE_SIZE; pin++, mask <<= 1)
+        for (int pin = 0, mask = 1; pin < INPUT_NODE_SIZE; pin++, mask <<= 1)
         {
           int state = pins & mask;
           if (state != (currentInputState[node] & mask))
