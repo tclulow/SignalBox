@@ -317,12 +317,12 @@ int readInputNode(int node)
   value = Wire.endTransmission();
   if (value)
   {
-    systemFail(M_MCP_ERROR, value);
+    systemFail(M_MCP_ERROR, value, DELAY_READ);
     value = currentInputState[node];  // Pretend no change if comms error.
   }
   else if ((value = Wire.requestFrom(systemData.i2cInputBaseID + node, 2)) != 2)
   {
-    systemFail(M_MCP_COMMS, value);
+    systemFail(M_MCP_COMMS, value, DELAY_READ);
     value = currentInputState[node];  // Pretend no change if comms error.
   }
   else

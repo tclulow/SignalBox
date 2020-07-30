@@ -472,7 +472,7 @@ class ImportExport
                         break;
       case EXP_OUTPUTS: exportOutputs();
                         break;
-      default:          systemFail(M_EXPORT, aExport);
+      default:          systemFail(M_EXPORT, aExport, 0);
     }
   
     lcd.clearRow(LCD_COL_EXP_STATUS, LCD_ROW_BOT);

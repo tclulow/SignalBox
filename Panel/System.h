@@ -42,7 +42,7 @@ void saveSystemData();
 
 /** Report a system failure.
  */
-void systemFail(PGM_P aMessage, int aValue);
+void systemFail(PGM_P aMessage, int aValue, int aDelay);
 
 
 /** Is an EzyBus setup detected?

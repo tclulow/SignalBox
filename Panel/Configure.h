@@ -58,7 +58,7 @@ class Configure
       case TOP_EXPORT: 
       case TOP_IMPORT: displaySystem();
                        break;
-      default:         systemFail(M_ALL, topMenu);
+      default:         systemFail(M_ALL, topMenu, 0);
                        break;
     }
 
@@ -102,7 +102,7 @@ class Configure
                        break;
       case TOP_IMPORT: displayDetailImport();
                        break;
-      default:         systemFail(M_DETAIL, topMenu);
+      default:         systemFail(M_DETAIL, topMenu, 0);
                        break;
     }
   }
@@ -127,7 +127,7 @@ class Configure
                        break;
       case SYS_I2C:    displaySystemI2cParams();
                        break;
-      default:         systemFail(M_PARAMS, topMenu);
+      default:         systemFail(M_PARAMS, topMenu, 0);
                        break;
     }
   }
@@ -353,7 +353,7 @@ class Configure
                                                  break;
                                 case TOP_IMPORT: menuImport();
                                                  break;
-                                default:         systemFail(M_CONFIG, topMenu);
+                                default:         systemFail(M_CONFIG, topMenu, 0);
                               }
 
                               // Re-establish debug.
@@ -449,7 +449,7 @@ class Configure
                             }
                             else
                             {
-                              systemFail(M_SYSTEM, sysMenu);
+                              systemFail(M_SYSTEM, sysMenu, 0);
                             }
 
                             displaySystem();
@@ -1109,7 +1109,7 @@ class Configure
                             }
                             else
                             {
-                              systemFail(M_OUTPUT, outputType);
+                              systemFail(M_OUTPUT, outputType, 0);
                             }
 
                             displayNode();
