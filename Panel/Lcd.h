@@ -110,7 +110,6 @@ class LCD: public LiquidCrystal
 
 
   /** Print a character at a particular location.
-   *  Return the length of the character printed (1).
    */
   void printAt(int col, int row, char aChar)
   {
@@ -175,7 +174,6 @@ class LCD: public LiquidCrystal
 
 
   /** Clear a row from the given column to the end.
-   *  Return the number of spaces output.
    */
   void clearRow(int aCol, int aRow)
   {
