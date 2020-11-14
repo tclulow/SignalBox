@@ -595,6 +595,14 @@ void setup()
   Wire.begin(systemData.i2cControllerID);   // I2C network
   pinMode(PIN_CALIBRATE, INPUT_PULLUP);     // Calibration input pin (11).
 
+  // Report software version.
+  Serial.print(PGMT(M_SOFTWARE));
+  Serial.print(CHAR_SPACE);
+  Serial.print(PGMT(M_VERSION));
+  Serial.print(CHAR_SPACE);
+  Serial.print(PGMT(M_VERSION_DATE));
+  Serial.println();
+
   // Announce ourselves.
   announce();
   delay(DELAY_READ);
