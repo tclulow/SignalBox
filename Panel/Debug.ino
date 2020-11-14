@@ -26,13 +26,13 @@ void debugPause()
       case BUTTON_DOWN:   systemData.debugLevel -= 1;
                           saveSystemData();
                           break;
-      case BUTTON_SELECT: configure.run();
-                          break;
       case BUTTON_LEFT:   systemData.debugLevel = 0;
                           saveSystemData();
                           announce();
                           break;
-      case BUTTON_RIGHT:  break;
+      case BUTTON_RIGHT:  configure.run();
+                          break;
+      case BUTTON_SELECT: break;
     }
 
     waitForButtonRelease();

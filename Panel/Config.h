@@ -5,6 +5,7 @@
 
 #define DEBUG true
 
+#define DELAY_HEARTBEAT       200    // Delay between changes of the heartbeat indicator.
 #define DELAY_READ           2000    // Delay in msecs when the LCD may need to be read by an operator.
 #define DELAY_BUTTON_WAIT      10    // Delay when waiting for button state to change.
 #define DELAY_BUTTON_DELAY    250    // Delay before auto-repeating button.

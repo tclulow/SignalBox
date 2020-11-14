@@ -23,6 +23,16 @@
 // Record state of inputs.
 uint16_t currentInputState[INPUT_NODE_MAX];    // Current state of inputs.
 
+// Timeout for the display when important messages are showing.
+long displayTimeout = 0L;
+
+/** Set the display timeout for an important message.
+ */
+void setDisplayTimeout(long aTimeout)
+{
+  displayTimeout = millis() + aTimeout;
+}
+
 
 /** Announce ourselves.
  */
@@ -352,19 +362,21 @@ void processInput(int aState)
 //  Serial.println();
 //  #endif
 
-  if (debugEnabled(DEBUG_LOW))
-  {
-    lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT);
-    lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (aState ? M_HI : M_LO));
-    lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
-    lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
-  }
-            
-  // Process all input state changes for Toggles, only going low for other Input types.
+  // Process all input state changes for Toggles, only state going low for other Input types.
   if (   (aState == 0)
       || (inputType == INPUT_TYPE_TOGGLE))
   {
+    // Report state change if debug enabled.
+    if (debugEnabled(DEBUG_LOW))
+    {
+      lcd.clear();
+      lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT);
+      lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (aState ? M_HI : M_LO));
+      lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
+      lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
+      setDisplayTimeout(DELAY_READ);
+    }
+            
     // Set desired new state based on Input's type/state and Output's state.
     switch (inputType)
     {
@@ -479,6 +491,7 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
     lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, (aState ? M_HI : M_LO));
     lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
     lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
+    setDisplayTimeout(DELAY_READ);
     debugPause();
   }
   
@@ -628,18 +641,30 @@ void loop()
     // Process any inputs
     scanInputs();           
 
-    // Show activity.
-    if (millis() - lastLoop > 200)
+    // Show heartbeat.
+    if (millis() - lastLoop > DELAY_HEARTBEAT)
     {
-      if (loops > 7)
+      // If display timeout has expired, clear it.
+      if (   (displayTimeout > 0)
+             && (millis() > displayTimeout))
       {
-        loops = 0;
+        displayTimeout = 0L;
+        announce();
       }
-      lcd.printAt((loops    ) & 0x7, LCD_ROW_BOT, CHAR_DOT);
-      lcd.printAt((loops + 4) & 0x7, LCD_ROW_BOT, CHAR_SPACE);
-      loops += 1;
 
-      lastLoop = millis();
+      // Show heartbeat if no display timeout is pending.
+      if (displayTimeout == 0)
+      {
+        if (loops > 7)
+        {
+          loops = 0;
+        }
+        lcd.printAt((loops    ) & 0x7, LCD_ROW_BOT, CHAR_DOT);
+        lcd.printAt((loops + 4) & 0x7, LCD_ROW_BOT, CHAR_SPACE);
+        loops += 1;
+
+        lastLoop = millis();
+      }
     }
   }
 }
