@@ -17,6 +17,8 @@
 #define BUTTON_RIGHT  5
 #define BUTTON_LIMIT  5
 
+#define BUTTON_THRESHHOLD   1000    // Analog limit above which no button is considered to be pressed.
+
 
 /** Calibrate the analog buttons.
  *  Each marker is half-way between the values the buttons return.

@@ -591,7 +591,8 @@ void setup()
   {
     firstRun();
   }
-  else if (digitalRead(PIN_CALIBRATE) == 0)
+  else if (   (digitalRead(PIN_CALIBRATE) == 0)   // Calibration pin grounded.
+           || (readButton() != BUTTON_NONE))      // An input button is being pressed.
   {
     // Calibration requested.
     calibrateButtons();
