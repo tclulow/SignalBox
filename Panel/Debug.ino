@@ -35,6 +35,11 @@ void debugPause()
       case BUTTON_SELECT: break;
     }
 
+    // Report (new) debug state.
+    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+    lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_DEBUG);
+    lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_LEN_OPTION);
+
     waitForButtonRelease();
   }
 }
