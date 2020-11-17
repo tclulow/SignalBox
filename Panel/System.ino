@@ -7,8 +7,8 @@
  */
 boolean loadSystemData()
 {
-  EEPROM.get(SYSTEM_BASE, systemData);
-  return systemData.magic == MAGIC_NUMBER;
+    EEPROM.get(SYSTEM_BASE, systemData);
+    return systemData.magic == MAGIC_NUMBER;
 }
 
 
@@ -16,7 +16,7 @@ boolean loadSystemData()
  */
 void saveSystemData()
 {
-  EEPROM.put(SYSTEM_BASE, systemData);
+    EEPROM.put(SYSTEM_BASE, systemData);
 }
 
 
@@ -24,21 +24,21 @@ void saveSystemData()
  */
 void systemFail(PGM_P aMessage, int aValue, int aDelay)
 {
-  lcd.clear();
-  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_FAILURE);
-  lcd.printAt(LCD_COL_START, LCD_ROW_BOT, aMessage);
-  lcd.printAtHex(LCD_COLS - 2,  LCD_ROW_BOT, aValue, 2);
-
-  if (aDelay > 0)
-  {
-    delay(aDelay);
-  }
-  else
-  {
-    waitForButton();
     lcd.clear();
-    waitForButtonRelease();
-  }
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_FAILURE);
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, aMessage);
+    lcd.printAtHex(LCD_COLS - 2,  LCD_ROW_BOT, aValue, 2);
+
+    if (aDelay > 0)
+    {
+        delay(aDelay);
+    }
+    else
+    {
+        waitForButton();
+        lcd.clear();
+        waitForButtonRelease();
+    }
 }
 
 
@@ -46,5 +46,5 @@ void systemFail(PGM_P aMessage, int aValue, int aDelay)
  */
 boolean ezyBusDetected()
 {
-  return EEPROM.read(EZY_MAGIC_ADDR) == EZY_MAGIC;
+    return EEPROM.read(EZY_MAGIC_ADDR) == EZY_MAGIC;
 }

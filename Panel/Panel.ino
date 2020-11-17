@@ -30,7 +30,7 @@ long displayTimeout = 0L;
  */
 void setDisplayTimeout(long aTimeout)
 {
-  displayTimeout = millis() + aTimeout;
+    displayTimeout = millis() + aTimeout;
 }
 
 
@@ -38,10 +38,10 @@ void setDisplayTimeout(long aTimeout)
  */
 void announce()
 {
-  lcd.clear();
-  lcd.printAt(LCD_COL_START,                       LCD_ROW_TOP, M_SOFTWARE);
-  lcd.printAt(LCD_COLS - strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
-  lcd.printAt(LCD_COLS - strlen_P(M_VERSION_DATE), LCD_ROW_BOT, M_VERSION_DATE);
+    lcd.clear();
+    lcd.printAt(LCD_COL_START,                       LCD_ROW_TOP, M_SOFTWARE);
+    lcd.printAt(LCD_COLS - strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
+    lcd.printAt(LCD_COLS - strlen_P(M_VERSION_DATE), LCD_ROW_BOT, M_VERSION_DATE);
 }
 
 
@@ -49,61 +49,61 @@ void announce()
  */
 void mapHardware()
 {
-  lcd.clear();
-  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_SCAN_NODES);
-  lcd.setCursor(LCD_COLS - INPUT_NODE_MAX, 0);
-  
-  // Scan for Input nodes.
-  for (int node = 0; node < INPUT_NODE_MAX; node++)
-  {
-    Wire.beginTransmission(systemData.i2cInputBaseID + node);
-    if (Wire.endTransmission())   
-    {
-      lcd.print(CHAR_DOT); 
-    }
-    else
-    {  
-      lcd.print(HEX_CHARS[node]);
-      setInputNodePresent(node);
-    }
-  }
-
-  // Scan for Output nodes.
-  lcd.setCursor(0, 1);
-  for (int node = 0; node < OUTPUT_NODE_MAX; node++)
-  {
-    Wire.beginTransmission(systemData.i2cOutputBaseID + node);
-    if (Wire.endTransmission())
-    {
-      lcd.print(CHAR_DOT); 
-    }
-    else
-    {
-      lcd.print(HEX_CHARS[node]);
-      setOutputNodePresent(node);  
-    }
-  }
-
-  delay(DELAY_READ);
-
-  // Report abscence of hardware (and default to all if necessary).
-  if (   (inputNodes  == 0)
-      || (outputNodes == 0))
-  {
-    int row = LCD_ROW_TOP;
     lcd.clear();
-    if (inputNodes == 0)
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_SCAN_NODES);
+    lcd.setCursor(LCD_COLS - INPUT_NODE_MAX, 0);
+    
+    // Scan for Input nodes.
+    for (int node = 0; node < INPUT_NODE_MAX; node++)
     {
-      lcd.printAt(LCD_COL_START, row++, M_NO_INPUTS);
-      inputNodes  = INPUT_NODE_ALL_MASK;
+        Wire.beginTransmission(systemData.i2cInputBaseID + node);
+        if (Wire.endTransmission())   
+        {
+            lcd.print(CHAR_DOT); 
+        }
+        else
+        {  
+            lcd.print(HEX_CHARS[node]);
+            setInputNodePresent(node);
+        }
     }
-    if (outputNodes == 0)
+
+    // Scan for Output nodes.
+    lcd.setCursor(0, 1);
+    for (int node = 0; node < OUTPUT_NODE_MAX; node++)
     {
-      lcd.printAt(LCD_COL_START, row++, M_NO_OUTPUTS);
-      outputNodes = OUTPUT_NODE_ALL_MASK;
+        Wire.beginTransmission(systemData.i2cOutputBaseID + node);
+        if (Wire.endTransmission())
+        {
+            lcd.print(CHAR_DOT); 
+        }
+        else
+        {
+            lcd.print(HEX_CHARS[node]);
+            setOutputNodePresent(node);  
+        }
     }
+
     delay(DELAY_READ);
-  }
+
+    // Report abscence of hardware (and default to all if necessary).
+    if (   (inputNodes  == 0)
+        || (outputNodes == 0))
+    {
+        int row = LCD_ROW_TOP;
+        lcd.clear();
+        if (inputNodes == 0)
+        {
+            lcd.printAt(LCD_COL_START, row++, M_NO_INPUTS);
+            inputNodes  = INPUT_NODE_ALL_MASK;
+        }
+        if (outputNodes == 0)
+        {
+            lcd.printAt(LCD_COL_START, row++, M_NO_OUTPUTS);
+            outputNodes = OUTPUT_NODE_ALL_MASK;
+        }
+        delay(DELAY_READ);
+    }
 }
 
 
@@ -111,48 +111,48 @@ void mapHardware()
  */
 void initInputs()
 { 
-  lcd.clear();
-  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INIT_INPUTS);
-  lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+    lcd.clear();
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INIT_INPUTS);
+    lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
-  // Clear state of Inputs, all high.
-  for (int node = 0; node < INPUT_NODE_MAX; node++)
-  {
-    currentInputState[node] = 0xffff;
-  }
-
-  // For every Input node, set it's mode of operation.
-  for(int node = 0; node < INPUT_NODE_MAX; node++)
-  {
-    if (isInputNode(node))
+    // Clear state of Inputs, all high.
+    for (int node = 0; node < INPUT_NODE_MAX; node++)
     {
-      lcd.print(HEX_CHARS[node]);
-      Wire.beginTransmission(systemData.i2cInputBaseID + node); 
-      Wire.write(MCP_IODIRA);
-      Wire.write(MCP_ALL_HIGH);
-      Wire.endTransmission();
-
-      Wire.beginTransmission(systemData.i2cInputBaseID + node);  
-      Wire.write(MCP_IODIRB);
-      Wire.write(MCP_ALL_HIGH);
-      Wire.endTransmission();
-
-      Wire.beginTransmission(systemData.i2cInputBaseID + node);
-      Wire.write (MCP_GPPUA);
-      Wire.write(MCP_ALL_HIGH);
-      Wire.endTransmission();  
-       
-      Wire.beginTransmission(systemData.i2cInputBaseID + node);
-      Wire.write(MCP_GPPUB);
-      Wire.write(MCP_ALL_HIGH);
-      Wire.endTransmission();  
+        currentInputState[node] = 0xffff;
     }
-    else
+
+    // For every Input node, set it's mode of operation.
+    for(int node = 0; node < INPUT_NODE_MAX; node++)
     {
-      lcd.print(CHAR_DOT);
-    }
-  }   
-  delay(DELAY_READ);
+        if (isInputNode(node))
+        {
+            lcd.print(HEX_CHARS[node]);
+            Wire.beginTransmission(systemData.i2cInputBaseID + node); 
+            Wire.write(MCP_IODIRA);
+            Wire.write(MCP_ALL_HIGH);
+            Wire.endTransmission();
+
+            Wire.beginTransmission(systemData.i2cInputBaseID + node);  
+            Wire.write(MCP_IODIRB);
+            Wire.write(MCP_ALL_HIGH);
+            Wire.endTransmission();
+
+            Wire.beginTransmission(systemData.i2cInputBaseID + node);
+            Wire.write (MCP_GPPUA);
+            Wire.write(MCP_ALL_HIGH);
+            Wire.endTransmission();  
+             
+            Wire.beginTransmission(systemData.i2cInputBaseID + node);
+            Wire.write(MCP_GPPUB);
+            Wire.write(MCP_ALL_HIGH);
+            Wire.endTransmission();  
+        }
+        else
+        {
+            lcd.print(CHAR_DOT);
+        }
+    }   
+    delay(DELAY_READ);
 }
 
 
@@ -160,43 +160,43 @@ void initInputs()
  */
 void firstRun()
 {
-  lcd.clear();
-  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_SETUP);
-  delay(DELAY_READ);
-
-  // Initialise SystemData.
-  systemData.magic   = MAGIC_NUMBER;
-  systemData.version = VERSION;
-
-  systemData.i2cControllerID = DEFAULT_I2C_CONTROLLER_ID;
-  systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
-  systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
-
-  calibrateButtons();
-
-  // Decide if EzyBus conversion required.
-  if (ezyBusDetected())
-  {
     lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_FOUND);
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_EZY_UPDATE);
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_SETUP);
+    delay(DELAY_READ);
 
-    if (waitForButton() == BUTTON_SELECT)
+    // Initialise SystemData.
+    systemData.magic   = MAGIC_NUMBER;
+    systemData.version = VERSION;
+
+    systemData.i2cControllerID = DEFAULT_I2C_CONTROLLER_ID;
+    systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
+    systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
+
+    calibrateButtons();
+
+    // Decide if EzyBus conversion required.
+    if (ezyBusDetected())
     {
-      convertEzyBus();
+        lcd.clear();
+        lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_FOUND);
+        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_EZY_UPDATE);
+
+        if (waitForButton() == BUTTON_SELECT)
+        {
+            convertEzyBus();
+        }
+        else
+        {
+            defaultSetup();
+        }
     }
     else
     {
-      defaultSetup();
+        defaultSetup();
     }
-  }
-  else
-  {
-    defaultSetup();
-  }
-    
-  saveSystemData();
-  delay(DELAY_READ);
+        
+    saveSystemData();
+    delay(DELAY_READ);
 }
 
 
@@ -205,36 +205,36 @@ void firstRun()
  */
 void defaultSetup()
 {
-  int input = 0;
+    int input = 0;
 
-  lcd.clear();
-  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INITIALISING);
-  lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
-  
-  for (int node = 0; node < OUTPUT_NODE_MAX; node++)
-  {
-    lcd.print(HEX_CHARS[node]);
+    lcd.clear();
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INITIALISING);
+    lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
     
-    inputTypes = 0;
-    for (int pin = 0; pin < OUTPUT_NODE_SIZE; pin++)
+    for (int node = 0; node < OUTPUT_NODE_MAX; node++)
     {
-      // Create the output.
-      loadOutput(node, pin);
-      outputData.type = OUTPUT_TYPE_SERVO;
-      outputData.lo   = OUTPUT_DEFAULT_LO;
-      outputData.hi   = OUTPUT_DEFAULT_HI;
-      outputData.pace = OUTPUT_DEFAULT_PACE;
-      saveOutput();
+        lcd.print(HEX_CHARS[node]);
+        
+        inputTypes = 0;
+        for (int pin = 0; pin < OUTPUT_NODE_SIZE; pin++)
+        {
+            // Create the output.
+            loadOutput(node, pin);
+            outputData.type = OUTPUT_TYPE_SERVO;
+            outputData.lo   = OUTPUT_DEFAULT_LO;
+            outputData.hi   = OUTPUT_DEFAULT_HI;
+            outputData.pace = OUTPUT_DEFAULT_PACE;
+            saveOutput();
 
-      // Create an input.
-      loadInput(input++);
-      inputData.output[0] = (node << OUTPUT_NODE_SHIFT) | pin;
-      inputData.output[1] = INPUT_DISABLED_MASK;
-      inputData.output[2] = INPUT_DISABLED_MASK;
-      inputType = INPUT_TYPE_ON_OFF;
-      saveInput();
+            // Create an input.
+            loadInput(input++);
+            inputData.output[0] = (node << OUTPUT_NODE_SHIFT) | pin;
+            inputData.output[1] = INPUT_DISABLED_MASK;
+            inputData.output[2] = INPUT_DISABLED_MASK;
+            inputType = INPUT_TYPE_ON_OFF;
+            saveInput();
+        }
     }
-  }
 }
 
 
@@ -242,34 +242,34 @@ void defaultSetup()
  */
 void convertEzyBus()
 {
-  int input = 0;
-  
-  lcd.clear();
-  lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_UPDATING);
-  lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
-  
-  for (int node = 0; node < OUTPUT_NODE_MAX; node++)
-  {
-    lcd.print(HEX_CHARS[node]);
-    for (int pin = 0; pin < OUTPUT_NODE_SIZE; pin++)
+    int input = 0;
+    
+    lcd.clear();
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_UPDATING);
+    lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+    
+    for (int node = 0; node < OUTPUT_NODE_MAX; node++)
     {
-      // Convert the output.
-      loadOutput(node, pin);
-      
-      // Pace was in steps of 4 (2-bits), drop one bit, store in left-most nibble
-      outputData.pace = ((outputData.pace >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT;
-      
-      saveOutput();
+        lcd.print(HEX_CHARS[node]);
+        for (int pin = 0; pin < OUTPUT_NODE_SIZE; pin++)
+        {
+            // Convert the output.
+            loadOutput(node, pin);
+            
+            // Pace was in steps of 4 (2-bits), drop one bit, store in left-most nibble
+            outputData.pace = ((outputData.pace >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT;
+            
+            saveOutput();
 
-      // Create an input.
-      loadInput(input++);
-      inputData.output[0] = (node << OUTPUT_NODE_SHIFT) | pin;
-      inputData.output[1] = INPUT_DISABLED_MASK;
-      inputData.output[2] = INPUT_DISABLED_MASK;
-      inputType = INPUT_TYPE_TOGGLE;
-      saveInput();
+            // Create an input.
+            loadInput(input++);
+            inputData.output[0] = (node << OUTPUT_NODE_SHIFT) | pin;
+            inputData.output[1] = INPUT_DISABLED_MASK;
+            inputData.output[2] = INPUT_DISABLED_MASK;
+            inputType = INPUT_TYPE_TOGGLE;
+            saveInput();
+        }
     }
-  }
 }
 
 
@@ -285,31 +285,31 @@ void scanInputs()
 //  processInput(3, 5, 0x80);
 //  #endif 
 
-  // Scan all the nodes. 
-  for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
-  {
-    if (isInputNode(node))                                        
+    // Scan all the nodes. 
+    for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
-      // Read current state of pins and if there's been a change
-      int pins = readInputNode(node);
-      if (pins != currentInputState[node])
-      {
-        // Process all the changed pins.
-        for (int pin = 0, mask = 1; pin < INPUT_NODE_SIZE; pin++, mask <<= 1)
+        if (isInputNode(node))                                        
         {
-          int state = pins & mask;
-          if (state != (currentInputState[node] & mask))
-          {
-            loadInput(node, pin);
-            processInput(state);
-          }
+            // Read current state of pins and if there's been a change
+            int pins = readInputNode(node);
+            if (pins != currentInputState[node])
+            {
+                // Process all the changed pins.
+                for (int pin = 0, mask = 1; pin < INPUT_NODE_SIZE; pin++, mask <<= 1)
+                {
+                    int state = pins & mask;
+                    if (state != (currentInputState[node] & mask))
+                    {
+                        loadInput(node, pin);
+                        processInput(state);
+                    }
+                }
+            
+                // Record new state.
+                currentInputState[node] = pins;
+            }
         }
-      
-        // Record new state.
-        currentInputState[node] = pins;
-      }
     }
-  }
 }
 
 
@@ -320,28 +320,28 @@ void scanInputs()
  */
 int readInputNode(int node)
 {
-  int value = 0;
+    int value = 0;
 
-  Wire.beginTransmission(systemData.i2cInputBaseID + node);    
-  Wire.write(MCP_GPIOA);
-  value = Wire.endTransmission();
-  if (value)
-  {
-    systemFail(M_MCP_ERROR, value, DELAY_READ);
-    value = currentInputState[node];  // Pretend no change if comms error.
-  }
-  else if ((value = Wire.requestFrom(systemData.i2cInputBaseID + node, 2)) != 2)
-  {
-    systemFail(M_MCP_COMMS, value, DELAY_READ);
-    value = currentInputState[node];  // Pretend no change if comms error.
-  }
-  else
-  {
-    value = Wire.read()
-          + (Wire.read() << 8);
-  }
+    Wire.beginTransmission(systemData.i2cInputBaseID + node);    
+    Wire.write(MCP_GPIOA);
+    value = Wire.endTransmission();
+    if (value)
+    {
+        systemFail(M_MCP_ERROR, value, DELAY_READ);
+        value = currentInputState[node];  // Pretend no change if comms error.
+    }
+    else if ((value = Wire.requestFrom(systemData.i2cInputBaseID + node, 2)) != 2)
+    {
+        systemFail(M_MCP_COMMS, value, DELAY_READ);
+        value = currentInputState[node];  // Pretend no change if comms error.
+    }
+    else
+    {
+        value = Wire.read()
+                    + (Wire.read() << 8);
+    }
 
-  return value;
+    return value;
 }
 
 
@@ -349,8 +349,8 @@ int readInputNode(int node)
  */
 void processInput(int aState)
 {
-  uint8_t newState = 0;
-  
+    uint8_t newState = 0;
+    
 //  #if DEBUG
 //  // Report the input
 //  Serial.print("Input  ");
@@ -362,44 +362,44 @@ void processInput(int aState)
 //  Serial.println();
 //  #endif
 
-  // Process all input state changes for Toggles, only state going low for other Input types.
-  if (   (aState == 0)
-      || (inputType == INPUT_TYPE_TOGGLE))
-  {
-    // Report state change if debug enabled.
-    if (debugEnabled(DEBUG_LOW))
+    // Process all input state changes for Toggles, only state going low for other Input types.
+    if (   (aState == 0)
+        || (inputType == INPUT_TYPE_TOGGLE))
     {
-      lcd.clear();
-      lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT);
-      lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (aState ? M_HI : M_LO));
-      lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
-      lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
-      setDisplayTimeout(DELAY_READ);
-    }
-            
-    // Set desired new state based on Input's type/state and Output's state.
-    switch (inputType)
-    {
-      case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE : 0;   // Set state to that of the Toggle.
-                              break;
-      case INPUT_TYPE_ON_OFF: loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
-                              if (outputData.type & OUTPUT_STATE)     // Change the state.
-                              {
-                                newState = 0;
-                              }
-                              else
-                              {
-                                newState = OUTPUT_STATE;
-                              }
-                              break;
-      case INPUT_TYPE_ON:     newState = OUTPUT_STATE;                // Set the state.
-                              break;
-      case INPUT_TYPE_OFF:    newState = 0;                           // Clear the state.
-                              break;
-    }
+        // Report state change if debug enabled.
+        if (debugEnabled(DEBUG_LOW))
+        {
+            lcd.clear();
+            lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT);
+            lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (aState ? M_HI : M_LO));
+            lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
+            lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
+            setDisplayTimeout(DELAY_READ);
+        }
+                        
+        // Set desired new state based on Input's type/state and Output's state.
+        switch (inputType)
+        {
+            case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE : 0;   // Set state to that of the Toggle.
+                                    break;
+            case INPUT_TYPE_ON_OFF: loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
+                                    if (outputData.type & OUTPUT_STATE)     // Change the state.
+                                    {
+                                        newState = 0;
+                                    }
+                                    else
+                                    {
+                                        newState = OUTPUT_STATE;
+                                    }
+                                    break;
+            case INPUT_TYPE_ON:     newState = OUTPUT_STATE;                // Set the state.
+                                    break;
+            case INPUT_TYPE_OFF:    newState = 0;                           // Clear the state.
+                                    break;
+        }
 
-    processInputOutputs(aState);
-  }
+        processInputOutputs(aState);
+    }
 }
 
 
@@ -407,24 +407,24 @@ void processInput(int aState)
  */
 void processInputOutputs(uint8_t aNewState)
 {
-  uint8_t delay = 0;
-  
-  // Process all the Input's outputs.
-  // In reverse order if setting lo.
-  if (aNewState)
-  {
-    for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
+    uint8_t delay = 0;
+    
+    // Process all the Input's outputs.
+    // In reverse order if setting lo.
+    if (aNewState)
     {
-      delay = processInputOutput(index, aNewState, delay);
+        for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
+        {
+            delay = processInputOutput(index, aNewState, delay);
+        }
     }
-  }
-  else
-  {
-    for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
+    else
     {
-      delay = processInputOutput(index, aNewState, delay);
+        for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
+        {
+            delay = processInputOutput(index, aNewState, delay);
+        }
     }
-  }
 }
 
 
@@ -432,35 +432,35 @@ void processInputOutputs(uint8_t aNewState)
  */
 uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
 {
-  uint8_t delay = aDelay;
-  
-  // Process the Input's zeroth Output, and others if not disabled.
-  if (   (aIndex == 0)
-      || (!(inputData.output[aIndex] & INPUT_DISABLED_MASK)))
-  {
-    loadOutput(inputData.output[aIndex] & INPUT_OUTPUT_MASK);
-    delay += outputData.pace & OUTPUT_DELAY_MASK;
-
-    // Can't delay beyond the maximum possible.
-    if (delay > OUTPUT_DELAY_MASK)
+    uint8_t delay = aDelay;
+    
+    // Process the Input's zeroth Output, and others if not disabled.
+    if (   (aIndex == 0)
+        || (!(inputData.output[aIndex] & INPUT_DISABLED_MASK)))
     {
-      delay = OUTPUT_DELAY_MASK;
+        loadOutput(inputData.output[aIndex] & INPUT_OUTPUT_MASK);
+        delay += outputData.pace & OUTPUT_DELAY_MASK;
+
+        // Can't delay beyond the maximum possible.
+        if (delay > OUTPUT_DELAY_MASK)
+        {
+            delay = OUTPUT_DELAY_MASK;
+        }
+
+        if (aNewState)
+        {
+            outputData.type |= OUTPUT_STATE;    // Set output state
+        }
+        else
+        {
+            outputData.type &= ~OUTPUT_STATE;   // Clear output state
+        }
+            
+        sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, delay, outputData.type & OUTPUT_STATE);
+        saveOutput();
     }
 
-    if (aNewState)
-    {
-      outputData.type |= OUTPUT_STATE;    // Set output state
-    }
-    else
-    {
-      outputData.type &= ~OUTPUT_STATE;   // Clear output state
-    }
-      
-    sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, delay, outputData.type & OUTPUT_STATE);
-    saveOutput();
-  }
-
-  return delay;
+    return delay;
 }
 
 
@@ -484,27 +484,27 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
 //  Serial.println();
 //  #endif
 
-  if (debugEnabled(DEBUG_LOW))
-  {
-    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-    lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT);
-    lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, (aState ? M_HI : M_LO));
-    lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-    lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
-    setDisplayTimeout(DELAY_READ);
-    debugPause();
-  }
-  
-  Wire.beginTransmission(systemData.i2cOutputBaseID + ((outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK));
-  Wire.write(((outputData.type & OUTPUT_TYPE_MASK) << OUTPUT_TYPE_SHIFT) | (outputNumber & OUTPUT_PIN_MASK));
-  Wire.write(aValue);
-  Wire.write((((aPace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_MULT) + OUTPUT_PACE_OFFSET);
-  Wire.write(aState ? 1 : 0);
-  if (aDelay & OUTPUT_DELAY_MASK)
-  {
-    Wire.write(aDelay & OUTPUT_DELAY_MASK);
-  }
-  return Wire.endTransmission();
+    if (debugEnabled(DEBUG_LOW))
+    {
+        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT);
+        lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, (aState ? M_HI : M_LO));
+        lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
+        lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
+        setDisplayTimeout(DELAY_READ);
+        debugPause();
+    }
+    
+    Wire.beginTransmission(systemData.i2cOutputBaseID + ((outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK));
+    Wire.write(((outputData.type & OUTPUT_TYPE_MASK) << OUTPUT_TYPE_SHIFT) | (outputNumber & OUTPUT_PIN_MASK));
+    Wire.write(aValue);
+    Wire.write((((aPace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_MULT) + OUTPUT_PACE_OFFSET);
+    Wire.write(aState ? 1 : 0);
+    if (aDelay & OUTPUT_DELAY_MASK)
+    {
+        Wire.write(aDelay & OUTPUT_DELAY_MASK);
+    }
+    return Wire.endTransmission();
 }
 
 
@@ -523,12 +523,12 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
 //  Serial.println((int)stackPtr);
 //}
 
-  
+    
 /** Setup the Arduino.
  */
 void setup()
 {
-  Serial.begin(115200);           // Serial IO.
+    Serial.begin(115200);           // Serial IO.
 //  #if DEBUG
 //  Serial.print("System  ");
 //  Serial.print(SYSTEM_BASE, HEX);
@@ -590,42 +590,42 @@ void setup()
 //  #endif
 
 
-  // Initialise subsystems.
-  lcd.begin(LCD_COLS, LCD_ROWS);            // LCD panel.
-  Wire.begin(systemData.i2cControllerID);   // I2C network
-  pinMode(PIN_CALIBRATE, INPUT_PULLUP);     // Calibration input pin (11).
+    // Initialise subsystems.
+    lcd.begin(LCD_COLS, LCD_ROWS);            // LCD panel.
+    Wire.begin(systemData.i2cControllerID);   // I2C network
+    pinMode(PIN_CALIBRATE, INPUT_PULLUP);     // Calibration input pin (11).
 
-  // Report software version.
-  Serial.print(PGMT(M_SOFTWARE));
-  Serial.print(CHAR_SPACE);
-  Serial.print(PGMT(M_VERSION));
-  Serial.print(CHAR_SPACE);
-  Serial.print(PGMT(M_VERSION_DATE));
-  Serial.println();
+    // Report software version.
+    Serial.print(PGMT(M_SOFTWARE));
+    Serial.print(CHAR_SPACE);
+    Serial.print(PGMT(M_VERSION));
+    Serial.print(CHAR_SPACE);
+    Serial.print(PGMT(M_VERSION_DATE));
+    Serial.println();
 
-  // Announce ourselves.
-  announce();
-  delay(DELAY_READ);
+    // Announce ourselves.
+    announce();
+    delay(DELAY_READ);
 
-  // Deal with first run (software has never been run before).
-  if (!loadSystemData() || ezyBusDetected())
-  {
-    firstRun();
-  }
-  else if (   (digitalRead(PIN_CALIBRATE) == 0)   // Calibration pin grounded.
-           || (readButton() != BUTTON_NONE))      // An input button is being pressed.
-  {
-    // Calibration requested.
-    calibrateButtons();
-    saveSystemData();
-  }
+    // Deal with first run (software has never been run before).
+    if (!loadSystemData())     //  || ezyBusDetected())
+    {
+        firstRun();
+    }
+    else if (   (digitalRead(PIN_CALIBRATE) == 0)   // Calibration pin grounded.
+             || (readButton() != BUTTON_NONE))      // An input button is being pressed.
+    {
+        // Calibration requested.
+        calibrateButtons();
+        saveSystemData();
+    }
 
-  // Discover and initialise attached hardware.
-  mapHardware();                            // Scan for attached hardware.
-  initInputs();                             // Initialise all inputs.
+    // Discover and initialise attached hardware.
+    mapHardware();                            // Scan for attached hardware.
+    initInputs();                             // Initialise all inputs.
 
-  // Announce ourselves.
-  announce();
+    // Announce ourselves.
+    announce();
 }
 
 
@@ -633,47 +633,47 @@ void setup()
  */
 void loop()
 {
-  int  loops    = 0;
-  long lastLoop = millis();
+    int  loops    = 0;
+    long lastLoop = millis();
 
-  // Loop forever
-  while (true)
-  {
-    // Press any button to configure.
-    if (readButton())
+    // Loop forever
+    while (true)
     {
-      configure.run();
-      announce();
-    }
-
-    // Process any inputs
-    scanInputs();           
-
-    // Show heartbeat.
-    if (millis() - lastLoop > DELAY_HEARTBEAT)
-    {
-      // If display timeout has expired, clear it.
-      if (   (displayTimeout > 0)
-             && (millis() > displayTimeout))
-      {
-        displayTimeout = 0L;
-        announce();
-      }
-
-      // Show heartbeat if no display timeout is pending.
-      if (displayTimeout == 0)
-      {
-        if (loops > 7)
+        // Press any button to configure.
+        if (readButton())
         {
-          loops = 0;
+            configure.run();
+            announce();
         }
-        lcd.printAt((loops    ) & 0x7, LCD_ROW_BOT, CHAR_DOT);
-        lcd.printAt((loops + 4) & 0x7, LCD_ROW_BOT, CHAR_SPACE);
-        loops += 1;
 
-        lastLoop = millis();
-      }
+        // Process any inputs
+        scanInputs();           
+
+        // Show heartbeat.
+        if (millis() - lastLoop > DELAY_HEARTBEAT)
+        {
+            // If display timeout has expired, clear it.
+            if (   (displayTimeout > 0)
+                && (millis() > displayTimeout))
+            {
+                displayTimeout = 0L;
+                announce();
+            }
+
+            // Show heartbeat if no display timeout is pending.
+            if (displayTimeout == 0)
+            {
+                if (loops > 7)
+                {
+                    loops = 0;
+                }
+                lcd.printAt((loops    ) & 0x7, LCD_ROW_BOT, CHAR_DOT);
+                lcd.printAt((loops + 4) & 0x7, LCD_ROW_BOT, CHAR_SPACE);
+                loops += 1;
+
+                lastLoop = millis();
+            }
+        }
     }
-  }
 }
  

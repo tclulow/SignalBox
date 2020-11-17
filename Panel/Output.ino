@@ -6,7 +6,7 @@
  */
 void loadOutput(int aOutput)
 {
-  loadOutput((aOutput >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK, aOutput & OUTPUT_PIN_MASK);
+    loadOutput((aOutput >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK, aOutput & OUTPUT_PIN_MASK);
 }
 
 
@@ -14,8 +14,8 @@ void loadOutput(int aOutput)
  */
 void loadOutput(int aNode, int aPin)
 {
-  outputNumber = ((aNode & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT) + (aPin & OUTPUT_PIN_MASK);
-  EEPROM.get(OUTPUT_BASE + outputNumber * OUTPUT_SIZE, outputData); 
+    outputNumber = ((aNode & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT) + (aPin & OUTPUT_PIN_MASK);
+    EEPROM.get(OUTPUT_BASE + outputNumber * OUTPUT_SIZE, outputData); 
 }
 
 
@@ -24,10 +24,10 @@ void loadOutput(int aNode, int aPin)
  */
 void saveOutput()
 {
-  if (outputNumber < OUTPUT_MAX)
-  {
-    EEPROM.put(OUTPUT_BASE + outputNumber * OUTPUT_SIZE, outputData);
-  }
+    if (outputNumber < OUTPUT_MAX)
+    {
+        EEPROM.put(OUTPUT_BASE + outputNumber * OUTPUT_SIZE, outputData);
+    }
 }
 
 
@@ -35,7 +35,7 @@ void saveOutput()
  */
 void setOutputNodePresent(int aNode)
 {
-  outputNodes |= (1 << aNode); 
+    outputNodes |= (1 << aNode); 
 }
 
 
@@ -44,7 +44,7 @@ void setOutputNodePresent(int aNode)
  */
 boolean isOutputNode(int aNode)
 {
-  return (aNode < OUTPUT_NODE_MAX) && (outputNodes & (1 << aNode));
+    return (aNode < OUTPUT_NODE_MAX) && (outputNodes & (1 << aNode));
 }
 
 
@@ -53,5 +53,5 @@ boolean isOutputNode(int aNode)
  */
 boolean isOutput(int aOutput)
 {
-  return isOutputNode(aOutput >> OUTPUT_NODE_SHIFT);
+    return isOutputNode(aOutput >> OUTPUT_NODE_SHIFT);
 }

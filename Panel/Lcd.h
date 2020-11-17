@@ -62,128 +62,128 @@
  */
 class LCD: public LiquidCrystal
 {
-  public:
-  LCD(uint8_t rs,  uint8_t enable, 
-      uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3):
-      LiquidCrystal(rs, enable, d0, d1, d2, d3)
-  {
-  }
-
-  LCD(uint8_t rs, uint8_t rw, uint8_t enable,
-      uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3):
-      LiquidCrystal(rs, rw, enable, d0, d1, d2, d3)
-  {
-  }
-
-  
-  /** Print a PROGMEM message to the LCD.
-   *  Pad with spaces to aSize.
-   */
-  void print_P(PGM_P messagePtr, int aSize)
-  {
-    print(PGMT(messagePtr));
-    int padding = aSize - strlen_P(messagePtr);
-    while (padding-- > 0)
+    public:
+    LCD(uint8_t rs,  uint8_t enable, 
+            uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3):
+            LiquidCrystal(rs, enable, d0, d1, d2, d3)
     {
-      print(CHAR_SPACE);
     }
-  }
 
-
-  /** Print a message at a particular location.
-   *  Pad with spaces to aSize.
-   */
-  void printAt(int col, int row, PGM_P messagePtr, int aSize)
-  {
-    setCursor(col, row);
-    print_P(messagePtr, aSize);
-  }
-
-
-  /** Print a message at a particular location.
-   *  No padding.
-   */
-  void printAt(int col, int row, PGM_P messagePtr)
-  {
-    printAt(col, row, messagePtr, 0);
-  }
-
-
-  /** Print a character at a particular location.
-   */
-  void printAt(int col, int row, char aChar)
-  {
-    setCursor(col, row);
-    print(aChar);
-  }
-
-
-  /** Print a number as a string of hex digits.
-   *  Padded with leading zeros to length aDigits.
-   */
-  void printAtHex(int col, int row, int aValue, int aDigits)
-  {
-    setCursor(col, row);
-    for (int digit = aDigits - 1; digit >= 0; digit--)
+    LCD(uint8_t rs, uint8_t rw, uint8_t enable,
+            uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3):
+            LiquidCrystal(rs, rw, enable, d0, d1, d2, d3)
     {
-      print(HEX_CHARS[(aValue >> (4 * digit)) & 0xf]);
     }
-  }
 
-
-  /** Print a number as a string of dec digits.
-   *  Padded with leading spaces to length aDigits.
-   */
-  void printAtDec(int col, int row, int aValue, int aDigits)
-  {
-    int value = aValue;
-    int divisor = 1;
-    boolean leadingBlanks = true;
     
-    setCursor(col, row);
-
-    // Calculate starting power of 10 for desired number of digits.
-    for (int digit = 1; digit < aDigits; digit++)
+    /** Print a PROGMEM message to the LCD.
+     *  Pad with spaces to aSize.
+     */
+    void print_P(PGM_P messagePtr, int aSize)
     {
-      divisor *= 10;
+        print(PGMT(messagePtr));
+        int padding = aSize - strlen_P(messagePtr);
+        while (padding-- > 0)
+        {
+            print(CHAR_SPACE);
+        }
     }
 
-    // Output the digits in sequence.
-    for (int digit = aDigits - 1; digit >= 0; digit--)
+
+    /** Print a message at a particular location.
+     *  Pad with spaces to aSize.
+     */
+    void printAt(int col, int row, PGM_P messagePtr, int aSize)
     {
-      if (value / divisor > 0)
-      {
-        print((char) ('0' + (value / divisor)));
-        leadingBlanks = false;
-      }
-      else if (   (digit > 0)
-               && (leadingBlanks))
-      {
-        print(CHAR_SPACE);
-      }
-      else
-      {
-        print('0');
-      }
-
-      // Next digit.
-      value = value % divisor;
-      divisor /= 10;
+        setCursor(col, row);
+        print_P(messagePtr, aSize);
     }
-  }
 
 
-  /** Clear a row from the given column to the end.
-   */
-  void clearRow(int aCol, int aRow)
-  {
-    int spaces = 0;
-    setCursor(aCol, aRow);
-    for (spaces = 0; spaces < LCD_COLS - aCol; spaces++)
+    /** Print a message at a particular location.
+     *  No padding.
+     */
+    void printAt(int col, int row, PGM_P messagePtr)
     {
-      print(CHAR_SPACE);
+        printAt(col, row, messagePtr, 0);
     }
-  }
+
+
+    /** Print a character at a particular location.
+     */
+    void printAt(int col, int row, char aChar)
+    {
+        setCursor(col, row);
+        print(aChar);
+    }
+
+
+    /** Print a number as a string of hex digits.
+     *  Padded with leading zeros to length aDigits.
+     */
+    void printAtHex(int col, int row, int aValue, int aDigits)
+    {
+        setCursor(col, row);
+        for (int digit = aDigits - 1; digit >= 0; digit--)
+        {
+            print(HEX_CHARS[(aValue >> (4 * digit)) & 0xf]);
+        }
+    }
+
+
+    /** Print a number as a string of dec digits.
+     *  Padded with leading spaces to length aDigits.
+     */
+    void printAtDec(int col, int row, int aValue, int aDigits)
+    {
+        int value = aValue;
+        int divisor = 1;
+        boolean leadingBlanks = true;
+        
+        setCursor(col, row);
+
+        // Calculate starting power of 10 for desired number of digits.
+        for (int digit = 1; digit < aDigits; digit++)
+        {
+            divisor *= 10;
+        }
+
+        // Output the digits in sequence.
+        for (int digit = aDigits - 1; digit >= 0; digit--)
+        {
+            if (value / divisor > 0)
+            {
+                print((char) ('0' + (value / divisor)));
+                leadingBlanks = false;
+            }
+            else if (   (digit > 0)
+                     && (leadingBlanks))
+            {
+                print(CHAR_SPACE);
+            }
+            else
+            {
+                print('0');
+            }
+
+            // Next digit.
+            value = value % divisor;
+            divisor /= 10;
+        }
+    }
+
+
+    /** Clear a row from the given column to the end.
+     */
+    void clearRow(int aCol, int aRow)
+    {
+        int spaces = 0;
+        setCursor(aCol, aRow);
+        for (spaces = 0; spaces < LCD_COLS - aCol; spaces++)
+        {
+            print(CHAR_SPACE);
+        }
+    }
 
 };
 

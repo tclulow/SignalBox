@@ -6,7 +6,7 @@
  */
 void loadInput(int aInput)
 {
-  loadInput((aInput >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK, aInput & INPUT_PIN_MASK);
+    loadInput((aInput >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK, aInput & INPUT_PIN_MASK);
 }
 
 
@@ -14,14 +14,14 @@ void loadInput(int aInput)
  */
 void loadInput(int aNode, int aPin)
 {
-  uint32_t mask = ((long)INPUT_TYPE_MASK) << (aPin << INPUT_TYPE_SHIFT);
+    uint32_t mask = ((long)INPUT_TYPE_MASK) << (aPin << INPUT_TYPE_SHIFT);
 
-  inputNumber = ((aNode & INPUT_NODE_MASK) << INPUT_NODE_SHIFT) | (aPin & INPUT_PIN_MASK);
+    inputNumber = ((aNode & INPUT_NODE_MASK) << INPUT_NODE_SHIFT) | (aPin & INPUT_PIN_MASK);
 
-  EEPROM.get(INPUT_BASE + (inputNumber * INPUT_SIZE), inputData);
-  EEPROM.get(TYPES_BASE + (aNode       * TYPES_SIZE), inputTypes);
-  inputType = (inputTypes >> (aPin << INPUT_TYPE_SHIFT)) & INPUT_TYPE_MASK;
-  
+    EEPROM.get(INPUT_BASE + (inputNumber * INPUT_SIZE), inputData);
+    EEPROM.get(TYPES_BASE + (aNode       * TYPES_SIZE), inputTypes);
+    inputType = (inputTypes >> (aPin << INPUT_TYPE_SHIFT)) & INPUT_TYPE_MASK;
+    
 //  Serial.print("Load inputTypes[");
 //  Serial.print(inputNumber, HEX);
 //  Serial.print(": ");
@@ -44,15 +44,15 @@ void loadInput(int aNode, int aPin)
  */
 void saveInput()
 {
-  if (inputNumber < INPUT_MAX)
-  {
-    int      node = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
-    int      pin  = (inputNumber                    ) & INPUT_PIN_MASK;
-    uint32_t mask = ((long)INPUT_TYPE_MASK) << (pin << INPUT_TYPE_SHIFT);
-    
-    inputTypes = (inputTypes & ~mask) | ((((long)inputType) << (pin << INPUT_TYPE_SHIFT)) & mask);
-    EEPROM.put(INPUT_BASE + (inputNumber * INPUT_SIZE), inputData);
-    EEPROM.put(TYPES_BASE + (node        * TYPES_SIZE), inputTypes);
+    if (inputNumber < INPUT_MAX)
+    {
+        int      node = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
+        int      pin  = (inputNumber                    ) & INPUT_PIN_MASK;
+        uint32_t mask = ((long)INPUT_TYPE_MASK) << (pin << INPUT_TYPE_SHIFT);
+        
+        inputTypes = (inputTypes & ~mask) | ((((long)inputType) << (pin << INPUT_TYPE_SHIFT)) & mask);
+        EEPROM.put(INPUT_BASE + (inputNumber * INPUT_SIZE), inputData);
+        EEPROM.put(TYPES_BASE + (node        * TYPES_SIZE), inputTypes);
 
 //    Serial.print("Save inputTypes[");
 //    Serial.print(inputNumber, HEX);
@@ -70,7 +70,7 @@ void saveInput()
 //    Serial.print(inputType, HEX);
 //    Serial.print(")");
 //    Serial.println();
-  }
+    }
 }
 
 
@@ -78,7 +78,7 @@ void saveInput()
  */
 void setInputNodePresent(int aNode)
 {
-  inputNodes |= (1 << aNode); 
+    inputNodes |= (1 << aNode); 
 }
 
 
@@ -87,7 +87,7 @@ void setInputNodePresent(int aNode)
  */
 boolean isInputNode(int aNode)
 {
-  return (aNode < INPUT_NODE_MAX) && (inputNodes & (1 << aNode));
+    return (aNode < INPUT_NODE_MAX) && (inputNodes & (1 << aNode));
 }
 
 
@@ -96,5 +96,5 @@ boolean isInputNode(int aNode)
  */
 boolean isInput(int aInput)
 {
-  return isInputNode(aInput >> INPUT_NODE_SHIFT);
+    return isInputNode(aInput >> INPUT_NODE_SHIFT);
 }

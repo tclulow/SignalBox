@@ -4,23 +4,27 @@
 #define _System_h
 
 
+#define MAGIC_NUMBER 0x50616e6c       // Magic number = Panl.
+#define VERSION      0x0004           // Version number of software.
+
+
 /** Data describing an Output's operation.
  */
 struct SystemData
 {
-  public:
-  
-  long    magic           = 0;    // Magic number to identify software.
-  long    version         = 0;    // Software version number to identify upgrades.
+    public:
+    
+    long    magic           = 0;    // Magic number to identify software.
+    long    version         = 0;    // Software version number to identify upgrades.
 
-  uint8_t i2cControllerID = 0;    // I2C node IDs.
-  uint8_t i2cInputBaseID  = 0;
-  uint8_t i2cOutputBaseID = 0;
-  int8_t  debugLevel      = 0;    // Debug messages.
+    uint8_t i2cControllerID = 0;    // I2C node IDs.
+    uint8_t i2cInputBaseID  = 0;
+    uint8_t i2cOutputBaseID = 0;
+    int8_t  debugLevel      = 0;    // Debug messages.
 
-  int     buttons[6];             // Configuration of analog buttons.
-  
-  char    rfu[8]          = "RFU rfu";                 // RFU. 32 bytes in all.
+    int     buttons[6];             // Configuration of analog buttons.
+    
+    char    rfu[8]          = "RFU rfu";                 // RFU. 32 bytes in all.
 };
 
 

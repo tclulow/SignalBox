@@ -4,10 +4,6 @@
 #define _Common_h
 
 
-#define MAGIC_NUMBER 0x50616f6e       // Magic number.
-#define VERSION      0x0003           // Version number of software.
-
-
 // i2c node numbers.
 #define DEFAULT_I2C_CONTROLLER_ID   0x10    // Controller ID.
 #define DEFAULT_I2C_INPUT_BASE_ID   0x20    // Input nodes' base ID.

@@ -61,7 +61,7 @@
  */
 struct InputData
 {
-  uint8_t output[INPUT_OUTPUT_MAX];   // The outputs conrolled by this input.
+    uint8_t output[INPUT_OUTPUT_MAX];   // The outputs conrolled by this input.
 };
 
 
