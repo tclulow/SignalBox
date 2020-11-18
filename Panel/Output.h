@@ -9,6 +9,7 @@
 #define OUTPUT_NODE_ALL_MASK 0xffff   // All output nodes present.
 #define OUTPUT_NODE_MASK       0x0f   // 4 bits for 16 nodes.
 #define OUTPUT_NODE_SHIFT         3   // Shift output number this amount to get a node number.
+#define OUTPUT_NODE_PIN_MASK      7   // 3 bits for 8 pins withing an output node.
 
 // Mask for OUTPUT options
 #define OUTPUT_STATE           0x80   // On or off, switched or not switched, 0 = lo, 1 = hi.

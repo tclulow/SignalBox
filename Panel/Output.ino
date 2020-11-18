@@ -6,7 +6,8 @@
  */
 void loadOutput(int aOutput)
 {
-    loadOutput((aOutput >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK, aOutput & OUTPUT_PIN_MASK);
+    outputNumber = aOutput;
+    EEPROM.get(OUTPUT_BASE + outputNumber * OUTPUT_SIZE, outputData); 
 }
 
 
@@ -14,8 +15,7 @@ void loadOutput(int aOutput)
  */
 void loadOutput(int aNode, int aPin)
 {
-    outputNumber = ((aNode & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT) + (aPin & OUTPUT_PIN_MASK);
-    EEPROM.get(OUTPUT_BASE + outputNumber * OUTPUT_SIZE, outputData); 
+    loadOutput(((aNode & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT) + (aPin & OUTPUT_PIN_MASK));
 }
 
 

@@ -21,7 +21,7 @@
 
 
 // Record state of inputs.
-uint16_t currentInputState[INPUT_NODE_MAX];    // Current state of inputs.
+uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
 
 // Timeout for the display when important messages are showing.
 long displayTimeout = 0L;
@@ -118,7 +118,7 @@ void initInputs()
     // Clear state of Inputs, all high.
     for (int node = 0; node < INPUT_NODE_MAX; node++)
     {
-        currentInputState[node] = 0xffff;
+        currentSwitchState[node] = 0xffff;
     }
 
     // For every Input node, set it's mode of operation.
@@ -211,64 +211,65 @@ void defaultSetup()
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INITIALISING);
     lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
     
-    for (int node = 0; node < OUTPUT_NODE_MAX; node++)
+    for (outputNumber = 0; outputNumber < OUTPUT_NODE_MAX * OUTPUT_NODE_SIZE; outputNumber++) 
     {
-        lcd.print(HEX_CHARS[node]);
-        
-        inputTypes = 0;
-        for (int pin = 0; pin < OUTPUT_NODE_SIZE; pin++)
+        if ((outputNumber & OUTPUT_NODE_PIN_MASK) == 0)
         {
-            // Create the output.
-            loadOutput(node, pin);
-            outputData.type = OUTPUT_TYPE_SERVO;
-            outputData.lo   = OUTPUT_DEFAULT_LO;
-            outputData.hi   = OUTPUT_DEFAULT_HI;
-            outputData.pace = OUTPUT_DEFAULT_PACE;
-            saveOutput();
-
-            // Create an input.
-            loadInput(input++);
-            inputData.output[0] = (node << OUTPUT_NODE_SHIFT) | pin;
-            inputData.output[1] = INPUT_DISABLED_MASK;
-            inputData.output[2] = INPUT_DISABLED_MASK;
-            inputType = INPUT_TYPE_ON_OFF;
-            saveInput();
+            lcd.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
         }
+
+        // Create the output.
+        outputData.type = OUTPUT_TYPE_SERVO;
+        outputData.lo   = OUTPUT_DEFAULT_LO;
+        outputData.hi   = OUTPUT_DEFAULT_HI;
+        outputData.pace = OUTPUT_DEFAULT_PACE;
+        saveOutput();
+
+        // Create an input.
+        inputNumber = outputNumber;
+        inputData.output[0] = outputNumber;
+        inputData.output[1] = INPUT_DISABLED_MASK;
+        inputData.output[2] = INPUT_DISABLED_MASK;
+        inputType = INPUT_TYPE_ON_OFF;
+        saveInput();
     }
 }
 
 
 /** Convert EzyBus configuration.
+ *  One-one mapping with EzyBus modules, and their inputs.
  */
 void convertEzyBus()
 {
-    int input = 0;
-    
+    int ezyBus = OUTPUT_NODE_MAX * OUTPUT_NODE_SIZE * OUTPUT_SIZE;
     lcd.clear();
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_UPDATING);
     lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
-    
-    for (int node = 0; node < OUTPUT_NODE_MAX; node++)
-    {
-        lcd.print(HEX_CHARS[node]);
-        for (int pin = 0; pin < OUTPUT_NODE_SIZE; pin++)
-        {
-            // Convert the output.
-            loadOutput(node, pin);
-            
-            // Pace was in steps of 4 (2-bits), drop one bit, store in left-most nibble
-            outputData.pace = ((outputData.pace >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT;
-            
-            saveOutput();
 
-            // Create an input.
-            loadInput(input++);
-            inputData.output[0] = (node << OUTPUT_NODE_SHIFT) | pin;
-            inputData.output[1] = INPUT_DISABLED_MASK;
-            inputData.output[2] = INPUT_DISABLED_MASK;
-            inputType = INPUT_TYPE_TOGGLE;
-            saveInput();
+    for (outputNumber = OUTPUT_NODE_MAX * OUTPUT_NODE_SIZE - 1; outputNumber >= 0; outputNumber--) 
+    {
+        if ((outputNumber & OUTPUT_NODE_PIN_MASK) == OUTPUT_NODE_PIN_MASK)
+        {
+            lcd.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
         }
+
+        ezyBus -= OUTPUT_SIZE;
+        EEPROM.get(ezyBus, outputData);
+        
+        // Pace was in steps of 4 (2-bits), drop one bit, store in left-most nibble
+        outputData.pace = ((outputData.pace >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT;
+        
+        saveOutput();
+
+        // Create an input.
+        inputNumber = outputNumber;
+        
+        inputData.output[0] = outputNumber;
+        inputData.output[1] = INPUT_DISABLED_MASK;
+        inputData.output[2] = INPUT_DISABLED_MASK;
+        inputType = INPUT_TYPE_TOGGLE;
+        
+        saveInput();
     }
 }
 
@@ -292,13 +293,13 @@ void scanInputs()
         {
             // Read current state of pins and if there's been a change
             int pins = readInputNode(node);
-            if (pins != currentInputState[node])
+            if (pins != currentSwitchState[node])
             {
                 // Process all the changed pins.
                 for (int pin = 0, mask = 1; pin < INPUT_NODE_SIZE; pin++, mask <<= 1)
                 {
                     int state = pins & mask;
-                    if (state != (currentInputState[node] & mask))
+                    if (state != (currentSwitchState[node] & mask))
                     {
                         loadInput(node, pin);
                         processInput(state);
@@ -306,7 +307,7 @@ void scanInputs()
                 }
             
                 // Record new state.
-                currentInputState[node] = pins;
+                currentSwitchState[node] = pins;
             }
         }
     }
@@ -328,12 +329,12 @@ int readInputNode(int node)
     if (value)
     {
         systemFail(M_MCP_ERROR, value, DELAY_READ);
-        value = currentInputState[node];  // Pretend no change if comms error.
+        value = currentSwitchState[node];  // Pretend no change if comms error.
     }
     else if ((value = Wire.requestFrom(systemData.i2cInputBaseID + node, 2)) != 2)
     {
         systemFail(M_MCP_COMMS, value, DELAY_READ);
-        value = currentInputState[node];  // Pretend no change if comms error.
+        value = currentSwitchState[node];  // Pretend no change if comms error.
     }
     else
     {
@@ -383,6 +384,7 @@ void processInput(int aState)
             case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE : 0;   // Set state to that of the Toggle.
                                     break;
             case INPUT_TYPE_ON_OFF: loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
+                                    // TODO - fix this.
                                     if (outputData.type & OUTPUT_STATE)     // Change the state.
                                     {
                                         newState = 0;
@@ -398,7 +400,7 @@ void processInput(int aState)
                                     break;
         }
 
-        processInputOutputs(aState);
+        processInputOutputs(newState);
     }
 }
 
