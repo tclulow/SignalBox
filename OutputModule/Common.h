@@ -4,7 +4,7 @@
 #define _Common_h
 
 
-#define DELAY_STARTUP   2000        // Delay when starting-up to allow interaction from connected computer
+#define DELAY_BLINK   250           // Blink interval when showing version number.
 
 
 // i2c node numbers.
@@ -23,5 +23,43 @@
 #define OUTPUT_TYPE_SHIFT         3   // Output type is shifted 3 bits when communicating to the OutputModule.
 #define OUTPUT_PIN_MASK        0x07   // Mask to get output pin within a node.
 
+
+/** Show version number by flashing LED
+ *  and reporting it on Serial output.
+ */
+void initialise()
+{
+    // Configure the on-board LED pin for output
+    pinMode(LED_BUILTIN, OUTPUT);
+
+    Serial.begin(115200);       // Serial IO.
+    delay(2000);                // And wait to avoid programmer conflicts.
+    
+    for (int ind = 0;ind < strlen_P(M_VERSION); ind++)
+    {
+        char ch = pgm_read_byte_near(M_VERSION + ind);
+        if (ch >= '1' && ch <= '9')
+        {
+            while (ch-- >= '1')
+            {
+                digitalWrite(LED_BUILTIN, HIGH);
+                delay(DELAY_BLINK);
+                digitalWrite(LED_BUILTIN, LOW);
+                delay(DELAY_BLINK);
+            }
+        }
+        else
+        {
+            delay(DELAY_BLINK * 2);
+        }
+    }
+
+    Serial.print(PGMT(M_SOFTWARE));
+    Serial.print(M_SPACE);
+    Serial.print(PGMT(M_VERSION));
+    Serial.print(M_SPACE);
+    Serial.print(PGMT(M_VERSION_DATE));
+    Serial.println();
+}
 
 #endif

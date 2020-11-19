@@ -10,7 +10,7 @@
 
 // Software versioning.
 const char M_SOFTWARE[]        PROGMEM = "Panel Output";
-const char M_VERSION[]         PROGMEM = "v0.4";
+const char M_VERSION[]         PROGMEM = "v1.2";
 const char M_VERSION_DATE[]    PROGMEM = "Nov 2020";
 
 const char M_SPACE = ' ';

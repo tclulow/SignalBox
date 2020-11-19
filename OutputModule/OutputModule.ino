@@ -6,9 +6,9 @@
 #include <Servo.h>
 #include <Wire.h>
 
+#include "Messages.h"
 #include "Common.h"
 #include "System.h"
-#include "Messages.h"
 
 
 // Servo state saved in EEPROM
@@ -120,15 +120,7 @@ void setPinType(int aPin, uint8_t aType)
  */
 void setup()
 {
-    Serial.begin(115200);           // Serial IO.
-    delay(DELAY_STARTUP);
-
-    Serial.print(PGMT(M_SOFTWARE));
-    Serial.print(M_SPACE);
-    Serial.print(PGMT(M_VERSION));
-    Serial.print(M_SPACE);
-    Serial.print(PGMT(M_VERSION_DATE));
-    Serial.println();
+    initialise();
 
     // Load SystemData from EEPROM and check it's valid.
     EEPROM.get(SYSTEM_BASE, systemData);
@@ -158,9 +150,6 @@ void setup()
         Serial.print(ioStates[pin] ? "Hi" : "Lo");
         Serial.println();\
     }
-
-    // Configure the on-board LED pin for output
-    pinMode(LED_BUILTIN, OUTPUT);
 
     // Configure the Jumper pins for input.
     for (int pin = 0; pin < JUMPER_PINS; pin++)
