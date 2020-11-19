@@ -4,11 +4,11 @@
 #include <EEPROM.h>
 #include <Wire.h>
 
+#include "Messages.h"
 #include "Common.h"
 #include "Config.h"
 #include "Memory.h"
 #include "EzyBus.h"
-#include "Messages.h"
 #include "Panel.h"
 #include "Lcd.h"
 #include "Output.h"
@@ -537,7 +537,8 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
  */
 void setup()
 {
-    Serial.begin(115200);           // Serial IO.
+    initialise();
+    
 //  #if DEBUG
 //  Serial.print("System  ");
 //  Serial.print(SYSTEM_BASE, HEX);
@@ -603,14 +604,6 @@ void setup()
     lcd.begin(LCD_COLS, LCD_ROWS);            // LCD panel.
     Wire.begin(systemData.i2cControllerID);   // I2C network
     pinMode(PIN_CALIBRATE, INPUT_PULLUP);     // Calibration input pin (11).
-
-    // Report software version.
-    Serial.print(PGMT(M_SOFTWARE));
-    Serial.print(CHAR_SPACE);
-    Serial.print(PGMT(M_VERSION));
-    Serial.print(CHAR_SPACE);
-    Serial.print(PGMT(M_VERSION_DATE));
-    Serial.println();
 
     // Announce ourselves.
     announce();
