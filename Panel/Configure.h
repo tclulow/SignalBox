@@ -478,7 +478,7 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     systemData.debugLevel += 2;
+                case BUTTON_UP:     systemData.debugLevel += 2;     // Allow for decrement in BUTTON_DOWN code below.
                                     if (systemData.debugLevel > DEBUG_MAX)
                                     {
                                         systemData.debugLevel = 1;
@@ -488,7 +488,7 @@ class Configure
                                     {
                                         systemData.debugLevel = DEBUG_MAX - 1;
                                     }
-                                    lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_COL_DEBUG_LENGTH);
+                                    lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel % DEBUG_MAX], LCD_COL_DEBUG_LENGTH);
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: break;

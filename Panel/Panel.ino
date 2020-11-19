@@ -26,13 +26,6 @@ uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
 // Timeout for the display when important messages are showing.
 long displayTimeout = 0L;
 
-/** Set the display timeout for an important message.
- */
-void setDisplayTimeout(long aTimeout)
-{
-    displayTimeout = millis() + aTimeout;
-}
-
 
 /** Announce ourselves.
  */
@@ -42,6 +35,14 @@ void announce()
     lcd.printAt(LCD_COL_START,                       LCD_ROW_TOP, M_SOFTWARE);
     lcd.printAt(LCD_COLS - strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
     lcd.printAt(LCD_COLS - strlen_P(M_VERSION_DATE), LCD_ROW_BOT, M_VERSION_DATE);
+}
+
+
+/** Set the display timeout for an important message.
+ */
+void setDisplayTimeout(long aTimeout)
+{
+    displayTimeout = millis() + aTimeout;
 }
 
 
@@ -171,8 +172,14 @@ void firstRun()
     systemData.i2cControllerID = DEFAULT_I2C_CONTROLLER_ID;
     systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
     systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
+    systemData.debugLevel      = DEFAULT_DEBUG;
 
     calibrateButtons();
+
+    for (int rfu = 0; rfu < SYSTEM_RFU; rfu++)
+    {
+        systemData.rfu[rfu] = 0;
+    }
 
     // Decide if EzyBus conversion required.
     if (ezyBusDetected())
