@@ -4,6 +4,9 @@
 #define _Common_h
 
 
+#define DELAY_STARTUP   2000        // Delay when starting-up to allow interaction from connected computer
+
+
 // i2c node numbers.
 #define DEFAULT_I2C_CONTROLLER_ID   0x10    // Controller ID.
 #define DEFAULT_I2C_INPUT_BASE_ID   0x20    // Input nodes' base ID.

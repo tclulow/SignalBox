@@ -121,6 +121,7 @@ void setPinType(int aPin, uint8_t aType)
 void setup()
 {
     Serial.begin(115200);           // Serial IO.
+    delay(DELAY_STARTUP);
 
     Serial.print(PGMT(M_SOFTWARE));
     Serial.print(M_SPACE);
