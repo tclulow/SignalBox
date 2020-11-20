@@ -4,6 +4,7 @@
 #define _Common_h
 
 
+#define DELAY_START   2000          // Pause during start-up to avoid swamping Serial IO.
 #define DELAY_BLINK   250           // Blink interval when showing version number.
 
 
@@ -29,11 +30,9 @@
  */
 void initialise()
 {
-    // Configure the on-board LED pin for output
-    pinMode(LED_BUILTIN, OUTPUT);
-
-    Serial.begin(115200);       // Serial IO.
-    delay(2000);                // And wait to avoid programmer conflicts.
+    pinMode(LED_BUILTIN, OUTPUT);   // Configure the on-board LED pin for output
+    delay(DELAY_START);             // Wait to avoid programmer conflicts.
+    Serial.begin(115200);           // Serial IO.
     
     for (int ind = 0;ind < strlen_P(M_VERSION); ind++)
     {
