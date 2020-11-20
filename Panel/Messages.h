@@ -13,6 +13,7 @@ const char M_SOFTWARE[]        PROGMEM = "Panel";
 const char M_VERSION[]         PROGMEM = "v1.2";
 const char M_VERSION_DATE[]    PROGMEM = "Nov 2020";
 const char M_SPACE                     = ' ';
+const char M_UPDATE[]          PROGMEM = "Update";
 
 // General messages.
 const char M_CONFIRM[]         PROGMEM = "Confirm? Sel=Yes";
@@ -57,6 +58,8 @@ const char M_INPUT[]           PROGMEM = "Input";
 const char M_EXPORT[]          PROGMEM = "Export";
 const char M_IMPORT[]          PROGMEM = "Import";
 const char M_ALL[]             PROGMEM = "All";
+const char M_TYPES[]           PROGMEM = "Types";
+const char M_STATES[]          PROGMEM = "States";
 
 // Configuration - System.
 const char M_DEBUG[]           PROGMEM = "Debug";
@@ -98,7 +101,7 @@ const char M_MCP_COMMS[]       PROGMEM = "MCP comms len";
 
 
 // Headers for the exports
-const char M_EXPORT_SYSTEM[]   PROGMEM = "#System\tVersion\tDetail\tControl\tInput\tOutput";
+const char M_EXPORT_SYSTEM[]   PROGMEM = "#System\tVersion\tDetail\tControl\tInput\tOutput\tDebug";
 const char M_EXPORT_INPUT[]    PROGMEM = "#Input\tNode\tPin\tType\tOutputA\tOutputB\tOutputC";
 const char M_EXPORT_OUTPUT[]   PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd\tDelay";
 

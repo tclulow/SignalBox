@@ -280,6 +280,8 @@ class ImportExport
         printHex(systemData.i2cInputBaseID,  2);
         Serial.print(CHAR_TAB);
         printHex(systemData.i2cOutputBaseID, 2);
+        Serial.print(CHAR_TAB);
+        printHex(systemData.debugLevel,      2);
         Serial.println();
         Serial.println();
     
@@ -291,23 +293,31 @@ class ImportExport
      */
     void dumpMemory()
     {
-        dumpMemory(SYSTEM_BASE, SYSTEM_END);
+        dumpMemory(M_SYSTEM, SYSTEM_BASE, SYSTEM_END);
         Serial.println();
-        dumpMemory(OUTPUT_BASE, OUTPUT_END);
+        dumpMemory(M_OUTPUT, OUTPUT_BASE, OUTPUT_END);
         Serial.println();
-        dumpMemory(INPUT_BASE,  INPUT_END);
+        dumpMemory(M_INPUT,  INPUT_BASE,  INPUT_END);
         Serial.println();
-        dumpMemory(TYPES_BASE,  TYPES_END);
+        dumpMemory(M_TYPES,  TYPES_BASE,  TYPES_END);
+        Serial.println();
+        dumpMemory(M_STATES, STATES_BASE, STATES_END);
         Serial.println();
     }
     
     
     /** Dump a range of the EEPROM memory.
      */
-    void dumpMemory(int aStart, int aEnd)
+    void dumpMemory(PGM_P aMessage, int aStart, int aEnd)
     {
+        Serial.print(CHAR_HASH);
+        Serial.print(CHAR_SPACE);
+        Serial.println(PGMT(aMessage));
+        
         for (int base = aStart; base < aEnd; base += 16)
         {
+            Serial.print(CHAR_HASH);
+            Serial.print(CHAR_SPACE);
             printHex(base, 4);
             Serial.print(CHAR_COLON);
             

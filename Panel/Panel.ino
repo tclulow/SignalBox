@@ -20,11 +20,11 @@
 #include "Configure.h"
 
 
-// Record state of inputs.
-uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
-
 // Timeout for the display when important messages are showing.
 long displayTimeout = 0L;
+
+// Record state of input switchess.
+uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
 
 
 /** Announce ourselves.
@@ -174,12 +174,19 @@ void firstRun()
     systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
     systemData.debugLevel      = DEFAULT_DEBUG;
 
-    calibrateButtons();
-
     for (int rfu = 0; rfu < SYSTEM_RFU; rfu++)
     {
         systemData.rfu[rfu] = 0;
     }
+
+    // Initialise all input states to lo.  
+    for (int node = 0; node < INPUT_MAX; node++)
+    {
+        inputStates[node] = 0;
+    }
+
+    //Calibrate the LCD buttons.
+    calibrateButtons();
 
     // Decide if EzyBus conversion required.
     if (ezyBusDetected())
@@ -201,8 +208,11 @@ void firstRun()
     {
         defaultSetup();
     }
-        
+
+    // Save all data to EEPROM.
     saveSystemData();
+    saveInputStates();
+    
     delay(DELAY_READ);
 }
 
@@ -619,6 +629,20 @@ void setup()
     {
         // Calibration requested.
         calibrateButtons();
+        saveSystemData();
+    }
+
+    // Check if version update required.
+    if (systemData.version != VERSION)
+    {
+        Serial.print(PGMT(M_UPDATE));
+        Serial.print(CHAR_SPACE);
+        Serial.print(systemData.version, HEX);
+        Serial.print(CHAR_SPACE);
+        Serial.print(VERSION, HEX);
+        Serial.println();
+        
+        systemData.version = VERSION;
         saveSystemData();
     }
 
