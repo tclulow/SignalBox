@@ -362,17 +362,6 @@ void processInput(int aState)
 {
     uint8_t newState = 0;
     
-//  #if DEBUG
-//  // Report the input
-//  Serial.print("Input  ");
-//  Serial.print(aState ? "Hi" : "Lo");
-//  Serial.print(" ");
-//  Serial.print(HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
-//  Serial.print(" ");
-//  Serial.print(HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
-//  Serial.println();
-//  #endif
-
     // Process all input state changes for Toggles, only state going low for other Input types.
     if (   (aState == 0)
         || (inputType == INPUT_TYPE_TOGGLE))
@@ -386,6 +375,17 @@ void processInput(int aState)
             lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
             lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
             setDisplayTimeout(DELAY_READ);
+            
+            #if DEBUG
+                Serial.println();
+                Serial.print(PGMT(M_INPUT));
+                Serial.print(M_SPACE);
+                Serial.print(PGMT(aState ? M_HI : M_LO));
+                Serial.print(M_SPACE);
+                Serial.print(HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
+                Serial.print(HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
+                Serial.println();
+            #endif
         }
                         
         // Set desired new state based on Input's type/state and Output's state.
@@ -503,6 +503,17 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
         lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
         lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
         setDisplayTimeout(DELAY_READ);
+        
+        #if DEBUG
+            Serial.print(PGMT(M_OUTPUT));
+            Serial.print(M_SPACE);
+            Serial.print(PGMT(aState ? M_HI : M_LO));
+            Serial.print(M_SPACE);
+            Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
+            Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK]);
+            Serial.println();
+        #endif
+        
         debugPause();
     }
     
