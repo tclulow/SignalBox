@@ -301,8 +301,6 @@ class ImportExport
         Serial.println();
         dumpMemory(M_TYPES,  TYPES_BASE,  TYPES_END);
         Serial.println();
-        dumpMemory(M_STATES, STATES_BASE, STATES_END);
-        Serial.println();
     }
     
     

@@ -179,12 +179,6 @@ void firstRun()
         systemData.rfu[rfu] = 0;
     }
 
-    // Initialise all input states to lo.  
-    for (int node = 0; node < INPUT_MAX; node++)
-    {
-        inputStates[node] = 0;
-    }
-
     //Calibrate the LCD buttons.
     calibrateButtons();
 
@@ -211,7 +205,6 @@ void firstRun()
 
     // Save all data to EEPROM.
     saveSystemData();
-    saveInputStates();
     
     delay(DELAY_READ);
 }
@@ -401,7 +394,6 @@ void processInput(int aState)
             case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE : 0;   // Set state to that of the Toggle.
                                     break;
             case INPUT_TYPE_ON_OFF: loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
-                                    // TODO - fix this.
                                     if (outputData.type & OUTPUT_STATE)     // Change the state.
                                     {
                                         newState = 0;

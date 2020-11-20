@@ -65,11 +65,6 @@ struct InputData
 };
 
 
-/** Record state of inputs.
- */
-uint16_t inputStates[INPUT_NODE_MAX];   // Current state of inputs.
-
-
 /** Variables for working with an Input.
  */
 int        inputNodes  = 0;   // Bit map of Input nodes present.
@@ -110,21 +105,6 @@ boolean isInputNode(int aNode);
  *  Look for input's node in inputNodes.
  */
 boolean isInput(int aInput);
-
-
-/** LOad all the input states from EEPROM
- */
-void loadInputStates();
-
-
-/** Save all the input states into EEPROM.
- */
-void saveInputStates();
-
-
-/** Save an input nodes state.
- */
-void saveInputState(int aNode);
 
 
 #endif

@@ -27,12 +27,7 @@
 #define TYPES_SIZE   sizeof(uint32_t)                             // Size of Input types.
 #define TYPES_END    (TYPES_BASE + TYPES_SIZE * INPUT_NODE_MAX)   // End of Input Types EEPROM.
 
-// Input types saved in EEPROM
-#define STATES_BASE  TYPES_END                                    // EEPROM base of Input states.
-#define STATES_SIZE  sizeof(uint32_t)                             // Size of Input states.
-#define STATES_END   (STATES_BASE + STATES_SIZE * INPUT_NODE_MAX) // End of Input states EEPROM.
-
-#define EEPROM_END   STATES_END                                   // End of EEPROM memory
+#define EEPROM_END   TYPES_END                                   // End of EEPROM memory
 
 
 #endif

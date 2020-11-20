@@ -98,27 +98,3 @@ boolean isInput(int aInput)
 {
     return isInputNode(aInput >> INPUT_NODE_SHIFT);
 }
-
-
-/** Load all the input states from EEPROM
- */
-void loadInputStates()
-{
-    EEPROM.get(STATES_BASE, inputStates);
-}
-
-
-/** Save all the input states into EEPROM.
- */
-void saveInputStates()
-{
-    EEPROM.put(STATES_BASE, inputStates);
-}
-
-
-/** Save an input nodes state.
- */
-void saveInputState(int aNode)
-{
-    EEPROM.put(STATES_BASE + (aNode * STATES_SIZE), inputStates[aNode]);
-}

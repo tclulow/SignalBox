@@ -59,7 +59,6 @@ const char M_EXPORT[]          PROGMEM = "Export";
 const char M_IMPORT[]          PROGMEM = "Import";
 const char M_ALL[]             PROGMEM = "All";
 const char M_TYPES[]           PROGMEM = "Types";
-const char M_STATES[]          PROGMEM = "States";
 
 // Configuration - System.
 const char M_DEBUG[]           PROGMEM = "Debug";
