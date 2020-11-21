@@ -550,6 +550,9 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
  */
 void setup()
 {
+    lcd.begin(LCD_COLS, LCD_ROWS);            // LCD panel.
+    announce();
+    
     initialise();
     
 //  #if DEBUG
@@ -614,13 +617,8 @@ void setup()
 
 
     // Initialise subsystems.
-    lcd.begin(LCD_COLS, LCD_ROWS);            // LCD panel.
     Wire.begin(systemData.i2cControllerID);   // I2C network
     pinMode(PIN_CALIBRATE, INPUT_PULLUP);     // Calibration input pin (11).
-
-    // Announce ourselves.
-    announce();
-    delay(DELAY_READ);
 
     // Deal with first run (software has never been run before).
     if (!loadSystemData())     //  || ezyBusDetected())
