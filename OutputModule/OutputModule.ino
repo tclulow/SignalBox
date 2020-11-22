@@ -241,15 +241,23 @@ void processRequest(int aLen)
 
         // Arrange for Servos to move to requested angle.
         if (   (type == OUTPUT_TYPE_SERVO)
-                || (type == OUTPUT_TYPE_SIGNAL))
+            || (type == OUTPUT_TYPE_SIGNAL))
         {
             moveServo(pin, angle, pace, state, delay);
         }
 
         // TODO - handle LEDs.
-        if (type == OUTPUT_TYPE_LED)
+        else if (   (type == OUTPUT_TYPE_LED)
+                 || (type == OUTPUT_TYPE_FLASH)
+                 || (type == OUTPUT_TYPE_BLINK))
         {
             Serial.println("TODO - LED");
+        }
+        else
+        {
+            Serial.print("Unknown outputType ");
+            Serial.print(type);
+            Serial.println();
         }
     }
 
