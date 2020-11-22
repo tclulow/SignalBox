@@ -7,19 +7,6 @@
 #define PIN_CALIBRATE    11
 
 // Useful characters
-const char CHAR_SPACE   = ' ';
-const char CHAR_TAB     = '\t';
-const char CHAR_NEWLINE = '\n';
-const char CHAR_RETURN  = '\r';
-const char CHAR_NULL    = 0;
-
-const char CHAR_HASH    = '#';
-const char CHAR_DOT     = '.';
-const char CHAR_COLON   = ':';
-const char CHAR_LEFT    = '<';
-const char CHAR_RIGHT   = '>';
-const char CHAR_STAR    = '*';
-
 const char HEX_CHARS[]  = "0123456789abcdef";
 const char EDIT_CHARS[] = "ABC";
 

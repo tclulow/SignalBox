@@ -8,6 +8,24 @@
 #define DELAY_BLINK   250           // Blink interval when showing version number.
 
 
+// Useful characters
+const char CHAR_SPACE   = ' ';
+const char CHAR_TAB     = '\t';
+const char CHAR_NEWLINE = '\n';
+const char CHAR_RETURN  = '\r';
+const char CHAR_NULL    = 0;
+
+const char CHAR_HASH    = '#';
+const char CHAR_DOT     = '.';
+const char CHAR_COLON   = ':';
+const char CHAR_LEFT    = '<';
+const char CHAR_RIGHT   = '>';
+const char CHAR_STAR    = '*';
+const char CHAR_ZERO    = '0';
+const char CHAR_NINE    = '9';
+const char CHAR_LOWER_A = 'a';
+
+
 // i2c node numbers.
 #define DEFAULT_I2C_CONTROLLER_ID   0x10    // Controller ID.
 #define DEFAULT_I2C_INPUT_BASE_ID   0x20    // Input nodes' base ID.
@@ -37,9 +55,9 @@ void initialise()
     for (int ind = 0;ind < strlen_P(M_VERSION); ind++)
     {
         char ch = pgm_read_byte_near(M_VERSION + ind);
-        if (ch >= '1' && ch <= '9')
+        if (ch >= CHAR_ZERO && ch <= CHAR_NINE)
         {
-            while (ch-- >= '1')
+            while (ch-- > CHAR_ZERO)
             {
                 digitalWrite(LED_BUILTIN, HIGH);
                 delay(DELAY_BLINK);
@@ -54,9 +72,9 @@ void initialise()
     }
 
     Serial.print(PGMT(M_SOFTWARE));
-    Serial.print(M_SPACE);
+    Serial.print(CHAR_SPACE);
     Serial.print(PGMT(M_VERSION));
-    Serial.print(M_SPACE);
+    Serial.print(CHAR_SPACE);
     Serial.print(PGMT(M_VERSION_DATE));
     Serial.println();
 }

@@ -33,8 +33,8 @@ void announce()
 {
     lcd.clear();
     lcd.printAt(LCD_COL_START,                       LCD_ROW_TOP, M_SOFTWARE);
-    lcd.printAt(LCD_COLS - strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
-    lcd.printAt(LCD_COLS - strlen_P(M_VERSION_DATE), LCD_ROW_BOT, M_VERSION_DATE);
+    lcd.printAt(LCD_COLS - strlen_P(M_VERSION_DATE), LCD_ROW_TOP, M_VERSION_DATE);
+    lcd.printAt(LCD_COLS - strlen_P(M_VERSION),      LCD_ROW_BOT, M_VERSION);
 }
 
 
@@ -379,9 +379,9 @@ void processInput(int aState)
             #if DEBUG
                 Serial.println();
                 Serial.print(PGMT(M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]));
-                Serial.print(M_SPACE);
+                Serial.print(CHAR_SPACE);
                 Serial.print(PGMT(aState ? M_HI : M_LO));
-                Serial.print(M_SPACE);
+                Serial.print(CHAR_SPACE);
                 Serial.print(HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
                 Serial.print(HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
                 Serial.println();
@@ -506,9 +506,9 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
         
         #if DEBUG
             Serial.print(PGMT(M_OUTPUT_TYPES[outputData.type & OUTPUT_TYPE_MASK]));
-            Serial.print(M_SPACE);
+            Serial.print(CHAR_SPACE);
             Serial.print(PGMT(aState ? M_HI : M_LO));
-            Serial.print(M_SPACE);
+            Serial.print(CHAR_SPACE);
             Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
             Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK]);
             Serial.println();
@@ -660,8 +660,8 @@ void setup()
  */
 void loop()
 {
-    int  loops    = 0;
     long lastLoop = millis();
+    long count = 0;
 
     // Loop forever
     while (true)
@@ -690,15 +690,20 @@ void loop()
             // Show heartbeat if no display timeout is pending.
             if (displayTimeout == 0)
             {
-                if (loops > 7)
-                {
-                    loops = 0;
-                }
-                lcd.printAt((loops    ) & 0x7, LCD_ROW_BOT, CHAR_DOT);
-                lcd.printAt((loops + 4) & 0x7, LCD_ROW_BOT, CHAR_SPACE);
-                loops += 1;
-
                 lastLoop = millis();
+                int hours = lastLoop / MILLIS_PER_HOUR;
+                int mins  = (lastLoop - MILLIS_PER_HOUR * hours) / MILLIS_PER_MINUTE;
+                int secs  = (lastLoop - MILLIS_PER_HOUR * hours  - MILLIS_PER_MINUTE * mins) / MILLIS_PER_SECOND;
+                
+                lcd.setCursor(0, LCD_ROW_BOT);
+                if (hours > 0)
+                {
+                    lcd.printDec(hours, 1, CHAR_ZERO);
+                    lcd.print(CHAR_COLON);
+                }
+                lcd.printDec(mins, 2, CHAR_ZERO);
+                lcd.print(CHAR_COLON);
+                lcd.printDec(secs, 2, CHAR_ZERO);
             }
         }
     }

@@ -124,12 +124,21 @@ class LCD: public LiquidCrystal
     }
 
 
-    /** Print a number as a string of hex digits.
+    /** Print a number as a string of hex digits at the specified location.
      *  Padded with leading zeros to length aDigits.
      */
     void printAtHex(int col, int row, int aValue, int aDigits)
     {
         setCursor(col, row);
+        printHex(aValue, aDigits);
+    }
+
+
+    /** Print a number as a string of hex digits.
+     *  Padded with leading zeros to length aDigits.
+     */
+    void printHex(int aValue, int aDigits)
+    {
         for (int digit = aDigits - 1; digit >= 0; digit--)
         {
             print(HEX_CHARS[(aValue >> (4 * digit)) & 0xf]);
@@ -137,39 +146,62 @@ class LCD: public LiquidCrystal
     }
 
 
-    /** Print a number as a string of dec digits.
+    /** Print a number as a string of dec digits at the specified location.
      *  Padded with leading spaces to length aDigits.
      */
     void printAtDec(int col, int row, int aValue, int aDigits)
     {
-        int value = aValue;
+        setCursor(col, row);
+        printDec(aValue, aDigits, CHAR_SPACE);
+    }
+
+
+    /** Print a number as a string of dec digits.
+     *  Padded with leading spaces to length aDigits.
+     */
+    void printDec(int aValue, int aDigits, char aPad)
+    {
+        int value   = aValue;
+        int digits  = 1;
         int divisor = 1;
         boolean leadingBlanks = true;
-        
-        setCursor(col, row);
 
+        // Calculate min digits required
+        while (value >= 10)
+        {
+            value  /= 10;
+            digits += 1;
+        }
+        value = aValue;
+        
+        // Use at least the min digits requested.
+        if (digits < aDigits)
+        {
+            digits = aDigits;
+        }
+        
         // Calculate starting power of 10 for desired number of digits.
-        for (int digit = 1; digit < aDigits; digit++)
+        for (int digit = 1; digit < digits; digit++)
         {
             divisor *= 10;
         }
 
         // Output the digits in sequence.
-        for (int digit = aDigits - 1; digit >= 0; digit--)
+        while (--digits >= 0)
         {
             if (value / divisor > 0)
             {
-                print((char) ('0' + (value / divisor)));
+                print((char) (CHAR_ZERO + (value / divisor)));
                 leadingBlanks = false;
             }
-            else if (   (digit > 0)
-                     && (leadingBlanks))
+            else if (   (digits > 0)            // Don't pad the last digit
+                     && (leadingBlanks))        // DOn't pad after we've had some non-zero digits.
             {
-                print(CHAR_SPACE);
+                print(aPad);
             }
             else
             {
-                print('0');
+                print(CHAR_ZERO);
             }
 
             // Next digit.

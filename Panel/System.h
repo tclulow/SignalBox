@@ -10,6 +10,10 @@
 #define DEFAULT_DEBUG   2           // Default debugging to high.
 #define SYSTEM_RFU      8           // Number of RFU bytes in system structure.
 
+#define MILLIS_PER_SECOND (1000L)                       // Millisecs in a second.
+#define MILLIS_PER_MINUTE (MILLIS_PER_SECOND * 60L)     // Millisecs in a minute.
+#define MILLIS_PER_HOUR   (MILLIS_PER_MINUTE * 60L)     // Millisecs per hour.
+
 
 /** Data describing an Output's operation.
  */

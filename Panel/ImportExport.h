@@ -161,13 +161,13 @@ class ImportExport
      */
     int hexValue(char aChar)
     {
-        if (aChar > '9')
+        if (aChar > CHAR_NINE)
         {
-            return (aChar - 'a' + 10) & 0xf;
+            return (aChar - CHAR_LOWER_A + 10) & 0xf;
         }
         else
         {
-            return (aChar - '0'     ) & 0xf;
+            return (aChar - CHAR_ZERO        ) & 0xf;
         }
     }
     
