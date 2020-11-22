@@ -374,7 +374,7 @@ void processInput(int aState)
             lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (aState ? M_HI : M_LO));
             lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
             lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
-            setDisplayTimeout(DELAY_READ);
+            setDisplayTimeout(reportDelay());
             
             #if DEBUG
                 Serial.println();
@@ -502,7 +502,7 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
         lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, (aState ? M_HI : M_LO));
         lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
         lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
-        setDisplayTimeout(DELAY_READ);
+        setDisplayTimeout(reportDelay());
         
         #if DEBUG
             Serial.print(PGMT(M_OUTPUT_TYPES[outputData.type & OUTPUT_TYPE_MASK]));

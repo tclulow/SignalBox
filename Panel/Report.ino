@@ -6,6 +6,14 @@ boolean reportEnabled(int aLevel)
 }
 
 
+/** Length of time to wait for depending on the reporting level.
+ */
+int reportDelay()
+{
+    return DELAY_READ * systemData.reportLevel;    
+}
+
+
 /** Pause for user-input if so configured.
  *  Use buttons to adjust report level.
  */

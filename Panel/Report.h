@@ -14,6 +14,12 @@
  */
 boolean reportEnabled(int aLevel);
 
+
+/** Length of time to wait for depending on the reporting level.
+ */
+int reportDelay();
+
+
 /** Pause for user-input if so configured.
  */
 void reportPause();
