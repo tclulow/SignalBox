@@ -1102,7 +1102,7 @@ class Configure
                                                                  break;
                                         case OUTPUT_TYPE_LED:
                                         case OUTPUT_TYPE_FLASH:
-                                        case OUTPUT_TYPE_BLINK:  changed |= menuOutputLo(OUTPUT_SERVO_MAX);
+                                        case OUTPUT_TYPE_BLINK:  changed |= menuOutputLo(OUTPUT_LED_MAX);
                                                                  // sendOutputCommand(outputData.hi,                                                  outputData.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE);
                                                                  // changed |= menuOutputPace();
                                                                  // sendOutputCommand(outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, outputData.type & OUTPUT_STATE);
