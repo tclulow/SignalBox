@@ -28,7 +28,6 @@ void debugPause()
                                 break;
             case BUTTON_LEFT:   systemData.debugLevel = 0;
                                 saveSystemData();
-                                announce();
                                 break;
             case BUTTON_RIGHT:  configure.run();
                                 break;
