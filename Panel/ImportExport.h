@@ -281,7 +281,7 @@ class ImportExport
         Serial.print(CHAR_TAB);
         printHex(systemData.i2cOutputBaseID, 2);
         Serial.print(CHAR_TAB);
-        printHex(systemData.debugLevel,      2);
+        printHex(systemData.reportLevel,     2);
         Serial.println();
         Serial.println();
     

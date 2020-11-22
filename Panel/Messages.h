@@ -60,7 +60,7 @@ const char M_ALL[]             PROGMEM = "All";
 const char M_TYPES[]           PROGMEM = "Types";
 
 // Configuration - System.
-const char M_DEBUG[]           PROGMEM = "Debug";
+const char M_REPORT[]          PROGMEM = "Report";
 const char M_SYS_I2C[]         PROGMEM = "i2cID";
 
 const char M_ID_CONTROLLER[]   PROGMEM = "Con";
@@ -68,8 +68,8 @@ const char M_ID_INPUT[]        PROGMEM = "Inp";
 const char M_ID_OUTPUT[]       PROGMEM = "Out";
 
 const char M_NONE[]            PROGMEM = "None";
-const char M_LOW[]             PROGMEM = "Low";
-const char M_HIGH[]            PROGMEM = "High";
+const char M_SHORT[]           PROGMEM = "Short";
+const char M_LONG[]            PROGMEM = "Long";
 const char M_PAUSE[]           PROGMEM = "Pause";
 
 // const char M_MOD[]             PROGMEM = "Mod";
@@ -99,7 +99,7 @@ const char M_MCP_COMMS[]       PROGMEM = "MCP comms len";
 
 
 // Headers for the exports
-const char M_EXPORT_SYSTEM[]   PROGMEM = "#System\tVersion\tDetail\tControl\tInput\tOutput\tDebug";
+const char M_EXPORT_SYSTEM[]   PROGMEM = "#System\tVersion\tDetail\tControl\tInput\tOutput\tReport";
 const char M_EXPORT_INPUT[]    PROGMEM = "#Input\tNode\tPin\tType\tOutputA\tOutputB\tOutputC";
 const char M_EXPORT_OUTPUT[]   PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd\tDelay";
 
@@ -107,10 +107,10 @@ const char M_EXPORT_OUTPUT[]   PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd\
 // Array of (pointers to) certain messages.
 const char* const M_BUTTONS[]        = { M_SELECT, M_LEFT, M_DOWN, M_UP, M_RIGHT };
 const char* const M_TOP_MENU[]       = { M_SYSTEM, M_INPUT, M_OUTPUT, M_EXPORT, M_IMPORT };
-const char* const M_SYS_TYPES[]      = { M_DEBUG, M_SYS_I2C };
+const char* const M_SYS_TYPES[]      = { M_REPORT, M_SYS_I2C };
 const char* const M_REPORT_TYPES[]   = { M_ALL, M_SYSTEM, M_INPUT, M_OUTPUT };
 const char* const M_I2C_PROMPTS[]    = { M_ID_CONTROLLER, M_ID_INPUT, M_ID_OUTPUT };
-const char* const M_DEBUG_PROMPTS[]  = { M_NONE, M_LOW, M_HIGH, M_PAUSE };
+const char* const M_REPORT_PROMPTS[] = { M_NONE, M_SHORT, M_LONG, M_PAUSE };
 
 const char* const M_INPUT_TYPES[]    = { M_TOGGLE, M_ON_OFF, M_ON,  M_OFF };
 const char* const M_OUTPUT_TYPES[]   = { M_SERVO,  M_SIGNAL, M_LED, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU };

@@ -15,7 +15,7 @@
 #include "Input.h"
 #include "Buttons.h"
 #include "System.h"
-#include "Debug.h"
+#include "Report.h"
 #include "ImportExport.h"
 #include "Configure.h"
 
@@ -172,7 +172,7 @@ void firstRun()
     systemData.i2cControllerID = DEFAULT_I2C_CONTROLLER_ID;
     systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
     systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
-    systemData.debugLevel      = DEFAULT_DEBUG;
+    systemData.reportLevel     = DEFAULT_REPORT;
 
     for (int rfu = 0; rfu < SYSTEM_RFU; rfu++)
     {
@@ -366,8 +366,8 @@ void processInput(int aState)
     if (   (aState == 0)
         || (inputType == INPUT_TYPE_TOGGLE))
     {
-        // Report state change if debug enabled.
-        if (debugEnabled(DEBUG_LOW))
+        // Report state change if reporting enabled.
+        if (reportEnabled(REPORT_SHORT))
         {
             lcd.clear();
             lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
@@ -495,7 +495,7 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
 //  Serial.println();
 //  #endif
 
-    if (debugEnabled(DEBUG_LOW))
+    if (reportEnabled(REPORT_SHORT))
     {
         lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
         lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputData.type & OUTPUT_TYPE_MASK]);
@@ -514,7 +514,7 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
             Serial.println();
         #endif
         
-        debugPause();
+        reportPause();
     }
     
     Wire.beginTransmission(systemData.i2cOutputBaseID + ((outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK));
@@ -695,7 +695,7 @@ void loop()
                 int mins  = (lastLoop - MILLIS_PER_HOUR * hours) / MILLIS_PER_MINUTE;
                 int secs  = (lastLoop - MILLIS_PER_HOUR * hours  - MILLIS_PER_MINUTE * mins) / MILLIS_PER_SECOND;
                 
-                lcd.setCursor(0, LCD_ROW_BOT);
+                lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
                 if (hours > 0)
                 {
                     lcd.printDec(hours, 1, CHAR_ZERO);

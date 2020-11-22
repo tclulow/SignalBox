@@ -7,7 +7,7 @@
 #define MAGIC_NUMBER    0x50616e6c  // Magic number = Panl.
 #define VERSION         0x0012      // Version number of software.
 
-#define DEFAULT_DEBUG   2           // Default debugging to high.
+#define DEFAULT_REPORT  REPORT_LONG // Default reporting to long.
 #define SYSTEM_RFU      8           // Number of RFU bytes in system structure.
 
 #define MILLIS_PER_SECOND (1000L)                       // Millisecs in a second.
@@ -27,7 +27,7 @@ struct SystemData
     uint8_t i2cControllerID = 0;            // I2C node IDs.
     uint8_t i2cInputBaseID  = 0;
     uint8_t i2cOutputBaseID = 0;
-    int8_t  debugLevel      = 0;            // Debug messages.
+    int8_t  reportLevel     = 0;            // Reporting level.
     int     buttons[6];                     // Configuration of analog buttons.
     
     char    rfu[SYSTEM_RFU];                // RFU. 32 bytes in all.

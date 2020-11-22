@@ -12,7 +12,7 @@
 #define TOP_MAX      5
 
 // Sys menu states.
-#define SYS_DEBUG    0
+#define SYS_REPORT   0
 #define SYS_I2C      1
 #define SYS_MAX      2
 
@@ -123,7 +123,7 @@ class Configure
     {
         switch (sysMenu)
         {
-            case SYS_DEBUG:  displaySystemDebugParams();
+            case SYS_REPORT: displaySystemReportParams();
                              break;
             case SYS_I2C:    displaySystemI2cParams();
                              break;
@@ -159,12 +159,12 @@ class Configure
     }
 
 
-    /** Display System's debug parameter.
+    /** Display System's report parameter.
      */
-    void displaySystemDebugParams()
+    void displaySystemReportParams()
     {
         lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_LEN_OPTION);    
+        lcd.printAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemData.reportLevel], LCD_LEN_OPTION);    
     }
 
 
@@ -338,10 +338,10 @@ class Configure
                                     }
                                     else
                                     {
-                                        int8_t debugLevel = systemData.debugLevel;
+                                        int8_t reportLevel = systemData.reportLevel;
 
-                                        // Disable debug whilst configuring.
-                                        systemData.debugLevel = 0;
+                                        // Disable reporting whilst configuring.
+                                        systemData.reportLevel = 0;
 
                                         switch (topMenu)
                                         {
@@ -356,8 +356,8 @@ class Configure
                                             default:         systemFail(M_CONFIG, topMenu, 0);
                                         }
 
-                                        // Re-establish debug.
-                                        systemData.debugLevel = debugLevel;
+                                        // Re-establish reporting.
+                                        systemData.reportLevel = reportLevel;
                                     }
                                     markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
                                     break;
@@ -439,9 +439,9 @@ class Configure
                                     }
                                     break;
                 case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
-                                    if (sysMenu == SYS_DEBUG)
+                                    if (sysMenu == SYS_REPORT)
                                     {
-                                        changed = menuSystemDebug();
+                                        changed = menuSystemReport();
                                     }
                                     else if (sysMenu == SYS_I2C)
                                     {
@@ -462,33 +462,33 @@ class Configure
     }
 
 
-    /** Process System debug menu.
+    /** Process System report menu.
      *  Reurn true if changes made.
      */
-    boolean menuSystemDebug()
+    boolean menuSystemReport()
     {
         boolean finished = false;
         boolean changed = false;
         int index = 0;
 
-        markField(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, LCD_COL_DEBUG_LENGTH, true);
+        markField(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, LCD_COL_REPORT_LENGTH, true);
 
         while (!finished)
         {
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     systemData.debugLevel += 2;     // Allow for decrement in BUTTON_DOWN code below.
-                                    if (systemData.debugLevel > DEBUG_MAX)
+                case BUTTON_UP:     systemData.reportLevel += 2;     // Allow for decrement in BUTTON_DOWN code below.
+                                    if (systemData.reportLevel > REPORT_MAX)
                                     {
-                                        systemData.debugLevel = 1;
+                                        systemData.reportLevel = 1;
                                     }
-                case BUTTON_DOWN:   systemData.debugLevel -= 1;
-                                    if (systemData.debugLevel < 0)
+                case BUTTON_DOWN:   systemData.reportLevel -= 1;
+                                    if (systemData.reportLevel < 0)
                                     {
-                                        systemData.debugLevel = DEBUG_MAX - 1;
+                                        systemData.reportLevel = REPORT_MAX - 1;
                                     }
-                                    lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel % DEBUG_MAX], LCD_COL_DEBUG_LENGTH);
+                                    lcd.printAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemData.reportLevel % REPORT_MAX], LCD_COL_REPORT_LENGTH);
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: break;
@@ -498,7 +498,7 @@ class Configure
             }
         }
 
-        markField(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, 5, false);
+        markField(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, 5, false);
         
         return changed;
     }
