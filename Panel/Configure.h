@@ -1095,23 +1095,19 @@ class Configure
                                     }
                                     break;
                 case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
-                                    if (   (outputType == OUTPUT_TYPE_SERVO)
-                                        || (outputType == OUTPUT_TYPE_SIGNAL))
+                                    switch (outputType)
                                     {
-                                        changed |= menuOutputLo(OUTPUT_SERVO_MAX);
-                                    }
-                                    else if (   (outputType == OUTPUT_TYPE_LED)
-                                             || (outputType == OUTPUT_TYPE_FLASH)
-                                             || (outputType == OUTPUT_TYPE_BLINK))
-                                    {
-                                        changed |= menuOutputLo(OUTPUT_LED_MAX);
-                                        // sendOutputCommand(outputData.hi,                                                  outputData.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE);
-                                        // changed |= menuOutputPace();
-                                        // sendOutputCommand(outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, outputData.type & OUTPUT_STATE);
-                                    }
-                                    else
-                                    {
-                                        systemFail(M_OUTPUT, outputType, 0);
+                                        case OUTPUT_TYPE_SERVO:
+                                        case OUTPUT_TYPE_SIGNAL: changed |= menuOutputLo(OUTPUT_SERVO_MAX);
+                                                                 break;
+                                        case OUTPUT_TYPE_LED:
+                                        case OUTPUT_TYPE_FLASH:
+                                        case OUTPUT_TYPE_BLINK:  changed |= menuOutputLo(OUTPUT_SERVO_MAX);
+                                                                 // sendOutputCommand(outputData.hi,                                                  outputData.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE);
+                                                                 // changed |= menuOutputPace();
+                                                                 // sendOutputCommand(outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, outputData.type & OUTPUT_STATE);
+                                                                 break;
+                                        default:                 systemFail(M_OUTPUT, outputType, 0);
                                     }
 
                                     displayNode();
