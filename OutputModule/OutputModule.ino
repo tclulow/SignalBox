@@ -31,8 +31,8 @@
 #define DELAY_MULTIPLIER  1000   // Multiply delay values by this amount (convert to seconds).
 
 
-// The module jumpers
-const uint8_t jumpers[JUMPER_PINS] = { 1, 0, A6, A7 };
+// The module jumper pins
+const uint8_t jumperPins[JUMPER_PINS] = { 1, 0, A6, A7 };
 
 // The digital IO pins.
 const uint8_t ioPins[IO_PINS]      = { 3, 2, A3, A2, A1, A0, 13, 12 };
@@ -154,7 +154,7 @@ void setup()
     // Configure the Jumper pins for input.
     for (int pin = 0; pin < JUMPER_PINS; pin++)
     {
-        pinMode(jumpers[pin], INPUT_PULLUP);
+        pinMode(jumperPins[pin], INPUT_PULLUP);
     }
 
     // Configure the IO pins for output.
@@ -166,7 +166,7 @@ void setup()
     // Configure i2c from jumpers.
     for (int pin = 0; pin < JUMPER_PINS; pin++)
     {
-        moduleID |= digitalRead(ioPins[pin]) << pin;
+        moduleID |= digitalRead(jumperPins[pin]) << pin;
     }
     moduleID |= systemData.i2cOutputBaseID;
 
