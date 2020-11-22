@@ -86,6 +86,8 @@ const char M_DISABLED[]        PROGMEM = "..";
 const char M_SERVO[]           PROGMEM = "Servo";
 const char M_SIGNAL[]          PROGMEM = "Signal";
 const char M_LED[]             PROGMEM = "LED";
+const char M_FLASH[]           PROGMEM = "Flash";
+const char M_BLINK[]           PROGMEM = "Blink";
 const char M_RFU[]             PROGMEM = "RFU";
 
 const char M_HI[]              PROGMEM = "Hi";
@@ -113,7 +115,7 @@ const char* const M_I2C_PROMPTS[]    = { M_ID_CONTROLLER, M_ID_INPUT, M_ID_OUTPU
 const char* const M_REPORT_PROMPTS[] = { M_NONE, M_SHORT, M_LONG, M_PAUSE };
 
 const char* const M_INPUT_TYPES[]    = { M_TOGGLE, M_ON_OFF, M_ON,  M_OFF };
-const char* const M_OUTPUT_TYPES[]   = { M_SERVO,  M_SIGNAL, M_LED, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU };
+const char* const M_OUTPUT_TYPES[]   = { M_SERVO,  M_SIGNAL, M_LED, M_FLASH, M_BLINK, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU };
 
 
 /** Gets a PROGMEM message and copies it to a buffer

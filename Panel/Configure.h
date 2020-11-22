@@ -1100,7 +1100,9 @@ class Configure
                                     {
                                         changed |= menuOutputLo(OUTPUT_SERVO_MAX);
                                     }
-                                    else if (outputType == OUTPUT_TYPE_LED)
+                                    else if (   (outputType == OUTPUT_TYPE_LED)
+                                             || (outputType == OUTPUT_TYPE_FLASH)
+                                             || (outputType == OUTPUT_TYPE_BLINK))
                                     {
                                         changed |= menuOutputLo(OUTPUT_LED_MAX);
                                         // sendOutputCommand(outputData.hi,                                                  outputData.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE);
