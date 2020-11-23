@@ -39,8 +39,8 @@ const uint8_t ioPins[IO_PINS]      = { 3, 2, A3, A2, A1, A0, 13, 12 };
 
 
 // EEPROM persistance of output pin types.
-uint8_t outputTypes[IO_PINS] = { OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, 
-                                                                 OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE };
+uint8_t outputTypes[IO_PINS]  = { OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, 
+                                  OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE };
 
 // EEPROM persistance of Output states.
 uint8_t outputStates[IO_PINS] = { 90, 90, 90, 90, 90, 90, 90, 90 };
@@ -55,13 +55,14 @@ uint8_t moduleID = 0;
 // An Array of Output control structures.
 struct 
 {
-    Servo   servo;            // The Servo.
-    uint8_t start  = 0;       // The angle we started at.
-    uint8_t target = 0;       // The angle we want to reach.
-    uint8_t steps  = 0;       // The number of steps to take.
-    uint8_t step   = 0;       // The current step.
-    uint8_t state  = 0;       // The state to set the output to.
-    long    delay  = 0;       // Delay start to this time.
+    Servo   servo;          // The Servo.
+    uint8_t start  = 0;     // The angle we started at.
+    uint8_t target = 0;     // The angle we want to reach.
+    uint8_t steps  = 0;     // The number of steps to take.
+    uint8_t step   = 0;     // The current step.
+    uint8_t state  = 0;     // The state to set the output to.
+    uint8_t alt    = 0;     // The state to set the alternate output to.
+    long    delay  = 0;     // Delay start to this time.
 } outputs[IO_PINS];
 
 
@@ -95,7 +96,7 @@ void setPinType(int aPin, uint8_t aType)
     {
         // Remove/disable old type.
         if (   (outputTypes[aPin] == OUTPUT_TYPE_SERVO)
-                || (outputTypes[aPin] == OUTPUT_TYPE_SIGNAL))
+            || (outputTypes[aPin] == OUTPUT_TYPE_SIGNAL))
         {
             // Detach servo.
             outputs[aPin].servo.detach();
@@ -108,7 +109,7 @@ void setPinType(int aPin, uint8_t aType)
 
     // Establish new type.
     if (   (aType == OUTPUT_TYPE_SERVO)
-            || (aType == OUTPUT_TYPE_SIGNAL))
+        || (aType == OUTPUT_TYPE_SIGNAL))
     {
         outputs[aPin].servo.write(outputStates[aPin]);
         outputs[aPin].servo.attach(SERVO_BASE_PIN + aPin);
@@ -136,6 +137,14 @@ void setup()
         EEPROM.get(STATE_BASE, outputStates);
         EEPROM.get(IO_BASE,    ioStates);
     }
+
+    // DEBUG
+    outputTypes[1]   = OUTPUT_TYPE_SERVO;
+    outputStates[1]  = 0x0;
+    outputs[1].state = 0x0;
+    ioStates[1]      = 0x0;
+    // moveServo(pin, angle, pace, state, delay);
+    moveServo(1, 180, 0xc, 1, 0);
     
     // Report state from EEPROM
     for (int pin = 0; pin < IO_PINS; pin++)
@@ -148,7 +157,7 @@ void setup()
         Serial.print(outputStates[pin]);
         Serial.print(" io ");
         Serial.print(ioStates[pin] ? "Hi" : "Lo");
-        Serial.println();\
+        Serial.println();
     }
 
     // Configure the Jumper pins for input.
@@ -306,7 +315,6 @@ void moveServo(uint8_t aServo, uint8_t aTarget, uint8_t aPace, uint8_t aState, u
 
 
 /** Step a servo to its next angle.
- *  Return true if Servo state changed.
  */
 void stepServo(int aPin)
 {
@@ -337,7 +345,7 @@ void stepServo(int aPin)
 
         // Test code to report activity.
         if (   (outputs[aPin].step == 1)
-                || (outputs[aPin].step == outputs[aPin].steps))
+            || (outputs[aPin].step == outputs[aPin].steps))
         {
             Serial.print(millis());
             Serial.print("\tStep: pin=");
@@ -402,10 +410,10 @@ void loop()
         for (int pin = 0; pin < IO_PINS; pin++)
         {
             if (   (outputTypes[pin] == OUTPUT_TYPE_SERVO)
-                    || (outputTypes[pin] == OUTPUT_TYPE_SIGNAL))
+                || (outputTypes[pin] == OUTPUT_TYPE_SIGNAL))
             {
                 if (   (outputs[pin].delay == 0)
-                        || (outputs[pin].delay <= now))
+                    || (outputs[pin].delay <= now))
                 {
                     stepServo(pin);
                 }
@@ -418,8 +426,18 @@ void loop()
     {
         if (outputTypes[pin] == OUTPUT_TYPE_LED)
         {
-            digitalWrite(SERVO_BASE_PIN + pin, outputs[pin].state >= (now & 0xff));
-            digitalWrite(ioPins[pin],          outputs[pin].state <= (now & 0xff));
+            boolean on = outputs[pin].state > 0 && outputs[pin].state >= (now & 0xff);
+            digitalWrite(SERVO_BASE_PIN + pin,  on);
+            digitalWrite(ioPins[pin],          !on);
+
+//            // DEBUG
+//            digitalWrite(LED_BUILTIN, on);
+//            Serial.print(now);
+//            Serial.print(" ");
+//            Serial.print(now & 0xff, HEX);
+//            Serial.print(on ? " 1" : " 0");
+//            Serial.println();
+//            delay(1001);
         }
     }
 }
