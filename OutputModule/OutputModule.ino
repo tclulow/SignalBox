@@ -64,12 +64,13 @@ long tickLed   = 0;
 struct 
 {
     Servo   servo;          // The Servo (if there is one).
-    uint8_t start  = 0;     // The angle we started at.
-    uint8_t target = 0;     // The angle we want to reach.
+    uint8_t start  = 0;     // The value we started at.
+    uint8_t target = 0;     // The value we want to reach.
     uint8_t steps  = 0;     // The number of steps to take.
     uint8_t step   = 0;     // The current step.
-    uint8_t value  = 0;     // The value to set the output to.
-    uint8_t alt    = 0;     // The value to set the alternate output to.
+    uint8_t state  = 0;     // The state of the ouput, Hi or Lo.
+    uint8_t alt    = 0;     // The value of the alternate output.
+    uint8_t value  = 0;     // The value of the output.
     long    delay  = 0;     // Delay start to this time.
 } outputs[IO_PINS];
 
@@ -104,18 +105,34 @@ void setup()
     outputs[pin].target = 180;
     outputs[pin].steps  = 10;
     outputs[pin].step   = 0;
+    outputs[pin].state  = 1;
+    outputs[pin].alt    = 180;
     outputs[pin].value  = 0;
     outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 0; // aDelay;
 
     pin += 1;
-    outputTypes[pin]    = OUTPUT_TYPE_SERVO;
+    outputTypes[pin]    = OUTPUT_TYPE_LED;
     outputValues[pin]   = 0x0;
     outputs[pin].start  = 0;
     outputs[pin].target = 180;
     outputs[pin].steps  = 10;
     outputs[pin].step   = 0;
+    outputs[pin].state  = 0;
+    outputs[pin].alt    = 180;
     outputs[pin].value  = 0;
-    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 0; // aDelay;
+    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 1; // aDelay;
+
+//    pin += 1;
+//    outputTypes[pin]    = OUTPUT_TYPE_SERVO;
+//    outputValues[pin]   = 0x0;
+//    outputs[pin].start  = 0;
+//    outputs[pin].target = 180;
+//    outputs[pin].steps  = 10;
+//    outputs[pin].step   = 0;
+//    outputs[pin].state  = 1;
+//    outputs[pin].alt    = 0;
+//    outputs[pin].value  = 0;
+//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 0; // aDelay;
     
     // Report state from EEPROM
     for (int pin = 0; pin < IO_PINS; pin++)
@@ -296,6 +313,7 @@ void processRequest(int aLen)
         outputs[pin].target = target;
         outputs[pin].steps  = (MAX_PACE - pace) * abs((target - start)) / PACE_STEPS + 1;
         outputs[pin].step   = 0;
+        outputs[pin].alt    = outputs[pin].value;
         outputs[pin].value  = start;
         outputs[pin].delay  = millis() + DELAY_MULTIPLIER * delay;
 
@@ -322,14 +340,16 @@ void reportMovement(uint8_t aPin)
     Serial.print(outputs[aPin].start);
     Serial.print(", target=");
     Serial.print(outputs[aPin].target);
-    Serial.print(", step=");
-    Serial.print(outputs[aPin].step);
     Serial.print(", steps=");
     Serial.print(outputs[aPin].steps);
-    Serial.print(", state=");
-    Serial.print(outputs[aPin].value);
+    Serial.print(", step=");
+    Serial.print(outputs[aPin].step);
     Serial.print(", alt=");
     Serial.print(outputs[aPin].alt);
+    Serial.print(", value=");
+    Serial.print(outputs[aPin].value);
+    Serial.print(", state=");
+    Serial.print(outputs[aPin].state);
     Serial.print(", delay=");
     Serial.print(outputs[aPin].delay);
     Serial.println();
@@ -369,7 +389,8 @@ void stepOutput(int aPin, boolean isServo)
         {
             // Last step, make sure to hit the target bang-on.
             outputValues[aPin] = outputs[aPin].target;
-
+            outputs[aPin].alt  = 0;
+            
             // Record Output's value.
             EEPROM.put(VALUE_BASE + aPin, outputValues[aPin]);
         }
@@ -377,7 +398,7 @@ void stepOutput(int aPin, boolean isServo)
         {
             // Intermediate step, move proportionately (step/steps) along the range (start to target).
             outputValues[aPin] = outputs[aPin].start + (outputs[aPin].target - outputs[aPin].start) * outputs[aPin].step / outputs[aPin].steps;
-
+            outputs[aPin].alt -= outputs[aPin].alt / (outputs[aPin].steps + 1 - outputs[aPin].step);
             working = true;
         }
 
@@ -447,16 +468,26 @@ void loop()
         stepOutputs(false, OUTPUT_TYPE_LED);
     }
     
-    // Set IO Outputs based on their intensity state, using the clock to generate a PWM signal.
+    // Set LED Outputs based on their intensity state, using the clock to generate a PWM signal.
     for (int pin = 0; pin < IO_PINS; pin++)
     {
         if (outputTypes[pin] == OUTPUT_TYPE_LED)
         {
-            boolean on =    outputs[pin].value > 0 
-                         && outputs[pin].value >= (now & 0xff);
-            digitalWrite(OUTPUT_BASE_PIN + pin,  on);
-            digitalWrite(ioPins[pin],           !on);
-
+            boolean on  =    outputs[pin].value >  0 
+                          && outputs[pin].value >= (now & 0xff);
+            boolean alt =    outputs[pin].alt   >  0 
+                          && outputs[pin].alt   >= (now & 0xff);
+            if (outputs[pin].state)
+            {
+                digitalWrite(OUTPUT_BASE_PIN + pin,  on);
+                digitalWrite(ioPins[pin],           alt);
+            }
+            else
+            {
+                digitalWrite(OUTPUT_BASE_PIN + pin, alt);
+                digitalWrite(ioPins[pin],            on);
+            }
+            
 //            // DEBUG
 //            digitalWrite(LED_BUILTIN, on);
 //            Serial.print(now);
