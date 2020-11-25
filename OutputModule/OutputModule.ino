@@ -1,3 +1,4 @@
+
 /** OutputModule.
  */
 
@@ -169,6 +170,7 @@ void setup()
     // Configure the IO pins for output.
     for (int pin = 0; pin < IO_PINS; pin++)
     {
+        pinMode(SERVO_BASE_PIN + pin, OUTPUT);
         pinMode(ioPins[pin], OUTPUT);
     }
 
@@ -318,20 +320,16 @@ void moveServo(uint8_t aServo, uint8_t aTarget, uint8_t aPace, uint8_t aState, u
  */
 void stepServo(int aPin)
 {
+    boolean workInProgress = false;
+    
     if (outputs[aPin].step < outputs[aPin].steps)
     {
-        // Indicate work in progress
-        digitalWrite(LED_BUILTIN, HIGH);
-
         outputs[aPin].step += 1;
         
         if (outputs[aPin].step == outputs[aPin].steps)
         {
             // Last step, make sure to hit the target bang-on.
             outputs[aPin].servo.write(outputs[aPin].target);
-
-            // Indicate work complete
-            digitalWrite(LED_BUILTIN, LOW);
 
             // Record Servo's state.
             outputStates[aPin] = outputs[aPin].servo.read();
@@ -341,6 +339,7 @@ void stepServo(int aPin)
         {
             // Intermediate step, move proportionately (step/steps) along the range (start to target).
             outputs[aPin].servo.write(outputs[aPin].start + (outputs[aPin].target - outputs[aPin].start) * outputs[aPin].step / outputs[aPin].steps);
+            workInProgress = true;
         }
 
         // Test code to report activity.
@@ -367,6 +366,9 @@ void stepServo(int aPin)
             Serial.println();
         }
     }
+
+    // Indicate work complete
+    digitalWrite(LED_BUILTIN, workInProgress);
 }
 
 
