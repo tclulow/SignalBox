@@ -15,7 +15,7 @@
 // Output state saved in EEPROM
 #define SYSTEM_BASE   0                                         // SystemData goes here
 #define TYPE_BASE     SYSTEM_BASE + sizeof(systemData)          // Base of Output type data.
-#define VALUE_BASE    TYPE_BASE   + sizeof(outputTypes)         // Base of Output state data.
+#define VALUE_BASE    TYPE_BASE   + IO_PINS * sizeof(uint8_t)   // Base of Output value data.
 #define EEPROM_END    VALUE_BASE  + IO_PINS * sizeof(uint8_t)   // Size of EEPROM
 
 
@@ -36,27 +36,23 @@
 const uint8_t jumperPins[JUMPER_PINS] = { 1, 0, A6, A7 };
 
 // The digital IO pins.
-const uint8_t ioPins[IO_PINS]      = { 3, 2, A3, A2, A1, A0, 13, 12 };
-
-
-// EEPROM persistance of output pin types.
-uint8_t outputTypes[IO_PINS]  = { OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, 
-                                  OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE };
+const uint8_t ioPins[IO_PINS]         = { 3, 2, A3, A2, A1, A0, 13, 12 };
 
 
 // The i2c ID of the module.
-uint8_t moduleID = 0;
+uint8_t moduleID  = 0;
 
 // Ticking
-long now       = 0;
-long tickServo = 0;
-long tickLed   = 0;
+long    now       = 0;
+long    tickServo = 0;
+long    tickLed   = 0;
 
 
 // An Array of Output control structures.
 struct 
 {
     Servo   servo;          // The Servo (if there is one).
+    uint8_t type   = 0;     // The type of the output.
     uint8_t start  = 0;     // The value we started at.
     uint8_t target = 0;     // The value we want to reach.
     uint8_t steps  = 0;     // The number of steps to take.
@@ -84,17 +80,29 @@ void setup()
     else
     {
         // Recover state from EEPROM.
-        EEPROM.get(TYPE_BASE,  outputTypes);
         for (uint8_t pin = 0; pin < IO_PINS; pin++)
         {
+            EEPROM.get(TYPE_BASE  + pin, outputs[pin].type);
             EEPROM.get(VALUE_BASE + pin, outputs[pin].value);
         }
+    }
+
+    // Report state from EEPROM
+    for (int pin = 0; pin < IO_PINS; pin++)
+    {
+        Serial.print("Init ");
+        Serial.print(pin);
+        Serial.print(" type 0x");
+        Serial.print(outputs[pin].type, HEX);
+        Serial.print(" value 0x");
+        Serial.print(outputs[pin].value, HEX);
+        Serial.println();
     }
 
     // DEBUG - move LED 0 and servo 1
     int pin = 0;
 
-    outputTypes[pin]    = OUTPUT_TYPE_LED;
+    setOutputType(pin, OUTPUT_TYPE_LED);
     outputs[pin].start  = 0;
     outputs[pin].target = 180;
     outputs[pin].steps  = 10;
@@ -102,10 +110,10 @@ void setup()
     outputs[pin].state  = 1;
     outputs[pin].alt    = 180;
     outputs[pin].value  = 0;
-    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 0; // aDelay;
+    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 1; // aDelay;
 
     pin += 1;
-    outputTypes[pin]    = OUTPUT_TYPE_LED;
+    setOutputType(pin, OUTPUT_TYPE_LED);
     outputs[pin].start  = 0;
     outputs[pin].target = 180;
     outputs[pin].steps  = 10;
@@ -113,10 +121,10 @@ void setup()
     outputs[pin].state  = 0;
     outputs[pin].alt    = 180;
     outputs[pin].value  = 0;
-    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 1; // aDelay;
+    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 2; // aDelay;
 
 //    pin += 1;
-//    outputTypes[pin]    = OUTPUT_TYPE_SERVO;
+//    setOutputType(pin, OUTPUT_TYPE_LED);
 //    outputs[pin].start  = 0;
 //    outputs[pin].target = 180;
 //    outputs[pin].steps  = 10;
@@ -126,18 +134,6 @@ void setup()
 //    outputs[pin].value  = 0;
 //    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 0; // aDelay;
     
-    // Report state from EEPROM
-    for (int pin = 0; pin < IO_PINS; pin++)
-    {
-        Serial.print("Init ");
-        Serial.print(pin);
-        Serial.print(" type 0x");
-        Serial.print(outputTypes[pin], HEX);
-        Serial.print(" value 0x");
-        Serial.print(outputs[pin].value, HEX);
-        Serial.println();
-    }
-
     // Configure the Jumper pins for input.
     for (int pin = 0; pin < JUMPER_PINS; pin++)
     {
@@ -161,7 +157,7 @@ void setup()
     // Initialise all the outputs (from state saved in EEPROM).
     for (int pin = 0; pin < IO_PINS; pin++)
     {
-        setOutputType(pin, outputTypes[pin]);  
+        setOutputType(pin, outputs[pin].type);  
     }
     
     // Start i2c communications.
@@ -186,9 +182,9 @@ void firstRun()
     systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
 
     // Initialise EEPROM with suitable data.
-    EEPROM.put(TYPE_BASE,   outputTypes);
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
+        EEPROM.put(TYPE_BASE  + pin, OUTPUT_TYPE_NONE);
         EEPROM.put(VALUE_BASE + pin, 90);
     }
     
@@ -201,19 +197,19 @@ void firstRun()
  */
 void setOutputType(int aPin, uint8_t aType)
 {
-    if (aType != outputTypes[aPin])
+    if (aType != outputs[aPin].type)
     {
         // Remove/disable old type.
-        if (   (outputTypes[aPin] == OUTPUT_TYPE_SERVO)
-            || (outputTypes[aPin] == OUTPUT_TYPE_SIGNAL))
+        if (   (outputs[aPin].type == OUTPUT_TYPE_SERVO)
+            || (outputs[aPin].type == OUTPUT_TYPE_SIGNAL))
         {
             // Detach servo.
             outputs[aPin].servo.detach();
         }
 
         // Record the change.
-        outputTypes[aPin] = aType;
-        EEPROM.put(TYPE_BASE, outputTypes);
+        outputs[aPin].type = aType;
+        EEPROM.put(TYPE_BASE + aPin, aType);
     }
 
     // Establish new type.
@@ -276,7 +272,7 @@ void processRequest(int aLen)
         Serial.println();
 
         // If the pin's type has changed, action it.
-        if (type != outputTypes[pin])
+        if (type != outputs[pin].type)
         {
             setOutputType(pin, type);
         }
@@ -355,7 +351,7 @@ void stepOutputs(boolean isServo, uint8_t aType)
     // Move any Outputs that need moving.
     for (int pin = 0; pin < IO_PINS; pin++)
     {
-        if (outputTypes[pin] == aType)
+        if (outputs[pin].type == aType)
         {
             if (   (outputs[pin].delay == 0)
                 || (outputs[pin].delay <= now))
@@ -461,7 +457,7 @@ void loop()
     // Set LED Outputs based on their intensity state, using the clock to generate a PWM signal.
     for (int pin = 0; pin < IO_PINS; pin++)
     {
-        if (outputTypes[pin] == OUTPUT_TYPE_LED)
+        if (outputs[pin].type == OUTPUT_TYPE_LED)
         {
             boolean on  =    outputs[pin].value >  0 
                           && outputs[pin].value >= (now & 0xff);
