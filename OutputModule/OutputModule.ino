@@ -154,7 +154,7 @@ void setup()
     // Initialise all the outputs (from state saved in EEPROM).
     for (int pin = 0; pin < IO_PINS; pin++)
     {
-        setPinType(pin, outputTypes[pin]);  
+        setOutputType(pin, outputTypes[pin]);  
     }
     
     // Start i2c communications.
@@ -190,7 +190,7 @@ void firstRun()
 /** Set the Type of a pin.
  *  Remove/disconnect previous type if necessary.
  */
-void setPinType(int aPin, uint8_t aType)
+void setOutputType(int aPin, uint8_t aType)
 {
     if (aType != outputTypes[aPin])
     {
@@ -269,7 +269,7 @@ void processRequest(int aLen)
         // If the pin's type has changed, action it.
         if (type != outputTypes[pin])
         {
-            setPinType(pin, type);
+            setOutputType(pin, type);
         }
 
         // Recover starting position for output.
