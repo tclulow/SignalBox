@@ -138,7 +138,7 @@ void setup()
         EEPROM.get(IO_BASE,    ioStates);
     }
 
-    // DEBUG
+    // DEBUG - move a servo
     outputTypes[1]   = OUTPUT_TYPE_SERVO;
     outputStates[1]  = 0x0;
     outputs[1].state = 0x0;
