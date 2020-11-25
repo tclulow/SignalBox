@@ -16,8 +16,7 @@
 #define SYSTEM_BASE   0                                         // SystemData goes here
 #define TYPE_BASE     SYSTEM_BASE + sizeof(systemData)          // Base of Output type data.
 #define VALUE_BASE    TYPE_BASE   + sizeof(outputTypes)         // Base of Output state data.
-#define IO_BASE       VALUE_BASE  + IO_PINS * sizeof(uint8_t)   // Base of IO states data. 
-#define EEPROM_END    IO_BASE     + sizeof(ioStates)            // Size of EEPROM
+#define EEPROM_END    VALUE_BASE  + IO_PINS * sizeof(uint8_t)   // Size of EEPROM
 
 
 #define STEP_SERVO          50   // Delay (msecs) between steps of a Servo.
@@ -43,9 +42,6 @@ const uint8_t ioPins[IO_PINS]      = { 3, 2, A3, A2, A1, A0, 13, 12 };
 // EEPROM persistance of output pin types.
 uint8_t outputTypes[IO_PINS]  = { OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, 
                                   OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE };
-
-// EEPROM persistance of IO states.
-uint8_t ioStates[IO_PINS]     = { 0, 0, 0, 0, 0, 0, 0, 0 }; 
 
 
 // The i2c ID of the module.
@@ -93,7 +89,6 @@ void setup()
         {
             EEPROM.get(VALUE_BASE + pin, outputs[pin].value);
         }
-        EEPROM.get(IO_BASE,    ioStates);
     }
 
     // DEBUG - move LED 0 and servo 1
@@ -140,8 +135,6 @@ void setup()
         Serial.print(outputTypes[pin], HEX);
         Serial.print(" value 0x");
         Serial.print(outputs[pin].value, HEX);
-        Serial.print(" io ");
-        Serial.print(ioStates[pin] ? "Hi" : "Lo");
         Serial.println();
     }
 
@@ -198,7 +191,6 @@ void firstRun()
     {
         EEPROM.put(VALUE_BASE + pin, 90);
     }
-    EEPROM.put(IO_BASE,     ioStates);
     
     EEPROM.put(SYSTEM_BASE, systemData);
 }
