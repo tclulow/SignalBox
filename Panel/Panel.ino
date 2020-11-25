@@ -431,6 +431,10 @@ void processInputOutputs(uint8_t aNewState)
     }
     else
     {
+        // Get initial delay from Input's zeroth output.
+        loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
+        delay = outputData.pace & OUTPUT_DELAY_MASK;
+        
         for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
         {
             delay = processInputOutput(index, aNewState, delay);
@@ -440,6 +444,7 @@ void processInputOutputs(uint8_t aNewState)
 
 
 /** Process an Input's n'th Output, setting it to the given state.
+ *  Accumulate delay before or after movement depending on direction outputs are being processed.
  */
 uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
 {
@@ -467,7 +472,7 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
             outputData.type &= ~OUTPUT_STATE;   // Clear output state
         }
             
-        sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, delay, outputData.type & OUTPUT_STATE);
+        sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, (aNewState ? delay : aDelay), outputData.type & OUTPUT_STATE);
         saveOutput();
     }
 
