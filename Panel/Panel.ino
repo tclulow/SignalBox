@@ -349,7 +349,7 @@ int readInputNode(int node)
     else
     {
         value = Wire.read()
-                    + (Wire.read() << 8);
+              + (Wire.read() << 8);
     }
 
     return value;
