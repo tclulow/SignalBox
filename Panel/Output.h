@@ -26,9 +26,9 @@
 #define OUTPUT_DELAY_MASK      0x0f   // Delay will be right-most nibble of output.pace.
 
 // Defaults when initialising
-#define OUTPUT_DEFAULT_LO        89   // Default low  position is 90 degrees - 1.
-#define OUTPUT_DEFAULT_HI        91   // Default high position is 90 degrees + 1.
-#define OUTPUT_DEFAULT_PACE    0x80   // Default pace is mid-range, no delay.
+#define OUTPUT_DEFAULT_LO        90   // Default low  position is 90 degrees.
+#define OUTPUT_DEFAULT_HI        90   // Default high position is 90 degrees.
+#define OUTPUT_DEFAULT_PACE    0xc0   // Default pace is mid-range, no delay.
 
 
 /** Data describing an Output's operation.
