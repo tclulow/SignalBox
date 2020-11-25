@@ -13,11 +13,11 @@
 
 
 // Output state saved in EEPROM
-#define SYSTEM_BASE   0                                   // SystemData goes here
-#define TYPE_BASE     SYSTEM_BASE + sizeof(systemData)    // Base of Output type data.
-#define VALUE_BASE    TYPE_BASE   + sizeof(outputTypes)   // Base of Output state data.
-#define IO_BASE       VALUE_BASE  + sizeof(outputValues)  // Base of IO states data. 
-#define EEPROM_END    IO_BASE     + sizeof(ioStates)      // Size of EEPROM
+#define SYSTEM_BASE   0                                         // SystemData goes here
+#define TYPE_BASE     SYSTEM_BASE + sizeof(systemData)          // Base of Output type data.
+#define VALUE_BASE    TYPE_BASE   + sizeof(outputTypes)         // Base of Output state data.
+#define IO_BASE       VALUE_BASE  + IO_PINS * sizeof(uint8_t)   // Base of IO states data. 
+#define EEPROM_END    IO_BASE     + sizeof(ioStates)            // Size of EEPROM
 
 
 #define STEP_SERVO          50   // Delay (msecs) between steps of a Servo.
@@ -43,9 +43,6 @@ const uint8_t ioPins[IO_PINS]      = { 3, 2, A3, A2, A1, A0, 13, 12 };
 // EEPROM persistance of output pin types.
 uint8_t outputTypes[IO_PINS]  = { OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, 
                                   OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE, OUTPUT_TYPE_NONE };
-
-// EEPROM persistance of Output values.
-uint8_t outputValues[IO_PINS] = { 90, 90, 90, 90, 90, 90, 90, 90 };
 
 // EEPROM persistance of IO states.
 uint8_t ioStates[IO_PINS]     = { 0, 0, 0, 0, 0, 0, 0, 0 }; 
@@ -92,7 +89,10 @@ void setup()
     {
         // Recover state from EEPROM.
         EEPROM.get(TYPE_BASE,  outputTypes);
-        EEPROM.get(VALUE_BASE, outputValues);
+        for (uint8_t pin = 0; pin < IO_PINS; pin++)
+        {
+            EEPROM.get(VALUE_BASE + pin, outputs[pin].value);
+        }
         EEPROM.get(IO_BASE,    ioStates);
     }
 
@@ -100,7 +100,6 @@ void setup()
     int pin = 0;
 
     outputTypes[pin]    = OUTPUT_TYPE_LED;
-    outputValues[pin]   = 0x0;
     outputs[pin].start  = 0;
     outputs[pin].target = 180;
     outputs[pin].steps  = 10;
@@ -112,7 +111,6 @@ void setup()
 
     pin += 1;
     outputTypes[pin]    = OUTPUT_TYPE_LED;
-    outputValues[pin]   = 0x0;
     outputs[pin].start  = 0;
     outputs[pin].target = 180;
     outputs[pin].steps  = 10;
@@ -124,7 +122,6 @@ void setup()
 
 //    pin += 1;
 //    outputTypes[pin]    = OUTPUT_TYPE_SERVO;
-//    outputValues[pin]   = 0x0;
 //    outputs[pin].start  = 0;
 //    outputs[pin].target = 180;
 //    outputs[pin].steps  = 10;
@@ -142,7 +139,7 @@ void setup()
         Serial.print(" type 0x");
         Serial.print(outputTypes[pin], HEX);
         Serial.print(" value 0x");
-        Serial.print(outputValues[pin], HEX);
+        Serial.print(outputs[pin].value, HEX);
         Serial.print(" io ");
         Serial.print(ioStates[pin] ? "Hi" : "Lo");
         Serial.println();
@@ -197,7 +194,10 @@ void firstRun()
 
     // Initialise EEPROM with suitable data.
     EEPROM.put(TYPE_BASE,   outputTypes);
-    EEPROM.put(VALUE_BASE,  outputValues);
+    for (uint8_t pin = 0; pin < IO_PINS; pin++)
+    {
+        EEPROM.put(VALUE_BASE + pin, 90);
+    }
     EEPROM.put(IO_BASE,     ioStates);
     
     EEPROM.put(SYSTEM_BASE, systemData);
@@ -228,7 +228,7 @@ void setOutputType(int aPin, uint8_t aType)
     if (   (aType == OUTPUT_TYPE_SERVO)
         || (aType == OUTPUT_TYPE_SIGNAL))
     {
-        outputs[aPin].servo.write(outputValues[aPin]);
+        outputs[aPin].servo.write(outputs[aPin].value);
         outputs[aPin].servo.attach(OUTPUT_BASE_PIN + aPin);
     }
 }
@@ -388,26 +388,24 @@ void stepOutput(int aPin, boolean isServo)
         if (outputs[aPin].step == outputs[aPin].steps)
         {
             // Last step, make sure to hit the target bang-on.
-            outputValues[aPin] = outputs[aPin].target;
-            outputs[aPin].alt  = 0;
+            outputs[aPin].value = outputs[aPin].target;
+            outputs[aPin].alt   = 0;
             
             // Record Output's value.
-            EEPROM.put(VALUE_BASE + aPin, outputValues[aPin]);
+            EEPROM.put(VALUE_BASE + aPin, outputs[aPin].value);
         }
         else
         {
             // Intermediate step, move proportionately (step/steps) along the range (start to target).
-            outputValues[aPin] = outputs[aPin].start + (outputs[aPin].target - outputs[aPin].start) * outputs[aPin].step / outputs[aPin].steps;
+            outputs[aPin].value = outputs[aPin].start + (outputs[aPin].target - outputs[aPin].start) * outputs[aPin].step / outputs[aPin].steps;
             outputs[aPin].alt -= outputs[aPin].alt / (outputs[aPin].steps + 1 - outputs[aPin].step);
             working = true;
         }
 
-        outputs[aPin].value = outputValues[aPin];
-
         // Ensure Servos move to new state.
         if (isServo)
         {
-            outputs[aPin].servo.write(outputValues[aPin]);
+            outputs[aPin].servo.write(outputs[aPin].value);
         }
 
         // Test code to report activity.
