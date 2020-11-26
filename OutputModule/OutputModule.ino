@@ -1,7 +1,5 @@
-
 /** OutputModule.
  */
-
 
 #include <EEPROM.h>
 #include <Servo.h>
@@ -86,6 +84,8 @@ void setup()
         {
             EEPROM.get(TYPE_BASE  + pin, outputs[pin].type);
             EEPROM.get(VALUE_BASE + pin, outputs[pin].value);
+            outputs[pin].alt = outputs[pin].value;              // TODO - find somewhere to save the right value,
+                                                                // or keep state so can set correct value/alt and clear the other.
         }
     }
 
@@ -104,49 +104,60 @@ void setup()
     // DEBUG - move LED 0 and servo 1
     int pin = 0;
 
-    setOutputType(pin, OUTPUT_TYPE_SERVO);
-    outputs[pin].start  = 0;
+//    setOutputType(pin, OUTPUT_TYPE_SERVO);
+//    outputs[pin].start  = 0;
+//    outputs[pin].target = 180;
+//    outputs[pin].steps  = 10;
+//    outputs[pin].step   = 0;
+//    outputs[pin].state  = 1;
+//    outputs[pin].alt    = 101 + pin;
+//    outputs[pin].value  = 101 + pin;
+//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * pin;
+//    pin += 1;
+//
+//    setOutputType(pin, OUTPUT_TYPE_SERVO);
+//    outputs[pin].start  = 180;
+//    outputs[pin].target = 0;
+//    outputs[pin].steps  = 10;
+//    outputs[pin].step   = 0;
+//    outputs[pin].state  = 0;
+//    outputs[pin].alt    = 101 + pin;
+//    outputs[pin].value  = 101 + pin;
+//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * pin;
+//    pin += 1;
+//
+//    setOutputType(pin, OUTPUT_TYPE_LED);
+//    outputs[pin].start  = 101 + pin;
+//    outputs[pin].target = 180;
+//    outputs[pin].steps  = 10;
+//    outputs[pin].step   = 0;
+//    outputs[pin].state  = 1;
+//    outputs[pin].alt    = 180;
+//    outputs[pin].value  = 101 + pin;
+//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * pin;
+//    pin += 1;
+//
+//    setOutputType(pin, OUTPUT_TYPE_LED);
+//    outputs[pin].start  = 101 + pin;
+//    outputs[pin].target = 180;
+//    outputs[pin].steps  = 10;
+//    outputs[pin].step   = 0;
+//    outputs[pin].state  = 0;
+//    outputs[pin].alt    = 101 + pin;
+//    outputs[pin].value  = 180;
+//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * pin;
+//    pin += 1;
+//
+    setOutputType(pin, OUTPUT_TYPE_BLINK);
+    outputs[pin].start  = 179;
     outputs[pin].target = 180;
     outputs[pin].steps  = 10;
-    outputs[pin].step   = 0;
+    outputs[pin].step   = 10;
     outputs[pin].state  = 1;
-    outputs[pin].alt    = 180;
+    outputs[pin].alt    = 179;
     outputs[pin].value  = 0;
-    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 1; // aDelay;
+    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 5;
     pin += 1;
-
-//    setOutputType(pin, OUTPUT_TYPE_LED);
-//    outputs[pin].start  = 0;
-//    outputs[pin].target = 180;
-//    outputs[pin].steps  = 100;
-//    outputs[pin].step   = 0;
-//    outputs[pin].state  = 1;
-//    outputs[pin].alt    = 180;
-//    outputs[pin].value  = 0;
-//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 1; // aDelay;
-//    pin += 1;
-//
-//    setOutputType(pin, OUTPUT_TYPE_LED);
-//    outputs[pin].start  = 0;
-//    outputs[pin].target = 180;
-//    outputs[pin].steps  = 10;
-//    outputs[pin].step   = 0;
-//    outputs[pin].state  = 0;
-//    outputs[pin].alt    = 180;
-//    outputs[pin].value  = 0;
-//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 2; // aDelay;
-//    pin += 1;
-//
-//    setOutputType(pin, OUTPUT_TYPE_BLINK);
-//    outputs[pin].start  = 0;
-//    outputs[pin].target = 180;
-//    outputs[pin].steps  = 10;
-//    outputs[pin].step   = 0;
-//    outputs[pin].state  = 1;
-//    outputs[pin].alt    = 0;
-//    outputs[pin].value  = 180;
-//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 3; // aDelay;
-//    pin += 1;
 //
 //    setOutputType(pin, OUTPUT_TYPE_BLINK);
 //    outputs[pin].start  = 0;
@@ -156,7 +167,7 @@ void setup()
 //    outputs[pin].state  = 0;
 //    outputs[pin].alt    = 180;
 //    outputs[pin].value  = 0;
-//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 4; // aDelay;
+//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 5;
 //    pin += 1;
 //
 //    setOutputType(pin, OUTPUT_TYPE_LED);
@@ -167,7 +178,7 @@ void setup()
 //    outputs[pin].state  = 1;
 //    outputs[pin].alt    = 0;
 //    outputs[pin].value  = 0;
-//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 0; // aDelay;
+//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 0;
 //    pin += 1;
 
     while (pin < IO_PINS)
@@ -285,7 +296,6 @@ void processRequest(int aLen)
     
         uint8_t pin    = Wire.read();
         uint8_t type   = 0;
-        uint8_t start  = 0;
         uint8_t target = Wire.read();
         uint8_t pace   = Wire.read();
         uint8_t state  = Wire.read();  
@@ -319,21 +329,44 @@ void processRequest(int aLen)
             setOutputType(pin, type);
         }
 
+        // Set the Output's movement characteristics.
+        if (   (type == OUTPUT_TYPE_SERVO)
+            || (type == OUTPUT_TYPE_SIGNAL))
+        {
+            outputs[pin].start = outputs[pin].value;    // start = outputs[pin].servo.read();
+        }
+        else
+        {
+            outputs[pin].start = 0;
+        }
+        outputs[pin].target = target;
+        outputs[pin].steps  = (MAX_PACE - pace) * abs((target - outputs[pin].start)) / PACE_STEPS + 1;
+        outputs[pin].step   = 0;
+        outputs[pin].delay  = millis() + DELAY_MULTIPLIER * delay;
+
         // Decide upon starting position.
         if (   (type == OUTPUT_TYPE_SERVO)
             || (type == OUTPUT_TYPE_SIGNAL))
         {
-            start = outputs[pin].value;   // start = outputs[pin].servo.read();
             digitalWrite(ioPins[pin], state);
         }
         else if (type == OUTPUT_TYPE_LED)
         {
-            // start = 0;
+            // outputs[pin].start = 0;
         }
         else if (   (type == OUTPUT_TYPE_FLASH)
                  || (type == OUTPUT_TYPE_BLINK))
         {
-            start = outputs[pin].value;
+            if (state)
+            {
+                outputs[pin].start  = outputs[pin].alt;
+            }
+            else
+            {
+                outputs[pin].target = outputs[pin].value;
+                outputs[pin].start  = target; 
+            }
+            outputs[pin].step = outputs[pin].steps;
         }
         else
         {
@@ -341,15 +374,6 @@ void processRequest(int aLen)
             Serial.print(type);
             Serial.println();
         }
-
-        // Set the Output's movement characteristics.
-        outputs[pin].start  = start;
-        outputs[pin].target = target;
-        outputs[pin].steps  = (MAX_PACE - pace) * abs((target - start)) / PACE_STEPS + 1;
-        outputs[pin].step   = 1;
-        outputs[pin].alt    = outputs[pin].value;
-        outputs[pin].value  = start;
-        outputs[pin].delay  = millis() + DELAY_MULTIPLIER * delay;
 
         reportOutput(pin);
     }
@@ -392,28 +416,29 @@ void reportOutput(uint8_t aPin)
 }
 
 
-/** Step all the outputs of the particular type if necessary.
+/** Step all the Servos if necessary.
  */
-void stepOutputs(boolean isServo, uint8_t aType)
+void stepServos()
 {
     // Move any Outputs that need moving.
     for (int pin = 0; pin < IO_PINS; pin++)
     {
-        if (outputs[pin].type == aType)
+        if (   (outputs[pin].type == OUTPUT_TYPE_SERVO)
+            || (outputs[pin].type == OUTPUT_TYPE_SIGNAL))
         {
             if (   (outputs[pin].delay == 0)
                 || (outputs[pin].delay <= now))
             {
-                stepOutput(pin, isServo);
+                stepServo(pin);
             }
         }
     }
 }
 
 
-/** Step an Output to its next position.
+/** Step a Servo to its next position.
  */
-void stepOutput(int aPin, boolean isServo)
+void stepServo(int aPin)
 {
     if (outputs[aPin].step < outputs[aPin].steps)
     {
@@ -423,7 +448,6 @@ void stepOutput(int aPin, boolean isServo)
         {
             // Last step, make sure to hit the target bang-on.
             outputs[aPin].value = outputs[aPin].target;
-            outputs[aPin].alt   = 0;
             
             // Record Output's value.
             EEPROM.put(VALUE_BASE + aPin, outputs[aPin].value);
@@ -432,19 +456,83 @@ void stepOutput(int aPin, boolean isServo)
         {
             // Intermediate step, move proportionately (step/steps) along the range (start to target).
             outputs[aPin].value = outputs[aPin].start + (outputs[aPin].target - outputs[aPin].start) * outputs[aPin].step / outputs[aPin].steps;
-            outputs[aPin].alt -= outputs[aPin].alt / (outputs[aPin].steps + 1 - outputs[aPin].step);
         }
 
         // Ensure Servos move to new state.
-        if (isServo)
+        outputs[aPin].servo.write(outputs[aPin].value);
+        digitalWrite(LED_BUILTIN, HIGH);                    // Indicate work in progress;
+
+        // Test code to report activity.
+//        if (   (outputs[aPin].step == 1)
+//            || (outputs[aPin].step == outputs[aPin].steps))
         {
-            outputs[aPin].servo.write(outputs[aPin].value);
-            digitalWrite(LED_BUILTIN, HIGH);                    // Indicate work in progress;
+            reportOutput(aPin);
+        }
+    }
+}
+
+
+/** Step all the Leds if necessary.
+ */
+void stepLeds()
+{
+    // Move any Leds that need moving.
+    for (int pin = 0; pin < IO_PINS; pin++)
+    {
+        if (outputs[pin].type == OUTPUT_TYPE_LED)
+        {
+            if (   (outputs[pin].delay == 0)
+                || (outputs[pin].delay <= now))
+            {
+                stepLed(pin);
+            }
+        }
+    }
+}
+
+
+/** Step a Led to its next intensity.
+ */
+void stepLed(int aPin)
+{
+    if (outputs[aPin].step < outputs[aPin].steps)
+    {
+        outputs[aPin].step += 1;
+
+        if (outputs[aPin].step == outputs[aPin].steps)
+        {
+            // Last step, make sure to hit the target bang-on.
+            if (outputs[aPin].state)
+            {
+                outputs[aPin].value = outputs[aPin].target;
+                outputs[aPin].alt   = 0;
+                EEPROM.put(VALUE_BASE + aPin, outputs[aPin].value);
+            }
+            else
+            {
+                outputs[aPin].alt   = outputs[aPin].start;
+                outputs[aPin].value = 0;
+                EEPROM.put(VALUE_BASE + aPin, outputs[aPin].alt);
+            }
+        }
+        else
+        {
+            // Intermediate step, move proportionately (step/steps) along the range (start to target).
+            if (outputs[aPin].state)
+            {
+                outputs[aPin].value  = outputs[aPin].target * outputs[aPin].step / outputs[aPin].steps;
+                outputs[aPin].alt   -= outputs[aPin].alt   / (outputs[aPin].steps + 1 - outputs[aPin].step);
+            }
+            else
+            {
+                outputs[aPin].alt    = outputs[aPin].target * outputs[aPin].step / outputs[aPin].steps;
+                outputs[aPin].value -= outputs[aPin].value / (outputs[aPin].steps + 1 - outputs[aPin].step);
+            }
         }
 
         // Test code to report activity.
-        if (   (outputs[aPin].step == 1)
-            || (outputs[aPin].step == outputs[aPin].steps))
+//        if (   (outputs[aPin].step == 1)
+//            || (outputs[aPin].step == outputs[aPin].steps))
         {
             reportOutput(aPin);
         }
@@ -485,26 +573,28 @@ void stepFlash(uint8_t aPin)
             outputs[aPin].steps = 0;
 
             // Decide if to finish with output Hi or Lo
-            if (   (outputs[aPin].type ==    OUTPUT_TYPE_FLASH)
+            if (   (outputs[aPin].type == OUTPUT_TYPE_FLASH)
                 && (outputs[aPin].state))
             {
                 outputs[aPin].value = outputs[aPin].target;
                 outputs[aPin].alt   = 0;
+                EEPROM.put(VALUE_BASE + aPin, outputs[aPin].value);
             }
             else
             {
                 outputs[aPin].value = 0;
-                outputs[aPin].alt   = outputs[aPin].target;
+                outputs[aPin].alt   = outputs[aPin].start;
+                EEPROM.put(VALUE_BASE + aPin, outputs[aPin].alt);
             }
         }
         else
         {
             // Flash opposite way.
-            outputs[aPin].step = 0;
+            outputs[aPin].step = 1;
             if (outputs[aPin].value)
             {
                 outputs[aPin].value = 0;
-                outputs[aPin].alt   = outputs[aPin].target;
+                outputs[aPin].alt   = outputs[aPin].start;
             }
             else
             {
@@ -553,15 +643,14 @@ void loop()
     {
         tickServo = now;
         digitalWrite(LED_BUILTIN, LOW);       // Assume no work in progress.
-        stepOutputs(true, OUTPUT_TYPE_SERVO);
-        stepOutputs(true, OUTPUT_TYPE_SIGNAL);
+        stepServos();
     }
 
     // Every STEP_LED msecs, step the LEDs if necessary
     if ((now - tickLed) > STEP_LED)
     {
         tickLed = now;
-        stepOutputs(false, OUTPUT_TYPE_LED);
+        stepLeds();
     }
     
     // Every STEP_FLASH msecs, step the FLASH/BLINKs if necessary
@@ -576,21 +665,10 @@ void loop()
     {
         if (outputs[pin].type == OUTPUT_TYPE_LED)
         {
-            boolean on  =    outputs[pin].value >  0 
-                          && outputs[pin].value >= (now & 0xff);
-            boolean alt =    outputs[pin].alt   >  0 
-                          && outputs[pin].alt   >= (now & 0xff);
-            if (outputs[pin].state)
-            {
-                digitalWrite(OUTPUT_BASE_PIN + pin,  on);
-                digitalWrite(ioPins[pin],           alt);
-            }
-            else
-            {
-                digitalWrite(OUTPUT_BASE_PIN + pin, alt);
-                digitalWrite(ioPins[pin],            on);
-            }
-            
+            digitalWrite(OUTPUT_BASE_PIN + pin,    outputs[pin].value >  0 
+                                                && outputs[pin].value >= (now & 0xff));
+            digitalWrite(ioPins[pin],              outputs[pin].alt   >  0 
+                                                && outputs[pin].alt   >= (now & 0xff));
 //            // DEBUG
 //            digitalWrite(LED_BUILTIN, on);
 //            Serial.print(now);
