@@ -104,10 +104,21 @@ void setup()
     // DEBUG - move LED 0 and servo 1
     int pin = 0;
 
+    setOutputType(pin, OUTPUT_TYPE_SERVO);
+    outputs[pin].start  = 0;
+    outputs[pin].target = 180;
+    outputs[pin].steps  = 10;
+    outputs[pin].step   = 0;
+    outputs[pin].state  = 1;
+    outputs[pin].alt    = 180;
+    outputs[pin].value  = 0;
+    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 1; // aDelay;
+    pin += 1;
+
 //    setOutputType(pin, OUTPUT_TYPE_LED);
 //    outputs[pin].start  = 0;
 //    outputs[pin].target = 180;
-//    outputs[pin].steps  = 10;
+//    outputs[pin].steps  = 100;
 //    outputs[pin].step   = 0;
 //    outputs[pin].state  = 1;
 //    outputs[pin].alt    = 180;
@@ -126,16 +137,16 @@ void setup()
 //    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 2; // aDelay;
 //    pin += 1;
 //
-    setOutputType(pin, OUTPUT_TYPE_BLINK);
-    outputs[pin].start  = 0;
-    outputs[pin].target = 180;
-    outputs[pin].steps  = 10;
-    outputs[pin].step   = 0;
-    outputs[pin].state  = 1;
-    outputs[pin].alt    = 0;
-    outputs[pin].value  = 180;
-    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 3; // aDelay;
-    pin += 1;
+//    setOutputType(pin, OUTPUT_TYPE_BLINK);
+//    outputs[pin].start  = 0;
+//    outputs[pin].target = 180;
+//    outputs[pin].steps  = 10;
+//    outputs[pin].step   = 0;
+//    outputs[pin].state  = 1;
+//    outputs[pin].alt    = 0;
+//    outputs[pin].value  = 180;
+//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 3; // aDelay;
+//    pin += 1;
 //
 //    setOutputType(pin, OUTPUT_TYPE_BLINK);
 //    outputs[pin].start  = 0;
@@ -308,20 +319,24 @@ void processRequest(int aLen)
             setOutputType(pin, type);
         }
 
-        // Recover starting position for output.
+        // Decide upon starting position.
         if (   (type == OUTPUT_TYPE_SERVO)
             || (type == OUTPUT_TYPE_SIGNAL))
         {
-            start = outputs[pin].servo.read();
+            start = outputs[pin].value;   // start = outputs[pin].servo.read();
+            digitalWrite(ioPins[pin], state);
         }
         else if (type == OUTPUT_TYPE_LED)
         {
             // start = 0;
         }
+        else if (   (type == OUTPUT_TYPE_FLASH)
+                 || (type == OUTPUT_TYPE_BLINK))
+        {
+            start = outputs[pin].value;
+        }
         else
         {
-//             || (type == OUTPUT_TYPE_FLASH)
-//             || (type == OUTPUT_TYPE_BLINK))
             Serial.print("Unknown outputType ");
             Serial.print(type);
             Serial.println();
@@ -400,12 +415,10 @@ void stepOutputs(boolean isServo, uint8_t aType)
  */
 void stepOutput(int aPin, boolean isServo)
 {
-    boolean working = false;
-    
     if (outputs[aPin].step < outputs[aPin].steps)
     {
         outputs[aPin].step += 1;
-        
+
         if (outputs[aPin].step == outputs[aPin].steps)
         {
             // Last step, make sure to hit the target bang-on.
@@ -420,13 +433,13 @@ void stepOutput(int aPin, boolean isServo)
             // Intermediate step, move proportionately (step/steps) along the range (start to target).
             outputs[aPin].value = outputs[aPin].start + (outputs[aPin].target - outputs[aPin].start) * outputs[aPin].step / outputs[aPin].steps;
             outputs[aPin].alt -= outputs[aPin].alt / (outputs[aPin].steps + 1 - outputs[aPin].step);
-            working = true;
         }
 
         // Ensure Servos move to new state.
         if (isServo)
         {
             outputs[aPin].servo.write(outputs[aPin].value);
+            digitalWrite(LED_BUILTIN, HIGH);                    // Indicate work in progress;
         }
 
         // Test code to report activity.
@@ -435,12 +448,6 @@ void stepOutput(int aPin, boolean isServo)
         {
             reportOutput(aPin);
         }
-    }
-
-    // Indicate working or not.
-    if (isServo)
-    {
-        digitalWrite(LED_BUILTIN, working);
     }
 }
 
@@ -478,7 +485,7 @@ void stepFlash(uint8_t aPin)
             outputs[aPin].steps = 0;
 
             // Decide if to finish with output Hi or Lo
-            if (   (outputs[aPin].type == OUTPUT_TYPE_FLASH)
+            if (   (outputs[aPin].type ==    OUTPUT_TYPE_FLASH)
                 && (outputs[aPin].state))
             {
                 outputs[aPin].value = outputs[aPin].target;
@@ -545,6 +552,7 @@ void loop()
     if ((now - tickServo) > STEP_SERVO)
     {
         tickServo = now;
+        digitalWrite(LED_BUILTIN, LOW);       // Assume no work in progress.
         stepOutputs(true, OUTPUT_TYPE_SERVO);
         stepOutputs(true, OUTPUT_TYPE_SIGNAL);
     }
