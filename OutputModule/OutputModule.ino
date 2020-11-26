@@ -21,6 +21,7 @@
 
 #define STEP_SERVO          50   // Delay (msecs) between steps of a Servo.
 #define STEP_LED             5   // delay (msecs) between steps of a LED.
+#define STEP_FLASH         100   // Delay (msecs) between flashes of a FLASH or BLINK.
 #define MAX_PACE           124   // Maximum pace value.
 #define PACE_STEPS         128   // Pace adjustment when converting to steps.
 
@@ -46,6 +47,7 @@ uint8_t moduleID  = 0;
 long    now       = 0;
 long    tickServo = 0;
 long    tickLed   = 0;
+long    tickFlash = 0;
 
 
 // An Array of Output control structures.
@@ -102,28 +104,50 @@ void setup()
     // DEBUG - move LED 0 and servo 1
     int pin = 0;
 
-    setOutputType(pin, OUTPUT_TYPE_LED);
+//    setOutputType(pin, OUTPUT_TYPE_LED);
+//    outputs[pin].start  = 0;
+//    outputs[pin].target = 180;
+//    outputs[pin].steps  = 10;
+//    outputs[pin].step   = 0;
+//    outputs[pin].state  = 1;
+//    outputs[pin].alt    = 180;
+//    outputs[pin].value  = 0;
+//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 1; // aDelay;
+//    pin += 1;
+//
+//    setOutputType(pin, OUTPUT_TYPE_LED);
+//    outputs[pin].start  = 0;
+//    outputs[pin].target = 180;
+//    outputs[pin].steps  = 10;
+//    outputs[pin].step   = 0;
+//    outputs[pin].state  = 0;
+//    outputs[pin].alt    = 180;
+//    outputs[pin].value  = 0;
+//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 2; // aDelay;
+//    pin += 1;
+//
+    setOutputType(pin, OUTPUT_TYPE_BLINK);
     outputs[pin].start  = 0;
     outputs[pin].target = 180;
     outputs[pin].steps  = 10;
     outputs[pin].step   = 0;
     outputs[pin].state  = 1;
-    outputs[pin].alt    = 180;
-    outputs[pin].value  = 0;
-    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 1; // aDelay;
-
+    outputs[pin].alt    = 0;
+    outputs[pin].value  = 180;
+    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 3; // aDelay;
     pin += 1;
-    setOutputType(pin, OUTPUT_TYPE_LED);
-    outputs[pin].start  = 0;
-    outputs[pin].target = 180;
-    outputs[pin].steps  = 10;
-    outputs[pin].step   = 0;
-    outputs[pin].state  = 0;
-    outputs[pin].alt    = 180;
-    outputs[pin].value  = 0;
-    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 2; // aDelay;
-
+//
+//    setOutputType(pin, OUTPUT_TYPE_BLINK);
+//    outputs[pin].start  = 0;
+//    outputs[pin].target = 180;
+//    outputs[pin].steps  = 10;
+//    outputs[pin].step   = 0;
+//    outputs[pin].state  = 0;
+//    outputs[pin].alt    = 180;
+//    outputs[pin].value  = 0;
+//    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 4; // aDelay;
 //    pin += 1;
+//
 //    setOutputType(pin, OUTPUT_TYPE_LED);
 //    outputs[pin].start  = 0;
 //    outputs[pin].target = 180;
@@ -133,7 +157,14 @@ void setup()
 //    outputs[pin].alt    = 0;
 //    outputs[pin].value  = 0;
 //    outputs[pin].delay  = millis() + DELAY_MULTIPLIER * 0; // aDelay;
+//    pin += 1;
+
+    while (pin < IO_PINS)
+    {
+        setOutputType(pin++, OUTPUT_TYPE_NONE);
+    }
     
+
     // Configure the Jumper pins for input.
     for (int pin = 0; pin < JUMPER_PINS; pin++)
     {
@@ -300,12 +331,12 @@ void processRequest(int aLen)
         outputs[pin].start  = start;
         outputs[pin].target = target;
         outputs[pin].steps  = (MAX_PACE - pace) * abs((target - start)) / PACE_STEPS + 1;
-        outputs[pin].step   = 0;
+        outputs[pin].step   = 1;
         outputs[pin].alt    = outputs[pin].value;
         outputs[pin].value  = start;
         outputs[pin].delay  = millis() + DELAY_MULTIPLIER * delay;
 
-        reportMovement(pin);
+        reportOutput(pin);
     }
 
     // Consume unexpected data.
@@ -318,12 +349,14 @@ void processRequest(int aLen)
 
 /** Report the status of an output during it's move
  */
-void reportMovement(uint8_t aPin)
+void reportOutput(uint8_t aPin)
 {
     // Report Output movement.
     Serial.print(millis());
-    Serial.print("\tMove: pin=");
+    Serial.print("\tOutput: pin=");
     Serial.print(aPin);
+    Serial.print(", type=");
+    Serial.print(outputs[aPin].type, HEX);
     Serial.print(", start=");
     Serial.print(outputs[aPin].start);
     Serial.print(", target=");
@@ -397,10 +430,10 @@ void stepOutput(int aPin, boolean isServo)
         }
 
         // Test code to report activity.
-//        if (   (outputs[aPin].step == 1)
-//            || (outputs[aPin].step == outputs[aPin].steps))
+        if (   (outputs[aPin].step == 1)
+            || (outputs[aPin].step == outputs[aPin].steps))
         {
-            reportMovement(aPin);
+            reportOutput(aPin);
         }
     }
 
@@ -409,6 +442,75 @@ void stepOutput(int aPin, boolean isServo)
     {
         digitalWrite(LED_BUILTIN, working);
     }
+}
+
+
+/** Step all the active FLASH/BLINK outputs.
+ */
+void stepFlashes()
+{
+    // Flash any Outputs that need flashing.
+    for (int pin = 0; pin < IO_PINS; pin++)
+    {
+        if (   (outputs[pin].type == OUTPUT_TYPE_FLASH)
+            || (outputs[pin].type == OUTPUT_TYPE_BLINK))
+        {
+            if (outputs[pin].steps > 0)
+            {
+                stepFlash(pin);
+            }
+        }
+    }
+}
+
+
+/** Flash the given output.
+ */
+void stepFlash(uint8_t aPin)
+{
+    outputs[aPin].step += 1;
+    if (outputs[aPin].step > outputs[aPin].steps)
+    {
+        if (   (outputs[aPin].delay > 0)
+            && (outputs[aPin].delay < now))
+        {
+            // Stop flashing.
+            outputs[aPin].steps = 0;
+
+            // Decide if to finish with output Hi or Lo
+            if (   (outputs[aPin].type == OUTPUT_TYPE_FLASH)
+                && (outputs[aPin].state))
+            {
+                outputs[aPin].value = outputs[aPin].target;
+                outputs[aPin].alt   = 0;
+            }
+            else
+            {
+                outputs[aPin].value = 0;
+                outputs[aPin].alt   = outputs[aPin].target;
+            }
+        }
+        else
+        {
+            // Flash opposite way.
+            outputs[aPin].step = 0;
+            if (outputs[aPin].value)
+            {
+                outputs[aPin].value = 0;
+                outputs[aPin].alt   = outputs[aPin].target;
+            }
+            else
+            {
+                outputs[aPin].value = outputs[aPin].target;
+                outputs[aPin].alt   = 0;
+            }
+        }
+        
+        digitalWrite(OUTPUT_BASE_PIN + aPin, outputs[aPin].value);
+        digitalWrite(ioPins[aPin],           outputs[aPin].alt);
+    }
+     
+    reportOutput(aPin);
 }
 
 
@@ -454,7 +556,14 @@ void loop()
         stepOutputs(false, OUTPUT_TYPE_LED);
     }
     
-    // Set LED Outputs based on their intensity state, using the clock to generate a PWM signal.
+    // Every STEP_FLASH msecs, step the FLASH/BLINKs if necessary
+    if ((now - tickFlash) > STEP_FLASH)
+    {
+        tickFlash = now;
+        stepFlashes();
+    }
+    
+    // Set LED Outputs based on their intensity value/alt, using the clock to generate a PWM signal.
     for (int pin = 0; pin < IO_PINS; pin++)
     {
         if (outputs[pin].type == OUTPUT_TYPE_LED)
