@@ -54,7 +54,7 @@ void initialise()
     delay(DELAY_START);             // Wait to avoid programmer conflicts.
     Serial.begin(115200);           // Serial IO.
     
-    for (int ind = 0;ind < strlen_P(M_VERSION); ind++)
+    for (int ind = 0; ind < strlen_P(M_VERSION); ind++)
     {
         char ch = pgm_read_byte_near(M_VERSION + ind);
         if (ch >= CHAR_ZERO && ch <= CHAR_NINE)
