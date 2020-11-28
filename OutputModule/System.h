@@ -33,12 +33,19 @@ SystemData systemData;
 /** Load SystemData from EEPROM
  *  Return true if valid
  */
-boolean loadSystemData();
+boolean loadSystemData()
+{
+    EEPROM.get(SYSTEM_BASE, systemData);
+    return systemData.magic != MAGIC_NUMBER;
+}
 
 
 /** Save SystemData.
  */
-void saveSystemData();
+void saveSystemData()
+{
+    EEPROM.put(SYSTEM_BASE, systemData);
+}
 
 
 #endif
