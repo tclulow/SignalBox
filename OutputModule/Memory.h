@@ -1,6 +1,5 @@
 /** Layout of EEPROM memory.
  */
-
 #ifndef _Memory_h
 #define _Memory_h
 
