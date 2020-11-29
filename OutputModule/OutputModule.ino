@@ -15,7 +15,7 @@
 
 #define STEP_SERVO          50   // Delay (msecs) between steps of a Servo.
 #define STEP_LED            10   // Delay (msecs) between steps of a LED.
-#define STEP_FLASH          20   // Delay (msecs) between steps of flashes of a FLASH or BLINK.
+#define STEP_FLASH          10   // Delay (msecs) between steps of flashes of a FLASH or BLINK.
 #define MAX_PACE           124   // Maximum pace value.
 #define PACE_STEPS         128   // Pace adjustment when converting to steps.
 
@@ -104,16 +104,10 @@ void setup()
     
     // Start i2c communications.
     Wire.begin(moduleID);
-    Wire.onReceive(processRequest);
+    Wire.onReceive(processReceipt);
 
     Serial.print("Module ID: 0x");
     Serial.println(moduleID, HEX);
-
-    // DEBUG - move LED 0 and servo 1
-    uint8_t pin     = 0;
-    uint8_t pace    = 117;  // 10 steps.
-    uint8_t delayBy = 1;
-    
 }
 
 
@@ -198,7 +192,7 @@ void setOutputType(int aPin, uint8_t aType)
 
 /** Upon receipt of a request, store it in the corresponding Output's controller.
  */
-void processRequest(int aLen)
+void processReceipt(int aLen)
 {
     Serial.print("Req: ");
     Serial.println(aLen);
@@ -211,7 +205,7 @@ void processRequest(int aLen)
     switch (command)
     {
         case COMMS_CMD_SET_HI:
-        case COMMS_CMD_SET_LO: actionRequest(pin, command == COMMS_CMD_SET_HI);
+        case COMMS_CMD_SET_LO: actionReceipt(pin, command == COMMS_CMD_SET_HI);
                                break;
         default:               Serial.print("Unrecognised command: ");
                                Serial.println(command, HEX);
@@ -256,58 +250,58 @@ void processRequest(int aLen)
 //        type = (pin >> OUTPUT_TYPE_SHIFT) & OUTPUT_TYPE_MASK;
 //        pin &= OUTPUT_PIN_MASK;
 //
-//        actionRequest(pin, type, target, pace, state, delay);
+//        actionReceipt(pin, type, target, pace, state, delay);
 //    }
 
 }
 
 
-/** Action a request.
- */
-void actionRequest(uint8_t aPin, uint8_t aType, uint8_t aTarget, uint8_t aPace, uint8_t aState, uint8_t aDelay)
-{
-    Serial.print(millis());
-    Serial.print("\tAction: ");
-    Serial.print("pin=");
-    Serial.print(aPin, HEX);    
-    Serial.print(", type=");
-    Serial.print(aType, HEX);    
-    Serial.print(", target=");
-    Serial.print(aTarget, HEX);    
-    Serial.print(", pace=");
-    Serial.print(aPace, HEX);    
-    Serial.print(", state=");
-    Serial.print(aState, HEX);    
-    Serial.print(", delay=");
-    Serial.print(aDelay);
-    Serial.println();
-
-    // If the pin's type has changed, action it.
-    if (aType != outputDefs[aPin].getType())
-    {
-        setOutputType(aPin, aType);
-    }
-
-    // Update Output's definition.
-    outputDefs[aPin].setState(aState);
-    if (aState)
-    {
-        outputDefs[aPin].setHi(aTarget);
-    }
-    else
-    {
-        outputDefs[aPin].setLo(aTarget); 
-    }
-    outputDefs[aPin].setPace(aPace);
-    outputDefs[aPin].setDelay(aDelay);
-
-    actionRequest(aPin, aState);
-}
+///** Action a request.
+// */
+//void actionReceipt(uint8_t aPin, uint8_t aType, uint8_t aTarget, uint8_t aPace, uint8_t aState, uint8_t aDelay)
+//{
+//    Serial.print(millis());
+//    Serial.print("\tAction: ");
+//    Serial.print("pin=");
+//    Serial.print(aPin, HEX);    
+//    Serial.print(", type=");
+//    Serial.print(aType, HEX);    
+//    Serial.print(", target=");
+//    Serial.print(aTarget, HEX);    
+//    Serial.print(", pace=");
+//    Serial.print(aPace, HEX);    
+//    Serial.print(", state=");
+//    Serial.print(aState, HEX);    
+//    Serial.print(", delay=");
+//    Serial.print(aDelay);
+//    Serial.println();
+//
+//    // If the pin's type has changed, action it.
+//    if (aType != outputDefs[aPin].getType())
+//    {
+//        setOutputType(aPin, aType);
+//    }
+//
+//    // Update Output's definition.
+//    outputDefs[aPin].setState(aState);
+//    if (aState)
+//    {
+//        outputDefs[aPin].setHi(aTarget);
+//    }
+//    else
+//    {
+//        outputDefs[aPin].setLo(aTarget); 
+//    }
+//    outputDefs[aPin].setPace(aPace);
+//    outputDefs[aPin].setDelay(aDelay);
+//
+//    actionReceipt(aPin, aState);
+//}
 
 
 /** Action the state change against the specified pin.
  */
-void actionRequest(uint8_t aPin, uint8_t aState)
+void actionReceipt(uint8_t aPin, uint8_t aState)
 {
     Serial.print(millis());
     Serial.print("\tAction: ");
@@ -323,11 +317,14 @@ void actionRequest(uint8_t aPin, uint8_t aState)
     outputs[aPin].step = 0;
     if (outputDefs[aPin].isServo())
     {
-        outputs[aPin].steps  =   (MAX_PACE - outputDefs[aPin].getAdjustedPace()) 
-                               * abs(outputDefs[aPin].getTarget() - outputDefs[aPin].getAltTarget())
-                               / PACE_STEPS 
-                             + 1;
-        digitalWrite(ioPins[aPin], aState);
+        uint32_t steps = abs(outputDefs[aPin].getTarget() - outputDefs[aPin].getAltTarget());
+        if (steps > OUTPUT_SERVO_MAX)
+        {
+            steps = OUTPUT_SERVO_MAX;
+        }
+        steps = steps * outputDefs[aPin].getPaceAsSteps()
+                      / OUTPUT_SERVO_MAX;
+        outputs[aPin].steps = steps + 1;
     }
     else if (outputDefs[aPin].isALed())
     {
@@ -338,7 +335,7 @@ void actionRequest(uint8_t aPin, uint8_t aState)
             outputDefs[aPin].setState(true);
         }
 
-        outputs[aPin].steps = (MAX_PACE - outputDefs[aPin].getAdjustedPace()) * 2 + 1;
+        outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
         if (outputDefs[aPin].isFlasher())
         {
             outputs[aPin].step  = outputs[aPin].steps;
@@ -416,6 +413,7 @@ void stepServo(int aPin)
     {
         outputs[aPin].step += 1;
 
+        // Calculate Servo's new position.
         if (outputs[aPin].step == outputs[aPin].steps)
         {
             // Last step, make sure to hit the target bang-on.
@@ -430,13 +428,23 @@ void stepServo(int aPin)
                                   / outputs[aPin].steps;
         }
 
-        // Ensure Servos move to new state.
+        // Set (or unset) Servo's digital pad when we're over halfway
+        if (outputDefs[aPin].getState())
+        {
+            digitalWrite(ioPins[aPin], outputs[aPin].step >  (outputs[aPin].steps >> 1));
+        }
+        else
+        {
+            digitalWrite(ioPins[aPin], outputs[aPin].step <= (outputs[aPin].steps >> 1));
+        }
+
+        // Move Servo to new state.
         outputs[aPin].servo.write(outputs[aPin].value);
         digitalWrite(LED_BUILTIN, HIGH);                    // Indicate work in progress;
 
-        // Test code to report activity.
-//        if (   (outputs[aPin].step == 1)
-//            || (outputs[aPin].step == outputs[aPin].steps))
+        // DEBUG Test code to report activity.
+        if (   (outputs[aPin].step == 1)
+            || (outputs[aPin].step == outputs[aPin].steps))
         {
             reportOutput(aPin);
         }
@@ -500,12 +508,12 @@ void stepLed(int aPin)
             }
         }
 
-        // Test code to report activity.
-        if (   (outputs[aPin].step == 1)
-            || (outputs[aPin].step == outputs[aPin].steps))
-        {
-            reportOutput(aPin);
-        }
+//        // DEBUG Test code to report activity.
+//        if (   (outputs[aPin].step == 1)
+//            || (outputs[aPin].step == outputs[aPin].steps))
+//        {
+//            reportOutput(aPin);
+//        }
     }
 }
 
@@ -572,12 +580,12 @@ void stepFlash(uint8_t aPin)
             }
         }
 
-        // Test code to report activity.
-        if (   (outputs[aPin].step  == 1)
-            || (outputs[aPin].steps == 0))
-        {
-            reportOutput(aPin);
-        }
+//        // DEBUG Test code to report activity.
+//        if (   (outputs[aPin].step  == 1)
+//            || (outputs[aPin].steps == 0))
+//        {
+//            reportOutput(aPin);
+//        }
     }
 
 //    // Test code to report activity.
@@ -664,20 +672,12 @@ void loop()
                                                 && outputs[pin].value >= (nowMicros & 0xff));
             digitalWrite(ioPins[pin],              outputs[pin].alt   >  0 
                                                 && outputs[pin].alt   >= (nowMicros & 0xff));
-            // DEBUG
-            if (pin == 0)
-            {
-                digitalWrite(LED_BUILTIN,    outputs[pin].value >  0 
-                                          && outputs[pin].value >= (nowMicros & 0xff));
-            }
 //            // DEBUG
-//            digitalWrite(LED_BUILTIN, on);
-//            Serial.print(now);
-//            Serial.print(" ");
-//            Serial.print(now & 0xff, HEX);
-//            Serial.print(on ? " 1" : " 0");
-//            Serial.println();
-//            delay(1001);
+//            if (pin == 0)
+//            {
+//                digitalWrite(LED_BUILTIN,    outputs[pin].value >  0 
+//                                          && outputs[pin].value >= (nowMicros & 0xff));
+//            }
         }
     }
 }
@@ -691,10 +691,10 @@ void test1()
     Serial.println();
 
     // outputDef.set(aType, aState, aLo, aHi, aPace, aDelay)
-//    outputDefs[pin].set(OUTPUT_TYPE_SERVO, false,  20, 180, pace, 1);   saveOutput(pin);   actionRequest(pin++, true);
-//    outputDefs[pin].set(OUTPUT_TYPE_LED,   false,  21, 181, pace, 0);   saveOutput(pin);   actionRequest(pin++, true);
-//  outputDefs[pin].set(OUTPUT_TYPE_FLASH, false,  22, 182, 0xe, 4);   saveOutput(pin);   actionRequest(pin++, true);
-    outputDefs[pin].set(OUTPUT_TYPE_BLINK, false,  23, 183, 0xe, 4);   saveOutput(pin);   actionRequest(pin++, true);
+//    outputDefs[pin].set(OUTPUT_TYPE_SERVO, false,   0, 180,  0xc, 1);   saveOutput(pin);   actionReceipt(pin++, true);
+//    outputDefs[pin].set(OUTPUT_TYPE_LED,   false, 100, 255, pace, 0);   saveOutput(pin);   actionReceipt(pin++, true);
+    outputDefs[pin].set(OUTPUT_TYPE_FLASH, false, 255, 255,  0xf, 4);   saveOutput(pin);   actionReceipt(pin++, true);
+//    outputDefs[pin].set(OUTPUT_TYPE_BLINK, false,  23, 183,  0xe, 4);   saveOutput(pin);   actionReceipt(pin++, true);
     
     Serial.println();
 }
@@ -705,12 +705,12 @@ void test2()
     int pin      = 0;
 
     Serial.println();
-    
+    outputDefs[0].setPace(0xe);
     // outputDef.set(aType, aState, aLo, aHi, aPace, aDelay)
-    actionRequest(pin++, false);
-//    actionRequest(pin++, false);
-//    actionRequest(pin++, false);
-//    actionRequest(pin++, false);
+    actionReceipt(pin++, false);
+//    actionReceipt(pin++, false);
+//    actionReceipt(pin++, false);
+//    actionReceipt(pin++, false);
     
-    Serial.println();
+    Serial.println();   
 }

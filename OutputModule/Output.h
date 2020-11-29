@@ -22,9 +22,8 @@
 #define OUTPUT_TYPE_MASK       0x0f   // Output type mask (4 bits).
 #define OUTPUT_PACE_SHIFT         4   // Pace is in the left-most nibble.
 #define OUTPUT_PACE_MASK       0x0f   // Pace is 4 bits.
-#define OUTPUT_PACE_MULT          3   // Pace is shifted by this amount (multiplied by 8).
-#define OUTPUT_PACE_OFFSET        4   // Pace is offset by this amount (add 4).
-#define OUTPUT_DELAY_MASK      0x0f   // Delay will be right-most nibble of output.pace.
+#define OUTPUT_PACE_MULT          4   // Pace is multiplied by 16 (shifted left 4 bits).
+#define OUTPUT_DELAY_MASK      0x0f   // Delay is right-most nibble of output.pace.
 
 // Defaults when initialising
 #define OUTPUT_DEFAULT_LO        90   // Default low  position is 90 degrees.
@@ -103,18 +102,12 @@ class OutputDef
     }
 
 
-    /** Gets the pace as adjusted from 0-f to 4-124.
+    /** Gets the pace as steps. 
+     *  From 0 -> f to 240 -> 0.
      */
-    uint8_t getAdjustedPace()
+    uint8_t getPaceAsSteps()
     {
-        Serial.print("Adjusted pace=");
-        Serial.print(getPace(),HEX);
-        Serial.print(", shifted=");
-        Serial.print(getPace() << OUTPUT_PACE_MULT, HEX);
-        Serial.print(", adjusted=");
-        Serial.print((getPace() << OUTPUT_PACE_MULT) + OUTPUT_PACE_OFFSET, HEX);
-        Serial.println();
-        return (getPace() << OUTPUT_PACE_MULT) + OUTPUT_PACE_OFFSET;
+        return (OUTPUT_PACE_MASK - getPace()) << OUTPUT_PACE_MULT;
     }
 
 
@@ -128,6 +121,28 @@ class OutputDef
         setHi(aHi);
         setPace(aPace);
         setDelay(aDelay);        
+    }
+
+
+    /** Write an Output down the i2c bus.
+     */
+    void write()
+    {
+        Wire.write(type);
+        Wire.write(lo);
+        Wire.write(hi);
+        Wire.write(pace);
+    }
+
+
+    /** Read an Output from the i2c bus.
+     */
+    void read()
+    {
+        type = Wire.read();
+        lo   = Wire.read();
+        hi   = Wire.read();
+        pace = Wire.read();
     }
 
 
