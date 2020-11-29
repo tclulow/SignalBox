@@ -13,18 +13,19 @@
 #include "Output.h"
 
 
-#define STEP_SERVO          50   // Delay (msecs) between steps of a Servo.
-#define STEP_LED            10   // Delay (msecs) between steps of a LED.
-#define STEP_FLASH          10   // Delay (msecs) between steps of flashes of a FLASH or BLINK.
-#define MAX_PACE           124   // Maximum pace value.
-#define PACE_STEPS         128   // Pace adjustment when converting to steps.
+#define STEP_SERVO          50  // Delay (msecs) between steps of a Servo.
+#define STEP_LED            10  // Delay (msecs) between steps of a LED.
+#define STEP_FLASH          10  // Delay (msecs) between steps of flashes of a FLASH or BLINK.
+#define STEP_FLICKER_MASK 0x0c  // Mask 2 bits (not right-most which are always 0) to gererate 1-in-4 chance of flicker.
+#define MAX_PACE           124  // Maximum pace value.
+#define PACE_STEPS         128  // Pace adjustment when converting to steps.
 
-#define OUTPUT_BASE_PIN      4   // Output attached to this pin and the next 7 more.
+#define JUMPER_PINS          4  // Four jumpers.
+#define IO_PINS              8  // Eight IO pins.
+#define OUTPUT_BASE_PIN      4  // Outputs attached to this pin and the next 7 more.
 
-#define JUMPER_PINS          4   // Four jumpers.
-#define IO_PINS              8   // Eight IO pins.
 
-#define DELAY_MULTIPLIER  1000   // Multiply delay values by this amount (convert to seconds).
+#define DELAY_MULTIPLIER  1000  // Multiply delay values by this amount (convert to seconds).
 
 
 // The module jumper pins
@@ -536,12 +537,17 @@ void stepFlashes()
 }
 
 
+//// DEBUG - checking flickering
+//long switches = 0;
+//long stays = 0;
+
+
 /** Flash the given output.
  */
 void stepFlash(uint8_t aPin)
 {
     outputs[aPin].step += 1;
-    if (outputs[aPin].step > outputs[aPin].steps)
+    if (outputs[aPin].step >= outputs[aPin].steps)
     {
         if (   (   (outputs[aPin].delay > 0)
                 && (outputs[aPin].delay < now))
@@ -563,21 +569,50 @@ void stepFlash(uint8_t aPin)
                 outputs[aPin].value = 0;
                 outputs[aPin].alt   = outputDefs[aPin].getLo();
             }
+
+//            // DEBUG - repoirt flickering metrics.
+//            Serial.print("Flickering: switches=");
+//            Serial.print(switches);
+//            Serial.print(", stays=");
+//            Serial.print(stays);
+//            Serial.println();
+//            switches = 0;
+//            stays = 0;
         }
         else
         {
-            // Flash opposite way.
-            outputs[aPin].step = 1;
-            if (outputs[aPin].value)
+            boolean doSwitch = true;
+            if (outputs[aPin].steps == 1)           // Fastest possible flash = flicker.
             {
-                outputs[aPin].value = 0;
-                outputs[aPin].alt   = outputDefs[aPin].getLo();
+                doSwitch = (micros() & 0xc) == 0;   // One chance in four
+                
+//                // DEBUG - metrics for flickering
+//                if (doSwitch)
+//                {
+//                    switches += 1;
+//                }
+//                else
+//                {
+//                    stays += 1;
+//                }
             }
-            else
+
+            if (doSwitch)
             {
-                outputs[aPin].value = outputDefs[aPin].getHi();
-                outputs[aPin].alt   = 0;
+                // Flash opposite way.
+                if (outputs[aPin].value)
+                {
+                    outputs[aPin].value = 0;
+                    outputs[aPin].alt   = outputDefs[aPin].getLo();
+                }
+                else
+                {
+                    outputs[aPin].value = outputDefs[aPin].getHi();
+                    outputs[aPin].alt   = 0;
+                }
             }
+
+            outputs[aPin].step = 0;
         }
 
 //        // DEBUG Test code to report activity.
@@ -686,14 +721,13 @@ void loop()
 void test1()
 {
     int pin      = 0;
-    int pace     = 0xc;
 
     Serial.println();
 
     // outputDef.set(aType, aState, aLo, aHi, aPace, aDelay)
 //    outputDefs[pin].set(OUTPUT_TYPE_SERVO, false,   0, 180,  0xc, 1);   saveOutput(pin);   actionReceipt(pin++, true);
-//    outputDefs[pin].set(OUTPUT_TYPE_LED,   false, 100, 255, pace, 0);   saveOutput(pin);   actionReceipt(pin++, true);
-    outputDefs[pin].set(OUTPUT_TYPE_FLASH, false, 255, 255,  0xf, 4);   saveOutput(pin);   actionReceipt(pin++, true);
+//    outputDefs[pin].set(OUTPUT_TYPE_LED,   false, 100, 100,  0xc, 1);   saveOutput(pin);   actionReceipt(pin++, true);
+    outputDefs[pin].set(OUTPUT_TYPE_FLASH, false, 255,   4,  0xf, 4);   saveOutput(pin);   actionReceipt(pin++, true);
 //    outputDefs[pin].set(OUTPUT_TYPE_BLINK, false,  23, 183,  0xe, 4);   saveOutput(pin);   actionReceipt(pin++, true);
     
     Serial.println();
