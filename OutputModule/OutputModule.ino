@@ -39,10 +39,14 @@ const uint8_t ioPins[IO_PINS]         = { 3, 2, A3, A2, A1, A0, 13, 12 };
 uint8_t moduleID  = 0;
 
 // Ticking
-long    now       = 0;
-long    tickServo = 0;
-long    tickLed   = 0;
-long    tickFlash = 0;
+long    now        = 0;
+long    tickServo  = 0;
+long    tickLed    = 0;
+long    tickFlash  = 0;
+
+// i2c request command.
+uint8_t requestCmd = COMMS_CMD_NONE;
+uint8_t requestPin = 0;
 
 
 // An Array of Output control structures.
@@ -106,6 +110,7 @@ void setup()
     // Start i2c communications.
     Wire.begin(moduleID);
     Wire.onReceive(processReceipt);
+    Wire.onRequest(processRequest);
 
     Serial.print("Module ID: 0x");
     Serial.println(moduleID, HEX);
@@ -191,7 +196,8 @@ void setOutputType(int aPin, uint8_t aType)
 }
 
 
-/** Upon receipt of a request, store it in the corresponding Output's controller.
+/** Data received.
+ *  Process the command.
  */
 void processReceipt(int aLen)
 {
@@ -205,8 +211,22 @@ void processReceipt(int aLen)
 
     switch (command)
     {
-        case COMMS_CMD_SET_HI:
-        case COMMS_CMD_SET_LO: actionReceipt(pin, command == COMMS_CMD_SET_HI);
+        case COMMS_CMD_SET_LO:
+        case COMMS_CMD_SET_HI: if (Wire.available())
+                               {
+                                   // Use delay sent with request.
+                                   actionReceipt(pin, command == COMMS_CMD_SET_HI, Wire.read());
+                               }
+                               else
+                               {
+                                   // Use delay from Output's definition.
+                                   actionReceipt(pin, command == COMMS_CMD_SET_HI, outputDefs[pin].getDelay());
+                               }
+                               break;
+        case COMMS_CMD_READ:   requestCmd = command;    // Record the command
+                               requestPin = pin;        // and the pin the master wants to read.
+                               break;
+        case COMMS_CMD_WRITE:  processWrite(pin);       // Process the rest of the command i2c data.
                                break;
         default:               Serial.print("Unrecognised command: ");
                                Serial.println(command, HEX);
@@ -222,38 +242,48 @@ void processReceipt(int aLen)
             Wire.read();
         }
     }
-    
-//    if (aLen < 4)
-//    {
-//        Serial.print("Len: ");
-//        Serial.print(aLen);
-//    }
-//    else if (Wire.available() < 4)
-//    {
-//        Serial.print("Avail: ");
-//        Serial.print(Wire.available());
-//    }
-//    else
-//    {
-//    
-//        uint8_t pin    = Wire.read();
-//        uint8_t type   = 0;
-//        uint8_t target = Wire.read();
-//        uint8_t pace   = Wire.read();
-//        uint8_t state  = Wire.read();  
-//        uint8_t delay  = 0;
-//        if (Wire.available())
-//        {
-//            delay = Wire.read();
-//        }
-//
-//        // Extract type and pin from the combined type/pin byte.
-//        type = (pin >> OUTPUT_TYPE_SHIFT) & OUTPUT_TYPE_MASK;
-//        pin &= OUTPUT_PIN_MASK;
-//
-//        actionReceipt(pin, type, target, pace, state, delay);
-//    }
+}
 
+
+/** Process write command.
+ *  Read the Output
+ *  Write the definition to the specified Output.
+ */
+void processWrite(uint8_t aPin)
+{
+    if (Wire.available() < COMMS_LEN_WRITE)
+    {
+        Serial.print("Write: ");
+        Serial.println(Wire.available());
+    }
+    else
+    {
+        outputDefs[aPin].read();
+        saveOutput(aPin);
+    }
+}
+
+
+/** Process a Request (for data).
+ *  Send data to master.
+ */
+void processRequest(int aLen)
+{
+    Serial.print("Request received: ");
+    Serial.println(aLen);
+
+    // If there's a read Output command pending, send the Output's definition.
+    if (requestCmd == COMMS_CMD_READ)
+    {
+        outputDefs[requestPin].write();
+    }
+    else
+    {
+        Serial.print("Unknown command: ");
+        Serial.println(requestCmd);
+    }
+
+    requestCmd = COMMS_CMD_NONE;
 }
 
 
@@ -302,7 +332,7 @@ void processReceipt(int aLen)
 
 /** Action the state change against the specified pin.
  */
-void actionReceipt(uint8_t aPin, uint8_t aState)
+void actionReceipt(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 {
     Serial.print(millis());
     Serial.print("\tAction: ");
@@ -310,6 +340,8 @@ void actionReceipt(uint8_t aPin, uint8_t aState)
     Serial.print(aPin, HEX);    
     Serial.print(", state=");
     Serial.print(aState, HEX);    
+    Serial.print(", delay=");
+    Serial.print(aDelay, HEX);    
     Serial.println();
 
     outputDefs[aPin].setState(aState);
@@ -350,7 +382,7 @@ void actionReceipt(uint8_t aPin, uint8_t aState)
     }
 
     // Set the Output's movement characteristics.
-    outputs[aPin].delay  = (outputDefs[aPin].getDelay() == 0 ? 0 : millis() + DELAY_MULTIPLIER * outputDefs[aPin].getDelay());
+    outputs[aPin].delay  = (aDelay == 0 ? 0 : millis() + DELAY_MULTIPLIER * aDelay);
 
     saveOutput(aPin);
     reportOutput(aPin);
@@ -725,10 +757,10 @@ void test1()
     Serial.println();
 
     // outputDef.set(aType, aState, aLo, aHi, aPace, aDelay)
-//    outputDefs[pin].set(OUTPUT_TYPE_SERVO, false,   0, 180,  0xc, 1);   saveOutput(pin);   actionReceipt(pin++, true);
-//    outputDefs[pin].set(OUTPUT_TYPE_LED,   false, 100, 100,  0xc, 1);   saveOutput(pin);   actionReceipt(pin++, true);
-    outputDefs[pin].set(OUTPUT_TYPE_FLASH, false, 255,   4,  0xf, 4);   saveOutput(pin);   actionReceipt(pin++, true);
-//    outputDefs[pin].set(OUTPUT_TYPE_BLINK, false,  23, 183,  0xe, 4);   saveOutput(pin);   actionReceipt(pin++, true);
+//    outputDefs[pin].set(OUTPUT_TYPE_SERVO, false,   0, 180,  0xc, 1);   saveOutput(pin);   actionReceipt(pin++, true, 1);
+//    outputDefs[pin].set(OUTPUT_TYPE_LED,   false, 100, 100,  0xc, 1);   saveOutput(pin);   actionReceipt(pin++, true, 1);
+    outputDefs[pin].set(OUTPUT_TYPE_FLASH, false, 255,   4,  0xf, 4);   saveOutput(pin);   actionReceipt(pin++, true, 4);
+//    outputDefs[pin].set(OUTPUT_TYPE_BLINK, false,  23, 183,  0xe, 4);   saveOutput(pin);   actionReceipt(pin++, true, 4);
     
     Serial.println();
 }
@@ -741,10 +773,10 @@ void test2()
     Serial.println();
     outputDefs[0].setPace(0xe);
     // outputDef.set(aType, aState, aLo, aHi, aPace, aDelay)
-    actionReceipt(pin++, false);
-//    actionReceipt(pin++, false);
-//    actionReceipt(pin++, false);
-//    actionReceipt(pin++, false);
+    actionReceipt(pin, false, outputDefs[pin].getDelay());     pin += 1;
+//    actionReceipt(pin, false, outputDefs[pin].getDelay());     pin += 1;
+//    actionReceipt(pin, false, outputDefs[pin].getDelay());     pin += 1;
+//    actionReceipt(pin, false, outputDefs[pin].getDelay());     pin += 1;
     
     Serial.println();   
 }
