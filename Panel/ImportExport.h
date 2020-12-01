@@ -295,8 +295,6 @@ class ImportExport
     {
         dumpMemory(M_SYSTEM, SYSTEM_BASE, SYSTEM_END);
         Serial.println();
-        dumpMemory(M_OUTPUT, OUTPUT_BASE, OUTPUT_END);
-        Serial.println();
         dumpMemory(M_INPUT,  INPUT_BASE,  INPUT_END);
         Serial.println();
         dumpMemory(M_TYPES,  TYPES_BASE,  TYPES_END);
@@ -380,7 +378,7 @@ class ImportExport
         {
             if (isOutputNode(node))
             {
-                for (int pin = 0; pin < OUTPUT_NODE_SIZE; pin++)
+                for (int pin = 0; pin < OUTPUT_PIN_MAX; pin++)
                 {
                     loadOutput(node, pin);
     

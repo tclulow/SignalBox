@@ -27,6 +27,7 @@ long displayTimeout = 0L;
 uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
 
 
+
 /** Announce ourselves.
  */
 void announce()
@@ -221,9 +222,9 @@ void defaultSetup()
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INITIALISING);
     lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
     
-    for (outputNumber = 0; outputNumber < OUTPUT_NODE_MAX * OUTPUT_NODE_SIZE; outputNumber++) 
+    for (outputNumber = 0; outputNumber < OUTPUT_NODE_MAX * OUTPUT_PIN_MAX; outputNumber++) 
     {
-        if ((outputNumber & OUTPUT_NODE_PIN_MASK) == 0)
+        if ((outputNumber & OUTPUT_PIN_MASK) == 0)
         {
             lcd.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
         }
@@ -251,36 +252,37 @@ void defaultSetup()
  */
 void convertEzyBus()
 {
-    int ezyBus = OUTPUT_NODE_MAX * OUTPUT_NODE_SIZE * OUTPUT_SIZE;
-    lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_UPDATING);
-    lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
-
-    for (outputNumber = OUTPUT_NODE_MAX * OUTPUT_NODE_SIZE - 1; outputNumber >= 0; outputNumber--) 
-    {
-        if ((outputNumber & OUTPUT_NODE_PIN_MASK) == OUTPUT_NODE_PIN_MASK)
-        {
-            lcd.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-        }
-
-        ezyBus -= OUTPUT_SIZE;
-        EEPROM.get(ezyBus, outputData);
-        
-        // Pace was in steps of 4 (2-bits), drop one bit, store in left-most nibble
-        outputData.pace = ((outputData.pace >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT;
-        
-        saveOutput();
-
-        // Create an input.
-        inputNumber = outputNumber;
-        
-        inputData.output[0] = outputNumber;
-        inputData.output[1] = INPUT_DISABLED_MASK;
-        inputData.output[2] = INPUT_DISABLED_MASK;
-        inputType = INPUT_TYPE_TOGGLE;
-        
-        saveInput();
-    }
+    // TODO - implement with Wire
+//    int ezyBus = OUTPUT_NODE_MAX * OUTPUT_NODE_SIZE * OUTPUT_SIZE;
+//    lcd.clear();
+//    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_UPDATING);
+//    lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+//
+//    for (outputNumber = OUTPUT_NODE_MAX * OUTPUT_NODE_SIZE - 1; outputNumber >= 0; outputNumber--) 
+//    {
+//        if ((outputNumber & OUTPUT_NODE_PIN_MASK) == OUTPUT_NODE_PIN_MASK)
+//        {
+//            lcd.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
+//        }
+//
+//        ezyBus -= OUTPUT_SIZE;
+//        EEPROM.get(ezyBus, outputData);
+//        
+//        // Pace was in steps of 4 (2-bits), drop one bit, store in left-most nibble
+//        outputData.pace = ((outputData.pace >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT;
+//        
+//        saveOutput();
+//
+//        // Create an input.
+//        inputNumber = outputNumber;
+//        
+//        inputData.output[0] = outputNumber;
+//        inputData.output[1] = INPUT_DISABLED_MASK;
+//        inputData.output[2] = INPUT_DISABLED_MASK;
+//        inputType = INPUT_TYPE_TOGGLE;
+//        
+//        saveInput();
+//    }
 }
 
 
@@ -391,19 +393,19 @@ void processInput(int aState)
         // Set desired new state based on Input's type/state and Output's state.
         switch (inputType)
         {
-            case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE : 0;   // Set state to that of the Toggle.
+            case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE_MASK : 0;   // Set state to that of the Toggle.
                                     break;
             case INPUT_TYPE_ON_OFF: loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
-                                    if (outputData.type & OUTPUT_STATE)     // Change the state.
+                                    if (outputData.type & OUTPUT_STATE_MASK)     // Change the state.
                                     {
                                         newState = 0;
                                     }
                                     else
                                     {
-                                        newState = OUTPUT_STATE;
+                                        newState = OUTPUT_STATE_MASK;
                                     }
                                     break;
-            case INPUT_TYPE_ON:     newState = OUTPUT_STATE;                // Set the state.
+            case INPUT_TYPE_ON:     newState = OUTPUT_STATE_MASK;                // Set the state.
                                     break;
             case INPUT_TYPE_OFF:    newState = 0;                           // Clear the state.
                                     break;
@@ -465,14 +467,14 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
 
         if (aNewState)
         {
-            outputData.type |= OUTPUT_STATE;    // Set output state
+            outputData.type |= OUTPUT_STATE_MASK;    // Set output state
         }
         else
         {
-            outputData.type &= ~OUTPUT_STATE;   // Clear output state
+            outputData.type &= ~OUTPUT_STATE_MASK;   // Clear output state
         }
             
-        sendOutputCommand((outputData.type & OUTPUT_STATE ? outputData.hi : outputData.lo), outputData.pace, (aNewState ? delay : aDelay), outputData.type & OUTPUT_STATE);
+        sendOutputCommand((outputData.type & OUTPUT_STATE_MASK ? outputData.hi : outputData.lo), outputData.pace, (aNewState ? delay : aDelay), outputData.type & OUTPUT_STATE_MASK);
         saveOutput();
     }
 
@@ -525,7 +527,7 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
     Wire.beginTransmission(systemData.i2cOutputBaseID + ((outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK));
     Wire.write(((outputData.type & OUTPUT_TYPE_MASK) << OUTPUT_TYPE_SHIFT) | (outputNumber & OUTPUT_PIN_MASK));
     Wire.write(aValue);
-    Wire.write((((aPace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_MULT) + OUTPUT_PACE_OFFSET);
+    Wire.write((((aPace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_MULT) + 0);  // was OUTPUT_PACE_OFFSET);
     Wire.write(aState ? 1 : 0);
     if (aDelay & OUTPUT_DELAY_MASK)
     {

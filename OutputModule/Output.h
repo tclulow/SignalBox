@@ -3,7 +3,6 @@
 #ifndef _Output_h
 #define _Output_h
 
-
 // Output nodes.
 #define OUTPUT_PIN_MAX            8   // 8 outputs to each node.        Was OUTPUT_NODE_SIZE
 #define OUTPUT_PIN_MASK           7   // 3 bits for 8 pins withing an output node.
@@ -44,11 +43,12 @@
 
 
 
+
 /** Definition of an Output.
  */
 class OutputDef
 {
-    private:
+    public:
 
     uint8_t type  = 0;
     uint8_t lo    = 0;
@@ -296,6 +296,74 @@ void saveOutput(int aPin)
     }
 }
 
+#else
+
+
+/** Variables for working with an Output.
+ */
+int        outputNodes  = 0;   // Bit map of Output nodes present.
+int        outputNumber = 0;   // Current Output number.
+OutputDef  outputData;         // Data describing current Output.
+
+
+/** Load an Output's data from EEPROM.
+ */
+void loadOutput(int aOutput)
+{
+    // TODO - implement with Wire.
+    outputNumber = aOutput;
+//    EEPROM.get(OUTPUT_BASE + outputNumber * OUTPUT_SIZE, outputData); 
+}
+
+
+/** Load an Output's data from EEPROM.
+ */
+void loadOutput(int aNode, int aPin)
+{
+    loadOutput(((aNode & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT) + (aPin & OUTPUT_PIN_MASK));
+}
+
+
+/** Save an Output's data to EEPROM.
+ *  Data in outputNumber and outputData.
+ */
+void saveOutput()
+{
+    // TODO - implement with Wire
+//    if (outputNumber < OUTPUT_MAX)
+//    {
+//        EEPROM.put(OUTPUT_BASE + outputNumber * OUTPUT_SIZE, outputData);
+//    }
+}
+
+
+/** Record the presence of an OutputNode in the map.
+ */
+void setOutputNodePresent(int aNode)
+{
+    outputNodes |= (1 << aNode); 
+}
+
+
+/** Is an Output node present?
+ *  Look for Output's node in outputNodes.
+ */
+boolean isOutputNode(int aNode)
+{
+    return (aNode < OUTPUT_NODE_MAX) && (outputNodes & (1 << aNode));
+}
+
+
+/** Is an Output present?
+ *  Look for output's node in outputNodes.
+ */
+boolean isOutput(int aOutput)
+{
+    return isOutputNode(aOutput >> OUTPUT_NODE_SHIFT);
+}
+
+
 #endif
+
 
 #endif
