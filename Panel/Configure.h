@@ -246,8 +246,8 @@ class Configure
      */
     void displayDetailOutput()
     {
-        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputData.type & OUTPUT_TYPE_MASK], LCD_LEN_OPTION);
-        displayOutputParams(outputData.type & OUTPUT_TYPE_MASK);
+        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.type & OUTPUT_TYPE_MASK], LCD_LEN_OPTION);
+        displayOutputParams(outputDef.type & OUTPUT_TYPE_MASK);
     }
 
 
@@ -258,13 +258,13 @@ class Configure
         int col = LCD_COL_OUTPUT_PARAM;
         
         lcd.clearRow(col, LCD_ROW_BOT);
-        lcd.printAtHex(col, LCD_ROW_BOT, outputData.lo,   2);
+        lcd.printAtHex(col, LCD_ROW_BOT, outputDef.lo,   2);
         col += LCD_COL_OUTPUT_STEP;
-        lcd.printAtHex(col, LCD_ROW_BOT, outputData.hi,   2);
+        lcd.printAtHex(col, LCD_ROW_BOT, outputDef.hi,   2);
         col += LCD_COL_OUTPUT_STEP;
-        lcd.printAtHex(col, LCD_ROW_BOT, (outputData.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK,  1);
+        lcd.printAtHex(col, LCD_ROW_BOT, (outputDef.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK,  1);
         col += LCD_COL_OUTPUT_STEP - 1;
-        lcd.printAtHex(col, LCD_ROW_BOT, (outputData.pace                     ) & OUTPUT_DELAY_MASK, 1);
+        lcd.printAtHex(col, LCD_ROW_BOT, (outputDef.pace                     ) & OUTPUT_DELAY_MASK, 1);
     }
 
 
@@ -277,8 +277,8 @@ class Configure
         lcd.printAt(LCD_COL_OUTPUT_HI + OUTPUT_HI_LO_SIZE - sizeof(M_HI) + 1, LCD_ROW_TOP, M_HI);
 
         lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT);
-        lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputData.lo, OUTPUT_HI_LO_SIZE);
-        lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputData.hi, OUTPUT_HI_LO_SIZE);
+        lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputDef.lo, OUTPUT_HI_LO_SIZE);
+        lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.hi, OUTPUT_HI_LO_SIZE);
     }
 
 
@@ -291,8 +291,8 @@ class Configure
         lcd.printAt(LCD_COL_OUTPUT_PACE  - 1, LCD_ROW_TOP, M_PACE);
 
         lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_OUTPUT_PACE,  LCD_ROW_BOT, HEX_CHARS[(outputData.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK]);
-        lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[(outputData.pace                     ) & OUTPUT_DELAY_MASK]);
+        lcd.printAt(LCD_COL_OUTPUT_PACE,  LCD_ROW_BOT, HEX_CHARS[(outputDef.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK]);
+        lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[(outputDef.pace                     ) & OUTPUT_DELAY_MASK]);
     }
     
 
@@ -1007,7 +1007,7 @@ class Configure
         uint8_t currentState = 0;
         
         loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
-        currentState = outputData.type & OUTPUT_STATE_MASK;
+        currentState = outputDef.type & OUTPUT_STATE_MASK;
 
         processInputOutputs(currentState ? 0 : OUTPUT_STATE_MASK);
         waitForButtonRelease();
@@ -1023,7 +1023,7 @@ class Configure
         boolean changed  = false;
         
         // Retrieve type
-        int outputType = outputData.type & OUTPUT_TYPE_MASK;
+        int outputType = outputDef.type & OUTPUT_TYPE_MASK;
 
         // Mark the field.
         markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
@@ -1043,7 +1043,7 @@ class Configure
                                     {
                                         outputType = OUTPUT_TYPE_MAX - 1;
                                     }
-                                    outputData.type = outputType | (outputData.type & ~OUTPUT_TYPE_MASK);
+                                    outputDef.type = outputType | (outputDef.type & ~OUTPUT_TYPE_MASK);
                                     
                                     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputType], LCD_LEN_OPTION);
                                     displayOutputParams(outputType);
@@ -1076,7 +1076,7 @@ class Configure
                                         if (cancel())
                                         {
                                             loadOutput(node, pin);
-                                            sendOutputCommand(outputData.type & OUTPUT_STATE_MASK ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, outputData.type & OUTPUT_STATE_MASK);
+                                            sendOutputCommand(outputDef.type & OUTPUT_STATE_MASK ? outputDef.hi : outputDef.lo, outputDef.pace & ~ OUTPUT_DELAY_MASK, 0, outputDef.type & OUTPUT_STATE_MASK);
                                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
                                             delay(DELAY_READ);
                                             displayDetailOutput();
@@ -1084,7 +1084,7 @@ class Configure
                                         }
                                         else
                                         {
-                                            outputData.type = outputType | (outputData.type & ~OUTPUT_TYPE_MASK);
+                                            outputDef.type = outputType | (outputDef.type & ~OUTPUT_TYPE_MASK);
                                             displayDetailOutput();
                                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                                         }
@@ -1103,15 +1103,15 @@ class Configure
                                         case OUTPUT_TYPE_LED:
                                         case OUTPUT_TYPE_FLASH:
                                         case OUTPUT_TYPE_BLINK:  changed |= menuOutputLo(OUTPUT_LED_MAX);
-                                                                 // sendOutputCommand(outputData.hi,                                                  outputData.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE_MASK);
+                                                                 // sendOutputCommand(outputDef.hi,                                                  outputDef.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE_MASK);
                                                                  // changed |= menuOutputPace();
-                                                                 // sendOutputCommand(outputData.type & OUTPUT_STATE_MASK ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, outputData.type & OUTPUT_STATE_MASK);
+                                                                 // sendOutputCommand(outputDef.type & OUTPUT_STATE_MASK ? outputDef.hi : outputDef.lo, outputDef.pace & ~ OUTPUT_DELAY_MASK, 0, outputDef.type & OUTPUT_STATE_MASK);
                                                                  break;
                                         default:                 systemFail(M_OUTPUT, outputType, 0);
                                     }
 
                                     displayNode();
-                                    displayOutputParams(outputData.type & OUTPUT_TYPE_MASK);
+                                    displayOutputParams(outputDef.type & OUTPUT_TYPE_MASK);
                                     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                                     break;
             }
@@ -1130,7 +1130,7 @@ class Configure
 
         displayOutputAngles();
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
-        sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, 0);
+        sendOutputCommand(outputDef.lo, outputDef.pace & ~ OUTPUT_DELAY_MASK, 0, 0);
 
         while (!finished)
         {
@@ -1140,32 +1140,32 @@ class Configure
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     do
                                     {
-                                        outputData.lo += 1;
-                                        if (outputData.lo > aLimit)
+                                        outputDef.lo += 1;
+                                        if (outputDef.lo > aLimit)
                                         {
-                                            outputData.lo = 0;
+                                            outputDef.lo = 0;
                                         }
-                                        lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputData.lo, OUTPUT_HI_LO_SIZE);
+                                        lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputDef.lo, OUTPUT_HI_LO_SIZE);
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, 0);
+                                    sendOutputCommand(outputDef.lo, outputDef.pace & ~ OUTPUT_DELAY_MASK, 0, 0);
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   do
                                     {
-                                        outputData.lo -= 1;
-                                        if (outputData.lo > aLimit)
+                                        outputDef.lo -= 1;
+                                        if (outputDef.lo > aLimit)
                                         {
-                                            outputData.lo = aLimit;
+                                            outputDef.lo = aLimit;
                                         }
-                                        lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputData.lo, OUTPUT_HI_LO_SIZE);
+                                        lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputDef.lo, OUTPUT_HI_LO_SIZE);
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, 0);
+                                    sendOutputCommand(outputDef.lo, outputDef.pace & ~ OUTPUT_DELAY_MASK, 0, 0);
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: testOutput(false, true);
@@ -1175,13 +1175,13 @@ class Configure
                 case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
                                     changed |= menuOutputHi(aLimit);
                                     markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
-                                    sendOutputCommand(outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, 0);
+                                    sendOutputCommand(outputDef.lo, outputDef.pace & ~ OUTPUT_DELAY_MASK, 0, 0);
                                     break;
             }
         }
 
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
-        sendOutputCommand(outputData.type & OUTPUT_STATE_MASK ? outputData.hi : outputData.lo, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, outputData.type & OUTPUT_STATE_MASK);
+        sendOutputCommand(outputDef.type & OUTPUT_STATE_MASK ? outputDef.hi : outputDef.lo, outputDef.pace & ~ OUTPUT_DELAY_MASK, 0, outputDef.type & OUTPUT_STATE_MASK);
         
         return changed;
     }
@@ -1195,7 +1195,7 @@ class Configure
         boolean changed  = false;
 
         markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
-        sendOutputCommand(outputData.hi, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE_MASK);
+        sendOutputCommand(outputDef.hi, outputDef.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE_MASK);
 
         while (!finished)
         {
@@ -1205,32 +1205,32 @@ class Configure
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     do
                                     {
-                                        outputData.hi += 1;
-                                        if (outputData.hi > aLimit)
+                                        outputDef.hi += 1;
+                                        if (outputDef.hi > aLimit)
                                         {
-                                            outputData.hi = 0;
+                                            outputDef.hi = 0;
                                         }
-                                        lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputData.hi, OUTPUT_HI_LO_SIZE);
+                                        lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.hi, OUTPUT_HI_LO_SIZE);
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    sendOutputCommand(outputData.hi, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE_MASK);
+                                    sendOutputCommand(outputDef.hi, outputDef.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE_MASK);
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   do
                                     {
-                                        outputData.hi -= 1;
-                                        if (outputData.hi > aLimit)
+                                        outputDef.hi -= 1;
+                                        if (outputDef.hi > aLimit)
                                         {
-                                            outputData.hi = aLimit;
+                                            outputDef.hi = aLimit;
                                         }
-                                        lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputData.hi, OUTPUT_HI_LO_SIZE);
+                                        lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.hi, OUTPUT_HI_LO_SIZE);
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    sendOutputCommand(outputData.hi, outputData.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE_MASK);
+                                    sendOutputCommand(outputDef.hi, outputDef.pace & ~ OUTPUT_DELAY_MASK, 0, OUTPUT_STATE_MASK);
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: testOutput(false, false);
@@ -1257,7 +1257,7 @@ class Configure
     {
         boolean finished = false;
         boolean changed  = false;
-        int value = (outputData.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK;
+        int value = (outputDef.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK;
 
         displayOutputDelayPace();
         markField(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, 1, true);
@@ -1268,12 +1268,12 @@ class Configure
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     value = value + 1 & OUTPUT_PACE_MASK;
-                                    outputData.pace = (outputData.pace & OUTPUT_DELAY_MASK) | ((value & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT);
+                                    outputDef.pace = (outputDef.pace & OUTPUT_DELAY_MASK) | ((value & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT);
                                     lcd.printAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, HEX_CHARS[value]);
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   value = value - 1 & OUTPUT_PACE_MASK;
-                                    outputData.pace = (outputData.pace & OUTPUT_DELAY_MASK) | ((value & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT);
+                                    outputDef.pace = (outputDef.pace & OUTPUT_DELAY_MASK) | ((value & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT);
                                     lcd.printAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, HEX_CHARS[value]);
                                     changed = true;
                                     break;
@@ -1300,7 +1300,7 @@ class Configure
     {
         boolean finished = false;
         boolean changed  = false;
-        int value = outputData.pace & OUTPUT_DELAY_MASK;
+        int value = outputDef.pace & OUTPUT_DELAY_MASK;
 
         markField(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, 1, true);
 
@@ -1310,12 +1310,12 @@ class Configure
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     value = value + 1 & OUTPUT_DELAY_MASK;
-                                    outputData.pace = (outputData.pace & ~ OUTPUT_DELAY_MASK) | value & OUTPUT_DELAY_MASK;
+                                    outputDef.pace = (outputDef.pace & ~ OUTPUT_DELAY_MASK) | value & OUTPUT_DELAY_MASK;
                                     lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[value]);
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   value = value - 1 & OUTPUT_DELAY_MASK;
-                                    outputData.pace = (outputData.pace & ~ OUTPUT_DELAY_MASK) | value & OUTPUT_DELAY_MASK;
+                                    outputDef.pace = (outputDef.pace & ~ OUTPUT_DELAY_MASK) | value & OUTPUT_DELAY_MASK;
                                     lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[value]);
                                     changed = true;
                                     break;
@@ -1337,9 +1337,9 @@ class Configure
      */
     void testOutput(boolean aIncludeDelay, boolean aDirectionHi)
     {
-        sendOutputCommand(aDirectionHi ? outputData.hi : outputData.lo, outputData.pace, aIncludeDelay ? outputData.pace & OUTPUT_DELAY_MASK : 0, aDirectionHi ? OUTPUT_STATE_MASK : 0);
+        sendOutputCommand(aDirectionHi ? outputDef.hi : outputDef.lo, outputDef.pace, aIncludeDelay ? outputDef.pace & OUTPUT_DELAY_MASK : 0, aDirectionHi ? OUTPUT_STATE_MASK : 0);
         waitForButtonRelease();
-        sendOutputCommand(aDirectionHi ? outputData.lo : outputData.hi, outputData.pace, aIncludeDelay ? outputData.pace & OUTPUT_DELAY_MASK : 0, aDirectionHi ? 0 : OUTPUT_STATE_MASK);
+        sendOutputCommand(aDirectionHi ? outputDef.lo : outputDef.hi, outputDef.pace, aIncludeDelay ? outputDef.pace & OUTPUT_DELAY_MASK : 0, aDirectionHi ? 0 : OUTPUT_STATE_MASK);
     }
 
 

@@ -108,23 +108,23 @@ class ImportExport
         loadOutput(node, pin);
         
         readWord();
-        for (outputData.type = 0; outputData.type < OUTPUT_TYPE_MAX; outputData.type++)
+        for (outputDef.type = 0; outputDef.type < OUTPUT_TYPE_MAX; outputDef.type++)
         {
-            if (!strcmp_P(wordBuffer, M_OUTPUT_TYPES[outputData.type]))
+            if (!strcmp_P(wordBuffer, M_OUTPUT_TYPES[outputDef.type]))
             {
                 break;
             }
         }
 
-        if (outputData.type >= OUTPUT_TYPE_MAX)
+        if (outputDef.type >= OUTPUT_TYPE_MAX)
         {
             importError();
         }
         else
         {
-            outputData.lo   = readData();
-            outputData.hi   = readData();
-            outputData.pace = readData();
+            outputDef.lo   = readData();
+            outputDef.hi   = readData();
+            outputDef.pace = readData();
         
             saveOutput();
         }
@@ -388,15 +388,15 @@ class ImportExport
                     Serial.print(CHAR_TAB);
                     printHex(pin, 1);
                     Serial.print(CHAR_TAB);
-                    Serial.print(PGMT(M_OUTPUT_TYPES[outputData.type & OUTPUT_TYPE_MASK]));
+                    Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.type & OUTPUT_TYPE_MASK]));
                     Serial.print(CHAR_TAB);
-                    printHex(outputData.lo, 2);
+                    printHex(outputDef.lo, 2);
                     Serial.print(CHAR_TAB);
-                    printHex(outputData.hi, 2);
+                    printHex(outputDef.hi, 2);
                     Serial.print(CHAR_TAB);
-                    printHex((outputData.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK,  1);
+                    printHex((outputDef.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK,  1);
                     Serial.print(CHAR_TAB);
-                    printHex((outputData.pace                     ) & OUTPUT_DELAY_MASK, 1);
+                    printHex((outputDef.pace                     ) & OUTPUT_DELAY_MASK, 1);
                     Serial.println();
                 }
                 Serial.println();

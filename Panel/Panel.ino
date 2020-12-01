@@ -216,33 +216,25 @@ void firstRun()
  */
 void defaultSetup()
 {
-    int input = 0;
-
     lcd.clear();
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INITIALISING);
     lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
-    
-    for (outputNumber = 0; outputNumber < OUTPUT_NODE_MAX * OUTPUT_PIN_MAX; outputNumber++) 
+
+    inputNumber = 0;
+
+    for (outputNode = 0; outputNode < OUTPUT_NODE_MAX; outputNode++)
     {
-        if ((outputNumber & OUTPUT_PIN_MASK) == 0)
+        lcd.print(HEX_CHARS[outputNode]);
+
+        for (outputPin = 0; outputPin < OUTPUT_PIN_MAX; outputPin++)
         {
-            lcd.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
+            // Create an input.
+            inputData.output[0] = inputNumber;
+            inputData.output[1] = INPUT_DISABLED_MASK;
+            inputData.output[2] = INPUT_DISABLED_MASK;
+            inputType = INPUT_TYPE_ON_OFF;
+            saveInput();
         }
-
-        // Create the output.
-        outputData.type = OUTPUT_TYPE_SERVO;
-        outputData.lo   = OUTPUT_DEFAULT_LO;
-        outputData.hi   = OUTPUT_DEFAULT_HI;
-        outputData.pace = OUTPUT_DEFAULT_PACE;
-        saveOutput();
-
-        // Create an input.
-        inputNumber = outputNumber;
-        inputData.output[0] = outputNumber;
-        inputData.output[1] = INPUT_DISABLED_MASK;
-        inputData.output[2] = INPUT_DISABLED_MASK;
-        inputType = INPUT_TYPE_ON_OFF;
-        saveInput();
     }
 }
 
@@ -269,7 +261,7 @@ void convertEzyBus()
 //        EEPROM.get(ezyBus, outputData);
 //        
 //        // Pace was in steps of 4 (2-bits), drop one bit, store in left-most nibble
-//        outputData.pace = ((outputData.pace >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT;
+//        outputDef.pace = ((outputDef.pace >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT;
 //        
 //        saveOutput();
 //
@@ -396,7 +388,7 @@ void processInput(int aState)
             case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE_MASK : 0;   // Set state to that of the Toggle.
                                     break;
             case INPUT_TYPE_ON_OFF: loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
-                                    if (outputData.type & OUTPUT_STATE_MASK)     // Change the state.
+                                    if (outputDef.type & OUTPUT_STATE_MASK)     // Change the state.
                                     {
                                         newState = 0;
                                     }
@@ -435,7 +427,7 @@ void processInputOutputs(uint8_t aNewState)
     {
         // Get initial delay from Input's zeroth output.
         loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
-        delay = outputData.pace & OUTPUT_DELAY_MASK;
+        delay = outputDef.pace & OUTPUT_DELAY_MASK;
         
         for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
         {
@@ -457,7 +449,7 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
         || (!(inputData.output[aIndex] & INPUT_DISABLED_MASK)))
     {
         loadOutput(inputData.output[aIndex] & INPUT_OUTPUT_MASK);
-        delay += outputData.pace & OUTPUT_DELAY_MASK;
+        delay += outputDef.pace & OUTPUT_DELAY_MASK;
 
         // Can't delay beyond the maximum possible.
         if (delay > OUTPUT_DELAY_MASK)
@@ -467,14 +459,14 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
 
         if (aNewState)
         {
-            outputData.type |= OUTPUT_STATE_MASK;    // Set output state
+            outputDef.type |= OUTPUT_STATE_MASK;    // Set output state
         }
         else
         {
-            outputData.type &= ~OUTPUT_STATE_MASK;   // Clear output state
+            outputDef.type &= ~OUTPUT_STATE_MASK;   // Clear output state
         }
             
-        sendOutputCommand((outputData.type & OUTPUT_STATE_MASK ? outputData.hi : outputData.lo), outputData.pace, (aNewState ? delay : aDelay), outputData.type & OUTPUT_STATE_MASK);
+        sendOutputCommand((outputDef.type & OUTPUT_STATE_MASK ? outputDef.hi : outputDef.lo), outputDef.pace, (aNewState ? delay : aDelay), outputDef.type & OUTPUT_STATE_MASK);
         saveOutput();
     }
 
@@ -505,27 +497,28 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
     if (reportEnabled(REPORT_SHORT))
     {
         lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputData.type & OUTPUT_TYPE_MASK]);
+        lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.type & OUTPUT_TYPE_MASK]);
         lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, (aState ? M_HI : M_LO));
-        lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-        lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
+        lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[outputNode]);
+        lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[outputPin]);
         setDisplayTimeout(reportDelay());
         
         #if DEBUG
-            Serial.print(PGMT(M_OUTPUT_TYPES[outputData.type & OUTPUT_TYPE_MASK]));
+            Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.type & OUTPUT_TYPE_MASK]));
             Serial.print(CHAR_SPACE);
             Serial.print(PGMT(aState ? M_HI : M_LO));
             Serial.print(CHAR_SPACE);
-            Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-            Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK]);
+            Serial.print(HEX_CHARS[outputNode]);
+            Serial.print(HEX_CHARS[outputPin]);
             Serial.println();
         #endif
         
         reportPause();
     }
     
-    Wire.beginTransmission(systemData.i2cOutputBaseID + ((outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK));
-    Wire.write(((outputData.type & OUTPUT_TYPE_MASK) << OUTPUT_TYPE_SHIFT) | (outputNumber & OUTPUT_PIN_MASK));
+    Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
+    // TODO - Send command via Wire.
+    Wire.write((outputDef.getType() << OUTPUT_TYPE_SHIFT) | outputPin);
     Wire.write(aValue);
     Wire.write((((aPace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_MULT) + 0);  // was OUTPUT_PACE_OFFSET);
     Wire.write(aState ? 1 : 0);
@@ -594,31 +587,31 @@ void setup()
 //  saveInput();
 //
 //  loadOutput(0x1, 7);
-//  outputData.type = OUTPUT_TYPE_NONE;
-//  outputData.lo   = 0x17;
-//  outputData.hi   = 0x22;
-//  outputData.pace = 0x33;
+//  outputDef.type = OUTPUT_TYPE_NONE;
+//  outputDef.lo   = 0x17;
+//  outputDef.hi   = 0x22;
+//  outputDef.pace = 0x33;
 //  saveOutput();
 //
 //  loadOutput(0xc, 5);
-//  outputData.type = OUTPUT_TYPE_SERVO;
-//  outputData.lo   = 0xc5;
-//  outputData.hi   = 0x44;
-//  outputData.pace = 0x55;
+//  outputDef.type = OUTPUT_TYPE_SERVO;
+//  outputDef.lo   = 0xc5;
+//  outputDef.hi   = 0x44;
+//  outputDef.pace = 0x55;
 //  saveOutput();
 //
 //  loadOutput(0x9, 3);
-//  outputData.type = OUTPUT_TYPE_SIGNAL;
-//  outputData.lo   = 0x93;
-//  outputData.hi   = 0x66;
-//  outputData.pace = 0x77;
+//  outputDef.type = OUTPUT_TYPE_SIGNAL;
+//  outputDef.lo   = 0x93;
+//  outputDef.hi   = 0x66;
+//  outputDef.pace = 0x77;
 //  saveOutput();
 //  
 //  loadOutput(0x6, 1);
-//  outputData.type = OUTPUT_TYPE_LED;
-//  outputData.lo   = 0x61;
-//  outputData.hi   = 0x88;
-//  outputData.pace = 0xaa;
+//  outputDef.type = OUTPUT_TYPE_LED;
+//  outputDef.lo   = 0x61;
+//  outputDef.hi   = 0x88;
+//  outputDef.pace = 0xaa;
 //  saveOutput();
 //  #endif
 

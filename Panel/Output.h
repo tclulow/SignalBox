@@ -299,26 +299,28 @@ void saveOutput(int aPin)
 
 /** Variables for working with an Output.
  */
-int        outputNodes  = 0;   // Bit map of Output nodes present.
-int        outputNumber = 0;   // Current Output number.
-OutputDef  outputData;         // Data describing current Output.
+int        outputNodes  = 0;    // Bit map of Output nodes present.
+uint8_t    outputNode   = 0;    // Current Output node.
+uint8_t    outputPin    = 0;    // Current Output pin.
+// uint8_t    outputNumber = 0;    // Current Output number.
+OutputDef  outputDef;           // Definition of current Output.
 
 
-/** Load an Output's data from EEPROM.
+/** Load an Output's data from OutputModule.
  */
-void loadOutput(int aOutput)
+void loadOutput(uint8_t aNode, uint8_t aPin)
 {
-    // TODO - implement with Wire.
-    outputNumber = aOutput;
-//    EEPROM.get(OUTPUT_BASE + outputNumber * OUTPUT_SIZE, outputData); 
+    outputNode = aNode;
+    outputPin  = aPin;
+    // Read node contents from OutputModule
 }
 
 
-/** Load an Output's data from EEPROM.
+/** Load an Output's data from OutputModule.
  */
-void loadOutput(int aNode, int aPin)
+void loadOutput(uint8_t aOutputNumber)
 {
-    loadOutput(((aNode & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT) + (aPin & OUTPUT_PIN_MASK));
+    loadOutput((aOutputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK, aOutputNumber & OUTPUT_PIN_MASK);
 }
 
 
@@ -328,10 +330,6 @@ void loadOutput(int aNode, int aPin)
 void saveOutput()
 {
     // TODO - implement with Wire
-//    if (outputNumber < OUTPUT_MAX)
-//    {
-//        EEPROM.put(OUTPUT_BASE + outputNumber * OUTPUT_SIZE, outputData);
-//    }
 }
 
 
