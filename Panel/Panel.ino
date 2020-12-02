@@ -83,6 +83,7 @@ void mapHardware()
         {
             lcd.print(HEX_CHARS[node]);
             setOutputNodePresent(node);  
+
         }
     }
 
@@ -389,7 +390,7 @@ void processInput(int aState)
             case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE_MASK : 0;   // Set state to that of the Toggle.
                                     break;
             case INPUT_TYPE_ON_OFF: loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
-                                    if (outputDef.getType())     // Change the state.
+                                    if (outputDef.getState())     // Change the state.
                                     {
                                         newState = 0;
                                     }
@@ -460,7 +461,7 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
 
         outputDef.setState(aNewState);
             
-        sendOutputCommand((outputDef.getType() ? outputDef.getHi() : outputDef.getLo()), outputDef.getPace(), (aNewState ? delay : aDelay), outputDef.getType());
+        sendOutputCommand((outputDef.getState() ? outputDef.getHi() : outputDef.getLo()), outputDef.getPace(), (aNewState ? delay : aDelay), outputDef.getState());
         saveOutput();
     }
 
@@ -502,6 +503,10 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
             Serial.print(CHAR_SPACE);
             Serial.print(PGMT(aState ? M_HI : M_LO));
             Serial.print(CHAR_SPACE);
+            Serial.print(aState, HEX);
+            Serial.print(CHAR_SPACE);
+            Serial.print(aPace, HEX);
+            Serial.print(CHAR_SPACE);
             Serial.print(HEX_CHARS[outputNode]);
             Serial.print(HEX_CHARS[outputPin]);
             Serial.println();
@@ -514,7 +519,7 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
     // TODO - Send command via Wire.
     Wire.write((outputDef.getType() << OUTPUT_TYPE_SHIFT) | outputPin);
     Wire.write(aValue);
-    Wire.write((((aPace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_MULT) + 0);  // was OUTPUT_PACE_OFFSET);
+    Wire.write(aPace << OUTPUT_PACE_SHIFT);
     Wire.write(aState ? 1 : 0);
     if (aDelay & OUTPUT_DELAY_MASK)
     {
