@@ -54,22 +54,34 @@ void saveInput()
         EEPROM.put(INPUT_BASE + (inputNumber * INPUT_SIZE), inputData);
         EEPROM.put(TYPES_BASE + (node        * TYPES_SIZE), inputTypes);
 
-//    Serial.print("Save inputTypes[");
-//    Serial.print(inputNumber, HEX);
-//    Serial.print(": ");
-//    Serial.print(node, HEX);
-//    Serial.print(",");
-//    Serial.print(pin, HEX);
-//    Serial.print("] @");
-//    Serial.print(TYPES_BASE + (node * TYPES_SIZE), HEX);
-//    Serial.print(", mask=");
-//    Serial.print(mask, HEX);
-//    Serial.print(" = ");
-//    Serial.print(inputTypes, HEX);
-//    Serial.print(" (");
-//    Serial.print(inputType, HEX);
-//    Serial.print(")");
-//    Serial.println();
+//        Serial.print("Save Input ");
+//        Serial.print(inputNumber, HEX);
+//        Serial.print(": output=");
+//        Serial.print(inputData.output[0], HEX);
+//        Serial.print(CHAR_DOT);
+//        Serial.print(inputData.output[1], HEX);
+//        Serial.print(CHAR_DOT);
+//        Serial.print(inputData.output[2], HEX);
+//        Serial.print(" @ ");
+//        Serial.print(INPUT_BASE + (inputNumber * INPUT_SIZE), HEX);
+//        Serial.println();
+        
+//        Serial.print("Save inputTypes[");
+//        Serial.print(inputNumber, HEX);
+//        Serial.print(": ");
+//        Serial.print(node, HEX);
+//        Serial.print(",");
+//        Serial.print(pin, HEX);
+//        Serial.print("] @");
+//        Serial.print(TYPES_BASE + (node * TYPES_SIZE), HEX);
+//        Serial.print(", mask=");
+//        Serial.print(mask, HEX);
+//        Serial.print(" = ");
+//        Serial.print(inputTypes, HEX);
+//        Serial.print(" (");
+//        Serial.print(inputType, HEX);
+//        Serial.print(")");
+//        Serial.println();
     }
 }
 

@@ -236,6 +236,8 @@ void defaultSetup()
             inputData.output[2] = INPUT_DISABLED_MASK;
             inputType = INPUT_TYPE_ON_OFF;
             saveInput();
+
+            inputNumber += 1;       // Input numbers map nicely to OutputNumbers.
         }
     }
 }
