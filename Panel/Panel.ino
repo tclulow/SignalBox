@@ -8,6 +8,7 @@
 #include "Common.h"
 #include "Config.h"
 #include "Memory.h"
+#include "Comms.h"
 #include "EzyBus.h"
 #include "Panel.h"
 #include "Lcd.h"
