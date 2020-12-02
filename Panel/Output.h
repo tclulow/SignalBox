@@ -306,30 +306,19 @@ uint8_t    outputPin    = 0;    // Current Output pin.
 OutputDef  outputDef;           // Definition of current Output.
 
 
-/** Load an Output's data from an OutputModule.
+/** Read an Output's data from an OutputModule.
  */
-void loadOutput(uint8_t aNode, uint8_t aPin)
-{
-    outputNode = aNode;
-    outputPin  = aPin;
-    // Read node contents from OutputModule
-}
+void readOutput(uint8_t aNode, uint8_t aPin);
 
 
-/** Load an Output's data from an OutputModule.
+/** Read an Output's data from an OutputModule.
  */
-void loadOutput(uint8_t aOutputNumber)
-{
-    loadOutput((aOutputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK, aOutputNumber & OUTPUT_PIN_MASK);
-}
+void readOutput(uint8_t aOutputNumber);
 
 
-/** Save an Output's data to an OutputModule.
+/** Write an Output's data to an OutputModule.
  */
-void saveOutput()
-{
-    // TODO - implement with Wire
-}
+void writeOutput();
 
 
 /** Record the presence of an OutputNode in the map.

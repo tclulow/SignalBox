@@ -393,7 +393,7 @@ void processInput(int aState)
         {
             case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE_MASK : 0;   // Set state to that of the Toggle.
                                     break;
-            case INPUT_TYPE_ON_OFF: loadOutput(inputDef.getOutput(0));
+            case INPUT_TYPE_ON_OFF: readOutput(inputDef.getOutput(0));
                                     if (outputDef.getState())     // Change the state.
                                     {
                                         newState = 0;
@@ -432,7 +432,7 @@ void processInputOutputs(uint8_t aNewState)
     else
     {
         // Get initial delay from Input's zeroth output.
-        loadOutput(inputDef.getOutput(0));
+        readOutput(inputDef.getOutput(0));
         delay = outputDef.getDelay();
         
         for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
@@ -453,7 +453,7 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
     // Process the Input's zeroth Output, and others if not disabled.
     if (!inputDef.isDisabled(aIndex))
     {
-        loadOutput(inputDef.getOutput(aIndex));
+        readOutput(inputDef.getOutput(aIndex));
         delay += outputDef.getDelay();
 
         // Can't delay beyond the maximum possible.
@@ -465,7 +465,7 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
         outputDef.setState(aNewState);
             
         sendOutputCommand((outputDef.getState() ? outputDef.getHi() : outputDef.getLo()), outputDef.getPace(), (aNewState ? delay : aDelay), outputDef.getState());
-        saveOutput();
+        writeOutput();
     }
 
     return delay;

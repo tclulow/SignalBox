@@ -295,7 +295,7 @@ class Configure
 
         // Initialise state.
         loadInput(node, pin);
-        loadOutput(node, pin);
+        readOutput(node, pin);
         
         lcd.clear();
         displayAll();
@@ -589,7 +589,7 @@ class Configure
 
         markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
         loadInput(node, pin);
-        loadOutput(node, pin);
+        readOutput(node, pin);
     }
 
 
@@ -658,7 +658,7 @@ class Configure
             else if (   (!aIsInput)
                      && (isOutputNode(next)))
             {
-                loadOutput(next, pin);
+                readOutput(next, pin);
                 break;
             }
         }
@@ -697,7 +697,7 @@ class Configure
                                     }
                                     else
                                     {
-                                        loadOutput(node, pin);
+                                        readOutput(node, pin);
                                     }
                                     displayDetail();
                                     break;
@@ -802,7 +802,7 @@ class Configure
         markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
 
         // Ensure output node is reset (we may have corrupted it when chaninging an Input's Outputs).
-        loadOutput(node, pin);
+        readOutput(node, pin);
     }
 
 
@@ -995,7 +995,7 @@ class Configure
     {
         uint8_t currentState = 0;
         
-        loadOutput(inputDef.getOutput(0));
+        readOutput(inputDef.getOutput(0));
         currentState = outputDef.getState();
 
         processInputOutputs(currentState ? 0 : OUTPUT_STATE_MASK);
@@ -1043,7 +1043,7 @@ class Configure
                                     {
                                         if (confirm())
                                         {
-                                            saveOutput();
+                                            writeOutput();
                                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
                                             delay(DELAY_READ);
                                             displayDetailOutput();
@@ -1064,7 +1064,7 @@ class Configure
                                     {
                                         if (cancel())
                                         {
-                                            loadOutput(node, pin);
+                                            readOutput(node, pin);
                                             sendOutputCommand(outputDef.getState() ? outputDef.getHi() : outputDef.getLo(), outputDef.getPace(), 0, outputDef.getState());
                                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
                                             delay(DELAY_READ);

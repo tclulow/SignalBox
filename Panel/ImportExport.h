@@ -102,7 +102,7 @@ class ImportExport
         node = readData();
         pin  = node & OUTPUT_PIN_MASK;
         node = (node >> 4) & OUTPUT_NODE_MASK;
-        loadOutput(node, pin);
+        readOutput(node, pin);
         
         readWord();
         for (type = 0; type < OUTPUT_TYPE_MAX; type++)
@@ -126,7 +126,7 @@ class ImportExport
             outputDef.setPace(pace >> OUTPUT_PACE_SHIFT);
             outputDef.setDelay(pace & OUTPUT_DELAY_MASK);
         
-            saveOutput();
+            writeOutput();
         }
     }
     
@@ -340,7 +340,7 @@ class ImportExport
             {
                 for (int pin = 0; pin < OUTPUT_PIN_MAX; pin++)
                 {
-                    loadOutput(node, pin);
+                    readOutput(node, pin);
     
                     Serial.print(PGMT(M_OUTPUT));
                     Serial.print(CHAR_TAB);
