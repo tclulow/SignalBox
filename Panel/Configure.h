@@ -540,7 +540,7 @@ class Configure
             }
         }
 
-        // Update outputData if changes have been made.
+        // Update systemData if changes have been made.
         if (changed)
         {
             systemData.i2cControllerID = params[0];

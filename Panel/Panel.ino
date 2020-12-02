@@ -264,7 +264,7 @@ void convertEzyBus()
 //        }
 //
 //        ezyBus -= OUTPUT_SIZE;
-//        EEPROM.get(ezyBus, outputData);
+//        EEPROM.get(ezyBus, outputDef);
 //        
 //        // Pace was in steps of 4 (2-bits), drop one bit, store in left-most nibble
 //        outputDef.pace = ((outputDef.pace >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT;

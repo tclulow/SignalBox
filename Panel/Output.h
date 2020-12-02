@@ -306,7 +306,7 @@ uint8_t    outputPin    = 0;    // Current Output pin.
 OutputDef  outputDef;           // Definition of current Output.
 
 
-/** Load an Output's data from OutputModule.
+/** Load an Output's data from an OutputModule.
  */
 void loadOutput(uint8_t aNode, uint8_t aPin)
 {
@@ -316,7 +316,7 @@ void loadOutput(uint8_t aNode, uint8_t aPin)
 }
 
 
-/** Load an Output's data from OutputModule.
+/** Load an Output's data from an OutputModule.
  */
 void loadOutput(uint8_t aOutputNumber)
 {
@@ -324,8 +324,7 @@ void loadOutput(uint8_t aOutputNumber)
 }
 
 
-/** Save an Output's data to EEPROM.
- *  Data in outputNumber and outputData.
+/** Save an Output's data to an OutputModule.
  */
 void saveOutput()
 {
