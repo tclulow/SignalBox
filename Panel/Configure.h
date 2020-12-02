@@ -200,44 +200,35 @@ class Configure
         int col = LCD_COL_INPUT_OUTPUT;
 
         lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
-        for (int output = 0; output < INPUT_OUTPUT_MAX; output++, col += LCD_COL_INPUT_STEP)
+        for (int index = 0; index < INPUT_OUTPUT_MAX; index++, col += LCD_COL_INPUT_STEP)
         {
-            displayInputOutput(col, inputData.output[output] & (output == 0 ? INPUT_OUTPUT_MASK : 0xff));
+            if (inputData.isDisabled(index))
+            {
+                lcd.printAt(col, LCD_ROW_BOT, M_DISABLED);    
+            }
+            else
+            {
+                lcd.setCursor(col, LCD_ROW_BOT);
+                lcd.print(HEX_CHARS[inputData.getOutputNode(index)]);
+                lcd.print(HEX_CHARS[inputData.getOutputPin(index)]);
+            }
         }
     }
     
-
-    /** Show an output number (or disabled marker).
-     */
-    void displayInputOutput(int aCol, int aOutput)
-    {
-        if (aOutput & INPUT_DISABLED_MASK)
-        {
-            lcd.printAt(aCol, LCD_ROW_BOT, M_DISABLED);
-        }
-        else
-        {
-            lcd.setCursor(aCol, LCD_ROW_BOT);
-            lcd.print(HEX_CHARS[(aOutput >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-            lcd.print(HEX_CHARS[(aOutput                     ) & OUTPUT_PIN_MASK]);
-        }
-    }
-
 
     /** Display an Input's output settings, node and pin.
      */
     void displayInputEdit(int aIndex)
     {
-        if (   (aIndex > 0)
-            && (inputData.output[aIndex] & INPUT_DISABLED_MASK))
+        if (inputData.isDisabled(aIndex))
         {
             lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, CHAR_DOT);
             lcd.printAt(LCD_COL_PIN,  LCD_ROW_BOT, CHAR_DOT);
         }
         else
         {
-            lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[(inputData.output[aIndex] >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-            lcd.printAt(LCD_COL_PIN,  LCD_ROW_BOT, HEX_CHARS[(inputData.output[aIndex]                     ) & OUTPUT_PIN_MASK]);
+            lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[inputData.getOutputNode(aIndex)]);
+            lcd.printAt(LCD_COL_PIN,  LCD_ROW_BOT, HEX_CHARS[inputData.getOutputPin(aIndex)]);
         }
     }
     
@@ -650,13 +641,14 @@ class Configure
     /** Find the next (live) node in the given direction.
      *  Load the node's data.
      */
-    int nextNode(int aStart, int aAdjust, boolean aIsInput)
+    uint8_t nextNode(uint8_t aStart, int aAdjust, boolean aIsInput)
     {
-        int next = aStart & (aIsInput ? INPUT_NODE_MASK : OUTPUT_NODE_MASK);
+        uint8_t next = aStart & (aIsInput ? INPUT_NODE_MASK : OUTPUT_NODE_MASK);
         
         for (int i = 0; i < (aIsInput ? INPUT_NODE_MAX : OUTPUT_NODE_MAX); i++)
         {
             next = (next + aAdjust) & (aIsInput ? INPUT_NODE_MASK : OUTPUT_NODE_MASK);
+            
             if (   (aIsInput)
                 && (isInputNode(next)))
             {
@@ -673,6 +665,7 @@ class Configure
 
         return next;
     }
+
 
     /** Process Pin menu.
      */
@@ -852,7 +845,7 @@ class Configure
                                     else
                                     {
                                         changed = true;
-                                        inputData.output[index] ^= INPUT_DISABLED_MASK;
+                                        inputData.setDisabled(index, !inputData.isDisabled(index));
                                         displayInputEdit(index);
                                     }
                                     break;
@@ -885,31 +878,27 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     if (inputData.output[aIndex] & INPUT_DISABLED_MASK)
+                case BUTTON_UP:     if (inputData.isDisabled(aIndex))
                                     {
-                                        inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
+                                        inputData.setDisabled(aIndex, false);
                                     }
                                     else
                                     {
-                                        // Increment the node number within the Input's output at this index.
-                                        int next = (inputData.output[aIndex] >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK;
-                                        next = nextNode(next, 1, false);
-                                        inputData.output[aIndex] = (inputData.output[aIndex] & ~ (OUTPUT_NODE_MASK << OUTPUT_NODE_SHIFT)) | ((next & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT);
+                                        // Increment the node number (to the next available) within the Input's output at this index.
+                                        inputData.setOutputNode(aIndex, nextNode(inputData.getOutputNode(aIndex), 1, false));
                                     }
                                     
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
-                case BUTTON_DOWN:   if (inputData.output[aIndex] & INPUT_DISABLED_MASK)
+                case BUTTON_DOWN:   if (inputData.isDisabled(aIndex))
                                     {
-                                        inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
+                                        inputData.setDisabled(aIndex, false);
                                     }
                                     else
                                     {
-                                        // Decrement the node number within the Input's output at this index.
-                                        int next = (inputData.output[aIndex] >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK;
-                                        next = nextNode(next, -1, false);
-                                        inputData.output[aIndex] = (inputData.output[aIndex] & ~ (OUTPUT_NODE_MASK << OUTPUT_NODE_SHIFT)) | ((next & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT);
+                                        // Decrement the node number (to the next available) within the Input's output at this index.
+                                        inputData.setOutputNode(aIndex, nextNode(inputData.getOutputNode(aIndex), -1, false));
                                     }
                                     displayInputEdit(aIndex);
                                     changed = true;
@@ -922,7 +911,7 @@ class Configure
                                     {
                                         // Enable/disable this output.
                                         changed = true;
-                                        inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
+                                        inputData.setDisabled(aIndex, !inputData.isDisabled(aIndex));
                                         displayInputEdit(aIndex);
                                     }
                                     break;
@@ -953,26 +942,26 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     if (inputData.output[aIndex] & INPUT_DISABLED_MASK)
+                case BUTTON_UP:     if (inputData.isDisabled(aIndex))
                                     {
-                                        inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
+                                        inputData.setDisabled(aIndex, false);
                                     }
                                     else
                                     {
                                         // Increment the pin number within the Input's output at this index.
-                                        inputData.output[aIndex] = (inputData.output[aIndex] & ~ OUTPUT_PIN_MASK) | ((inputData.output[aIndex] + 1) & OUTPUT_PIN_MASK);
+                                        inputData.setOutputPin(aIndex, inputData.getOutputPin(aIndex) + 1);
                                     }
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
-                case BUTTON_DOWN:   if (inputData.output[aIndex] & INPUT_DISABLED_MASK)
+                case BUTTON_DOWN:   if (inputData.isDisabled(aIndex))
                                     {
-                                        inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
+                                        inputData.setDisabled(aIndex, false);
                                     }
                                     else
                                     {
                                         // Decrement the pin number within the Input's output at this index.
-                                        inputData.output[aIndex] = (inputData.output[aIndex] & ~ OUTPUT_PIN_MASK) | ((inputData.output[aIndex] - 1) & OUTPUT_PIN_MASK);
+                                        inputData.setOutputPin(aIndex, inputData.getOutputPin(aIndex) - 1);
                                     }
                                     displayInputEdit(aIndex);
                                     changed = true;
@@ -984,7 +973,7 @@ class Configure
                                     else
                                     {
                                         changed = true;
-                                        inputData.output[aIndex] ^= INPUT_DISABLED_MASK;
+                                        inputData.setDisabled(aIndex, !inputData.isDisabled(aIndex));
                                         displayInputEdit(aIndex);
                                     }
                                     break;
@@ -1006,7 +995,7 @@ class Configure
     {
         uint8_t currentState = 0;
         
-        loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
+        loadOutput(inputData.getOutput(0));
         currentState = outputDef.getState();
 
         processInputOutputs(currentState ? 0 : OUTPUT_STATE_MASK);

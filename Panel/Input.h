@@ -59,9 +59,80 @@
 
 /** Data describing an Input's operation.
  */
-struct InputData
+class InputData
 {
+    private:
     uint8_t output[INPUT_OUTPUT_MAX];   // The outputs conrolled by this input.
+
+
+    public:
+    
+    /** Gets the nth outputNode.
+     */
+    uint8_t getOutputNode(uint8_t aIndex)
+    {
+        return (output[aIndex] >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK;
+    }
+
+
+    /** Sets the nth outputNode.
+     */
+    void setOutputNode(uint8_t aIndex, uint8_t aOutputNode)
+    {
+        output[aIndex] = (output[aIndex] & ~(OUTPUT_NODE_MASK << OUTPUT_NODE_SHIFT)) 
+                       | ((aOutputNode   &  OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT);
+    }
+
+
+    /** Gets the nth outputPin.
+     */
+    uint8_t getOutputPin(uint8_t aIndex)
+    {
+        return output[aIndex] & OUTPUT_PIN_MASK;
+    }
+
+
+    /** Sets the nth outputPin.
+     */
+    void setOutputPin(uint8_t aIndex, uint8_t aOutputPin)
+    {
+        output[aIndex] = (output[aIndex] & ~OUTPUT_PIN_MASK)
+                       | (aOutputPin     &  OUTPUT_PIN_MASK);
+    }
+
+
+    /** Gets the nth outputNumber.
+     */
+    uint8_t getOutput(uint8_t aIndex)
+    {
+        return output[aIndex] & INPUT_OUTPUT_MASK;
+    }
+
+
+    /** Sets the nth outputNumber.
+     */
+    void setOutput(uint8_t aIndex, uint8_t aOutputNumber)
+    {
+        output[aIndex] = (output[aIndex] & ~INPUT_OUTPUT_MASK)
+                       | (aOutputNumber  &  INPUT_OUTPUT_MASK);
+    }
+
+
+    /** Is the nth output disabled?
+     */
+    boolean isDisabled(uint8_t aIndex)
+    {
+        return output[aIndex] & INPUT_DISABLED_MASK;
+    }
+
+
+    /** Sets the nth output disabled (or not).
+     */
+    void setDisabled(uint8_t aIndex, boolean aDisabled)
+    {
+        output[aIndex] = (output[aIndex] & ~INPUT_DISABLED_MASK)
+                       | (aDisabled ? INPUT_DISABLED_MASK : 0);
+    }
 };
 
 

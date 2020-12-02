@@ -232,12 +232,13 @@ void defaultSetup()
         for (outputPin = 0; outputPin < OUTPUT_PIN_MAX; outputPin++)
         {
             // Create an input.
-            inputData.output[0] = inputNumber;
-            inputData.output[1] = INPUT_DISABLED_MASK;
-            inputData.output[2] = INPUT_DISABLED_MASK;
-            inputType = INPUT_TYPE_ON_OFF;
-            saveInput();
+            for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
+            {
+                inputData.setOutput(index, inputNumber);
+                inputData.setDisabled(index, index != 0);
+            }
 
+            saveInput();
             inputNumber += 1;       // Input numbers map nicely to OutputNumbers.
         }
     }
@@ -392,7 +393,7 @@ void processInput(int aState)
         {
             case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE_MASK : 0;   // Set state to that of the Toggle.
                                     break;
-            case INPUT_TYPE_ON_OFF: loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
+            case INPUT_TYPE_ON_OFF: loadOutput(inputData.getOutput(0));
                                     if (outputDef.getState())     // Change the state.
                                     {
                                         newState = 0;
@@ -431,7 +432,7 @@ void processInputOutputs(uint8_t aNewState)
     else
     {
         // Get initial delay from Input's zeroth output.
-        loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
+        loadOutput(inputData.getOutput(0));
         delay = outputDef.getDelay();
         
         for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
@@ -450,10 +451,9 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
     uint8_t delay = aDelay;
     
     // Process the Input's zeroth Output, and others if not disabled.
-    if (   (aIndex == 0)
-        || (!(inputData.output[aIndex] & INPUT_DISABLED_MASK)))
+    if (!inputData.isDisabled(aIndex))
     {
-        loadOutput(inputData.output[aIndex] & INPUT_OUTPUT_MASK);
+        loadOutput(inputData.getOutput(aIndex));
         delay += outputDef.getDelay();
 
         // Can't delay beyond the maximum possible.

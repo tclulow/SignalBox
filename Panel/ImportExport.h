@@ -79,15 +79,10 @@ class ImportExport
         }
         else
         {  
-            for (int i = 0; i < INPUT_OUTPUT_MAX; i++)
+            for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
             {
-                inputData.output[i] = readData();
-                inputData.output[i] = (((inputData.output[i] >> 4) & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT) | (inputData.output[i] & OUTPUT_PIN_MASK);
-                if (   (i > 0)
-                    && (wordBuffer[strlen(wordBuffer) - 1] == CHAR_STAR))
-                {
-                    inputData.output[i] |= INPUT_DISABLED_MASK;    
-                }
+                inputData.setOutput(index, readData());
+                inputData.setDisabled(index, wordBuffer[strlen(wordBuffer) - 1] == CHAR_STAR);
             }
 
             saveInput();
@@ -314,14 +309,13 @@ class ImportExport
                     Serial.print(CHAR_TAB);
                     Serial.print(PGMT(M_INPUT_TYPES[inputType]));
                     
-                    for (int output = 0; output < INPUT_OUTPUT_MAX; output++)
+                    for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
                     {
                         Serial.print(CHAR_TAB);
-                        printHex((inputData.output[output] >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK, 1);
+                        printHex(inputData.getOutputNode(index), 1);
                         Serial.print(CHAR_SPACE);
-                        printHex((inputData.output[output]                     ) & OUTPUT_PIN_MASK,  1);
-                        if (   (output > 0)
-                            && (inputData.output[output] & INPUT_DISABLED_MASK))
+                        printHex(inputData.getOutputPin(index),  1);
+                        if (inputData.isDisabled(index))
                         {
                             Serial.print(CHAR_STAR);
                         }
