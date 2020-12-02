@@ -294,45 +294,6 @@ class ImportExport
     }
     
     
-    /** Dump all the EEPROM memory.
-     */
-    void dumpMemory()
-    {
-        dumpMemory(M_SYSTEM, SYSTEM_BASE, SYSTEM_END);
-        Serial.println();
-        dumpMemory(M_INPUT,  INPUT_BASE,  INPUT_END);
-        Serial.println();
-        dumpMemory(M_TYPES,  TYPES_BASE,  TYPES_END);
-        Serial.println();
-    }
-    
-    
-    /** Dump a range of the EEPROM memory.
-     */
-    void dumpMemory(PGM_P aMessage, int aStart, int aEnd)
-    {
-        Serial.print(CHAR_HASH);
-        Serial.print(CHAR_SPACE);
-        Serial.println(PGMT(aMessage));
-        
-        for (int base = aStart; base < aEnd; base += 16)
-        {
-            Serial.print(CHAR_HASH);
-            Serial.print(CHAR_SPACE);
-            printHex(base, 4);
-            Serial.print(CHAR_COLON);
-            
-            for (int offs = 0; offs < 16; offs++)
-            {
-                Serial.print(CHAR_SPACE);
-                printHex(EEPROM.read(base + offs), 2);
-            }
-    
-            Serial.println();
-        }
-    }
-    
-    
     void exportInputs()
     {
         Serial.println(PGMT(M_EXPORT_INPUT));
@@ -410,18 +371,6 @@ class ImportExport
     }
     
     
-    /** Print a number as a string of hex digits.
-     *  Padded with leading zeros to length aDigits.
-     */
-    void printHex(int aValue, int aDigits)
-    {
-        for (int digit = aDigits - 1; digit >= 0; digit--)
-        {
-            Serial.print(HEX_CHARS[(aValue >> (digit << 2)) & 0xf]);
-        }
-    }
-
-
     public:
     
     /** A ImportExport object.
@@ -488,14 +437,12 @@ class ImportExport
     
         lcd.clearRow(LCD_COL_EXP_STATUS, LCD_ROW_BOT);
     }
-    
-
 };
 
 
 /** A singleton instance of the class.
  */
-ImportExport importExport;;
+ImportExport importExport;
 
 
 #endif
