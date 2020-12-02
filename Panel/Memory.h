@@ -10,9 +10,9 @@
 #define SYSTEM_SIZE  sizeof(SystemData)                           // Size of System Data.
 #define SYSTEM_END   (SYSTEM_BASE + SYSTEM_SIZE)                  // End of System EEPROM.
 
-// InputData saved in EEPROM
+// InputDef saved in EEPROM
 #define INPUT_BASE   SYSTEM_END                                   // EEPROM base of Input data.
-#define INPUT_SIZE   sizeof(InputData)                            // Size of InputData entry.
+#define INPUT_SIZE   sizeof(InputDef)                             // Size of InputData entry.
 #define INPUT_MAX    (INPUT_NODE_SIZE * INPUT_NODE_MAX)           // Maximum inputs (up to 128, 8 nodes, 16 inputs each).
 #define INPUT_END    (INPUT_BASE + INPUT_SIZE * INPUT_MAX)        // End of Input EEPROM.
 

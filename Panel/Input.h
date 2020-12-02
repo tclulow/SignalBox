@@ -57,9 +57,9 @@
 #define MCP_OLATB     0x15
 
 
-/** Data describing an Input's operation.
+/** Definition of an Input..
  */
-class InputData
+class InputDef
 {
     private:
     uint8_t output[INPUT_OUTPUT_MAX];   // The outputs conrolled by this input.
@@ -140,7 +140,7 @@ class InputData
  */
 int        inputNodes  = 0;   // Bit map of Input nodes present.
 int        inputNumber = 0;   // Current Input number.
-InputData  inputData;         // Data describing current Input.
+InputDef   inputData;         // Definition of the current Input.
 uint32_t   inputTypes  = 0L;  // The types of the Inputs. 2 bits per pin, 16 pins per node = 32 bits.
 int        inputType   = 0;   // Type of the current Input (2 bits, INPUT_TYPE_MASK).
 
