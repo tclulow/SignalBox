@@ -234,8 +234,8 @@ void defaultSetup()
             // Create an input.
             for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
             {
-                inputData.setOutput(index, inputNumber);
-                inputData.setDisabled(index, index != 0);
+                inputDef.setOutput(index, inputNumber);
+                inputDef.setDisabled(index, index != 0);
             }
 
             saveInput();
@@ -274,9 +274,9 @@ void convertEzyBus()
 //        // Create an input.
 //        inputNumber = outputNumber;
 //        
-//        inputData.output[0] = outputNumber;
-//        inputData.output[1] = INPUT_DISABLED_MASK;
-//        inputData.output[2] = INPUT_DISABLED_MASK;
+//        inputDef.output[0] = outputNumber;
+//        inputDef.output[1] = INPUT_DISABLED_MASK;
+//        inputDef.output[2] = INPUT_DISABLED_MASK;
 //        inputType = INPUT_TYPE_TOGGLE;
 //        
 //        saveInput();
@@ -393,7 +393,7 @@ void processInput(int aState)
         {
             case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE_MASK : 0;   // Set state to that of the Toggle.
                                     break;
-            case INPUT_TYPE_ON_OFF: loadOutput(inputData.getOutput(0));
+            case INPUT_TYPE_ON_OFF: loadOutput(inputDef.getOutput(0));
                                     if (outputDef.getState())     // Change the state.
                                     {
                                         newState = 0;
@@ -432,7 +432,7 @@ void processInputOutputs(uint8_t aNewState)
     else
     {
         // Get initial delay from Input's zeroth output.
-        loadOutput(inputData.getOutput(0));
+        loadOutput(inputDef.getOutput(0));
         delay = outputDef.getDelay();
         
         for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
@@ -451,9 +451,9 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
     uint8_t delay = aDelay;
     
     // Process the Input's zeroth Output, and others if not disabled.
-    if (!inputData.isDisabled(aIndex))
+    if (!inputDef.isDisabled(aIndex))
     {
-        loadOutput(inputData.getOutput(aIndex));
+        loadOutput(inputDef.getOutput(aIndex));
         delay += outputDef.getDelay();
 
         // Can't delay beyond the maximum possible.

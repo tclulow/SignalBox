@@ -18,7 +18,7 @@ void loadInput(int aNode, int aPin)
 
     inputNumber = ((aNode & INPUT_NODE_MASK) << INPUT_NODE_SHIFT) | (aPin & INPUT_PIN_MASK);
 
-    EEPROM.get(INPUT_BASE + (inputNumber * INPUT_SIZE), inputData);
+    EEPROM.get(INPUT_BASE + (inputNumber * INPUT_SIZE), inputDef);
     EEPROM.get(TYPES_BASE + (aNode       * TYPES_SIZE), inputTypes);
     inputType = (inputTypes >> (aPin << INPUT_TYPE_SHIFT)) & INPUT_TYPE_MASK;
     
@@ -40,7 +40,7 @@ void loadInput(int aNode, int aPin)
 
 
 /** Save an Input's data to EEPROM.
- *  Data in inputNumber and inputData.
+ *  Data in inputNumber and inputDef.
  */
 void saveInput()
 {
@@ -51,17 +51,17 @@ void saveInput()
         uint32_t mask = ((long)INPUT_TYPE_MASK) << (pin << INPUT_TYPE_SHIFT);
         
         inputTypes = (inputTypes & ~mask) | ((((long)inputType) << (pin << INPUT_TYPE_SHIFT)) & mask);
-        EEPROM.put(INPUT_BASE + (inputNumber * INPUT_SIZE), inputData);
+        EEPROM.put(INPUT_BASE + (inputNumber * INPUT_SIZE), inputDef);
         EEPROM.put(TYPES_BASE + (node        * TYPES_SIZE), inputTypes);
 
 //        Serial.print("Save Input ");
 //        Serial.print(inputNumber, HEX);
 //        Serial.print(": output=");
-//        Serial.print(inputData.output[0], HEX);
+//        Serial.print(inputDef.output[0], HEX);
 //        Serial.print(CHAR_DOT);
-//        Serial.print(inputData.output[1], HEX);
+//        Serial.print(inputDef.output[1], HEX);
 //        Serial.print(CHAR_DOT);
-//        Serial.print(inputData.output[2], HEX);
+//        Serial.print(inputDef.output[2], HEX);
 //        Serial.print(" @ ");
 //        Serial.print(INPUT_BASE + (inputNumber * INPUT_SIZE), HEX);
 //        Serial.println();

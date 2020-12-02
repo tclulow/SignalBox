@@ -81,8 +81,8 @@ class ImportExport
         {  
             for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
             {
-                inputData.setOutput(index, readData());
-                inputData.setDisabled(index, wordBuffer[strlen(wordBuffer) - 1] == CHAR_STAR);
+                inputDef.setOutput(index, readData());
+                inputDef.setDisabled(index, wordBuffer[strlen(wordBuffer) - 1] == CHAR_STAR);
             }
 
             saveInput();
@@ -312,10 +312,10 @@ class ImportExport
                     for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
                     {
                         Serial.print(CHAR_TAB);
-                        printHex(inputData.getOutputNode(index), 1);
+                        printHex(inputDef.getOutputNode(index), 1);
                         Serial.print(CHAR_SPACE);
-                        printHex(inputData.getOutputPin(index),  1);
-                        if (inputData.isDisabled(index))
+                        printHex(inputDef.getOutputPin(index),  1);
+                        if (inputDef.isDisabled(index))
                         {
                             Serial.print(CHAR_STAR);
                         }

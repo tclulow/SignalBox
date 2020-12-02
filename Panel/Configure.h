@@ -202,15 +202,15 @@ class Configure
         lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
         for (int index = 0; index < INPUT_OUTPUT_MAX; index++, col += LCD_COL_INPUT_STEP)
         {
-            if (inputData.isDisabled(index))
+            if (inputDef.isDisabled(index))
             {
                 lcd.printAt(col, LCD_ROW_BOT, M_DISABLED);    
             }
             else
             {
                 lcd.setCursor(col, LCD_ROW_BOT);
-                lcd.print(HEX_CHARS[inputData.getOutputNode(index)]);
-                lcd.print(HEX_CHARS[inputData.getOutputPin(index)]);
+                lcd.print(HEX_CHARS[inputDef.getOutputNode(index)]);
+                lcd.print(HEX_CHARS[inputDef.getOutputPin(index)]);
             }
         }
     }
@@ -220,15 +220,15 @@ class Configure
      */
     void displayInputEdit(int aIndex)
     {
-        if (inputData.isDisabled(aIndex))
+        if (inputDef.isDisabled(aIndex))
         {
             lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, CHAR_DOT);
             lcd.printAt(LCD_COL_PIN,  LCD_ROW_BOT, CHAR_DOT);
         }
         else
         {
-            lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[inputData.getOutputNode(aIndex)]);
-            lcd.printAt(LCD_COL_PIN,  LCD_ROW_BOT, HEX_CHARS[inputData.getOutputPin(aIndex)]);
+            lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[inputDef.getOutputNode(aIndex)]);
+            lcd.printAt(LCD_COL_PIN,  LCD_ROW_BOT, HEX_CHARS[inputDef.getOutputPin(aIndex)]);
         }
     }
     
@@ -845,7 +845,7 @@ class Configure
                                     else
                                     {
                                         changed = true;
-                                        inputData.setDisabled(index, !inputData.isDisabled(index));
+                                        inputDef.setDisabled(index, !inputDef.isDisabled(index));
                                         displayInputEdit(index);
                                     }
                                     break;
@@ -878,27 +878,27 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     if (inputData.isDisabled(aIndex))
+                case BUTTON_UP:     if (inputDef.isDisabled(aIndex))
                                     {
-                                        inputData.setDisabled(aIndex, false);
+                                        inputDef.setDisabled(aIndex, false);
                                     }
                                     else
                                     {
                                         // Increment the node number (to the next available) within the Input's output at this index.
-                                        inputData.setOutputNode(aIndex, nextNode(inputData.getOutputNode(aIndex), 1, false));
+                                        inputDef.setOutputNode(aIndex, nextNode(inputDef.getOutputNode(aIndex), 1, false));
                                     }
                                     
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
-                case BUTTON_DOWN:   if (inputData.isDisabled(aIndex))
+                case BUTTON_DOWN:   if (inputDef.isDisabled(aIndex))
                                     {
-                                        inputData.setDisabled(aIndex, false);
+                                        inputDef.setDisabled(aIndex, false);
                                     }
                                     else
                                     {
                                         // Decrement the node number (to the next available) within the Input's output at this index.
-                                        inputData.setOutputNode(aIndex, nextNode(inputData.getOutputNode(aIndex), -1, false));
+                                        inputDef.setOutputNode(aIndex, nextNode(inputDef.getOutputNode(aIndex), -1, false));
                                     }
                                     displayInputEdit(aIndex);
                                     changed = true;
@@ -911,7 +911,7 @@ class Configure
                                     {
                                         // Enable/disable this output.
                                         changed = true;
-                                        inputData.setDisabled(aIndex, !inputData.isDisabled(aIndex));
+                                        inputDef.setDisabled(aIndex, !inputDef.isDisabled(aIndex));
                                         displayInputEdit(aIndex);
                                     }
                                     break;
@@ -942,26 +942,26 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     if (inputData.isDisabled(aIndex))
+                case BUTTON_UP:     if (inputDef.isDisabled(aIndex))
                                     {
-                                        inputData.setDisabled(aIndex, false);
+                                        inputDef.setDisabled(aIndex, false);
                                     }
                                     else
                                     {
                                         // Increment the pin number within the Input's output at this index.
-                                        inputData.setOutputPin(aIndex, inputData.getOutputPin(aIndex) + 1);
+                                        inputDef.setOutputPin(aIndex, inputDef.getOutputPin(aIndex) + 1);
                                     }
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
-                case BUTTON_DOWN:   if (inputData.isDisabled(aIndex))
+                case BUTTON_DOWN:   if (inputDef.isDisabled(aIndex))
                                     {
-                                        inputData.setDisabled(aIndex, false);
+                                        inputDef.setDisabled(aIndex, false);
                                     }
                                     else
                                     {
                                         // Decrement the pin number within the Input's output at this index.
-                                        inputData.setOutputPin(aIndex, inputData.getOutputPin(aIndex) - 1);
+                                        inputDef.setOutputPin(aIndex, inputDef.getOutputPin(aIndex) - 1);
                                     }
                                     displayInputEdit(aIndex);
                                     changed = true;
@@ -973,7 +973,7 @@ class Configure
                                     else
                                     {
                                         changed = true;
-                                        inputData.setDisabled(aIndex, !inputData.isDisabled(aIndex));
+                                        inputDef.setDisabled(aIndex, !inputDef.isDisabled(aIndex));
                                         displayInputEdit(aIndex);
                                     }
                                     break;
@@ -995,7 +995,7 @@ class Configure
     {
         uint8_t currentState = 0;
         
-        loadOutput(inputData.getOutput(0));
+        loadOutput(inputDef.getOutput(0));
         currentState = outputDef.getState();
 
         processInputOutputs(currentState ? 0 : OUTPUT_STATE_MASK);
