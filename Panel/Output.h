@@ -45,7 +45,7 @@
  */
 class OutputDef
 {
-    public:
+    private:
 
     uint8_t type  = 0;
     uint8_t lo    = 0;

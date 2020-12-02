@@ -99,8 +99,10 @@ class ImportExport
      */
     void importOutput()
     {
-        int node = 0;
-        int pin  = 0;
+        uint8_t node = 0;
+        uint8_t pin  = 0;
+        uint8_t type = 0;
+        uint8_t pace = 0;
         
         node = readData();
         pin  = node & OUTPUT_PIN_MASK;
@@ -108,23 +110,26 @@ class ImportExport
         loadOutput(node, pin);
         
         readWord();
-        for (outputDef.type = 0; outputDef.type < OUTPUT_TYPE_MAX; outputDef.type++)
+        for (type = 0; type < OUTPUT_TYPE_MAX; type++)
         {
-            if (!strcmp_P(wordBuffer, M_OUTPUT_TYPES[outputDef.type]))
+            if (!strcmp_P(wordBuffer, M_OUTPUT_TYPES[type]))
             {
                 break;
             }
         }
 
-        if (outputDef.type >= OUTPUT_TYPE_MAX)
+        if (type >= OUTPUT_TYPE_MAX)
         {
             importError();
         }
         else
         {
-            outputDef.lo   = readData();
-            outputDef.hi   = readData();
-            outputDef.pace = readData();
+            outputDef.setType(type);
+            outputDef.setLo(readData());
+            outputDef.setHi(readData());
+            pace = readData();
+            outputDef.setPace(pace >> OUTPUT_PACE_SHIFT);
+            outputDef.setDelay(pace & OUTPUT_DELAY_MASK);
         
             saveOutput();
         }
@@ -388,15 +393,15 @@ class ImportExport
                     Serial.print(CHAR_TAB);
                     printHex(pin, 1);
                     Serial.print(CHAR_TAB);
-                    Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.type & OUTPUT_TYPE_MASK]));
+                    Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.getType()]));
                     Serial.print(CHAR_TAB);
-                    printHex(outputDef.lo, 2);
+                    printHex(outputDef.getLo(),    2);
                     Serial.print(CHAR_TAB);
-                    printHex(outputDef.hi, 2);
+                    printHex(outputDef.getHi(),    2);
                     Serial.print(CHAR_TAB);
-                    printHex((outputDef.pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK,  1);
+                    printHex(outputDef.getPace(),  1);
                     Serial.print(CHAR_TAB);
-                    printHex((outputDef.pace                     ) & OUTPUT_DELAY_MASK, 1);
+                    printHex(outputDef.getDelay(), 1);
                     Serial.println();
                 }
                 Serial.println();

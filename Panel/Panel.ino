@@ -190,6 +190,7 @@ void firstRun()
         lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_FOUND);
         lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_EZY_UPDATE);
 
+        ezyBusClear();
         if (waitForButton() == BUTTON_SELECT)
         {
             convertEzyBus();
@@ -388,7 +389,7 @@ void processInput(int aState)
             case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE_MASK : 0;   // Set state to that of the Toggle.
                                     break;
             case INPUT_TYPE_ON_OFF: loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
-                                    if (outputDef.type & OUTPUT_STATE_MASK)     // Change the state.
+                                    if (outputDef.getType())     // Change the state.
                                     {
                                         newState = 0;
                                     }
@@ -427,7 +428,7 @@ void processInputOutputs(uint8_t aNewState)
     {
         // Get initial delay from Input's zeroth output.
         loadOutput(inputData.output[0] & INPUT_OUTPUT_MASK);
-        delay = outputDef.pace & OUTPUT_DELAY_MASK;
+        delay = outputDef.getDelay();
         
         for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
         {
@@ -449,7 +450,7 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
         || (!(inputData.output[aIndex] & INPUT_DISABLED_MASK)))
     {
         loadOutput(inputData.output[aIndex] & INPUT_OUTPUT_MASK);
-        delay += outputDef.pace & OUTPUT_DELAY_MASK;
+        delay += outputDef.getDelay();
 
         // Can't delay beyond the maximum possible.
         if (delay > OUTPUT_DELAY_MASK)
@@ -457,16 +458,9 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
             delay = OUTPUT_DELAY_MASK;
         }
 
-        if (aNewState)
-        {
-            outputDef.type |= OUTPUT_STATE_MASK;    // Set output state
-        }
-        else
-        {
-            outputDef.type &= ~OUTPUT_STATE_MASK;   // Clear output state
-        }
+        outputDef.setState(aNewState);
             
-        sendOutputCommand((outputDef.type & OUTPUT_STATE_MASK ? outputDef.hi : outputDef.lo), outputDef.pace, (aNewState ? delay : aDelay), outputDef.type & OUTPUT_STATE_MASK);
+        sendOutputCommand((outputDef.getType() ? outputDef.getHi() : outputDef.getLo()), outputDef.getPace(), (aNewState ? delay : aDelay), outputDef.getType());
         saveOutput();
     }
 
@@ -497,14 +491,14 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
     if (reportEnabled(REPORT_SHORT))
     {
         lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.type & OUTPUT_TYPE_MASK]);
+        lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()]);
         lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, (aState ? M_HI : M_LO));
         lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[outputNode]);
         lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[outputPin]);
         setDisplayTimeout(reportDelay());
         
         #if DEBUG
-            Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.type & OUTPUT_TYPE_MASK]));
+            Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.getType()]));
             Serial.print(CHAR_SPACE);
             Serial.print(PGMT(aState ? M_HI : M_LO));
             Serial.print(CHAR_SPACE);
@@ -573,55 +567,12 @@ void setup()
 //  Serial.println();
 //  #endif
 
-//  #if DEBUG
-//  loadInput(3, 4);
-//  inputData.output[0] = (0x1 << OUTPUT_NODE_SHIFT) | 7 | INPUT_TOGGLE_MASK; 
-//  inputData.output[1] = (0xc << OUTPUT_NODE_SHIFT) | 5;
-//  inputData.output[2] = INPUT_DISABLED_MASK;
-//  saveInput();
-//
-//  loadInput(3, 5);
-//  inputData.output[0] = (0x9 << OUTPUT_NODE_SHIFT) | 3; 
-//  inputData.output[1] = INPUT_DISABLED_MASK;
-//  inputData.output[2] = (0x6 << OUTPUT_NODE_SHIFT) | 1;
-//  saveInput();
-//
-//  loadOutput(0x1, 7);
-//  outputDef.type = OUTPUT_TYPE_NONE;
-//  outputDef.lo   = 0x17;
-//  outputDef.hi   = 0x22;
-//  outputDef.pace = 0x33;
-//  saveOutput();
-//
-//  loadOutput(0xc, 5);
-//  outputDef.type = OUTPUT_TYPE_SERVO;
-//  outputDef.lo   = 0xc5;
-//  outputDef.hi   = 0x44;
-//  outputDef.pace = 0x55;
-//  saveOutput();
-//
-//  loadOutput(0x9, 3);
-//  outputDef.type = OUTPUT_TYPE_SIGNAL;
-//  outputDef.lo   = 0x93;
-//  outputDef.hi   = 0x66;
-//  outputDef.pace = 0x77;
-//  saveOutput();
-//  
-//  loadOutput(0x6, 1);
-//  outputDef.type = OUTPUT_TYPE_LED;
-//  outputDef.lo   = 0x61;
-//  outputDef.hi   = 0x88;
-//  outputDef.pace = 0xaa;
-//  saveOutput();
-//  #endif
-
-
     // Initialise subsystems.
     Wire.begin(systemData.i2cControllerID);   // I2C network
     pinMode(PIN_CALIBRATE, INPUT_PULLUP);     // Calibration input pin (11).
 
     // Deal with first run (software has never been run before).
-    if (!loadSystemData())     //  || ezyBusDetected())
+    if (!loadSystemData())      // || ezyBusDetected())
     {
         firstRun();
     }
