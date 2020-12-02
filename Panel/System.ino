@@ -48,3 +48,14 @@ boolean ezyBusDetected()
 {
     return EEPROM.read(EZY_MAGIC_ADDR) == EZY_MAGIC;
 }
+
+
+/** Make sure Ezybus won't recognise the (Panel) setup.
+ */
+void ezyBusClear()
+{
+    if (ezyBusDetected())
+    {
+        EEPROM.put(EZY_MAGIC_ADDR, EZY_MAGIC + 1);      // Corrupt the EzyBus magic number slightly.
+    }
+}

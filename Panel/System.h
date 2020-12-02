@@ -60,4 +60,9 @@ void systemFail(PGM_P aMessage, int aValue, int aDelay);
 boolean ezyBusDetected();
 
 
+/** Make sure Ezybus won't recognise the (Panel) setup.
+ */
+void ezyBusClear();
+
+
 #endif
