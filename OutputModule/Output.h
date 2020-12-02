@@ -45,7 +45,7 @@
  */
 class OutputDef
 {
-    public:
+    private:
 
     uint8_t type  = 0;
     uint8_t lo    = 0;
@@ -191,6 +191,16 @@ class OutputDef
     }
 
 
+    /** Sets the Output's state.
+     *  Hi - Non zero.
+     *  Lo - zero.
+     */
+    void setState(uint8_t aState)
+    {
+        type = (aState ? OUTPUT_STATE_MASK : 0) | (type & OUTPUT_TYPE_MASK);
+    }
+
+    
     /** Gets the Output's Lo value.
      */
     uint8_t getLo()
@@ -223,16 +233,6 @@ class OutputDef
     }
     
 
-    /** Sets the Output's state.
-     *  Hi - Non zero.
-     *  Lo - zero.
-     */
-    void setState(uint8_t aState)
-    {
-        type = (aState ? OUTPUT_STATE_MASK : 0) | (type & OUTPUT_TYPE_MASK);
-    }
-
-    
     /** Gets the Output's pace.
      */
     uint8_t getPace()

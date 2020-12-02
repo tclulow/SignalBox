@@ -520,14 +520,14 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
     
     Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
     // TODO - Send command via Wire.
-    Wire.write((outputDef.getType() << OUTPUT_TYPE_SHIFT) | outputPin);
-    Wire.write(aValue);
-    Wire.write(aPace << OUTPUT_PACE_SHIFT);
-    Wire.write(aState ? 1 : 0);
-    if (aDelay & OUTPUT_DELAY_MASK)
-    {
-        Wire.write(aDelay & OUTPUT_DELAY_MASK);
-    }
+//    Wire.write((outputDef.getType() << OUTPUT_TYPE_SHIFT) | outputPin);
+//    Wire.write(aValue);
+//    Wire.write(aPace << OUTPUT_PACE_SHIFT);
+//    Wire.write(aState ? 1 : 0);
+//    if (aDelay & OUTPUT_DELAY_MASK)
+//    {
+//        Wire.write(aDelay & OUTPUT_DELAY_MASK);
+//    }
     return Wire.endTransmission();
 }
 
