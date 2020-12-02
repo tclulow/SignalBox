@@ -6,15 +6,28 @@
  */
 void readOutput(uint8_t aNode, uint8_t aPin)
 {
+    int error = 0;
+    
     outputNode = aNode;
     outputPin  = aPin;
 
     Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
     Wire.write(COMMS_CMD_READ | outputPin);
-    Wire.endTransmission();
+    error = Wire.endTransmission();
 
-    // Read 4-byte response.
-    outputDef.read();
+    if (error)
+    {
+        systemFail(M_MCP_ERROR, error, DELAY_READ);
+    }
+    else if ((error = Wire.requestFrom(systemData.i2cOutputBaseID + outputNode, OUTPUT_WRITE_LEN)) != OUTPUT_WRITE_LEN)
+    {
+        systemFail(M_MCP_COMMS, error, DELAY_READ);
+    }
+    else
+    {
+        // Read the outputDef from the OutputModule.
+        outputDef.read();
+    }
 }
 
 
@@ -33,7 +46,7 @@ void writeOutput()
     Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
     Wire.write(COMMS_CMD_WRITE | outputPin);
     outputDef.write();
-    return Wire.endTransmission();
+    Wire.endTransmission();
 }
 
  
