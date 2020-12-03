@@ -106,15 +106,15 @@ void setup()
         {
             moduleID |= mask;
         }
-        Serial.print("Jumper ");
-        Serial.print(jumperPins[pin], HEX);
-        Serial.print(": digital=");
-        Serial.print(digitalRead(jumperPins[pin]), HEX);
-        Serial.print(", analog=");
-        Serial.print(analogRead(jumperPins[pin]), HEX);
-        Serial.print(". ID=");
-        Serial.print(moduleID, HEX);
-        Serial.println();
+//        Serial.print("Jumper ");
+//        Serial.print(jumperPins[pin], HEX);
+//        Serial.print(": digital=");
+//        Serial.print(digitalRead(jumperPins[pin]), HEX);
+//        Serial.print(", analog=");
+//        Serial.print(analogRead(jumperPins[pin]), HEX);
+//        Serial.print(". ID=");
+//        Serial.print(moduleID, HEX);
+//        Serial.println();
     }
     moduleID |= systemData.i2cOutputBaseID;
 
@@ -218,13 +218,18 @@ void setOutputType(int aPin, uint8_t aType)
  */
 void processReceipt(int aLen)
 {
-    Serial.print("Req: ");
-    Serial.println(aLen);
-
     uint8_t command = Wire.read();
     uint8_t pin     = command & COMMS_PIN_MASK;
 
     command &= COMMS_CMD_MASK;
+
+    Serial.print("Receipt(");
+    Serial.print(aLen);
+    Serial.print("): cmd=");
+    Serial.print(command, HEX);
+    Serial.print(", pin=");
+    Serial.print(pin, HEX);
+    Serial.println();
 
     switch (command)
     {
@@ -286,8 +291,13 @@ void processWrite(uint8_t aPin)
  */
 void processRequest(int aLen)
 {
-    Serial.print("Request received: ");
-    Serial.println(aLen);
+    Serial.print("Receipt(");
+    Serial.print(aLen);
+    Serial.print("): requestCmd=");
+    Serial.print(requestCmd, HEX);
+    Serial.print(", requestPin=");
+    Serial.print(requestPin, HEX);
+    Serial.println();
 
     // If there's a read Output command pending, send the Output's definition.
     if (requestCmd == COMMS_CMD_READ)
@@ -772,8 +782,8 @@ void test1()
     Serial.println();
 
     // outputDef.set(aType, aState, aLo, aHi, aPace, aDelay)
-    outputDefs[0].set(OUTPUT_TYPE_SERVO, false,   0, 180,  0xc, 0);   saveOutput(0);
-    outputDefs[1].set(OUTPUT_TYPE_SERVO, false,   0, 180,  0xc, 2);   saveOutput(1);
+    outputDefs[0].set(OUTPUT_TYPE_SERVO, false,   3, 180,  0xd, 1);   saveOutput(0);
+    outputDefs[1].set(OUTPUT_TYPE_SERVO, false,   4, 179,  0xc, 2);   saveOutput(1);
 
     actionReceipt(0, true, 0);
     actionReceipt(1, true, 3);
@@ -788,12 +798,10 @@ void test1()
 
 void test2()
 {
-    int pin      = 0;
-
     Serial.println();
 
-    actionReceipt(pin++, false, outputDefs[pin].getDelay());
-    actionReceipt(pin++, false, outputDefs[pin].getDelay());
+    actionReceipt(0, false, outputDefs[0].getDelay());
+    actionReceipt(1, false, outputDefs[1].getDelay());
     
     Serial.println();   
 }
