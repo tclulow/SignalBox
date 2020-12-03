@@ -115,7 +115,7 @@ const char* const M_I2C_PROMPTS[]    = { M_ID_CONTROLLER, M_ID_INPUT, M_ID_OUTPU
 const char* const M_REPORT_PROMPTS[] = { M_NONE, M_SHORT, M_LONG, M_PAUSE };
 
 const char* const M_INPUT_TYPES[]    = { M_TOGGLE, M_ON_OFF, M_ON,  M_OFF };
-const char* const M_OUTPUT_TYPES[]   = { M_SERVO,  M_SIGNAL, M_LED, M_FLASH, M_BLINK, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU };
+const char* const M_OUTPUT_TYPES[]   = { M_SERVO,  M_SIGNAL, M_LED, M_FLASH, M_BLINK, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_NONE };
 
 
 /** Gets a PROGMEM message and copies it to a buffer

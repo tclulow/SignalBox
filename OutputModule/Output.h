@@ -148,6 +148,8 @@ class OutputDef
      */
     printDef(char* aHeader, uint8_t aPin)
     {
+        Serial.print(millis());
+        Serial.print("\t");
         Serial.print(aHeader);
         Serial.print(aPin);
         Serial.print("\ttype ");

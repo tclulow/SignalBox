@@ -6,27 +6,44 @@
  */
 void readOutput(uint8_t aNode, uint8_t aPin)
 {
-    int error = 0;
-    
-    outputNode = aNode;
-    outputPin  = aPin;
-
-    Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
-    Wire.write(COMMS_CMD_READ | outputPin);
-    error = Wire.endTransmission();
-
-    if (error)
+    if (!isOutputNode(aNode))
     {
-        systemFail(M_MCP_ERROR, error, DELAY_READ);
-    }
-    else if ((error = Wire.requestFrom(systemData.i2cOutputBaseID + outputNode, OUTPUT_WRITE_LEN)) != OUTPUT_WRITE_LEN)
-    {
-        systemFail(M_MCP_COMMS, error, DELAY_READ);
+        outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
     }
     else
     {
-        // Read the outputDef from the OutputModule.
-        outputDef.read();
+        int error = 0;
+
+        outputNode = aNode;
+        outputPin  = aPin;
+    
+        Serial.print(millis());
+        Serial.print("\tRead node=");
+        Serial.print(aNode, HEX);
+        Serial.print(", pin=");
+        Serial.print(outputPin, HEX);
+        Serial.println();
+    
+        Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
+        Wire.write(COMMS_CMD_READ | outputPin);
+        error = Wire.endTransmission();
+    
+        if (error)
+        {
+            systemFail(M_MCP_ERROR, error, DELAY_READ);
+            outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
+        }
+        else if ((error = Wire.requestFrom(systemData.i2cOutputBaseID + outputNode, OUTPUT_WRITE_LEN)) != OUTPUT_WRITE_LEN)
+        {
+            systemFail(M_MCP_COMMS, error, DELAY_READ);
+            outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
+        }
+        else
+        {
+            // Read the outputDef from the OutputModule.
+            outputDef.read();
+            outputDef.printDef("Output", outputPin);
+        }
     }
 }
 

@@ -24,6 +24,13 @@ void saveSystemData()
  */
 void systemFail(PGM_P aMessage, int aValue, int aDelay)
 {
+    Serial.print(millis());
+    Serial.print(CHAR_TAB);
+    Serial.print(PGMT(aMessage));
+    Serial.print(CHAR_SPACE);
+    Serial.print(aValue, HEX);
+    Serial.println();
+    
     lcd.clear();
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_FAILURE);
     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, aMessage);

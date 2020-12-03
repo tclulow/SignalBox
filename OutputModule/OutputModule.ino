@@ -129,7 +129,8 @@ void setup()
     Wire.onReceive(processReceipt);
     Wire.onRequest(processRequest);
 
-    Serial.print("Module ID: 0x");
+    Serial.print(millis());
+    Serial.print("\tModule ID: 0x");
     Serial.println(moduleID, HEX);
 }
 
@@ -218,47 +219,62 @@ void setOutputType(int aPin, uint8_t aType)
  */
 void processReceipt(int aLen)
 {
-    uint8_t command = Wire.read();
-    uint8_t pin     = command & COMMS_PIN_MASK;
-
-    command &= COMMS_CMD_MASK;
-
-    Serial.print("Receipt(");
-    Serial.print(aLen);
-    Serial.print("): cmd=");
-    Serial.print(command, HEX);
-    Serial.print(", pin=");
-    Serial.print(pin, HEX);
-    Serial.println();
-
-    switch (command)
+    if (aLen > 0)
     {
-        case COMMS_CMD_SET_LO:
-        case COMMS_CMD_SET_HI: if (Wire.available())
-                               {
-                                   // Use delay sent with request.
-                                   actionReceipt(pin, command == COMMS_CMD_SET_HI, Wire.read());
-                               }
-                               else
-                               {
-                                   // Use delay from Output's definition.
-                                   actionReceipt(pin, command == COMMS_CMD_SET_HI, outputDefs[pin].getDelay());
-                               }
-                               break;
-        case COMMS_CMD_READ:   requestCmd = command;    // Record the command
-                               requestPin = pin;        // and the pin the master wants to read.
-                               break;
-        case COMMS_CMD_WRITE:  processWrite(pin);       // Process the rest of the command i2c data.
-                               break;
-        default:               Serial.print("Unrecognised command: ");
-                               Serial.println(command, HEX);
-    }
+        uint8_t command = Wire.read();
+        uint8_t pin     = command & COMMS_PIN_MASK;
+    
+        command &= COMMS_CMD_MASK;
 
+        Serial.print(millis());
+        Serial.print("\tReceipt(");
+        Serial.print(aLen, HEX);
+        Serial.print("): cmd=");
+        Serial.print(command, HEX);
+        Serial.print(", pin=");
+        Serial.print(pin, HEX);
+        Serial.println();
+    
+        switch (command)
+        {
+            case COMMS_CMD_SET_LO:
+            case COMMS_CMD_SET_HI: if (Wire.available())
+                                   {
+                                       // Use delay sent with request.
+                                       actionReceipt(pin, command == COMMS_CMD_SET_HI, Wire.read());
+                                   }
+                                   else
+                                   {
+                                       // Use delay from Output's definition.
+                                       actionReceipt(pin, command == COMMS_CMD_SET_HI, outputDefs[pin].getDelay());
+                                   }
+                                   break;
+            case COMMS_CMD_READ:   requestCmd = command;    // Record the command
+                                   requestPin = pin;        // and the pin the master wants to read.
+                                   break;
+            case COMMS_CMD_WRITE:  processWrite(pin);       // Process the rest of the command i2c data.
+                                   break;
+            default:               Serial.print(millis());
+                                   Serial.print("\tUnrecognised command: ");
+                                   Serial.println(command, HEX);
+        }
+    }
+    else
+    {
+        // Null receipt - Just the master seeing if we exist.
+        Serial.print(millis());
+        Serial.print("\tReceipt(");
+        Serial.print(aLen, HEX);
+        Serial.print(")");
+        Serial.println();
+    }
+    
     // Consume unexpected data.
     if (Wire.available())
     {
-        Serial.print("Unexpected data: ");
-        Serial.println(Wire.available());
+        Serial.print(millis());
+        Serial.print("\tUnexpected data: ");
+        Serial.println(Wire.available(), HEX);
         while (Wire.available())
         {
             Wire.read();
@@ -275,11 +291,13 @@ void processWrite(uint8_t aPin)
 {
     if (Wire.available() < COMMS_LEN_WRITE)
     {
-        Serial.print("Write: ");
-        Serial.println(Wire.available());
+        Serial.print(millis());
+        Serial.print("\tWrite: ");
+        Serial.println(Wire.available(), HEX);
     }
     else
     {
+        // Read the Output definition and save it.
         outputDefs[aPin].read();
         saveOutput(aPin);
     }
@@ -289,11 +307,10 @@ void processWrite(uint8_t aPin)
 /** Process a Request (for data).
  *  Send data to master.
  */
-void processRequest(int aLen)
+void processRequest()
 {
-    Serial.print("Receipt(");
-    Serial.print(aLen);
-    Serial.print("): requestCmd=");
+    Serial.print(millis());
+    Serial.print("\tRequest(): requestCmd=");
     Serial.print(requestCmd, HEX);
     Serial.print(", requestPin=");
     Serial.print(requestPin, HEX);
@@ -302,11 +319,13 @@ void processRequest(int aLen)
     // If there's a read Output command pending, send the Output's definition.
     if (requestCmd == COMMS_CMD_READ)
     {
+        outputDefs[requestPin].printDef("Send", requestPin);
         outputDefs[requestPin].write();
     }
     else
     {
-        Serial.print("Unknown command: ");
+        Serial.print(millis());
+        Serial.print("\tUnknown command: ");
         Serial.println(requestCmd);
     }
 
