@@ -16,13 +16,14 @@
 #define OUTPUT_LED_MAX          255   // Maximum value a LED can take.
 #define OUTPUT_HI_LO_SIZE         3   // Maximum digits in a Hi/Lo display.
 
-// Masks for type, state, pace and delay options withing the outputDef element.
+// Masks for type, state, pace and delay options within the outputDef.
 #define OUTPUT_STATE_MASK      0x80   // On or off, switched or not switched, 0 = lo, 1 = hi.    Was OUTPUT_STATE
 #define OUTPUT_TYPE_MASK       0x0f   // Output type mask (4 bits).
 #define OUTPUT_PACE_SHIFT         4   // Pace is in the left-most nibble.
 #define OUTPUT_PACE_MASK       0x0f   // Pace is 4 bits.
 #define OUTPUT_PACE_MULT          4   // Pace is multiplied by 16 (shifted left 4 bits).
 #define OUTPUT_DELAY_MASK      0x0f   // Delay is right-most nibble of output.pace.
+#define OUTPUT_WRITE_LEN          4   // Four bytes used to read/write OutputDef to/from OutputModule.
 
 // Defaults when initialising
 #define OUTPUT_DEFAULT_LO        90   // Default low  position is 90 degrees.
@@ -306,31 +307,19 @@ uint8_t    outputPin    = 0;    // Current Output pin.
 OutputDef  outputDef;           // Definition of current Output.
 
 
-/** Load an Output's data from OutputModule.
+/** Read an Output's data from an OutputModule.
  */
-void loadOutput(uint8_t aNode, uint8_t aPin)
-{
-    outputNode = aNode;
-    outputPin  = aPin;
-    // Read node contents from OutputModule
-}
+void readOutput(uint8_t aNode, uint8_t aPin);
 
 
-/** Load an Output's data from OutputModule.
+/** Read an Output's data from an OutputModule.
  */
-void loadOutput(uint8_t aOutputNumber)
-{
-    loadOutput((aOutputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK, aOutputNumber & OUTPUT_PIN_MASK);
-}
+void readOutput(uint8_t aOutputNumber);
 
 
-/** Save an Output's data to EEPROM.
- *  Data in outputNumber and outputData.
+/** Write an Output's data to an OutputModule.
  */
-void saveOutput()
-{
-    // TODO - implement with Wire
-}
+void writeOutput();
 
 
 /** Record the presence of an OutputNode in the map.
