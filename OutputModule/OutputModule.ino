@@ -13,23 +13,25 @@
 #include "Output.h"
 
 
-#define STEP_SERVO          50  // Delay (msecs) between steps of a Servo.
-#define STEP_LED            10  // Delay (msecs) between steps of a LED.
-#define STEP_FLASH          10  // Delay (msecs) between steps of flashes of a FLASH or BLINK.
-#define STEP_FLICKER_MASK 0x0c  // Mask 2 bits (not right-most which are always 0) to gererate 1-in-4 chance of flicker.
-#define MAX_PACE           124  // Maximum pace value.
-#define PACE_STEPS         128  // Pace adjustment when converting to steps.
+#define STEP_SERVO           50  // Delay (msecs) between steps of a Servo.
+#define STEP_LED             10  // Delay (msecs) between steps of a LED.
+#define STEP_FLASH           10  // Delay (msecs) between steps of flashes of a FLASH or BLINK.
+#define STEP_FLICKER_MASK  0x0c  // Mask 2 bits (not right-most which are always 0) to gererate 1-in-4 chance of flicker.
+#define MAX_PACE            124  // Maximum pace value.
+#define PACE_STEPS          128  // Pace adjustment when converting to steps.
 
-#define JUMPER_PINS          4  // Four jumpers.
-#define IO_PINS              8  // Eight IO pins.
-#define OUTPUT_BASE_PIN      4  // Outputs attached to this pin and the next 7 more.
+#define JUMPER_PINS           4  // Four jumpers.
+#define IO_PINS               8  // Eight IO pins.
+#define OUTPUT_BASE_PIN       4  // Outputs attached to this pin and the next 7 more.
+#define ANALOG_PIN_FIRST     A0  // First analog pin. 
+#define ANALOG_PIN_CUTOFF 0x200  // When usinging analog pin for digital purposes, cutoff at this value (half of full range 0-3ff).     
 
 
 #define DELAY_MULTIPLIER  1000  // Multiply delay values by this amount (convert to seconds).
 
 
 // The module jumper pins
-const uint8_t jumperPins[JUMPER_PINS] = { 1, 0, A6, A7 };
+const uint8_t jumperPins[JUMPER_PINS] = { 1, 0, A7, A6 };
 
 // The digital IO pins.
 const uint8_t ioPins[IO_PINS]         = { 3, 2, A3, A2, A1, A0, 13, 12 };
@@ -95,9 +97,24 @@ void setup()
     }
 
     // Configure i2c from jumpers.
-    for (int pin = 0; pin < JUMPER_PINS; pin++)
+    for (int pin = 0, mask=1; pin < JUMPER_PINS; pin++, mask <<= 1)
     {
-        moduleID |= digitalRead(jumperPins[pin]) << pin;
+        if (   (   (jumperPins[pin] >= ANALOG_PIN_FIRST)
+                && (analogRead(jumperPins[pin]) > ANALOG_PIN_CUTOFF))
+            || (   (jumperPins[pin] <  ANALOG_PIN_FIRST)
+                && (digitalRead(jumperPins[pin]))))
+        {
+            moduleID |= mask;
+        }
+        Serial.print("Jumper ");
+        Serial.print(jumperPins[pin], HEX);
+        Serial.print(": digital=");
+        Serial.print(digitalRead(jumperPins[pin]), HEX);
+        Serial.print(", analog=");
+        Serial.print(analogRead(jumperPins[pin]), HEX);
+        Serial.print(". ID=");
+        Serial.print(moduleID, HEX);
+        Serial.println();
     }
     moduleID |= systemData.i2cOutputBaseID;
 
@@ -752,14 +769,17 @@ void loop()
 
 void test1()
 {
-    int pin      = 0;
-
     Serial.println();
 
     // outputDef.set(aType, aState, aLo, aHi, aPace, aDelay)
-//    outputDefs[pin].set(OUTPUT_TYPE_SERVO, false,   0, 180,  0xc, 1);   saveOutput(pin);   actionReceipt(pin++, true, 1);
+    outputDefs[0].set(OUTPUT_TYPE_SERVO, false,   0, 180,  0xc, 0);   saveOutput(0);
+    outputDefs[1].set(OUTPUT_TYPE_SERVO, false,   0, 180,  0xc, 2);   saveOutput(1);
+
+    actionReceipt(0, true, 0);
+    actionReceipt(1, true, 3);
+    
 //    outputDefs[pin].set(OUTPUT_TYPE_LED,   false, 100, 100,  0xc, 1);   saveOutput(pin);   actionReceipt(pin++, true, 1);
-    outputDefs[pin].set(OUTPUT_TYPE_FLASH, false, 255,   4,  0xf, 4);   saveOutput(pin);   actionReceipt(pin++, true, 4);
+//    outputDefs[pin].set(OUTPUT_TYPE_FLASH, false, 255,   4,  0xf, 4);   saveOutput(pin);   actionReceipt(pin++, true, 4);
 //    outputDefs[pin].set(OUTPUT_TYPE_BLINK, false,  23, 183,  0xe, 4);   saveOutput(pin);   actionReceipt(pin++, true, 4);
     
     Serial.println();
@@ -771,12 +791,9 @@ void test2()
     int pin      = 0;
 
     Serial.println();
-    outputDefs[0].setPace(0xe);
-    // outputDef.set(aType, aState, aLo, aHi, aPace, aDelay)
-    actionReceipt(pin, false, outputDefs[pin].getDelay());     pin += 1;
-//    actionReceipt(pin, false, outputDefs[pin].getDelay());     pin += 1;
-//    actionReceipt(pin, false, outputDefs[pin].getDelay());     pin += 1;
-//    actionReceipt(pin, false, outputDefs[pin].getDelay());     pin += 1;
+
+    actionReceipt(pin++, false, outputDefs[pin].getDelay());
+    actionReceipt(pin++, false, outputDefs[pin].getDelay());
     
     Serial.println();   
 }
