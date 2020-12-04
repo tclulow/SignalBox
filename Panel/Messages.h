@@ -12,6 +12,7 @@
 const char M_SOFTWARE[]        PROGMEM = "Panel";
 const char M_VERSION[]         PROGMEM = "v1.2";
 const char M_VERSION_DATE[]    PROGMEM = "Nov 2020";
+const char M_STARTUP[]         PROGMEM = "Startup";
 const char M_UPDATE[]          PROGMEM = "Update";
 
 // General messages.

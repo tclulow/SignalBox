@@ -463,13 +463,71 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
         }
 
         outputDef.setState(aNewState);
-            
-        sendOutputCommand((outputDef.getState() ? outputDef.getHi() : outputDef.getLo()), outputDef.getPace(), (aNewState ? delay : aDelay), outputDef.getState());
-        writeOutput();
+        writeOutputState(outputNode, outputPin, aNewState, delay);
+        
+//        sendOutputCommand((outputDef.getState() ? outputDef.getHi() : outputDef.getLo()), outputDef.getPace(), (aNewState ? delay : aDelay), outputDef.getState());
+//        writeOutput();
     }
 
     return delay;
 }
+
+
+/** Send a change-of-state to a particular Output.
+ */
+int writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay)
+{
+//  #if DEBUG
+//  // Report output
+//  Serial.print("Output ");
+//  Serial.print(aState ? "Hi" : "Lo");
+//  Serial.print(" ");
+//  Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
+//  Serial.print(" ");
+//  Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
+//  Serial.print(" ");
+//  Serial.print(aValue, HEX);
+//  Serial.print(" ");
+//  Serial.print(aPace);
+//  Serial.println();
+//  #endif
+
+    if (reportEnabled(REPORT_SHORT))
+    {
+        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()]);
+        lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, (aState ? M_HI : M_LO));
+        lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[outputNode]);
+        lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[outputPin]);
+        setDisplayTimeout(reportDelay());
+        
+        #if DEBUG
+            Serial.print(millis());
+            Serial.print(CHAR_TAB);
+            Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.getType()]));
+            Serial.print(CHAR_SPACE);
+            Serial.print(PGMT(aState ? M_HI : M_LO));
+            Serial.print(CHAR_SPACE);
+            Serial.print(HEX_CHARS[outputNode]);
+            Serial.print(HEX_CHARS[outputPin]);
+            Serial.print(CHAR_SPACE);
+            Serial.print(aDelay, HEX);
+            Serial.println();
+        #endif
+        
+        reportPause();
+    }
+
+    Wire.beginTransmission(systemData.i2cOutputBaseID + aNode);
+    Wire.write((aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | aPin);
+    if (aDelay)
+    {
+        Wire.write(aDelay);
+    }
+    return Wire.endTransmission();
+}
+
+
 
 
 /** Send a command to an output node.
@@ -554,6 +612,7 @@ void setup()
 {
     lcd.begin(LCD_COLS, LCD_ROWS);            // LCD panel.
     announce();
+    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_STARTUP);
     
     initialise();
     
@@ -592,6 +651,10 @@ void setup()
         saveSystemData();
     }
 
+    // Discover and initialise attached hardware.
+    mapHardware();                            // Scan for attached hardware.
+    initInputs();                             // Initialise all inputs.
+
     // Check if version update required.
     if (systemData.version != VERSION)
     {
@@ -601,14 +664,15 @@ void setup()
         Serial.print(CHAR_SPACE);
         Serial.print(VERSION, HEX);
         Serial.println();
+
+        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_UPDATE);
+
+        // Do the update here.
+        delay(DELAY_READ);          // Nothing to do, just show it's happening.
         
         systemData.version = VERSION;
         saveSystemData();
     }
-
-    // Discover and initialise attached hardware.
-    mapHardware();                            // Scan for attached hardware.
-    initInputs();                             // Initialise all inputs.
 
     // Announce ourselves.
     announce();
