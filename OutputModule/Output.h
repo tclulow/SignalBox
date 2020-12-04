@@ -23,6 +23,9 @@
 #define OUTPUT_PACE_MASK       0x0f   // Pace is 4 bits.
 #define OUTPUT_PACE_MULT          4   // Pace is multiplied by 16 (shifted left 4 bits).
 #define OUTPUT_DELAY_MASK      0x0f   // Delay is right-most nibble of output.pace.
+
+// Wire response message lengths.
+#define OUTPUT_STATE_LEN          1   // One byte used to return a node's Outputs' states.
 #define OUTPUT_WRITE_LEN          4   // Four bytes used to read/write OutputDef to/from OutputModule.
 
 // Defaults when initialising
@@ -305,8 +308,9 @@ void saveOutput(int aPin)
 int        outputNodes  = 0;    // Bit map of Output nodes present.
 uint8_t    outputNode   = 0;    // Current Output node.
 uint8_t    outputPin    = 0;    // Current Output pin.
-// uint8_t    outputNumber = 0;    // Current Output number.
 OutputDef  outputDef;           // Definition of current Output.
+
+uint8_t    outputStates[OUTPUT_NODE_MAX];   // State of all the attached output module's Outputs.
 
 
 /** Read an Output's data from an OutputModule.
@@ -324,11 +328,48 @@ void readOutput(uint8_t aOutputNumber);
 void writeOutput();
 
 
+/** Get the states of the given node's Outputs.
+ *  Save in OutputStates.
+ *  If fails, return a character indicating the error.
+ */
+char getOutputStates(uint8_t aNode);
+
+
 /** Record the presence of an OutputNode in the map.
  */
 void setOutputNodePresent(int aNode)
 {
     outputNodes |= (1 << aNode); 
+}
+
+
+/** Gets the state of the given Output's given pin.
+ */
+boolean getOutputState(uint8_t aNode, uint8_t aPin)
+{
+    return outputStates[aNode] & (1 << aPin);
+}
+
+
+/** Sets the states of all the given node's Outputs.
+ */
+void setOutputStates(uint8_t aNode, uint8_t aStates)
+{
+    outputStates[aNode] = aStates;
+}
+
+
+/** Sets the state of the given node's Output pin.
+ */
+void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState)
+{
+    uint8_t mask = 1 << aPin;
+    
+    outputStates[aNode] &= ~mask;
+    if (aState)
+    {
+        outputStates[aNode] |= mask;
+    }
 }
 
 
