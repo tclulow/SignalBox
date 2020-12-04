@@ -296,10 +296,14 @@ void processReceipt(int aLen)
                                        actionState(pin, command == COMMS_CMD_SET_HI, outputDefs[pin].getDelay());
                                    }
                                    break;
-            case COMMS_CMD_READ:   requestCmd = command;    // Record the command.
-                                   requestPin = pin;        // and the pin the master wants to read.
+            case COMMS_CMD_READ:   requestCmd = command;        // Record the command.
+                                   requestPin = pin;            // and the pin the master wants to read.
                                    break;
-            case COMMS_CMD_WRITE:  processWrite(pin);       // Process the rest of the command i2c data.
+            case COMMS_CMD_WRITE:  processWrite(pin, false);    // Process the Output's data.
+                                   break;
+            case COMMS_CMD_SAVE:   processWrite(pin, true);     // Process the Output's data and save it.
+                                   break;
+            case COMMS_CMD_RESET:  loadOutput(pin);
                                    break;
             default:               Serial.print("\tUnrecognised command: ");
                                    Serial.println(command, HEX);
@@ -334,7 +338,7 @@ void processReceipt(int aLen)
  *  Read the Output
  *  Write the definition to the specified Output.
  */
-void processWrite(uint8_t aPin)
+void processWrite(uint8_t aPin, boolean aSave)
 {
     if (Wire.available() < COMMS_LEN_WRITE)
     {
@@ -348,7 +352,14 @@ void processWrite(uint8_t aPin)
     {
         // Read the Output definition and save it.
         outputDefs[aPin].read();
-        saveOutput(aPin);
+        if (aSave)
+        {
+            saveOutput(aPin);
+        }
+        else
+        {
+            outputDefs[aPin].printDef("Write", aPin);
+        }
     }
 }
 

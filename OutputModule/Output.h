@@ -326,8 +326,9 @@ void readOutput(uint8_t aOutputNumber);
 
 
 /** Write an Output's data to an OutputModule.
+ *  And save it if so requested.
  */
-void writeOutput();
+void writeOutput(boolean aSave);
 
 
 /** Read the states of the given node's Outputs.

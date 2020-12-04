@@ -1043,7 +1043,7 @@ class Configure
                                     {
                                         if (confirm())
                                         {
-                                            writeOutput();
+                                            writeOutput(true);
                                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
                                             delay(DELAY_READ);
                                             displayDetailOutput();

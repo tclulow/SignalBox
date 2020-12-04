@@ -126,7 +126,7 @@ class ImportExport
             outputDef.setPace(pace >> OUTPUT_PACE_SHIFT);
             outputDef.setDelay(pace & OUTPUT_DELAY_MASK);
         
-            writeOutput();
+            writeOutput(true);
         }
     }
     

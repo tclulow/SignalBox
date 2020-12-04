@@ -20,7 +20,7 @@ void readOutput(uint8_t aNode, uint8_t aPin)
         #if DEBUG
             Serial.print(millis());
             Serial.print("\tRead node=");
-            Serial.print(aNode, HEX);
+            Serial.print(outputNode, HEX);
             Serial.print(", pin=");
             Serial.print(outputPin, HEX);
             Serial.println();
@@ -59,11 +59,22 @@ void readOutput(uint8_t aOutputNumber)
 
 
 /** Write an Output's data to an OutputModule.
+ *  And save it if so requested.
  */
-void writeOutput()
+void writeOutput(boolean aSave)
 {
+    #if DEBUG
+        Serial.print(millis());
+        Serial.print("\tRead node=");
+        Serial.print(outputNode, HEX);
+        Serial.print(", pin=");
+        Serial.print(outputPin, HEX);
+        Serial.println();
+        outputDef.printDef((aSave ? "Save" : "Write"), outputPin);
+    #endif
+
     Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
-    Wire.write(COMMS_CMD_WRITE | outputPin);
+    Wire.write((aSave ? COMMS_CMD_SAVE : COMMS_CMD_WRITE) | outputPin);
     outputDef.write();
     Wire.endTransmission();
 }
