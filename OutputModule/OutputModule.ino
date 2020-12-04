@@ -237,7 +237,7 @@ void processReceipt(int aLen)
     
         switch (command)
         {
-            case COMMS_CMD_SET_LO:
+            case COMMS_CMD_SET_LO:  
             case COMMS_CMD_SET_HI: if (Wire.available())
                                    {
                                        // Use delay sent with request.
@@ -249,6 +249,7 @@ void processReceipt(int aLen)
                                        actionReceipt(pin, command == COMMS_CMD_SET_HI, outputDefs[pin].getDelay());
                                    }
                                    break;
+            case COMMS_CMD_STATE:
             case COMMS_CMD_READ:   requestCmd = command;    // Record the command
                                    requestPin = pin;        // and the pin the master wants to read.
                                    break;
@@ -316,20 +317,48 @@ void processRequest()
     Serial.print(requestPin, HEX);
     Serial.println();
 
-    // If there's a read Output command pending, send the Output's definition.
-    if (requestCmd == COMMS_CMD_READ)
+    switch (requestCmd)
     {
-        outputDefs[requestPin].printDef("Send", requestPin);
-        outputDefs[requestPin].write();
-    }
-    else
-    {
-        Serial.print(millis());
-        Serial.print("\tUnknown command: ");
-        Serial.println(requestCmd);
+        case COMMS_CMD_STATE: returnState();
+                              break;
+        case COMMS_CMD_READ:  returnDef();
+                              break;
+        default:              Serial.print(millis());
+                              Serial.print("\tUnknown command: ");
+                              Serial.println(requestCmd);
+
     }
 
+    // Clear pending command.
     requestCmd = COMMS_CMD_NONE;
+}
+
+
+/** Return the state of all the node's Outputs.
+ */
+void returnState()
+{
+    uint8_t state = 0;
+
+    // Build a response from all the Output's states.
+    for (uint8_t pin = 0, mask = 1; pin < OUTPUT_PIN_MAX; pin++, mask <<= 1)
+    {
+        if (outputDefs[pin].getState())
+        {
+            state |= mask;
+        }
+    }
+    
+    Wire.write(state);
+}
+
+
+/** Return the requested pin's Output definition.
+ */
+void returnDef()
+{
+    outputDefs[requestPin].printDef("Send", requestPin);
+    outputDefs[requestPin].write();
 }
 
 

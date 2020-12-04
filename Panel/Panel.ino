@@ -75,16 +75,16 @@ void mapHardware()
     lcd.setCursor(0, 1);
     for (int node = 0; node < OUTPUT_NODE_MAX; node++)
     {
-        Wire.beginTransmission(systemData.i2cOutputBaseID + node);
-        if (Wire.endTransmission())
+        char state = getOutputStates(node);
+
+        if (state == 0)
         {
-            lcd.print(CHAR_DOT); 
+            lcd.print(HEX_CHARS[node]);
+            setOutputNodePresent(node);
         }
         else
         {
-            lcd.print(HEX_CHARS[node]);
-            setOutputNodePresent(node);  
-
+            lcd.print(CHAR_DOT); 
         }
     }
 

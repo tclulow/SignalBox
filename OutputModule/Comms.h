@@ -9,10 +9,11 @@
 #define COMMS_PIN_MASK      0x07    // Bottom 3 bits.
 
 
-#define COMMS_CMD_SET_LO    0x00    // go Lo
-#define COMMS_CMD_SET_HI    0x10    // go Hi
-#define COMMS_CMD_READ      0x20    // Read data from Output's definition (to the i2c master).    
-#define COMMS_CMD_WRITE     0x30    // Write data to Output's definition (from the i2c master).
+#define COMMS_CMD_STATE     0x00    // Read the sate of all node's Outputs.
+#define COMMS_CMD_SET_LO    0x10    // Go Lo
+#define COMMS_CMD_SET_HI    0x20    // Go Hi
+#define COMMS_CMD_READ      0x40    // Read data from Output's definition (to the i2c master).    
+#define COMMS_CMD_WRITE     0x50    // Write data to Output's definition (from the i2c master).
 
 #define COMMS_CMD_NONE      0xff    // Null command.
 

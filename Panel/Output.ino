@@ -66,4 +66,47 @@ void writeOutput()
     Wire.endTransmission();
 }
 
+
+/** Get the states of the given node's Outputs.
+ *  Save in OutputStates.
+ *  If fails, return a character indicating the error.
+ */
+char getOutputStates(uint8_t aNode)
+{
+    char error = 0;
+    
+    Wire.beginTransmission(systemData.i2cOutputBaseID + aNode);
+    Wire.write(COMMS_CMD_STATE);
+    if (Wire.endTransmission())
+    {
+        error = CHAR_DOT;       // No such node on the bus.
+    }
+    else if (Wire.requestFrom(systemData.i2cOutputBaseID + aNode, OUTPUT_STATE_LEN) != OUTPUT_STATE_LEN)
+    {
+        error = CHAR_HASH;
+    }
+    else
+    {
+        int states = Wire.read();
+
+        Serial.print(millis());
+        Serial.print("\tState ");
+        Serial.print(aNode, HEX);
+        Serial.print(CHAR_SPACE);
+        Serial.print(states, HEX);
+        Serial.println();
+        
+        if (states < 0)
+        {
+            error = CHAR_STAR;
+        }
+        else
+        {
+            setOutputNodePresent(aNode);
+            setOutputStates(aNode, states);
+        }
+    }
+
+    return error;
+}
  
