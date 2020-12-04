@@ -75,7 +75,7 @@ void mapHardware()
     lcd.setCursor(0, 1);
     for (int node = 0; node < OUTPUT_NODE_MAX; node++)
     {
-        char state = getOutputStates(node);
+        char state = readOutputStates(node);
 
         if (state == 0)
         {
@@ -358,9 +358,9 @@ int readInputNode(int node)
 
 /** Process the changed input.
  */
-void processInput(int aState)
+void processInput(uint8_t aState)
 {
-    uint8_t newState = 0;
+    boolean newState = false;
     
     // Process all input state changes for Toggles, only state going low for other Input types.
     if (   (aState == 0)
@@ -393,21 +393,15 @@ void processInput(int aState)
         // Set desired new state based on Input's type/state and Output's state.
         switch (inputType)
         {
-            case INPUT_TYPE_TOGGLE: newState = aState ? OUTPUT_STATE_MASK : 0;   // Set state to that of the Toggle.
+            case INPUT_TYPE_TOGGLE: newState = aState != 0;     // Set state to that of the Toggle.
                                     break;
-            case INPUT_TYPE_ON_OFF: readOutput(inputDef.getOutput(0));
-                                    if (outputDef.getState())     // Change the state.
-                                    {
-                                        newState = 0;
-                                    }
-                                    else
-                                    {
-                                        newState = OUTPUT_STATE_MASK;
-                                    }
+            case INPUT_TYPE_ON_OFF: readOutput(inputDef.getOutput(0));      // TODO - avoid reading Outputs.
+                                    newState = !outputDef.getState();
+                                    // newState = !getOutputState(inputDef.getOutputNode(0), inputDef.getOutputPin(0));
                                     break;
-            case INPUT_TYPE_ON:     newState = OUTPUT_STATE_MASK;                // Set the state.
+            case INPUT_TYPE_ON:     newState = true;            // Set the state.
                                     break;
-            case INPUT_TYPE_OFF:    newState = 0;                           // Clear the state.
+            case INPUT_TYPE_OFF:    newState = false;           // Clear the state.
                                     break;
         }
 
@@ -418,7 +412,7 @@ void processInput(int aState)
 
 /** Process all the Input's Outputs.
  */
-void processInputOutputs(uint8_t aNewState)
+void processInputOutputs(boolean aNewState)
 {
     uint8_t delay = 0;
     
@@ -434,7 +428,7 @@ void processInputOutputs(uint8_t aNewState)
     else
     {
         // Get initial delay from Input's zeroth output.
-        readOutput(inputDef.getOutput(0));
+        readOutput(inputDef.getOutput(0));                  // TODO - avoid having to fetch Output's def.
         delay = outputDef.getDelay();
         
         for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)

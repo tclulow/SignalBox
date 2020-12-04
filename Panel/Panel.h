@@ -13,7 +13,7 @@ const char EDIT_CHARS[] = "ABC";
 
 /** Process all the Input's Outputs.
  */
-void processInputOutputs(uint8_t aNewState);
+void processInputOutputs(boolean aNewState);
 
 
 /** Send a command to an output node.

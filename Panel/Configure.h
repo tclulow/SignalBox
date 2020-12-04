@@ -993,12 +993,12 @@ class Configure
      */
     void testInput()
     {
-        uint8_t currentState = 0;
+        boolean currentState = false;
         
         readOutput(inputDef.getOutput(0));
         currentState = outputDef.getState();
 
-        processInputOutputs(currentState ? 0 : OUTPUT_STATE_MASK);
+        processInputOutputs(!currentState);
         waitForButtonRelease();
         processInputOutputs(currentState);
     }

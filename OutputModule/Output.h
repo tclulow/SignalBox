@@ -330,11 +330,11 @@ void readOutput(uint8_t aOutputNumber);
 void writeOutput();
 
 
-/** Get the states of the given node's Outputs.
+/** Read the states of the given node's Outputs.
  *  Save in OutputStates.
  *  If fails, return a character indicating the error.
  */
-char getOutputStates(uint8_t aNode);
+char readOutputStates(uint8_t aNode);
 
 
 /** Record the presence of an OutputNode in the map.
