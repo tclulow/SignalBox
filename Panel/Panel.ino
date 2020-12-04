@@ -651,10 +651,6 @@ void setup()
         saveSystemData();
     }
 
-    // Discover and initialise attached hardware.
-    mapHardware();                            // Scan for attached hardware.
-    initInputs();                             // Initialise all inputs.
-
     // Check if version update required.
     if (systemData.version != VERSION)
     {
@@ -673,6 +669,10 @@ void setup()
         systemData.version = VERSION;
         saveSystemData();
     }
+
+    // Discover and initialise attached hardware.
+    mapHardware();                            // Scan for attached hardware.
+    initInputs();                             // Initialise all inputs.
 
     // Announce ourselves.
     announce();
