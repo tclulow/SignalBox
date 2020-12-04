@@ -191,6 +191,71 @@ void setOutputType(int aPin, uint8_t aType)
 }
 
 
+/** Process a Request (for data).
+ *  Send data to master.
+ */
+void processRequest()
+{
+    #if DEBUG
+        Serial.print(millis());
+        Serial.print("\tRequest(): requestCmd=");
+        Serial.print(requestCmd, HEX);
+        Serial.print(", requestPin=");
+        Serial.print(requestPin, HEX);
+        Serial.println();
+    #endif
+    
+    switch (requestCmd)
+    {
+        case COMMS_CMD_STATES: returnStates();
+                               break;
+        case COMMS_CMD_READ:   returnDef();
+                               break;
+        default:               Serial.print("\tUnknown command: ");
+                               Serial.println(requestCmd);
+
+    }
+
+    // Clear pending command.
+    requestCmd = COMMS_CMD_NONE;
+}
+
+
+/** Return the state of all the node's Outputs.
+ */
+void returnStates()
+{
+    uint8_t states = 0;
+
+    // Build a response from all the Output's states.
+    for (uint8_t pin = 0, mask = 1; pin < OUTPUT_PIN_MAX; pin++, mask <<= 1)
+    {
+        if (outputDefs[pin].getState())
+        {
+            states |= mask;
+        }
+    }
+    
+    Wire.write(states);
+
+    #if DEBUG
+        Serial.print(millis());
+        Serial.print("\tStates ");
+        Serial.print(states, HEX);
+        Serial.println();
+    #endif
+}
+
+
+/** Return the requested pin's Output definition.
+ */
+void returnDef()
+{
+    outputDefs[requestPin].printDef("Send", requestPin);
+    outputDefs[requestPin].write();
+}
+
+
 /** Data received.
  *  Process the command.
  */
@@ -216,20 +281,22 @@ void processReceipt(int aLen)
             
         switch (command)
         {
+            case COMMS_CMD_STATES: requestCmd = command;    // Record the command.
+                                   // requestPin = pin;     // Not interested in the pin.
+                                   break;
             case COMMS_CMD_SET_LO:  
             case COMMS_CMD_SET_HI: if (Wire.available())
                                    {
                                        // Use delay sent with request.
-                                       actionReceipt(pin, command == COMMS_CMD_SET_HI, Wire.read());
+                                       actionState(pin, command == COMMS_CMD_SET_HI, Wire.read());
                                    }
                                    else
                                    {
                                        // Use delay from Output's definition.
-                                       actionReceipt(pin, command == COMMS_CMD_SET_HI, outputDefs[pin].getDelay());
+                                       actionState(pin, command == COMMS_CMD_SET_HI, outputDefs[pin].getDelay());
                                    }
                                    break;
-            case COMMS_CMD_STATES:
-            case COMMS_CMD_READ:   requestCmd = command;    // Record the command
+            case COMMS_CMD_READ:   requestCmd = command;    // Record the command.
                                    requestPin = pin;        // and the pin the master wants to read.
                                    break;
             case COMMS_CMD_WRITE:  processWrite(pin);       // Process the rest of the command i2c data.
@@ -286,119 +353,9 @@ void processWrite(uint8_t aPin)
 }
 
 
-/** Process a Request (for data).
- *  Send data to master.
- */
-void processRequest()
-{
-    #if DEBUG
-        Serial.print(millis());
-        Serial.print("\tRequest(): requestCmd=");
-        Serial.print(requestCmd, HEX);
-        Serial.print(", requestPin=");
-        Serial.print(requestPin, HEX);
-        Serial.println();
-    #endif
-    
-    switch (requestCmd)
-    {
-        case COMMS_CMD_STATES:  returnStates();
-                               break;
-        case COMMS_CMD_READ:   returnDef();
-                               break;
-        default:               Serial.print("\tUnknown command: ");
-                               Serial.println(requestCmd);
-
-    }
-
-    // Clear pending command.
-    requestCmd = COMMS_CMD_NONE;
-}
-
-
-/** Return the state of all the node's Outputs.
- */
-void returnStates()
-{
-    uint8_t states = 0;
-
-    // Build a response from all the Output's states.
-    for (uint8_t pin = 0, mask = 1; pin < OUTPUT_PIN_MAX; pin++, mask <<= 1)
-    {
-        if (outputDefs[pin].getState())
-        {
-            states |= mask;
-        }
-    }
-    
-    Wire.write(states);
-
-    #if DEBUG
-        Serial.print(millis());
-        Serial.print("\tStates ");
-        Serial.print(states, HEX);
-        Serial.println();
-    #endif
-}
-
-
-/** Return the requested pin's Output definition.
- */
-void returnDef()
-{
-    outputDefs[requestPin].printDef("Send", requestPin);
-    outputDefs[requestPin].write();
-}
-
-
-///** Action a request.
-// */
-//void actionReceipt(uint8_t aPin, uint8_t aType, uint8_t aTarget, uint8_t aPace, uint8_t aState, uint8_t aDelay)
-//{
-//    #if DEBUG
-//        Serial.print(millis());
-//        Serial.print("\tAction: ");
-//        Serial.print("pin=");
-//        Serial.print(aPin, HEX);    
-//        Serial.print(", type=");
-//        Serial.print(aType, HEX);    
-//        Serial.print(", target=");
-//        Serial.print(aTarget, HEX);    
-//        Serial.print(", pace=");
-//        Serial.print(aPace, HEX);    
-//        Serial.print(", state=");
-//        Serial.print(aState, HEX);    
-//        Serial.print(", delay=");
-//        Serial.print(aDelay);
-//        Serial.println();
-//    #endif
-//
-//    // If the pin's type has changed, action it.
-//    if (aType != outputDefs[aPin].getType())
-//    {
-//        setOutputType(aPin, aType);
-//    }
-//
-//    // Update Output's definition.
-//    outputDefs[aPin].setState(aState);
-//    if (aState)
-//    {
-//        outputDefs[aPin].setHi(aTarget);
-//    }
-//    else
-//    {
-//        outputDefs[aPin].setLo(aTarget); 
-//    }
-//    outputDefs[aPin].setPace(aPace);
-//    outputDefs[aPin].setDelay(aDelay);
-//
-//    actionReceipt(aPin, aState);
-//}
-
-
 /** Action the state change against the specified pin.
  */
-void actionReceipt(uint8_t aPin, uint8_t aState, uint8_t aDelay)
+void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 {
     #if DEBUG
         Serial.print(millis());
@@ -487,6 +444,51 @@ void reportOutput(uint8_t aPin)
         Serial.println();
     #endif
 }
+
+
+///** Action a request.
+// */
+//void actionReceipt(uint8_t aPin, uint8_t aType, uint8_t aTarget, uint8_t aPace, uint8_t aState, uint8_t aDelay)
+//{
+//    #if DEBUG
+//        Serial.print(millis());
+//        Serial.print("\tAction: ");
+//        Serial.print("pin=");
+//        Serial.print(aPin, HEX);    
+//        Serial.print(", type=");
+//        Serial.print(aType, HEX);    
+//        Serial.print(", target=");
+//        Serial.print(aTarget, HEX);    
+//        Serial.print(", pace=");
+//        Serial.print(aPace, HEX);    
+//        Serial.print(", state=");
+//        Serial.print(aState, HEX);    
+//        Serial.print(", delay=");
+//        Serial.print(aDelay);
+//        Serial.println();
+//    #endif
+//
+//    // If the pin's type has changed, action it.
+//    if (aType != outputDefs[aPin].getType())
+//    {
+//        setOutputType(aPin, aType);
+//    }
+//
+//    // Update Output's definition.
+//    outputDefs[aPin].setState(aState);
+//    if (aState)
+//    {
+//        outputDefs[aPin].setHi(aTarget);
+//    }
+//    else
+//    {
+//        outputDefs[aPin].setLo(aTarget); 
+//    }
+//    outputDefs[aPin].setPace(aPace);
+//    outputDefs[aPin].setDelay(aDelay);
+//
+//    actionReceipt(aPin, aState);
+//}
 
 
 /** Step all the Servos if necessary.

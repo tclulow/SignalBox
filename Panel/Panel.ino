@@ -459,10 +459,8 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
         }
 
         outputDef.setState(aNewState);
+        setOutputState(outputNode, outputPin, aNewState);
         writeOutputState(outputNode, outputPin, aNewState, delay);
-        
-//        sendOutputCommand((outputDef.getState() ? outputDef.getHi() : outputDef.getLo()), outputDef.getPace(), (aNewState ? delay : aDelay), outputDef.getState());
-//        writeOutput();
     }
 
     return delay;
@@ -520,71 +518,6 @@ int writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay
     {
         Wire.write(aDelay);
     }
-    return Wire.endTransmission();
-}
-
-
-
-
-/** Send a command to an output node.
- *  Return error code if any.
- */
-int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aState)
-{
-//    #if DEBUG
-//        // Report output
-//        Serial.print(millis());
-//        Serial.print("\tOutput ");
-//        Serial.print(aState ? "Hi" : "Lo");
-//        Serial.print(" ");
-//        Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-//        Serial.print(" ");
-//        Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
-//        Serial.print(" ");
-//        Serial.print(aValue, HEX);
-//        Serial.print(" ");
-//        Serial.print(aPace);
-//        Serial.println();
-//    #endif
-
-    if (reportEnabled(REPORT_SHORT))
-    {
-        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()]);
-        lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, (aState ? M_HI : M_LO));
-        lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[outputNode]);
-        lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[outputPin]);
-        setDisplayTimeout(reportDelay());
-        
-        #if DEBUG
-            Serial.print(millis());
-            Serial.print("\tOutput ");
-            Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.getType()]));
-            Serial.print(CHAR_SPACE);
-            Serial.print(PGMT(aState ? M_HI : M_LO));
-            Serial.print(CHAR_SPACE);
-            Serial.print(aState, HEX);
-            Serial.print(CHAR_SPACE);
-            Serial.print(aPace, HEX);
-            Serial.print(CHAR_SPACE);
-            Serial.print(HEX_CHARS[outputNode]);
-            Serial.print(HEX_CHARS[outputPin]);
-            Serial.println();
-        #endif
-        
-        reportPause();
-    }
-    
-    Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
-    // TODO - Send command via Wire.
-//    Wire.write((outputDef.getType() << OUTPUT_TYPE_SHIFT) | outputPin);
-//    Wire.write(aValue);
-//    Wire.write(aPace << OUTPUT_PACE_SHIFT);
-//    Wire.write(aState ? 1 : 0);
-//    if (aDelay & OUTPUT_DELAY_MASK)
-//    {
-//        Wire.write(aDelay & OUTPUT_DELAY_MASK);
-//    }
     return Wire.endTransmission();
 }
 

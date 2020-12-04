@@ -1363,6 +1363,42 @@ class Configure
         return waitForButton() == BUTTON_SELECT;
     }
 
+
+    /** Send a command to an output node.
+     *  Return error code if any.
+     */
+    int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aState)
+    {
+        #if DEBUG
+            Serial.print(millis());
+            Serial.print("\tOutput ");
+            Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.getType()]));
+            Serial.print(CHAR_SPACE);
+            Serial.print(HEX_CHARS[outputNode]);
+            Serial.print(HEX_CHARS[outputPin]);
+            Serial.print(CHAR_SPACE);
+            Serial.print(PGMT(aState ? M_HI : M_LO));
+            Serial.print(", value=");
+            Serial.print(aValue, HEX);
+            Serial.print(", pace=");
+            Serial.print(aPace, HEX);
+            Serial.println();
+        #endif
+    
+//        // TODO - send output command
+//        Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
+//        Wire.write(COMMS_CMD_SET + outputPin);
+//        Wire.write(outputDef.getType());
+//        Wire.write(aValue);
+//        Wire.write(aPace);
+//        Wire.write(aState);
+//        if (aDelay)
+//        {
+//            Wire.write(aDelay);
+//        }
+//        return Wire.endTransmission();
+    }
+
     
     public:
     
