@@ -535,20 +535,21 @@ int writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay
  */
 int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aState)
 {
-//  #if DEBUG
-//  // Report output
-//  Serial.print("Output ");
-//  Serial.print(aState ? "Hi" : "Lo");
-//  Serial.print(" ");
-//  Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-//  Serial.print(" ");
-//  Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
-//  Serial.print(" ");
-//  Serial.print(aValue, HEX);
-//  Serial.print(" ");
-//  Serial.print(aPace);
-//  Serial.println();
-//  #endif
+//    #if DEBUG
+//        // Report output
+//        SERIAL.PRINT(millis());
+//        Serial.print("\tOutput ");
+//        Serial.print(aState ? "Hi" : "Lo");
+//        Serial.print(" ");
+//        Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
+//        Serial.print(" ");
+//        Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
+//        Serial.print(" ");
+//        Serial.print(aValue, HEX);
+//        Serial.print(" ");
+//        Serial.print(aPace);
+//        Serial.println();
+//    #endif
 
     if (reportEnabled(REPORT_SHORT))
     {
@@ -560,6 +561,8 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
         setDisplayTimeout(reportDelay());
         
         #if DEBUG
+            Serial.print(millis());
+            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.getType()]));
             Serial.print(CHAR_SPACE);
             Serial.print(PGMT(aState ? M_HI : M_LO));
