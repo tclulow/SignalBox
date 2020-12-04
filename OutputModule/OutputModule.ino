@@ -5,36 +5,13 @@
 #include <Servo.h>
 #include <Wire.h>
 
+#include "Config.h"
 #include "Messages.h"
 #include "Common.h"
 #include "Memory.h"
 #include "Comms.h"
 #include "System.h"
 #include "Output.h"
-
-
-#define STEP_SERVO           50  // Delay (msecs) between steps of a Servo.
-#define STEP_LED             10  // Delay (msecs) between steps of a LED.
-#define STEP_FLASH           10  // Delay (msecs) between steps of flashes of a FLASH or BLINK.
-#define STEP_FLICKER_MASK  0x0c  // Mask 2 bits (not right-most which are always 0) to gererate 1-in-4 chance of flicker.
-#define MAX_PACE            124  // Maximum pace value.
-#define PACE_STEPS          128  // Pace adjustment when converting to steps.
-
-#define JUMPER_PINS           4  // Four jumpers.
-#define IO_PINS               8  // Eight IO pins.
-#define OUTPUT_BASE_PIN       4  // Outputs attached to this pin and the next 7 more.
-#define ANALOG_PIN_FIRST     A0  // First analog pin. 
-#define ANALOG_PIN_CUTOFF 0x200  // When usinging analog pin for digital purposes, cutoff at this value (half of full range 0-3ff).     
-
-
-#define DELAY_MULTIPLIER  1000  // Multiply delay values by this amount (convert to seconds).
-
-
-// The module jumper pins
-const uint8_t jumperPins[JUMPER_PINS] = { 1, 0, A7, A6 };
-
-// The digital IO pins.
-const uint8_t ioPins[IO_PINS]         = { 3, 2, A3, A2, A1, A0, 13, 12 };
 
 
 // The i2c ID of the module.
@@ -102,6 +79,7 @@ void setup()
         if (   (   (jumperPins[pin] >= ANALOG_PIN_FIRST)
                 && (analogRead(jumperPins[pin]) > ANALOG_PIN_CUTOFF))
             || (   (jumperPins[pin] <  ANALOG_PIN_FIRST)
+                && (false)      // TODO - handle digital pins on TxRx
                 && (digitalRead(jumperPins[pin]))))
         {
             moduleID |= mask;
@@ -129,7 +107,6 @@ void setup()
     Wire.onReceive(processReceipt);
     Wire.onRequest(processRequest);
 
-    Serial.print(millis());
     Serial.print("\tModule ID: 0x");
     Serial.println(moduleID, HEX);
 }
@@ -226,15 +203,17 @@ void processReceipt(int aLen)
     
         command &= COMMS_CMD_MASK;
 
-        Serial.print(millis());
-        Serial.print("\tReceipt(");
-        Serial.print(aLen, HEX);
-        Serial.print("): cmd=");
-        Serial.print(command, HEX);
-        Serial.print(", pin=");
-        Serial.print(pin, HEX);
-        Serial.println();
-    
+        #if DEBUG
+            Serial.print(millis());
+            Serial.print("\tReceipt(");
+            Serial.print(aLen, HEX);
+            Serial.print("): cmd=");
+            Serial.print(command, HEX);
+            Serial.print(", pin=");
+            Serial.print(pin, HEX);
+            Serial.println();
+        #endif
+            
         switch (command)
         {
             case COMMS_CMD_SET_LO:  
@@ -249,32 +228,32 @@ void processReceipt(int aLen)
                                        actionReceipt(pin, command == COMMS_CMD_SET_HI, outputDefs[pin].getDelay());
                                    }
                                    break;
-            case COMMS_CMD_STATE:
+            case COMMS_CMD_STATES:
             case COMMS_CMD_READ:   requestCmd = command;    // Record the command
                                    requestPin = pin;        // and the pin the master wants to read.
                                    break;
             case COMMS_CMD_WRITE:  processWrite(pin);       // Process the rest of the command i2c data.
                                    break;
-            default:               Serial.print(millis());
-                                   Serial.print("\tUnrecognised command: ");
+            default:               Serial.print("\tUnrecognised command: ");
                                    Serial.println(command, HEX);
         }
     }
     else
     {
         // Null receipt - Just the master seeing if we exist.
-        Serial.print(millis());
-        Serial.print("\tReceipt(");
-        Serial.print(aLen, HEX);
-        Serial.print(")");
-        Serial.println();
+        #if DEBUG
+            Serial.print(millis());
+            Serial.print("\tReceipt(");
+            Serial.print(aLen, HEX);
+            Serial.print(")");
+            Serial.println();
+        #endif
     }
     
     // Consume unexpected data.
     if (Wire.available())
     {
-        Serial.print(millis());
-        Serial.print("\tUnexpected data: ");
+        Serial.print("Unexpected data: ");
         Serial.println(Wire.available(), HEX);
         while (Wire.available())
         {
@@ -292,9 +271,11 @@ void processWrite(uint8_t aPin)
 {
     if (Wire.available() < COMMS_LEN_WRITE)
     {
-        Serial.print(millis());
-        Serial.print("\tWrite: ");
-        Serial.println(Wire.available(), HEX);
+        #if DEBUG
+            Serial.print(millis());
+            Serial.print("\tWrite: ");
+            Serial.println(Wire.available(), HEX);
+        #endif
     }
     else
     {
@@ -310,22 +291,23 @@ void processWrite(uint8_t aPin)
  */
 void processRequest()
 {
-    Serial.print(millis());
-    Serial.print("\tRequest(): requestCmd=");
-    Serial.print(requestCmd, HEX);
-    Serial.print(", requestPin=");
-    Serial.print(requestPin, HEX);
-    Serial.println();
-
+    #if DEBUG
+        Serial.print(millis());
+        Serial.print("\tRequest(): requestCmd=");
+        Serial.print(requestCmd, HEX);
+        Serial.print(", requestPin=");
+        Serial.print(requestPin, HEX);
+        Serial.println();
+    #endif
+    
     switch (requestCmd)
     {
-        case COMMS_CMD_STATE: returnState();
-                              break;
-        case COMMS_CMD_READ:  returnDef();
-                              break;
-        default:              Serial.print(millis());
-                              Serial.print("\tUnknown command: ");
-                              Serial.println(requestCmd);
+        case COMMS_CMD_STATES:  returnStates();
+                               break;
+        case COMMS_CMD_READ:   returnDef();
+                               break;
+        default:               Serial.print("\tUnknown command: ");
+                               Serial.println(requestCmd);
 
     }
 
@@ -336,20 +318,27 @@ void processRequest()
 
 /** Return the state of all the node's Outputs.
  */
-void returnState()
+void returnStates()
 {
-    uint8_t state = 0;
+    uint8_t states = 0;
 
     // Build a response from all the Output's states.
     for (uint8_t pin = 0, mask = 1; pin < OUTPUT_PIN_MAX; pin++, mask <<= 1)
     {
         if (outputDefs[pin].getState())
         {
-            state |= mask;
+            states |= mask;
         }
     }
     
-    Wire.write(state);
+    Wire.write(states);
+
+    #if DEBUG
+        Serial.print(millis());
+        Serial.print("\tStates ");
+        Serial.print(states, HEX);
+        Serial.println();
+    #endif
 }
 
 
@@ -366,21 +355,23 @@ void returnDef()
 // */
 //void actionReceipt(uint8_t aPin, uint8_t aType, uint8_t aTarget, uint8_t aPace, uint8_t aState, uint8_t aDelay)
 //{
-//    Serial.print(millis());
-//    Serial.print("\tAction: ");
-//    Serial.print("pin=");
-//    Serial.print(aPin, HEX);    
-//    Serial.print(", type=");
-//    Serial.print(aType, HEX);    
-//    Serial.print(", target=");
-//    Serial.print(aTarget, HEX);    
-//    Serial.print(", pace=");
-//    Serial.print(aPace, HEX);    
-//    Serial.print(", state=");
-//    Serial.print(aState, HEX);    
-//    Serial.print(", delay=");
-//    Serial.print(aDelay);
-//    Serial.println();
+//    #if DEBUG
+//        Serial.print(millis());
+//        Serial.print("\tAction: ");
+//        Serial.print("pin=");
+//        Serial.print(aPin, HEX);    
+//        Serial.print(", type=");
+//        Serial.print(aType, HEX);    
+//        Serial.print(", target=");
+//        Serial.print(aTarget, HEX);    
+//        Serial.print(", pace=");
+//        Serial.print(aPace, HEX);    
+//        Serial.print(", state=");
+//        Serial.print(aState, HEX);    
+//        Serial.print(", delay=");
+//        Serial.print(aDelay);
+//        Serial.println();
+//    #endif
 //
 //    // If the pin's type has changed, action it.
 //    if (aType != outputDefs[aPin].getType())
@@ -409,16 +400,18 @@ void returnDef()
  */
 void actionReceipt(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 {
-    Serial.print(millis());
-    Serial.print("\tAction: ");
-    Serial.print("pin=");
-    Serial.print(aPin, HEX);    
-    Serial.print(", state=");
-    Serial.print(aState, HEX);    
-    Serial.print(", delay=");
-    Serial.print(aDelay, HEX);    
-    Serial.println();
-
+    #if DEBUG
+        Serial.print(millis());
+        Serial.print("\tAction: ");
+        Serial.print("pin=");
+        Serial.print(aPin, HEX);    
+        Serial.print(", state=");
+        Serial.print(aState, HEX);    
+        Serial.print(", delay=");
+        Serial.print(aDelay, HEX);    
+        Serial.println();
+    #endif
+    
     outputDefs[aPin].setState(aState);
     
     // Calculate steps and starting step.
@@ -469,28 +462,30 @@ void actionReceipt(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 void reportOutput(uint8_t aPin)
 {
     // Report Output movement.
-    Serial.print(millis());
-    Serial.print("\tOutput: pin=");
-    Serial.print(aPin, HEX);
-    Serial.print(", type=");
-    Serial.print(outputDefs[aPin].getType(), HEX);
-    Serial.print(", state=");
-    Serial.print(outputDefs[aPin].getState(), HEX);
-    Serial.print(", target=");
-    Serial.print(outputDefs[aPin].getTarget(), HEX);
-    Serial.print(", altTarget=");
-    Serial.print(outputDefs[aPin].getAltTarget(), HEX);
-    Serial.print(", steps=");
-    Serial.print(outputs[aPin].steps, HEX);
-    Serial.print(", step=");
-    Serial.print(outputs[aPin].step, HEX);
-    Serial.print(", value=");
-    Serial.print(outputs[aPin].value, HEX);
-    Serial.print(", alt=");
-    Serial.print(outputs[aPin].alt, HEX);
-    Serial.print(", delay=");
-    Serial.print(outputs[aPin].delay);
-    Serial.println();
+    #if DEBUG
+        Serial.print(millis());
+        Serial.print("\tOutput: pin=");
+        Serial.print(aPin, HEX);
+        Serial.print(", type=");
+        Serial.print(outputDefs[aPin].getType(), HEX);
+        Serial.print(", state=");
+        Serial.print(outputDefs[aPin].getState(), HEX);
+        Serial.print(", target=");
+        Serial.print(outputDefs[aPin].getTarget(), HEX);
+        Serial.print(", altTarget=");
+        Serial.print(outputDefs[aPin].getAltTarget(), HEX);
+        Serial.print(", steps=");
+        Serial.print(outputs[aPin].steps, HEX);
+        Serial.print(", step=");
+        Serial.print(outputs[aPin].step, HEX);
+        Serial.print(", value=");
+        Serial.print(outputs[aPin].value, HEX);
+        Serial.print(", alt=");
+        Serial.print(outputs[aPin].alt, HEX);
+        Serial.print(", delay=");
+        Serial.print(outputs[aPin].delay);
+        Serial.println();
+    #endif
 }
 
 
@@ -769,19 +764,19 @@ void loop()
 //    start = now;
 //  }
 
-    // DEBUG tests.
-    if (   (now > 5000)
-        && (testRun == 0))
-    {
-        test1();
-        testRun += 1;
-    }
-    if (   (now > 15000)
-        && (testRun == 1))
-    {
-        test2();
-        testRun += 1;
-    }
+//    // DEBUG tests.
+//    if (   (now > 5000)
+//        && (testRun == 0))
+//    {
+//        test1();
+//        testRun += 1;
+//    }
+//    if (   (now > 15000)
+//        && (testRun == 1))
+//    {
+//        test2();
+//        testRun += 1;
+//    }
 
     // Every STEP_SERVO msecs, step the servos if necessary
     if ((now - tickServo) > STEP_SERVO)

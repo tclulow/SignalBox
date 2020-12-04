@@ -81,12 +81,6 @@ class LCD: public LiquidCrystal
      */
     void print_P(PGM_P messagePtr, int aSize)
     {
-//        Serial.print("p_P ");
-//        Serial.print(PGMT(messagePtr));
-//        Serial.print(" [");
-//        Serial.print(aSize);
-//        Serial.println("]");
-
         print(PGMT(messagePtr));
         int padding = aSize - strlen_P(messagePtr);
         while (padding-- > 0)
@@ -215,11 +209,6 @@ class LCD: public LiquidCrystal
      */
     void clearRow(int aCol, int aRow)
     {
-//        Serial.print("clr ");
-//        Serial.print(aCol);
-//        Serial.print(",");
-//        Serial.println(aRow);
-        
         int spaces = 0;
         setCursor(aCol, aRow);
         for (spaces = 0; spaces < LCD_COLS - aCol; spaces++)

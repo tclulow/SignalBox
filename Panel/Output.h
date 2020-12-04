@@ -151,23 +151,25 @@ class OutputDef
      */
     void printDef(char* aHeader, uint8_t aPin)
     {
-        Serial.print(millis());
-        Serial.print("\t");
-        Serial.print(aHeader);
-        Serial.print(aPin);
-        Serial.print("\ttype ");
-        Serial.print(getType(),  HEX);
-        Serial.print(", state ");
-        Serial.print(getState(), HEX);
-        Serial.print(", Lo ");
-        Serial.print(getLo(),    HEX);
-        Serial.print(", Hi ");
-        Serial.print(getHi(),    HEX);
-        Serial.print(", pace ");
-        Serial.print(getPace(),  HEX);
-        Serial.print(", delay ");
-        Serial.print(getDelay(), HEX);
-        Serial.println();
+        #if DEBUG
+            Serial.print(millis());
+            Serial.print("\t");
+            Serial.print(aHeader);
+            Serial.print(aPin);
+            Serial.print("\ttype ");
+            Serial.print(getType(),  HEX);
+            Serial.print(", state ");
+            Serial.print(getState(), HEX);
+            Serial.print(", Lo ");
+            Serial.print(getLo(),    HEX);
+            Serial.print(", Hi ");
+            Serial.print(getHi(),    HEX);
+            Serial.print(", pace ");
+            Serial.print(getPace(),  HEX);
+            Serial.print(", delay ");
+            Serial.print(getDelay(), HEX);
+            Serial.println();
+        #endif
     }
 
     

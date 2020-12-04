@@ -16,13 +16,15 @@ void readOutput(uint8_t aNode, uint8_t aPin)
 
         outputNode = aNode;
         outputPin  = aPin;
-    
-        Serial.print(millis());
-        Serial.print("\tRead node=");
-        Serial.print(aNode, HEX);
-        Serial.print(", pin=");
-        Serial.print(outputPin, HEX);
-        Serial.println();
+
+        #if DEBUG
+            Serial.print(millis());
+            Serial.print("\tRead node=");
+            Serial.print(aNode, HEX);
+            Serial.print(", pin=");
+            Serial.print(outputPin, HEX);
+            Serial.println();
+        #endif
     
         Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
         Wire.write(COMMS_CMD_READ | outputPin);
@@ -76,7 +78,7 @@ char getOutputStates(uint8_t aNode)
     char error = 0;
     
     Wire.beginTransmission(systemData.i2cOutputBaseID + aNode);
-    Wire.write(COMMS_CMD_STATE);
+    Wire.write(COMMS_CMD_STATES);
     if (Wire.endTransmission())
     {
         error = CHAR_DOT;       // No such node on the bus.
@@ -89,12 +91,14 @@ char getOutputStates(uint8_t aNode)
     {
         int states = Wire.read();
 
-        Serial.print(millis());
-        Serial.print("\tState ");
-        Serial.print(aNode, HEX);
-        Serial.print(CHAR_SPACE);
-        Serial.print(states, HEX);
-        Serial.println();
+        #if DEBUG
+            Serial.print(millis());
+            Serial.print("\tState ");
+            Serial.print(aNode, HEX);
+            Serial.print(CHAR_SPACE);
+            Serial.print(states, HEX);
+            Serial.println();
+        #endif
         
         if (states < 0)
         {

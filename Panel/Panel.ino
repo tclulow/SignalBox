@@ -4,9 +4,9 @@
 #include <EEPROM.h>
 #include <Wire.h>
 
+#include "Config.h"
 #include "Messages.h"
 #include "Common.h"
-#include "Config.h"
 #include "Memory.h"
 #include "Comms.h"
 #include "EzyBus.h"
@@ -378,6 +378,8 @@ void processInput(int aState)
             
             #if DEBUG
                 Serial.println();
+                Serial.print(millis());
+                Serial.print("\tInput ");
                 Serial.print(PGMT(M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]));
                 Serial.print(CHAR_SPACE);
                 Serial.print(PGMT(aState ? M_HI : M_LO));
@@ -537,7 +539,7 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
 {
 //    #if DEBUG
 //        // Report output
-//        SERIAL.PRINT(millis());
+//        Serial.print(millis());
 //        Serial.print("\tOutput ");
 //        Serial.print(aState ? "Hi" : "Lo");
 //        Serial.print(" ");
@@ -562,7 +564,7 @@ int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aSt
         
         #if DEBUG
             Serial.print(millis());
-            Serial.print(CHAR_TAB);
+            Serial.print("\tOutput ");
             Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.getType()]));
             Serial.print(CHAR_SPACE);
             Serial.print(PGMT(aState ? M_HI : M_LO));
@@ -619,23 +621,23 @@ void setup()
     
     initialise();
     
-//  #if DEBUG
-//  Serial.print("System  ");
-//  Serial.print(SYSTEM_BASE, HEX);
-//  Serial.print(" to ");
-//  Serial.print(SYSTEM_END, HEX);
-//  Serial.println();
-//  Serial.print("Outputs ");
-//  Serial.print(OUTPUT_BASE, HEX);
-//  Serial.print(" to ");
-//  Serial.print(OUTPUT_END, HEX);
-//  Serial.println();
-//  Serial.print("Inputs  ");
-//  Serial.print(INPUT_BASE, HEX);
-//  Serial.print(" to ");
-//  Serial.print(INPUT_END, HEX);
-//  Serial.println();
-//  #endif
+//    #if DEBUG
+//        Serial.print("System  ");
+//        Serial.print(SYSTEM_BASE, HEX);
+//        Serial.print(" to ");
+//        Serial.print(SYSTEM_END, HEX);
+//        Serial.println();
+//        Serial.print("Outputs ");
+//        Serial.print(OUTPUT_BASE, HEX);
+//        Serial.print(" to ");
+//        Serial.print(OUTPUT_END, HEX);
+//        Serial.println();
+//        Serial.print("Inputs  ");
+//        Serial.print(INPUT_BASE, HEX);
+//        Serial.print(" to ");
+//        Serial.print(INPUT_END, HEX);
+//        Serial.println();
+//    #endif
 
     // Initialise subsystems.
     Wire.begin(systemData.i2cControllerID);   // I2C network

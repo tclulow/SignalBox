@@ -24,7 +24,7 @@ void saveSystemData()
  */
 void systemFail(PGM_P aMessage, int aValue, int aDelay)
 {
-    Serial.print(millis());
+    Serial.print(PGMT(M_FAILURE));
     Serial.print(CHAR_TAB);
     Serial.print(PGMT(aMessage));
     Serial.print(CHAR_SPACE);
