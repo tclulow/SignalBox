@@ -107,7 +107,7 @@ void setup()
     Wire.onReceive(processReceipt);
     Wire.onRequest(processRequest);
 
-    Serial.print("\tModule ID: 0x");
+    Serial.print("Module ID: 0x");
     Serial.println(moduleID, HEX);
 }
 
@@ -344,14 +344,15 @@ void processWrite(uint8_t aPin, boolean aSave)
     {
         #if DEBUG
             Serial.print(millis());
-            Serial.print("\tWrite: ");
+            Serial.print((aSave ? "\tSave: " : "\tWrite: "));
             Serial.println(Wire.available(), HEX);
         #endif
     }
     else
     {
         // Read the Output definition and save it.
-        outputDefs[aPin].read();
+        setOutputType(aPin, outputDefs[aPin].read());
+
         if (aSave)
         {
             saveOutput(aPin);
@@ -386,7 +387,8 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     outputs[aPin].step = 0;
     if (outputDefs[aPin].isServo())
     {
-        uint32_t steps = abs(outputDefs[aPin].getTarget() - outputDefs[aPin].getAltTarget());
+        outputs[aPin].value = outputs[aPin].servo.read();
+        uint32_t steps = abs(outputDefs[aPin].getTarget() - outputs[aPin].value);
         if (steps > OUTPUT_SERVO_MAX)
         {
             steps = OUTPUT_SERVO_MAX;
@@ -538,10 +540,12 @@ void stepServo(int aPin)
         else
         {
             // Intermediate step, move proportionately (step/steps) along the range (start to target).
-            outputs[aPin].value = outputDefs[aPin].getAltTarget() 
-                                +   (outputDefs[aPin].getTarget() - outputDefs[aPin].getAltTarget())
-                                  * outputs[aPin].step
-                                  / outputs[aPin].steps;
+//            outputs[aPin].value = outputDefs[aPin].getAltTarget() 
+//                                +   (outputDefs[aPin].getTarget() - outputDefs[aPin].getAltTarget())
+//                                  * outputs[aPin].step
+//                                  / outputs[aPin].steps;
+            outputs[aPin].value += (outputDefs[aPin].getTarget() - outputs[aPin].value)
+                                 / (outputs[aPin].steps + 1 - outputs[aPin].step);
         }
 
         // Set (or unset) Servo's digital pad when we're over halfway

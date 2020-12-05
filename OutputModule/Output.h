@@ -137,13 +137,19 @@ class OutputDef
 
 
     /** Read an Output from the i2c bus.
+     *  Populate the structure except for the type.
+     *  Return the new type without setting it in the structure.
      */
-    void read()
+    uint8_t read()
     {
-        type = Wire.read();
+        uint8_t type = Wire.read();
         lo   = Wire.read();
         hi   = Wire.read();
         pace = Wire.read();
+        
+        setState(type & OUTPUT_STATE_MASK);
+
+        return type & OUTPUT_TYPE_MASK;
     }
 
 
