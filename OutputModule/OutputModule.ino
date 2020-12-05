@@ -188,6 +188,11 @@ void setOutputType(int aPin, uint8_t aType)
             outputs[aPin].alt   = outputDefs[aPin].getLo();
         }
     }
+    else
+    {
+        digitalWrite(OUTPUT_BASE_PIN + aPin, 0);
+        digitalWrite(ioPins[aPin], 0);
+    }
 }
 
 
@@ -827,7 +832,7 @@ void loop()
             digitalWrite(ioPins[pin],              outputs[pin].alt   >  0 
                                                 && outputs[pin].alt   >= (nowMicros & 0xff));
 //            // DEBUG
-//            if (pin == 0)
+//            if (pin == 1)
 //            {
 //                digitalWrite(LED_BUILTIN,    outputs[pin].value >  0 
 //                                          && outputs[pin].value >= (nowMicros & 0xff));
