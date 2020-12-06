@@ -27,6 +27,10 @@ long displayTimeout = 0L;
 // Record state of input switchess.
 uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
 
+// Ticking
+long now           = 0;     // The current time in millisecs.
+long tickScan      = 0;     // TRhe time of the last scan of input switches.
+long tickHeartBeat = 0;     // Time of last heartbeat.
 
 
 /** Announce ourselves.
@@ -615,51 +619,51 @@ void setup()
  */
 void loop()
 {
-    long lastLoop = millis();
-    long count = 0;
+    now = millis();
 
-    // Loop forever
-    while (true)
+    // Press any button to configure.
+    if (readButton())
     {
-        // Press any button to configure.
-        if (readButton())
+        configure.run();
+        announce();
+    }
+
+    // Process any inputs
+    if (now - tickScan > STEP_SCAN)
+    {
+        tickScan = now;
+        scanInputs();           
+    }
+    
+    // Show heartbeat.
+    if (now - tickHeartBeat > STEP_HEARTBEAT)
+    {
+        tickHeartBeat = now;
+        
+        // If display timeout has expired, clear it.
+        if (   (displayTimeout > 0)
+            && (now > displayTimeout))
         {
-            configure.run();
+            displayTimeout = 0L;
             announce();
         }
 
-        // Process any inputs
-        scanInputs();           
-
-        // Show heartbeat.
-        if (millis() - lastLoop > DELAY_HEARTBEAT)
+        // Show heartbeat if no display timeout is pending.
+        if (displayTimeout == 0)
         {
-            // If display timeout has expired, clear it.
-            if (   (displayTimeout > 0)
-                && (millis() > displayTimeout))
+            int hours = (tickHeartBeat)                                                       / MILLIS_PER_HOUR;
+            int mins  = (tickHeartBeat - MILLIS_PER_HOUR * hours)                             / MILLIS_PER_MINUTE;
+            int secs  = (tickHeartBeat - MILLIS_PER_HOUR * hours  - MILLIS_PER_MINUTE * mins) / MILLIS_PER_SECOND;
+            
+            lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+            if (hours > 0)
             {
-                displayTimeout = 0L;
-                announce();
-            }
-
-            // Show heartbeat if no display timeout is pending.
-            if (displayTimeout == 0)
-            {
-                lastLoop = millis();
-                int hours = lastLoop / MILLIS_PER_HOUR;
-                int mins  = (lastLoop - MILLIS_PER_HOUR * hours) / MILLIS_PER_MINUTE;
-                int secs  = (lastLoop - MILLIS_PER_HOUR * hours  - MILLIS_PER_MINUTE * mins) / MILLIS_PER_SECOND;
-                
-                lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
-                if (hours > 0)
-                {
-                    lcd.printDec(hours, 1, CHAR_ZERO);
-                    lcd.print(CHAR_COLON);
-                }
-                lcd.printDec(mins, 2, CHAR_ZERO);
+                lcd.printDec(hours, 1, CHAR_ZERO);
                 lcd.print(CHAR_COLON);
-                lcd.printDec(secs, 2, CHAR_ZERO);
             }
+            lcd.printDec(mins, 2, CHAR_ZERO);
+            lcd.print(CHAR_COLON);
+            lcd.printDec(secs, 2, CHAR_ZERO);
         }
     }
 }
