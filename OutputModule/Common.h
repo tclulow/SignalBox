@@ -46,7 +46,14 @@ void initialise()
     for (int ind = 0; ind < strlen_P(M_VERSION); ind++)
     {
         char ch = pgm_read_byte_near(M_VERSION + ind);
-        if (ch >= CHAR_ZERO && ch <= CHAR_NINE)
+        if (ch == CHAR_ZERO)
+        {
+                digitalWrite(LED_BUILTIN, HIGH);
+                delay(DELAY_BLINK * 2);
+                digitalWrite(LED_BUILTIN, LOW);
+                delay(DELAY_BLINK);
+        }
+        if (ch > CHAR_ZERO && ch <= CHAR_NINE)
         {
             while (ch-- > CHAR_ZERO)
             {
