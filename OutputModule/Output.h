@@ -59,7 +59,8 @@ class OutputDef
 
     public:
 
-    /** Is the Output one of the servo type?
+    /** Is the given Output type a servo type?
+     *  ie: SERVO or SIGNAL.
      */
     boolean isServo()
     {
@@ -137,19 +138,13 @@ class OutputDef
 
 
     /** Read an Output from the i2c bus.
-     *  Populate the structure except for the type.
-     *  Return the new type without setting it in the structure.
      */
-    uint8_t read()
+    void read()
     {
-        uint8_t type = Wire.read();
+        type = Wire.read();
         lo   = Wire.read();
         hi   = Wire.read();
         pace = Wire.read();
-        
-        setState(type & OUTPUT_STATE_MASK);
-
-        return type & OUTPUT_TYPE_MASK;
     }
 
 
@@ -307,6 +302,15 @@ void saveOutput(int aPin)
     }
 }
 
+
+/** Is the given Output type a servo type?
+ *  ie: SERVO or SIGNAL.
+ */
+boolean isServo(uint8_t aType)
+{
+    return    (aType == OUTPUT_TYPE_SERVO)
+           || (aType == OUTPUT_TYPE_SIGNAL);
+}
 
 #else   // Methods for loading/saving outputs to/from EEPROM in the OutputModule.
 

@@ -43,20 +43,6 @@ void setup()
 {
     initialise();
 
-    // Load SystemData from EEPROM and check it's valid.
-    if (loadSystemData())
-    {
-        firstRun();
-    }
-    else
-    {
-        // Recover state from EEPROM.
-        for (uint8_t pin = 0; pin < IO_PINS; pin++)
-        {
-            loadOutput(pin);
-        }
-    }
-
     // Configure the Jumper pins for input.
     for (int pin = 0; pin < JUMPER_PINS; pin++)
     {
@@ -70,18 +56,30 @@ void setup()
         pinMode(ioPins[pin], OUTPUT);
     }
 
-    // Initialise all the outputs (from state saved in EEPROM).
-    for (int pin = 0; pin < IO_PINS; pin++)
+    // Load SystemData from EEPROM and check it's valid.
+    if (loadSystemData())
     {
-        setOutputType(pin, outputDefs[pin].getType());  
+        firstRun();
     }
-    
+    else
+    {
+//        systemData.i2cModuleID = systemData.i2cOutputBaseID + 8;    // Hard-code module ID.
+//        saveSystemData();
+
+        // Recover state from EEPROM.
+        for (uint8_t pin = 0; pin < IO_PINS; pin++)
+        {
+            loadOutput(pin);
+            initOutput(pin, OUTPUT_TYPE_NONE);
+        }
+    }
+
     // Start i2c communications.
     Wire.begin(systemData.i2cModuleID);
     Wire.onReceive(processReceipt);
     Wire.onRequest(processRequest);
 
-    Serial.print("Module ID: 0x");
+    Serial.print("Module ID: ");
     Serial.println(systemData.i2cModuleID, HEX);
 }
 
@@ -139,38 +137,48 @@ void firstRun()
 }
 
 
-/** Set the Type of a pin.
- *  Remove/disconnect previous type if necessary.
+/** Initialise an Output.
+ *  Detach/attach servo as necessary.
+ *  Set outputs entry if movement necessary.
  */
-void setOutputType(int aPin, uint8_t aType)
+void initOutput(int aPin, uint8_t aOldType)
 {
-    if (aType != outputDefs[aPin].getType())
+    // Detach servo if currently attached and no longer required.
+    if (   (isServo(aOldType))
+        && (!outputDefs[aPin].isServo()))
     {
-        // Remove/disable old type.
-        if (outputDefs[aPin].isServo())
-        {
-            // Detach servo.
-            outputs[aPin].servo.detach();
-        }
-
-        // Record the change.
-        outputDefs[aPin].setType(aType);
-        saveOutput(aPin);
+        // Detach servo.
+        outputs[aPin].servo.detach();
     }
 
     // Establish new type.
     if (outputDefs[aPin].isServo())
     {
-        // Ensure servos are set to correct angle, and attach them.
-        if (outputDefs[aPin].getState())
+        if (isServo(aOldType))
         {
-            outputs[aPin].servo.write(outputDefs[aPin].getHi());
+            // Already attached, move (at correct pace) to new position (immediately).
+            actionState(aPin, outputDefs[aPin].getState(), 0);
         }
         else
         {
-            outputs[aPin].servo.write(outputDefs[aPin].getLo());
+            // Ensure servo is set to correct angle, and attach it.
+            if (outputDefs[aPin].getState())
+            {
+                outputs[aPin].servo.write(outputDefs[aPin].getHi());
+            }
+            else
+            {
+                outputs[aPin].servo.write(outputDefs[aPin].getLo());
+            }
+            digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
+            Serial.print(millis());
+            Serial.print("\tSetIoPin pin=");
+            Serial.print(aPin, HEX);
+            Serial.print(", state=");
+            Serial.print(outputDefs[aPin].getState());
+            Serial.println();
+            outputs[aPin].servo.attach(OUTPUT_BASE_PIN + aPin);
         }
-        outputs[aPin].servo.attach(OUTPUT_BASE_PIN + aPin);
     }
     else if (outputDefs[aPin].isALed())
     {
@@ -185,9 +193,13 @@ void setOutputType(int aPin, uint8_t aType)
             outputs[aPin].value = 0;
             outputs[aPin].alt   = outputDefs[aPin].getLo();
         }
+        outputs[aPin].steps = 0;            // Ensure there's no flashing
+
+        // TODO - Ensure BLINK Outputs blink if they're Hi and have delay-0 (indefinite).
     }
     else
     {
+        // All other outputs, turn pins off. 
         digitalWrite(OUTPUT_BASE_PIN + aPin, 0);
         digitalWrite(ioPins[aPin], 0);
     }
@@ -343,6 +355,8 @@ void processReceipt(int aLen)
  */
 void processWrite(uint8_t aPin, boolean aSave)
 {
+    uint8_t oldType = outputDefs[aPin].getType();       // Remember old type.
+    
     if (Wire.available() < COMMS_LEN_WRITE)
     {
         #if DEBUG
@@ -354,8 +368,9 @@ void processWrite(uint8_t aPin, boolean aSave)
     else
     {
         // Read the Output definition and save it.
-        setOutputType(aPin, outputDefs[aPin].read());
-
+        outputDefs[aPin].read();
+        initOutput(aPin, oldType);
+        
         if (aSave)
         {
             saveOutput(aPin);
@@ -539,6 +554,7 @@ void stepServo(int aPin)
         {
             // Last step, make sure to hit the target bang-on.
             outputs[aPin].value = outputDefs[aPin].getTarget();
+            digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
         }
         else
         {

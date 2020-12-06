@@ -23,7 +23,7 @@ struct SystemData
     
     uint8_t i2cModuleID     = 0;    // The module number we're using.
     
-    char    rfu[20]         = "RFU rfu OutputModule";                 // RFU. 32 bytes in all.
+    char    rfu[20]         = "RFUrfu OutputModule";        // RFU. 32 bytes in all.
 };
 
 
