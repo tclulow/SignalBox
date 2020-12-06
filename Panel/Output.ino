@@ -84,6 +84,19 @@ void writeOutput(boolean aSave)
  */
 void writeOutputState(boolean aState, uint8_t aDelay)
 {
+    #if DEBUG
+        Serial.print(millis());
+        Serial.print("\tState node=");
+        Serial.print(outputNode, HEX);
+        Serial.print(", pin=");
+        Serial.print(outputPin, HEX);
+        Serial.print(", state=");
+        Serial.print(aState, HEX);
+        Serial.print(", delay=");
+        Serial.print(aDelay, HEX);
+        Serial.println();
+    #endif
+
     Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
     Wire.write((aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | outputPin);
     Wire.write(aDelay);

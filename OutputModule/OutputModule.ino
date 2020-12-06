@@ -437,10 +437,10 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 
         if (outputDefs[aPin].isFlasher())
         {
+            // Turn Flashers off immediately if state = Lo and an indefinite time (delay = 0).
             if (   (!outputDefs[aPin].getState())
                 && (aDelay == 0))
             {
-                // Turn off immediately if state = Lo an indefinite time (delay = 0).
                 outputs[aPin].steps = 0;
             }
             else
@@ -449,6 +449,11 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
                 outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
                 outputs[aPin].step  = outputs[aPin].steps;
             }
+        }
+        else
+        {
+            // Ordinary LEDs.
+            outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
         }
     }
     else
@@ -644,7 +649,7 @@ void stepLed(int aPin)
     {
         outputs[aPin].step += 1;
 
-        if (outputs[aPin].step == outputs[aPin].steps)
+        if (outputs[aPin].step >= outputs[aPin].steps)
         {
             // Last step, make sure to hit the target bang-on.
             if (outputDefs[aPin].getState())
@@ -734,7 +739,7 @@ void stepFlash(uint8_t aPin)
                 outputs[aPin].alt   = outputDefs[aPin].getLo();
             }
 
-//            // DEBUG - repoirt flickering metrics.
+//            // DEBUG - report flickering metrics.
 //            Serial.print("Flickering: switches=");
 //            Serial.print(switches);
 //            Serial.print(", stays=");
