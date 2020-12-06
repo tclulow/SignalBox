@@ -43,7 +43,7 @@ void readOutput(uint8_t aNode, uint8_t aPin)
         else
         {
             // Read the outputDef from the OutputModule.
-            outputDef.setType(outputDef.read());
+            outputDef.read();
             outputDef.printDef("Output", outputPin);
         }
     }

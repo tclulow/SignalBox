@@ -431,9 +431,12 @@ void processInputOutputs(boolean aNewState)
     }
     else
     {
-        // Get initial delay from Input's zeroth output.
-        readOutput(inputDef.getOutput(0));                  // TODO - avoid having to fetch Output's def.
-        delay = outputDef.getDelay();
+        // Get initial delay from Input's zeroth output (if not a Flasher which use delay as duration).
+        readOutput(inputDef.getOutput(0));          // TODO - avoid having to fetch Output's def.
+        if (!outputDef.isFlasher())
+        {
+            delay = outputDef.getDelay();
+        }
         
         for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
         {
@@ -454,14 +457,6 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
     if (!inputDef.isDisabled(aIndex))
     {
         readOutput(inputDef.getOutput(aIndex));
-        delay += outputDef.getDelay();
-
-        // Can't delay beyond the maximum possible.
-        if (delay > OUTPUT_DELAY_MASK)
-        {
-            delay = OUTPUT_DELAY_MASK;
-        }
-
         outputDef.setState(aState);
         setOutputState(outputNode, outputPin, aState);
     
@@ -490,8 +485,22 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
             
             reportPause();
         }
-    
-        writeOutputState(aState, delay);
+
+        // Flashers always use their own delay as their duration.
+        if (outputDef.isFlasher())
+        {
+            writeOutputState(aState, outputDef.getDelay());
+        }
+        else
+        {
+            delay += outputDef.getDelay();      // Add in the delay.
+            if (delay > OUTPUT_DELAY_MASK)
+            {
+                delay = OUTPUT_DELAY_MASK;      // Can't delay beyond the maximum possible.
+            }
+            
+            writeOutputState(aState, (aState ? delay : aDelay));
+        }
     }
 
     return delay;
