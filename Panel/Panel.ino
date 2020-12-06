@@ -446,7 +446,7 @@ void processInputOutputs(boolean aNewState)
 /** Process an Input's n'th Output, setting it to the given state.
  *  Accumulate delay before or after movement depending on direction outputs are being processed.
  */
-uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
+uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
 {
     uint8_t delay = aDelay;
     
@@ -462,67 +462,39 @@ uint8_t processInputOutput(int aIndex, uint8_t aNewState, uint8_t aDelay)
             delay = OUTPUT_DELAY_MASK;
         }
 
-        outputDef.setState(aNewState);
-        setOutputState(outputNode, outputPin, aNewState);
-        writeOutputState(outputNode, outputPin, aNewState, delay);
+        outputDef.setState(aState);
+        setOutputState(outputNode, outputPin, aState);
+    
+        if (reportEnabled(REPORT_SHORT))
+        {
+            lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+            lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()]);
+            lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, (aState ? M_HI : M_LO));
+            lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[outputNode]);
+            lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[outputPin]);
+            setDisplayTimeout(reportDelay());
+            
+            #if DEBUG
+                Serial.print(millis());
+                Serial.print(CHAR_TAB);
+                Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.getType()]));
+                Serial.print(CHAR_SPACE);
+                Serial.print(PGMT(aState ? M_HI : M_LO));
+                Serial.print(CHAR_SPACE);
+                Serial.print(HEX_CHARS[outputNode]);
+                Serial.print(HEX_CHARS[outputPin]);
+                Serial.print(CHAR_SPACE);
+                Serial.print(aDelay, HEX);
+                Serial.println();
+            #endif
+            
+            reportPause();
+        }
+    
+        writeOutputState(aState, delay);
     }
 
     return delay;
-}
-
-
-/** Send a change-of-state to a particular Output.
- */
-int writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay)
-{
-//  #if DEBUG
-//  // Report output
-//  Serial.print("Output ");
-//  Serial.print(aState ? "Hi" : "Lo");
-//  Serial.print(" ");
-//  Serial.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-//  Serial.print(" ");
-//  Serial.print(HEX_CHARS[(outputNumber                     ) & OUTPUT_PIN_MASK ]);
-//  Serial.print(" ");
-//  Serial.print(aValue, HEX);
-//  Serial.print(" ");
-//  Serial.print(aPace);
-//  Serial.println();
-//  #endif
-
-    if (reportEnabled(REPORT_SHORT))
-    {
-        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()]);
-        lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, (aState ? M_HI : M_LO));
-        lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[outputNode]);
-        lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[outputPin]);
-        setDisplayTimeout(reportDelay());
-        
-        #if DEBUG
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
-            Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.getType()]));
-            Serial.print(CHAR_SPACE);
-            Serial.print(PGMT(aState ? M_HI : M_LO));
-            Serial.print(CHAR_SPACE);
-            Serial.print(HEX_CHARS[outputNode]);
-            Serial.print(HEX_CHARS[outputPin]);
-            Serial.print(CHAR_SPACE);
-            Serial.print(aDelay, HEX);
-            Serial.println();
-        #endif
-        
-        reportPause();
-    }
-
-    Wire.beginTransmission(systemData.i2cOutputBaseID + aNode);
-    Wire.write((aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | aPin);
-    if (aDelay)
-    {
-        Wire.write(aDelay);
-    }
-    return Wire.endTransmission();
 }
 
 

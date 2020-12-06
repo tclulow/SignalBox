@@ -58,8 +58,8 @@ void readOutput(uint8_t aOutputNumber)
 }
 
 
-/** Write an Output's data to an OutputModule.
- *  And save it if so requested.
+/** Write current Output's data to its OutputModule.
+ *  With save it if so requested.
  */
 void writeOutput(boolean aSave)
 {
@@ -79,6 +79,40 @@ void writeOutput(boolean aSave)
     Wire.endTransmission();
 }
 
+
+/** Write a change of state to the Output module.
+ */
+void writeOutputState(boolean aState, uint8_t aDelay)
+{
+    Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
+    Wire.write((aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | outputPin);
+    Wire.write(aDelay);
+    Wire.endTransmission();
+}
+
+
+/** Reset current Output. 
+ *  And then reload its definition.
+ */
+void resetOutput()
+{
+    #if DEBUG
+        Serial.print(millis());
+        Serial.print("\tReset node=");
+        Serial.print(outputNode, HEX);
+        Serial.print(", pin=");
+        Serial.print(outputPin, HEX);
+        Serial.println();
+        outputDef.printDef("Reset", outputPin);
+    #endif
+
+    Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
+    Wire.write(COMMS_CMD_RESET | outputPin);
+    Wire.endTransmission();
+
+    // Reload the Output now it's been reset.
+    readOutput(outputNode, outputPin);
+}
 
 /** Read the states of the given node's Outputs.
  *  Save in OutputStates.
@@ -124,4 +158,3 @@ char readOutputStates(uint8_t aNode)
 
     return error;
 }
- 

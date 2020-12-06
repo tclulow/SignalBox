@@ -1010,7 +1010,7 @@ class Configure
     {
         boolean finished = false;
         boolean changed  = false;
-        
+
         // Retrieve type
         int outputType = outputDef.getType();
 
@@ -1033,6 +1033,7 @@ class Configure
                                         outputType = OUTPUT_TYPE_MAX - 1;
                                     }
                                     outputDef.setType(outputType);
+                                    writeOutput(false);
                                     
                                     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputType], LCD_LEN_OPTION);
                                     displayOutputParams(outputType);
@@ -1064,8 +1065,7 @@ class Configure
                                     {
                                         if (cancel())
                                         {
-                                            readOutput(node, pin);
-                                            sendOutputCommand(outputDef.getState() ? outputDef.getHi() : outputDef.getLo(), outputDef.getPace(), 0, outputDef.getState());
+                                            resetOutput();
                                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
                                             delay(DELAY_READ);
                                             displayDetailOutput();
@@ -1092,9 +1092,6 @@ class Configure
                                         case OUTPUT_TYPE_LED:
                                         case OUTPUT_TYPE_FLASH:
                                         case OUTPUT_TYPE_BLINK:  changed |= menuOutputLo(OUTPUT_LED_MAX);
-                                                                 // sendOutputCommand(outputDef.getHi(),                                                  outputDef.getPace(), 0, OUTPUT_STATE_MASK);
-                                                                 // changed |= menuOutputPace();
-                                                                 // sendOutputCommand(outputDef.type & OUTPUT_STATE_MASK ? outputDef.getHi() : outputDef.getLo(), outputDef.getPace(), 0, outputDef.type & OUTPUT_STATE_MASK);
                                                                  break;
                                         default:                 systemFail(M_OUTPUT, outputType, 0);
                                     }
@@ -1116,10 +1113,13 @@ class Configure
     {
         boolean finished = false;
         boolean changed  = false;
+        boolean state    = outputDef.getState();
 
         displayOutputAngles();
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
-        sendOutputCommand(outputDef.getLo(), outputDef.getPace(), 0, 0);
+        
+        outputDef.setState(false);
+        writeOutput(pin);
 
         while (!finished)
         {
@@ -1139,7 +1139,7 @@ class Configure
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    sendOutputCommand(outputDef.getLo(), outputDef.getPace(), 0, 0);
+                                    writeOutput(false);
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   do
@@ -1154,23 +1154,24 @@ class Configure
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    sendOutputCommand(outputDef.getLo(), outputDef.getPace(), 0, 0);
+                                    writeOutput(false);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: testOutput(false, true);
+                case BUTTON_SELECT: testOutput(false);
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
                 case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
                                     changed |= menuOutputHi(aLimit);
                                     markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
-                                    sendOutputCommand(outputDef.getLo(), outputDef.getPace(), 0, 0);
                                     break;
             }
         }
 
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
-        sendOutputCommand(outputDef.getType() ? outputDef.getHi() : outputDef.getLo(), outputDef.getPace(), 0, outputDef.getType());
+        
+        outputDef.setState(state);
+        writeOutput(pin);
         
         return changed;
     }
@@ -1184,7 +1185,9 @@ class Configure
         boolean changed  = false;
 
         markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
-        sendOutputCommand(outputDef.getHi(), outputDef.getPace(), 0, OUTPUT_STATE_MASK);
+
+        outputDef.setState(true);
+        writeOutput(pin);
 
         while (!finished)
         {
@@ -1204,7 +1207,7 @@ class Configure
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    sendOutputCommand(outputDef.getHi(), outputDef.getPace(), 0, OUTPUT_STATE_MASK);
+                                    writeOutput(false);
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   do
@@ -1219,10 +1222,10 @@ class Configure
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    sendOutputCommand(outputDef.getHi(), outputDef.getPace(), 0, OUTPUT_STATE_MASK);
+                                    writeOutput(false);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: testOutput(false, false);
+                case BUTTON_SELECT: testOutput(false);
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
@@ -1235,6 +1238,9 @@ class Configure
         }
 
         markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
+
+        outputDef.setState(false);
+        writeOutput(pin);
                 
         return changed;
     }
@@ -1259,14 +1265,16 @@ class Configure
                 case BUTTON_UP:     value = (value + 1) & OUTPUT_PACE_MASK;
                                     outputDef.setPace(value);
                                     lcd.printAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, HEX_CHARS[value]);
+                                    writeOutput(false);
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   value = (value - 1) & OUTPUT_PACE_MASK;
                                     outputDef.setPace(value);
                                     lcd.printAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, HEX_CHARS[value]);
+                                    writeOutput(false);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: testOutput(false, false);
+                case BUTTON_SELECT: testOutput(false);
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
@@ -1308,7 +1316,7 @@ class Configure
                                     lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[value]);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: testOutput(true, false);
+                case BUTTON_SELECT: testOutput(true);
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
@@ -1324,11 +1332,11 @@ class Configure
 
     /** Test the current Configuration.
      */
-    void testOutput(boolean aIncludeDelay, boolean aDirectionHi)
+    void testOutput(boolean aIncludeDelay)
     {
-        sendOutputCommand(aDirectionHi ? outputDef.getHi() : outputDef.getLo(), outputDef.getPace(), aIncludeDelay ? outputDef.getDelay() : 0, aDirectionHi ? OUTPUT_STATE_MASK : 0);
+        writeOutputState(!outputDef.getState(), aIncludeDelay ? outputDef.getDelay() : 0);
         waitForButtonRelease();
-        sendOutputCommand(aDirectionHi ? outputDef.getLo() : outputDef.getHi(), outputDef.getPace(), aIncludeDelay ? outputDef.getDelay() : 0, aDirectionHi ? 0 : OUTPUT_STATE_MASK);
+        writeOutputState( outputDef.getState(), aIncludeDelay ? outputDef.getDelay() : 0);
     }
 
 
@@ -1364,42 +1372,6 @@ class Configure
     }
 
 
-    /** Send a command to an output node.
-     *  Return error code if any.
-     */
-    int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aState)
-    {
-        #if DEBUG
-            Serial.print(millis());
-            Serial.print("\tOutput ");
-            Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.getType()]));
-            Serial.print(CHAR_SPACE);
-            Serial.print(HEX_CHARS[outputNode]);
-            Serial.print(HEX_CHARS[outputPin]);
-            Serial.print(CHAR_SPACE);
-            Serial.print(PGMT(aState ? M_HI : M_LO));
-            Serial.print(", value=");
-            Serial.print(aValue, HEX);
-            Serial.print(", pace=");
-            Serial.print(aPace, HEX);
-            Serial.println();
-        #endif
-    
-//        // TODO - send output command
-//        Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
-//        Wire.write(COMMS_CMD_SET + outputPin);
-//        Wire.write(outputDef.getType());
-//        Wire.write(aValue);
-//        Wire.write(aPace);
-//        Wire.write(aState);
-//        if (aDelay)
-//        {
-//            Wire.write(aDelay);
-//        }
-//        return Wire.endTransmission();
-    }
-
-    
     public:
     
     /** A Configure object.

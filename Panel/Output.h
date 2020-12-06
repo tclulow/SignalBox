@@ -337,6 +337,17 @@ void readOutput(uint8_t aOutputNumber);
 void writeOutput(boolean aSave);
 
 
+/** Write a change of state to the Output module.
+ */
+void writeOutputState(boolean aState, uint8_t aDelay);
+
+
+/** Reset current Output. 
+ *  And then reload its definition.
+ */
+void resetOutput();
+
+
 /** Read the states of the given node's Outputs.
  *  Save in OutputStates.
  *  If fails, return a character indicating the error.
