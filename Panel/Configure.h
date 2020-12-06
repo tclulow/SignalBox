@@ -1331,12 +1331,24 @@ class Configure
 
 
     /** Test the current Configuration.
+     *  Most outputs change state and then change back again.
+     *  Flashers always go Hi first, then Lo.
      */
     void testOutput(boolean aIncludeDelay)
     {
-        writeOutputState(!outputDef.getState(), aIncludeDelay ? outputDef.getDelay() : 0);
-        waitForButtonRelease();
-        writeOutputState( outputDef.getState(), aIncludeDelay ? outputDef.getDelay() : 0);
+        if (outputDef.isFlasher())
+        {
+            writeOutputState(true,  aIncludeDelay ? outputDef.getDelay() : 0);
+            waitForButtonRelease();
+            writeOutputState(false, aIncludeDelay ? outputDef.getDelay() : 0);
+            writeOutput(false);
+        }
+        else
+        {
+            writeOutputState(!outputDef.getState(), aIncludeDelay ? outputDef.getDelay() : 0);
+            waitForButtonRelease();
+            writeOutputState( outputDef.getState(), aIncludeDelay ? outputDef.getDelay() : 0);
+        }
     }
 
 

@@ -205,6 +205,7 @@ void initOutput(int aPin, uint8_t aOldType)
         outputs[aPin].steps = 0;            // Ensure there's no flashing
 
         // TODO - Ensure BLINK Outputs blink if they're Hi and have delay-0 (indefinite).
+        // But only at start-up, not when configuring.
     }
     else
     {
@@ -434,10 +435,20 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             outputDefs[aPin].setState(true);
         }
 
-        outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
         if (outputDefs[aPin].isFlasher())
         {
-            outputs[aPin].step  = outputs[aPin].steps;
+            if (   (!outputDefs[aPin].getState())
+                && (aDelay == 0))
+            {
+                // Turn off immediately if state = Lo an indefinite time (delay = 0).
+                outputs[aPin].steps = 0;
+            }
+            else
+            {
+                // Flash as required.
+                outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
+                outputs[aPin].step  = outputs[aPin].steps;
+            }
         }
     }
     else
