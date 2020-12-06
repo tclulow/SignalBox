@@ -148,6 +148,16 @@ void firstRun()
  */
 void initOutput(int aPin, uint8_t aOldType)
 {
+    #if DEBUG
+        Serial.print(millis());
+        Serial.print("\tinit pin=");
+        Serial.print(aPin, HEX);
+        Serial.print(", oldType=");
+        Serial.print(aOldType, HEX);
+        Serial.println();
+        reportOutput(aPin);
+    #endif
+        
     // Detach servo if currently attached and no longer required.
     if (   (isServo(aOldType))
         && (!outputDefs[aPin].isServo()))

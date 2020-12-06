@@ -308,6 +308,16 @@ void saveOutput(int aPin)
 }
 
 
+/** Is the given Output type a servo type?
+ *  ie: SERVO or SIGNAL.
+ */
+boolean isServo(uint8_t aType)
+{
+    return    (aType == OUTPUT_TYPE_SERVO)
+           || (aType == OUTPUT_TYPE_SIGNAL);
+}
+
+
 #else   // Methods for loading/saving outputs to/from EEPROM in the OutputModule.
 
 
