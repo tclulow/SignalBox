@@ -70,11 +70,9 @@ class OutputDef
 
     /** Is the Output one of the LED types?
      */
-    boolean isALed()
+    boolean isLed()
     {
-        return    (getType() == OUTPUT_TYPE_LED)
-               || (getType() == OUTPUT_TYPE_FLASH)
-               || (getType() == OUTPUT_TYPE_BLINK);
+        return getType() == OUTPUT_TYPE_LED;
     }
 
 

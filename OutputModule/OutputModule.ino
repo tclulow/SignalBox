@@ -189,7 +189,8 @@ void initOutput(int aPin, uint8_t aOldType)
             outputs[aPin].servo.attach(OUTPUT_BASE_PIN + aPin);
         }
     }
-    else if (outputDefs[aPin].isALed())
+    else if (   (outputDefs[aPin].isLed())
+             || (outputDefs[aPin].isFlasher()))
     {
         // Ensure LEDs glow with correct intensity.
         if (outputDefs[aPin].getState())
@@ -426,7 +427,11 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
                       / OUTPUT_SERVO_MAX;
         outputs[aPin].steps = steps + 1;
     }
-    else if (outputDefs[aPin].isALed())
+    else if (outputDefs[aPin].isLed())
+    {
+        outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
+    }
+    else if (outputDefs[aPin].isFlasher())
     {
         // For a BLINK that's not running, force state on.
         if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
@@ -435,25 +440,17 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             outputDefs[aPin].setState(true);
         }
 
-        if (outputDefs[aPin].isFlasher())
+        // Turn Flashers off immediately if state = Lo and an indefinite time (delay = 0).
+        if (   (!outputDefs[aPin].getState())
+            && (aDelay == 0))
         {
-            // Turn Flashers off immediately if state = Lo and an indefinite time (delay = 0).
-            if (   (!outputDefs[aPin].getState())
-                && (aDelay == 0))
-            {
-                outputs[aPin].steps = 0;
-            }
-            else
-            {
-                // Flash as required.
-                outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
-                outputs[aPin].step  = outputs[aPin].steps;
-            }
+            outputs[aPin].steps = 0;
         }
         else
         {
-            // Ordinary LEDs.
+            // Flash as required.
             outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
+            outputs[aPin].step  = outputs[aPin].steps;
         }
     }
     else
@@ -869,7 +866,8 @@ void loop()
     // Set LED Outputs based on their intensity value/alt, using the clock to generate a PWM signal.
     for (int pin = 0; pin < IO_PINS; pin++)
     {
-        if (outputDefs[pin].isALed())
+        if (   (outputDefs[pin].isLed())
+            || (outputDefs[pin].isFlasher()))
         {
             digitalWrite(OUTPUT_BASE_PIN + pin,    outputs[pin].value >  0 
                                                 && outputs[pin].value >= (nowMicros & 0xff));
