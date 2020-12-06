@@ -14,9 +14,6 @@
 #include "Output.h"
 
 
-// The i2c ID of the module.
-uint8_t moduleID  = 0;
-
 // Ticking
 long    now        = 0;
 long    tickServo  = 0;
@@ -73,29 +70,6 @@ void setup()
         pinMode(ioPins[pin], OUTPUT);
     }
 
-    // Configure i2c from jumpers.
-    for (int pin = 0, mask=1; pin < JUMPER_PINS; pin++, mask <<= 1)
-    {
-        if (   (   (jumperPins[pin] >= ANALOG_PIN_FIRST)
-                && (analogRead(jumperPins[pin]) > ANALOG_PIN_CUTOFF))
-            || (   (jumperPins[pin] <  ANALOG_PIN_FIRST)
-                && (false)      // TODO - handle digital pins on TxRx
-                && (digitalRead(jumperPins[pin]))))
-        {
-            moduleID |= mask;
-        }
-//        Serial.print("Jumper ");
-//        Serial.print(jumperPins[pin], HEX);
-//        Serial.print(": digital=");
-//        Serial.print(digitalRead(jumperPins[pin]), HEX);
-//        Serial.print(", analog=");
-//        Serial.print(analogRead(jumperPins[pin]), HEX);
-//        Serial.print(". ID=");
-//        Serial.print(moduleID, HEX);
-//        Serial.println();
-    }
-    moduleID |= systemData.i2cOutputBaseID;
-
     // Initialise all the outputs (from state saved in EEPROM).
     for (int pin = 0; pin < IO_PINS; pin++)
     {
@@ -103,12 +77,12 @@ void setup()
     }
     
     // Start i2c communications.
-    Wire.begin(moduleID);
+    Wire.begin(systemData.i2cModuleID);
     Wire.onReceive(processReceipt);
     Wire.onRequest(processRequest);
 
     Serial.print("Module ID: 0x");
-    Serial.println(moduleID, HEX);
+    Serial.println(systemData.i2cModuleID, HEX);
 }
 
 
@@ -125,7 +99,31 @@ void firstRun()
     systemData.i2cControllerID = DEFAULT_I2C_CONTROLLER_ID;
     systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
     systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
+    systemData.i2cModuleID     = systemData.i2cOutputBaseID;
 
+    // Configure i2c from jumpers.
+    for (int pin = 0, mask=1; pin < JUMPER_PINS; pin++, mask <<= 1)
+    {
+        if (   (   (jumperPins[pin] >= ANALOG_PIN_FIRST)
+                && (analogRead(jumperPins[pin]) > ANALOG_PIN_CUTOFF))
+            || (   (jumperPins[pin] <  ANALOG_PIN_FIRST)
+                && (false)      // TODO - handle digital pins on TxRx
+                && (digitalRead(jumperPins[pin]))))
+        {
+            systemData.i2cModuleID |= mask;
+        }
+//        Serial.print("Jumper ");
+//        Serial.print(jumperPins[pin], HEX);
+//        Serial.print(": digital=");
+//        Serial.print(digitalRead(jumperPins[pin]), HEX);
+//        Serial.print(", analog=");
+//        Serial.print(analogRead(jumperPins[pin]), HEX);
+//        Serial.print(". ID=");
+//        Serial.print(systemData.i2cModuleID, HEX);
+//        Serial.println();
+    }
+
+    
     // Initialise EEPROM with suitable data.
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
