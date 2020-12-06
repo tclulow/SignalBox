@@ -15,10 +15,11 @@
 
 
 // Ticking
-long    now        = 0;
-long    tickServo  = 0;
-long    tickLed    = 0;
-long    tickFlash  = 0;
+long now       = 0;
+long nowMicros = micros();
+long tickServo = 0;
+long tickLed   = 0;
+long tickFlash = 0;
 
 // i2c request command.
 uint8_t requestCmd = COMMS_CMD_NONE;
@@ -171,12 +172,6 @@ void initOutput(int aPin, uint8_t aOldType)
                 outputs[aPin].servo.write(outputDefs[aPin].getLo());
             }
             digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
-            Serial.print(millis());
-            Serial.print("\tSetIoPin pin=");
-            Serial.print(aPin, HEX);
-            Serial.print(", state=");
-            Serial.print(outputDefs[aPin].getState());
-            Serial.println();
             outputs[aPin].servo.attach(OUTPUT_BASE_PIN + aPin);
         }
     }
@@ -781,10 +776,9 @@ int testRun = 0;
  */
 void loop()
 {
-    long nowMicros = micros();
-            
     // Record the time now
-    now = millis();
+    now       = millis();
+    nowMicros = micros();
     
 //  // Metrics
 //  count += 1;
