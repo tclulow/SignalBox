@@ -14,6 +14,10 @@
 #include "Output.h"
 
 
+// Should changes be persisted?
+boolean persisting = true;
+
+
 // Ticking
 long now       = 0;
 long nowMicros = micros();
@@ -365,7 +369,8 @@ void processWrite(uint8_t aPin, boolean aSave)
         // Read the Output definition and save it.
         outputDefs[aPin].read();
         initOutput(aPin, oldType);
-        
+
+        persisting = aSave;         // Change persisting state based on Save vs Write.
         if (aSave)
         {
             saveOutput(aPin);
@@ -435,7 +440,12 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     // Set the Output's movement characteristics.
     outputs[aPin].delay  = (aDelay == 0 ? 0 : millis() + DELAY_MULTIPLIER * aDelay);
 
-    saveOutput(aPin);
+    // Save the new state if persisting is enabled.
+    if (persisting)
+    {
+        saveOutput(aPin);
+    }
+    
     reportOutput(aPin);
 }
 
