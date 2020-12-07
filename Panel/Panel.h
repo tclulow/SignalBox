@@ -11,6 +11,11 @@ const char HEX_CHARS[]  = "0123456789abcdef";
 const char EDIT_CHARS[] = "ABC";
 
 
+/** Map the Input and Output nodes.
+ */
+void mapHardware();
+
+
 /** Process all the Input's Outputs.
  */
 void processInputOutputs(boolean aNewState);

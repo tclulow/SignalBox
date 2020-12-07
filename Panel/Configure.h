@@ -14,7 +14,8 @@
 // Sys menu states.
 #define SYS_REPORT   0
 #define SYS_I2C      1
-#define SYS_MAX      2
+#define SYS_NODES    2
+#define SYS_MAX      3
 
 
 /** Configure the system.
@@ -127,9 +128,20 @@ class Configure
                              break;
             case SYS_I2C:    displaySystemI2cParams();
                              break;
-            default:         systemFail(M_PARAMS, topMenu, 0);
+            case SYS_NODES:  displaySystemNodesParams();
+                             break;
+            default:         systemFail(M_PARAMS, sysMenu, 0);
                              break;
         }
+    }
+
+
+    /** Display System's report parameter.
+     */
+    void displaySystemReportParams()
+    {
+        lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
+        lcd.printAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemData.reportLevel], LCD_LEN_OPTION);    
     }
 
 
@@ -149,6 +161,13 @@ class Configure
     }
 
 
+    /** Display System's report parameter.
+     */
+    void displaySystemNodesParams()
+    {
+        lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
+    }
+
 
     /** Display an i2c parameter's prompt above it.
      */
@@ -156,15 +175,6 @@ class Configure
     {
         lcd.clearRow(LCD_COL_I2C_PARAM, LCD_ROW_TOP);
         lcd.printAt(LCD_COL_I2C_PARAM + aParam * LCD_COL_I2C_STEP, LCD_ROW_TOP, M_I2C_PROMPTS[aParam], LCD_LEN_OPTION);
-    }
-
-
-    /** Display System's report parameter.
-     */
-    void displaySystemReportParams()
-    {
-        lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemData.reportLevel], LCD_LEN_OPTION);    
     }
 
 
@@ -430,19 +440,18 @@ class Configure
                                     }
                                     break;
                 case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
-                                    if (sysMenu == SYS_REPORT)
+                                    switch (sysMenu)
                                     {
-                                        changed = menuSystemReport();
+                                        case SYS_REPORT: changed = menuSystemReport();
+                                                         break;
+                                        case SYS_I2C:    changed = menuSystemI2c();
+                                                         break;
+                                        case SYS_NODES:  mapHardware();
+                                                         displayAll();
+                                                         break;
+                                        default:         systemFail(M_SYSTEM, sysMenu, 0);
                                     }
-                                    else if (sysMenu == SYS_I2C)
-                                    {
-                                        changed = menuSystemI2c();
-                                    }
-                                    else
-                                    {
-                                        systemFail(M_SYSTEM, sysMenu, 0);
-                                    }
-
+                                    
                                     displaySystem();
                                     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                                     break;

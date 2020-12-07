@@ -39,7 +39,7 @@ const char M_EZY_FOUND[]       PROGMEM = "EzyBus  detected";
 const char M_EZY_UPDATE[]      PROGMEM = "Update?  Sel=Yes";
 const char M_EZY_UPDATING[]    PROGMEM = "EzyBus  updating";
 
-const char M_SCAN_NODES[]      PROGMEM = "Nodes";
+const char M_NODES[]           PROGMEM = "Nodes";
 const char M_NO_INPUTS[]       PROGMEM = "No input nodes";
 const char M_NO_OUTPUTS[]      PROGMEM = "No output nodes";
 const char M_INIT_INPUTS[]     PROGMEM = "Init inputs";
@@ -110,7 +110,7 @@ const char M_EXPORT_OUTPUT[]   PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd\
 // Array of (pointers to) certain messages.
 const char* const M_BUTTONS[]        = { M_SELECT, M_LEFT, M_DOWN, M_UP, M_RIGHT };
 const char* const M_TOP_MENU[]       = { M_SYSTEM, M_INPUT, M_OUTPUT, M_EXPORT, M_IMPORT };
-const char* const M_SYS_TYPES[]      = { M_REPORT, M_SYS_I2C };
+const char* const M_SYS_TYPES[]      = { M_REPORT, M_SYS_I2C, M_NODES };
 const char* const M_REPORT_TYPES[]   = { M_ALL, M_SYSTEM, M_INPUT, M_OUTPUT };
 const char* const M_I2C_PROMPTS[]    = { M_ID_CONTROLLER, M_ID_INPUT, M_ID_OUTPUT };
 const char* const M_REPORT_PROMPTS[] = { M_NONE, M_SHORT, M_LONG, M_PAUSE };

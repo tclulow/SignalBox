@@ -57,7 +57,7 @@ void setDisplayTimeout(long aTimeout)
 void mapHardware()
 {
     lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_SCAN_NODES);
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_NODES);
     lcd.setCursor(LCD_COLS - INPUT_NODE_MAX, 0);
     
     // Scan for Input nodes.
