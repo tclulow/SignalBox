@@ -713,7 +713,15 @@ class Configure
                                     }
                                     displayDetail();
                                     break;
-                case BUTTON_SELECT: break;
+                case BUTTON_SELECT: if (aIsInput)
+                                    {
+                                        testInput();
+                                    }
+                                    else
+                                    {
+                                        testOutput(false);
+                                    }
+                                    break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
                 case BUTTON_RIGHT:  markField(LCD_COL_PIN, LCD_ROW_TOP, 1, false);
