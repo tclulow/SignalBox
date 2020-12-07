@@ -329,10 +329,10 @@ class Configure
                                     }
                                     else
                                     {
-                                        int8_t reportLevel = systemData.reportLevel;
+                                        // int8_t reportLevel = systemData.reportLevel;
 
-                                        // Disable reporting whilst configuring.
-                                        systemData.reportLevel = 0;
+                                        // // Disable reporting whilst configuring.
+                                        // systemData.reportLevel = 0;
 
                                         switch (topMenu)
                                         {
@@ -347,8 +347,8 @@ class Configure
                                             default:         systemFail(M_CONFIG, topMenu, 0);
                                         }
 
-                                        // Re-establish reporting.
-                                        systemData.reportLevel = reportLevel;
+                                        // // Re-establish reporting.
+                                        // systemData.reportLevel = reportLevel;
                                     }
                                     markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
                                     break;
