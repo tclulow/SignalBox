@@ -336,32 +336,19 @@ class Configure
                 case BUTTON_LEFT:   finished = true;
                                     break;
                 case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, false);
-                                    if (topMenu == TOP_SYSTEM)
+                                    switch (topMenu)
                                     {
-                                        menuSystem();
-                                    }
-                                    else
-                                    {
-                                        // int8_t reportLevel = systemData.reportLevel;
-
-                                        // // Disable reporting whilst configuring.
-                                        // systemData.reportLevel = 0;
-
-                                        switch (topMenu)
-                                        {
-                                            case TOP_INPUT:  menuNode(true);
-                                                             break;
-                                            case TOP_OUTPUT: menuNode(false);
-                                                             break;
-                                            case TOP_EXPORT: menuExport();
-                                                             break;
-                                            case TOP_IMPORT: menuImport();
-                                                             break;
-                                            default:         systemFail(M_CONFIG, topMenu, 0);
-                                        }
-
-                                        // // Re-establish reporting.
-                                        // systemData.reportLevel = reportLevel;
+                                        case TOP_SYSTEM: menuSystem();
+                                                         break;
+                                        case TOP_INPUT:  menuNode(true);
+                                                         break;
+                                        case TOP_OUTPUT: menuNode(false);
+                                                         break;
+                                        case TOP_EXPORT: menuExport();
+                                                         break;
+                                        case TOP_IMPORT: menuImport();
+                                                         break;
+                                        default:         systemFail(M_CONFIG, topMenu, 0);
                                     }
                                     markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
                                     break;
@@ -618,8 +605,10 @@ class Configure
      */
     void menuNode(boolean aIsInput)
     {
-        boolean finished = false;
+        boolean finished    = false;
+        int8_t  reportLevel = systemData.reportLevel;    // Record reportLevel so we can turn it back on again.
 
+        systemData.reportLevel = 0;
         markField(LCD_COL_NODE, LCD_ROW_TOP, 1, true);
         
         while (!finished)
@@ -646,6 +635,7 @@ class Configure
             }
         }
 
+        systemData.reportLevel = reportLevel;
         markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
     }
 
