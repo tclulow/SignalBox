@@ -3,7 +3,7 @@
 #ifndef _Config_h
 #define _Config_h
 
-#define DEBUG true
+#define DEBUG false
 
 
 #define STEP_SERVO           50  // Delay (msecs) between steps of a Servo.
