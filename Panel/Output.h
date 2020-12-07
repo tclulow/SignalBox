@@ -36,13 +36,13 @@
 
 
 // Output information that's shared with the output module.
-#define OUTPUT_TYPE_SERVO      0x00   // Output is a servo.
-#define OUTPUT_TYPE_SIGNAL     0x01   // Output is a signal.
-#define OUTPUT_TYPE_LED        0x02   // Output is a LED or other IO device.
-#define OUTPUT_TYPE_FLASH      0x03   // Output is a flashing LED.
-#define OUTPUT_TYPE_BLINK      0x04   // Output is a blinking LED.
-#define OUTPUT_TYPE_MAX        0x05   // Limit of output types.
-#define OUTPUT_TYPE_NONE       0x0f   // Placeholder to mark "no type".
+#define OUTPUT_TYPE_NONE       0x00   // Placeholder to mark "no type".
+#define OUTPUT_TYPE_SERVO      0x01   // Output is a servo.
+#define OUTPUT_TYPE_SIGNAL     0x02   // Output is a signal.
+#define OUTPUT_TYPE_LED        0x03   // Output is a LED or other IO device.
+#define OUTPUT_TYPE_FLASH      0x04   // Output is a flashing LED.
+#define OUTPUT_TYPE_BLINK      0x05   // Output is a blinking LED.
+#define OUTPUT_TYPE_MAX        0x06   // Limit of output types.
 
 
 /** Definition of an Output.
