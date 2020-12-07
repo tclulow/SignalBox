@@ -259,13 +259,16 @@ class Configure
         int col = LCD_COL_OUTPUT_PARAM;
         
         lcd.clearRow(col, LCD_ROW_BOT);
-        lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getLo(),    2);
-        col += LCD_COL_OUTPUT_STEP;
-        lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getHi(),    2);
-        col += LCD_COL_OUTPUT_STEP;
-        lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getPace(),  1);
-        col += LCD_COL_OUTPUT_STEP - 1;
-        lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getDelay(), 1);
+        if (aType != OUTPUT_TYPE_NONE)
+        {    
+            lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getLo(),    2);
+            col += LCD_COL_OUTPUT_STEP;
+            lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getHi(),    2);
+            col += LCD_COL_OUTPUT_STEP;
+            lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getPace(),  1);
+            col += LCD_COL_OUTPUT_STEP - 1;
+            lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getDelay(), 1);
+        }
     }
 
 
@@ -1095,6 +1098,7 @@ class Configure
                 case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
                                     switch (outputType)
                                     {
+                                        case OUTPUT_TYPE_NONE:   break;
                                         case OUTPUT_TYPE_SERVO:
                                         case OUTPUT_TYPE_SIGNAL: changed |= menuOutputLo(OUTPUT_SERVO_MAX);
                                                                  break;
