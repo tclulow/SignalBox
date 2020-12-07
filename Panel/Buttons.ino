@@ -32,6 +32,17 @@ void calibrateButtons()
         systemData.buttons[button] = (previous + value) / 2;
         previous = value;
 
+        #if DEBUG
+            Serial.print(millis());
+            Serial.print("\tButton ");
+            Serial.print(PGMT(M_BUTTONS[button]));
+            Serial.print(", value=");
+            Serial.print(value, HEX);
+            Serial.print(", mark=");
+            Serial.print(systemData.buttons[button], HEX);
+            Serial.println();
+        #endif
+
         // Wait for button to be released.
         while (analogRead(0) < BUTTON_THRESHHOLD);
     }
