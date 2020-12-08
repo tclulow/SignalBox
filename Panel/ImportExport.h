@@ -87,6 +87,8 @@ class ImportExport
                 inputDef.setDisabled(index, wordBuffer[strlen(wordBuffer) - 1] == CHAR_STAR);
             }
 
+            lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[node]);
+            lcd.printAt(LCD_COL_PIN , LCD_ROW_BOT, HEX_CHARS[pin]);
             saveInput();
         }
     }
@@ -125,6 +127,8 @@ class ImportExport
             outputDef.setPace(pace >> OUTPUT_PACE_SHIFT);
             outputDef.setDelay(pace & OUTPUT_DELAY_MASK);
         
+            lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[outputNode]);
+            lcd.printAt(LCD_COL_PIN , LCD_ROW_BOT, HEX_CHARS[outputPin]);
             writeOutput(true);
         }
     }
