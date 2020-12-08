@@ -1,0 +1,20 @@
+#!/bin/bash
+# Monitor output from arduino
+
+PORT=/dev/ttyUSB${1:-1}
+
+clear
+stty -F ${PORT} 115200
+echo Monotor port ${PORT}
+
+while true
+do
+    read LINE
+    echo $LINE
+#   if [ "$LINE" != "" ]
+#   then
+#       echo
+#   fi
+done < ${PORT}
+
+

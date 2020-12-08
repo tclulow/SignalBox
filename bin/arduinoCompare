@@ -1,0 +1,10 @@
+#!/bin/bash
+# Check common files have no differences
+
+cd ~/JavaDev/Pentad/Arduino/Panel
+for FILE in Comms.h Common.h Output.h
+do
+    echo $FILE
+    diff $FILE ../OutputModule
+done
+

@@ -1,0 +1,22 @@
+#!/bin/bash
+# Deploy an Arduino sketch
+
+BAUD=115200
+EXEC=avrdude
+
+PATH=${1}
+PORT=/dev/ttyUSB${2:-0}
+PART=${3:-atmega328p}
+PROG=${4:-arduino}
+
+DIR="${0%/*}"
+#BASE="${0##*/}"
+CONFIG=${DIR}/${EXEC}.conf
+
+if [ -z "$PATH" ]
+then
+    echo Usage "$0 <Hex file path> [port number]"
+    exit
+fi
+
+${DIR}/$EXEC -C${CONFIG} -v -V -p${PART} -c${PROG} -P${PORT} -b${BAUD} -D -Uflash:w:${PATH}:i 
