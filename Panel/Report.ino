@@ -24,14 +24,10 @@ void reportPause()
         switch (waitForButton())
         {
             case BUTTON_NONE:   break;
-            case BUTTON_UP:     systemData.reportLevel += 1;
-                                if (systemData.reportLevel >= REPORT_MAX)
-                                {
-                                    systemData.reportLevel = REPORT_MAX - 1;
-                                }
+            case BUTTON_UP:     systemData.reportLevel = REPORT_LONG;
                                 saveSystemData();
                                 break;
-            case BUTTON_DOWN:   systemData.reportLevel -= 1;
+            case BUTTON_DOWN:   systemData.reportLevel = REPORT_SHORT;
                                 saveSystemData();
                                 break;
             case BUTTON_LEFT:   systemData.reportLevel = 0;
