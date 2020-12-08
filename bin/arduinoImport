@@ -1,0 +1,38 @@
+#!/bin/bash
+# Send (import) a file to Arduino
+
+# Useful constants
+DEVICES=/dev/ttyUSB
+
+# Get parameters
+FILE=${1}
+PORT=${DEVICES}${2:-0}
+
+
+if [ -z "$1" ]
+then
+    echo "Usage $0 <file to import>"
+    exit
+fi
+
+if [ ! -w ${PORT} ]
+then
+    echo No USB port ${PORT}
+    echo Available ports:
+    /usr/bin/ls -1 ${DEVICES}* | /usr/bin/sed 's/^/    /'
+    exit
+fi
+
+
+echo "Press RETURN when Arduino is in import waiting mode."
+
+(
+    read LINE
+    while read LINE		# Read a line from the archive file
+    do
+        echo "$LINE"		# Send a line to the arduino
+        sleep 1			# Don't overpower the arduino with too much data
+    done < ${FILE}
+) > ${PORT}
+
+
