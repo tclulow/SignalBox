@@ -22,23 +22,38 @@ void loadInput(int aNode, int aPin)
     EEPROM.get(TYPES_BASE + (aNode       * TYPES_SIZE), inputTypes);
     inputType = (inputTypes >> (aPin << INPUT_TYPE_SHIFT)) & INPUT_TYPE_MASK;
 
-//    #if DEBUG
-//        Serial.print(millis());
-//        Serial.print("\tLoad inputTypes[");
-//        Serial.print(inputNumber, HEX);
-//        Serial.print(": ");
-//        Serial.print(aNode, HEX);
-//        Serial.print(",");
-//        Serial.print(aPin, HEX);
-//        Serial.print("] @");
-//        Serial.print(TYPES_BASE + (aNode * TYPES_SIZE), HEX);
-//        Serial.print(" = ");
-//        Serial.print(inputTypes, HEX);
-//        Serial.print(" (");
-//        Serial.print(inputType, HEX);
-//        Serial.print(")");
-//        Serial.println();
-//    #endif
+    #if DEBUG
+        Serial.print(millis());
+        Serial.print("\tLoad Input ");
+        Serial.print(inputNumber, HEX);
+        Serial.print(": output=");
+        for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
+        {
+            Serial.print(inputDef.getOutputNode(index), HEX);
+            Serial.print(inputDef.getOutputPin(index), HEX);
+            if (inputDef.isDisabled(index))
+            {
+                Serial.print(CHAR_STAR);
+            }
+            Serial.print(CHAR_SPACE);
+        }
+        Serial.print(INPUT_BASE + (inputNumber * INPUT_SIZE), HEX);
+        Serial.println();
+
+        Serial.print(millis());
+        Serial.print("\tLoad types ");
+        Serial.print(aNode, HEX);
+        Serial.print(CHAR_COMMA);
+        Serial.print(aPin, HEX);
+        Serial.print(" @");
+        Serial.print(TYPES_BASE + (aNode * TYPES_SIZE), HEX);
+        Serial.print(" = ");
+        Serial.print(inputTypes, HEX);
+        Serial.print(" (");
+        Serial.print(inputType, HEX);
+        Serial.print(")");
+        Serial.println();
+    #endif
 }
 
 
@@ -57,37 +72,41 @@ void saveInput()
         EEPROM.put(INPUT_BASE + (inputNumber * INPUT_SIZE), inputDef);
         EEPROM.put(TYPES_BASE + (node        * TYPES_SIZE), inputTypes);
 
-//        #if DEBUG
-//            Serial.print(millis());
-//            Serial.print("\tSave Input ");
-//            Serial.print(inputNumber, HEX);
-//            Serial.print(": output=");
-//            Serial.print(inputDef.output[0], HEX);
-//            Serial.print(CHAR_DOT);
-//            Serial.print(inputDef.output[1], HEX);
-//            Serial.print(CHAR_DOT);
-//            Serial.print(inputDef.output[2], HEX);
-//            Serial.print(" @ ");
-//            Serial.print(INPUT_BASE + (inputNumber * INPUT_SIZE), HEX);
-//            Serial.println();
-//            
-//            Serial.print("Save inputTypes[");
-//            Serial.print(inputNumber, HEX);
-//            Serial.print(": ");
-//            Serial.print(node, HEX);
-//            Serial.print(",");
-//            Serial.print(pin, HEX);
-//            Serial.print("] @");
-//            Serial.print(TYPES_BASE + (node * TYPES_SIZE), HEX);
-//            Serial.print(", mask=");
-//            Serial.print(mask, HEX);
-//            Serial.print(" = ");
-//            Serial.print(inputTypes, HEX);
-//            Serial.print(" (");
-//            Serial.print(inputType, HEX);
-//            Serial.print(")");
-//            Serial.println();
-//        #endif
+        #if DEBUG
+            Serial.print(millis());
+            Serial.print("\tSave Input ");
+            Serial.print(inputNumber, HEX);
+            Serial.print(": output=");
+            for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
+            {
+                Serial.print(inputDef.getOutputNode(index), HEX);
+                Serial.print(inputDef.getOutputPin(index), HEX);
+                if (inputDef.isDisabled(index))
+                {
+                    Serial.print(CHAR_STAR);
+                }
+                Serial.print(CHAR_SPACE);
+            }
+            Serial.print("@ ");
+            Serial.print(INPUT_BASE + (inputNumber * INPUT_SIZE), HEX);
+            Serial.println();
+            
+            Serial.print(millis());
+            Serial.print("\tSave types ");
+            Serial.print(node, HEX);
+            Serial.print(",");
+            Serial.print(pin, HEX);
+            Serial.print("] @");
+            Serial.print(TYPES_BASE + (node * TYPES_SIZE), HEX);
+            Serial.print(", mask=");
+            Serial.print(mask, HEX);
+            Serial.print(" = ");
+            Serial.print(inputTypes, HEX);
+            Serial.print(" (");
+            Serial.print(inputType, HEX);
+            Serial.print(")");
+            Serial.println();
+        #endif
     }
 }
 

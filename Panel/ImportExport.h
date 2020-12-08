@@ -61,7 +61,7 @@ class ImportExport
         
         node = readData();
         pin  = node & INPUT_PIN_MASK;
-        node = (node >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
+        node = (node >> 4) & INPUT_NODE_MASK;       // Node number is in upper nibble
         loadInput(node, pin);
     
         readWord();
@@ -81,7 +81,9 @@ class ImportExport
         {  
             for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
             {
-                inputDef.setOutput(index, readData());
+                uint8_t value = readData();
+                inputDef.setOutputNode(index, (value >> 4) & OUTPUT_NODE_MASK);
+                inputDef.setOutputPin(index,  (value     ) & OUTPUT_PIN_MASK);
                 inputDef.setDisabled(index, wordBuffer[strlen(wordBuffer) - 1] == CHAR_STAR);
             }
 
@@ -94,15 +96,12 @@ class ImportExport
      */
     void importOutput()
     {
-        uint8_t node = 0;
-        uint8_t pin  = 0;
         uint8_t type = 0;
         uint8_t pace = 0;
         
-        node = readData();
-        pin  = node & OUTPUT_PIN_MASK;
-        node = (node >> 4) & OUTPUT_NODE_MASK;
-        readOutput(node, pin);
+        outputNode = readData();
+        outputPin  = outputNode & OUTPUT_PIN_MASK;
+        outputNode = (outputNode >> 4) & OUTPUT_NODE_MASK;
         
         readWord();
         for (type = 0; type < OUTPUT_TYPE_MAX; type++)
