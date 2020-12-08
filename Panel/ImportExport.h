@@ -18,9 +18,10 @@
  */
 class ImportExport
 {
-    char lastChar;
-    char wordBuffer[WORD_BUFFER_LENGTH + 1];
-    
+    char lastChar;                              // Last character read.
+    char wordBuffer[WORD_BUFFER_LENGTH + 1];    // Buffer to read characters
+    long messageTick = 1L;                      // Time the last message was emitted.
+
 
     /** Import a line.
      */
@@ -189,7 +190,10 @@ class ImportExport
     {
         while (lastChar != CHAR_NEWLINE)
         {
-            lastChar = Serial.read();
+            if (Serial.available())
+            {
+                lastChar = Serial.read();
+            }
             if (readButton())
             {
                 return;
@@ -214,6 +218,15 @@ class ImportExport
                     return 0;
                 }
                 delay(DELAY_BUTTON_WAIT);
+    
+                // Clear message if there's no activity.
+                if (   (messageTick > 0)
+                    && (messageTick < millis()))
+                {
+                    messageTick = 0;
+                    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+                    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
+                }
             }
     
             if (   (lastChar <  0)
@@ -389,8 +402,7 @@ class ImportExport
         {
             Serial.read();
         }
-        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
-    
+
         // Keep going until until button pressed.
         while (!readButton())
         {
@@ -404,6 +416,7 @@ class ImportExport
                 else
                 {
                     importLine();
+                    messageTick = millis() + DELAY_READ;
                 }
             }
         }
