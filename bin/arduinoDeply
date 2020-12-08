@@ -1,11 +1,14 @@
 #!/bin/bash
 # Deploy an Arduino sketch
 
+# Useful constants
 BAUD=115200
 EXEC=avrdude
+DEVICES=/dev/ttyUSB
 
+# Get parameters
 PATH=${1}
-PORT=/dev/ttyUSB${2:-0}
+PORT=${DEVICES}${2:-0}
 PART=${3:-atmega328p}
 PROG=${4:-arduino}
 
@@ -15,8 +18,22 @@ CONFIG=${DIR}/${EXEC}.conf
 
 if [ -z "$PATH" ]
 then
-    echo Usage "$0 <Hex file path> [port number]"
+    echo Usage "$0 <Hex file path> [port [part [programmer]]]"
     exit
 fi
 
+# Deploy with acrdude tool.
 ${DIR}/$EXEC -C${CONFIG} -v -V -p${PART} -c${PROG} -P${PORT} -b${BAUD} -D -Uflash:w:${PATH}:i 
+
+# Check for error
+if [ $? -ne 0 ]
+then
+    if [ ! -w ${PORT} ]
+    then
+        echo No USB port ${PORT}
+        echo Available ports:
+        /usr/bin/ls -1 ${DEVICES}* | /usr/bin/sed 's/^/    /'
+    else
+        echo Deployment failed
+    fi >&2
+fi
