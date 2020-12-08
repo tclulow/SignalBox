@@ -168,10 +168,6 @@ void initInputs()
  */
 void firstRun()
 {
-    lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_SETUP);
-    delay(DELAY_READ);
-
     // Initialise SystemData.
     systemData.magic   = MAGIC_NUMBER;
     systemData.version = VERSION;
@@ -544,7 +540,14 @@ void setup()
 {
     lcd.begin(LCD_COLS, LCD_ROWS);            // LCD panel.
     announce();
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_STARTUP);
+    if (loadSystemData())
+    {
+        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_STARTUP);
+    }
+    else
+    {
+        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SETUP);
+    }
     
     initialise();
     
