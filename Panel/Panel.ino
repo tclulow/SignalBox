@@ -381,30 +381,6 @@ void processInput(uint8_t aState)
     if (   (aState == 0)
         || (inputType == INPUT_TYPE_TOGGLE))
     {
-        // Report state change if reporting enabled.
-        if (reportEnabled(REPORT_SHORT))
-        {
-            lcd.clear();
-            lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
-            lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (aState ? M_HI : M_LO));
-            lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
-            lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
-            setDisplayTimeout(reportDelay());
-            
-            #if DEBUG
-                Serial.println();
-                Serial.print(millis());
-                Serial.print("\tInput ");
-                Serial.print(PGMT(M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]));
-                Serial.print(CHAR_SPACE);
-                Serial.print(PGMT(aState ? M_HI : M_LO));
-                Serial.print(CHAR_SPACE);
-                Serial.print(HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
-                Serial.print(HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
-                Serial.println();
-            #endif
-        }
-                        
         // Set desired new state based on Input's type/state and Output's state.
         switch (inputType)
         {
@@ -420,6 +396,30 @@ void processInput(uint8_t aState)
                                     break;
         }
 
+        // Report state change if reporting enabled.
+        if (reportEnabled(REPORT_SHORT))
+        {
+            lcd.clear();
+            lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
+            lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (newState ? M_HI : M_LO));
+            lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
+            lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
+            setDisplayTimeout(reportDelay());
+            
+            #if DEBUG
+                Serial.println();
+                Serial.print(millis());
+                Serial.print("\tInput ");
+                Serial.print(PGMT(M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]));
+                Serial.print(CHAR_SPACE);
+                Serial.print(PGMT(newState ? M_HI : M_LO));
+                Serial.print(CHAR_SPACE);
+                Serial.print(HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
+                Serial.print(HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
+                Serial.println();
+            #endif
+        }
+                        
         processInputOutputs(newState);
     }
 }
