@@ -254,37 +254,52 @@ void defaultSetup()
  */
 void convertEzyBus()
 {
-    // TODO - implement with Wire
-//    int ezyBus = OUTPUT_NODE_MAX * OUTPUT_NODE_SIZE * OUTPUT_SIZE;
-//    lcd.clear();
-//    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_UPDATING);
-//    lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
-//
-//    for (outputNumber = OUTPUT_NODE_MAX * OUTPUT_NODE_SIZE - 1; outputNumber >= 0; outputNumber--) 
-//    {
-//        if ((outputNumber & OUTPUT_NODE_PIN_MASK) == OUTPUT_NODE_PIN_MASK)
-//        {
-//            lcd.print(HEX_CHARS[(outputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK]);
-//        }
-//
-//        ezyBus -= OUTPUT_SIZE;
-//        EEPROM.get(ezyBus, outputDef);
-//        
-//        // Pace was in steps of 4 (2-bits), drop one bit, store in left-most nibble
-//        outputDef.pace = ((outputDef.pace >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT;
-//        
-//        saveOutput();
-//
-//        // Create an input.
-//        inputNumber = outputNumber;
-//        
-//        inputDef.output[0] = outputNumber;
-//        inputDef.output[1] = INPUT_DISABLED_MASK;
-//        inputDef.output[2] = INPUT_DISABLED_MASK;
-//        inputType = INPUT_TYPE_TOGGLE;
-//        
-//        saveInput();
-//    }
+    int     ezyBus = 0;
+    uint8_t value  = 0;
+    
+    lcd.clear();
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_UPDATING);
+    lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+
+    for (outputNode = 0; outputNode < OUTPUT_NODE_MAX; outputNode++)
+    {
+        lcd.print(HEX_CHARS[outputNode]);
+
+        for (outputPin = 0; outputPin < OUTPUT_PIN_MAX; outputPin++)
+        {
+            EEPROM.get(ezyBus++, value);
+            outputDef.setType(++value & OUTPUT_TYPE_MASK);
+            outputDef.setState(false);
+            
+            EEPROM.get(ezyBus++, value);
+            outputDef.setLo(value);        
+            
+            EEPROM.get(ezyBus++, value);
+            outputDef.setHi(value);        
+
+            // Pace was in steps of 4 (2-bits), drop one bit.
+            EEPROM.get(ezyBus++, value);
+            value = (value >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK;
+            outputDef.setPace(value);
+            outputDef.setDelay(0);
+
+            writeOutput(true);
+        }
+    }
+
+    // Create the inputs.
+    inputType = INPUT_TYPE_TOGGLE;
+
+    for (inputNumber = 0; inputNumber < INPUT_MAX; inputNumber++)
+    {
+        // Create an input.
+        for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
+        {
+            inputDef.setOutput(index, inputNumber);
+            inputDef.setDisabled(index, index > 0);
+        }
+        saveInput();
+    }
 }
 
 
