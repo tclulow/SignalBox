@@ -304,13 +304,6 @@ void convertEzyBus()
  */
 void scanInputs()
 { 
-//  #if DEBUG
-//  processInput(3, 4, 0x00);
-//  processInput(3, 4, 0x80);
-//  processInput(3, 5, 0x00);
-//  processInput(3, 5, 0x80);
-//  #endif 
-
     // Scan all the nodes. 
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
