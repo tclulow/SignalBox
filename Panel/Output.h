@@ -147,7 +147,7 @@ class OutputDef
 
     /** Prints an Output's definition.
      */
-    void printDef(char* aHeader, uint8_t aPin)
+    void printDef(const char* aHeader, uint8_t aPin)
     {
         #if DEBUG
             Serial.print(millis());

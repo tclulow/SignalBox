@@ -513,7 +513,7 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
 
 //uint8_t * heapPtr, * stackPtr;
 //
-//void checkMem(char* aMessage)
+//void checkMem(const char* aMessage)
 //{
 //  stackPtr = (uint8_t *)malloc(4);  // use stackPtr temporarily
 //  heapPtr = stackPtr;               // save value of heap pointer
