@@ -6,6 +6,8 @@
 
 #include "Config.h"
 #include "Messages.h"
+#include "Debug.h"
+#include "System.h"
 #include "Common.h"
 #include "Memory.h"
 #include "Comms.h"
@@ -15,7 +17,6 @@
 #include "Output.h"
 #include "Input.h"
 #include "Buttons.h"
-#include "System.h"
 #include "Report.h"
 #include "ImportExport.h"
 #include "Configure.h"
@@ -176,6 +177,7 @@ void firstRun()
     systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
     systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
     systemData.reportLevel     = DEFAULT_REPORT;
+    systemData.debugLevel      = DEFAULT_DEBUG;
 
     for (int rfu = 0; rfu < SYSTEM_RFU; rfu++)
     {
@@ -399,18 +401,19 @@ void processInput(uint8_t aState)
             lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
             setDisplayTimeout(reportDelay());
             
-            #if DEBUG
+            if (isDebug(DEBUG_BRIEF))
+            {
                 Serial.println();
                 Serial.print(millis());
-                Serial.print("\tInput ");
+                Serial.print(CHAR_TAB);
                 Serial.print(PGMT(M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]));
                 Serial.print(CHAR_SPACE);
                 Serial.print(PGMT(newState ? M_HI : M_LO));
                 Serial.print(CHAR_SPACE);
-                Serial.print(HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
-                Serial.print(HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
+                Serial.print((inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK, HEX);
+                Serial.print((inputNumber                    ) & INPUT_PIN_MASK,  HEX);
                 Serial.println();
-            #endif
+            }
         }
                         
         processInputOutputs(newState);
@@ -473,19 +476,21 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
             lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[outputPin]);
             setDisplayTimeout(reportDelay());
             
-            #if DEBUG
+            if (isDebug(DEBUG_BRIEF))
+            {
                 Serial.print(millis());
                 Serial.print(CHAR_TAB);
                 Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.getType()]));
-                Serial.print(CHAR_SPACE);
+                Serial.print(PGMT(M_DEBUG_STATE));
                 Serial.print(PGMT(aState ? M_HI : M_LO));
-                Serial.print(CHAR_SPACE);
-                Serial.print(HEX_CHARS[outputNode]);
-                Serial.print(HEX_CHARS[outputPin]);
-                Serial.print(CHAR_SPACE);
+                Serial.print(PGMT(M_DEBUG_NODE));
+                Serial.print(outputNode, HEX);
+                Serial.print(PGMT(M_DEBUG_PIN));
+                Serial.print(outputPin,  HEX);
+                Serial.print(PGMT(M_DEBUG_DELAY));
                 Serial.print(aDelay, HEX);
                 Serial.println();
-            #endif
+            }
             
             reportPause();
         }
@@ -544,23 +549,21 @@ void setup()
     
     initialise();
     
-//    #if DEBUG
-//        Serial.print("System  ");
-//        Serial.print(SYSTEM_BASE, HEX);
-//        Serial.print(" to ");
-//        Serial.print(SYSTEM_END, HEX);
-//        Serial.println();
-//        Serial.print("Outputs ");
-//        Serial.print(OUTPUT_BASE, HEX);
-//        Serial.print(" to ");
-//        Serial.print(OUTPUT_END, HEX);
-//        Serial.println();
-//        Serial.print("Inputs  ");
-//        Serial.print(INPUT_BASE, HEX);
-//        Serial.print(" to ");
-//        Serial.print(INPUT_END, HEX);
-//        Serial.println();
-//    #endif
+    if (isDebug(DEBUG_DETAIL))
+    {
+        Serial.print(millis());
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_DEBUG_SYSTEM));
+        Serial.print(CHAR_SPACE);
+        Serial.print(SYSTEM_BASE, HEX);
+        Serial.print(CHAR_DASH);
+        Serial.print(SYSTEM_END, HEX);
+        Serial.print(PGMT(M_DEBUG_INPUTS));
+        Serial.print(INPUT_BASE, HEX);
+        Serial.print(CHAR_DASH);
+        Serial.print(INPUT_END, HEX);
+        Serial.println();
+    }
 
     // Initialise subsystems.
     Wire.begin(systemData.i2cControllerID);   // I2C network
@@ -582,12 +585,15 @@ void setup()
     // Check if version update required.
     if (systemData.version != VERSION)
     {
-        Serial.print(PGMT(M_UPDATE));
-        Serial.print(CHAR_SPACE);
-        Serial.print(systemData.version, HEX);
-        Serial.print(CHAR_SPACE);
-        Serial.print(VERSION, HEX);
-        Serial.println();
+        if (isDebug(DEBUG_NONE))
+        {
+            Serial.print(PGMT(M_UPDATE));
+            Serial.print(CHAR_SPACE);
+            Serial.print(systemData.version, HEX);
+            Serial.print(CHAR_SPACE);
+            Serial.print(VERSION, HEX);
+            Serial.println();
+        }
 
         lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_UPDATE);
 

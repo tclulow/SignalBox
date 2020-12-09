@@ -7,6 +7,9 @@ clear
 stty -F ${PORT} 115200
 echo Monotor port ${PORT}
 
+# cat < ${PORT}
+# exit
+
 while true
 do
     read LINE

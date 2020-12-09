@@ -17,14 +17,15 @@ void readOutput(uint8_t aNode, uint8_t aPin)
         outputNode = aNode;
         outputPin  = aPin;
 
-        #if DEBUG
+        if (isDebug(DEBUG_FULL))
+        {
             Serial.print(millis());
-            Serial.print("\tRead node=");
+            Serial.print(CHAR_TAB);
+            Serial.print(PGMT(M_DEBUG_READ));
             Serial.print(outputNode, HEX);
-            Serial.print(", pin=");
             Serial.print(outputPin, HEX);
             Serial.println();
-        #endif
+        }
     
         Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
         Wire.write(COMMS_CMD_READ | outputPin);
@@ -44,7 +45,11 @@ void readOutput(uint8_t aNode, uint8_t aPin)
         {
             // Read the outputDef from the OutputModule.
             outputDef.read();
-            outputDef.printDef("Output", outputPin);
+            
+            if (isDebug(DEBUG_FULL))
+            {
+                outputDef.printDef(M_DEBUG_READ, outputPin);
+            }
         }
     }
 }
@@ -63,15 +68,16 @@ void readOutput(uint8_t aOutputNumber)
  */
 void writeOutput(boolean aSave)
 {
-    #if DEBUG
+    if (isDebug(DEBUG_FULL))
+    {
         Serial.print(millis());
-        Serial.print("\tRead node=");
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_DEBUG_READ));
         Serial.print(outputNode, HEX);
-        Serial.print(", pin=");
         Serial.print(outputPin, HEX);
         Serial.println();
-        outputDef.printDef((aSave ? "Save" : "Write"), outputPin);
-    #endif
+        outputDef.printDef(aSave ? M_DEBUG_SAVE : M_DEBUG_WRITE, outputPin);
+    }
 
     Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
     Wire.write((aSave ? COMMS_CMD_SAVE : COMMS_CMD_WRITE) | outputPin);
@@ -84,18 +90,19 @@ void writeOutput(boolean aSave)
  */
 void writeOutputState(boolean aState, uint8_t aDelay)
 {
-    #if DEBUG
+    if (isDebug(DEBUG_FULL))
+    {
         Serial.print(millis());
-        Serial.print("\tState node=");
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_DEBUG_SEND));
         Serial.print(outputNode, HEX);
-        Serial.print(", pin=");
         Serial.print(outputPin, HEX);
-        Serial.print(", state=");
+        Serial.print(PGMT(M_DEBUG_STATE));
         Serial.print(aState, HEX);
-        Serial.print(", delay=");
+        Serial.print(PGMT(M_DEBUG_DELAY));
         Serial.print(aDelay, HEX);
         Serial.println();
-    #endif
+    }
 
     Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
     Wire.write((aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | outputPin);
@@ -109,15 +116,16 @@ void writeOutputState(boolean aState, uint8_t aDelay)
  */
 void resetOutput()
 {
-    #if DEBUG
+    if (isDebug(DEBUG_FULL))
+    {
         Serial.print(millis());
-        Serial.print("\tReset node=");
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_DEBUG_RESET));
         Serial.print(outputNode, HEX);
-        Serial.print(", pin=");
         Serial.print(outputPin, HEX);
         Serial.println();
-        outputDef.printDef("Reset", outputPin);
-    #endif
+        outputDef.printDef(M_DEBUG_RESET, outputPin);
+    }
 
     Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
     Wire.write(COMMS_CMD_RESET | outputPin);
@@ -149,14 +157,16 @@ char readOutputStates(uint8_t aNode)
     {
         int states = Wire.read();
 
-        #if DEBUG
+        if (isDebug(DEBUG_FULL))
+        {
             Serial.print(millis());
-            Serial.print("\tState ");
+            Serial.print(CHAR_TAB);
+            Serial.print(PGMT(M_DEBUG_STATES));
             Serial.print(aNode, HEX);
             Serial.print(CHAR_SPACE);
             Serial.print(states, HEX);
             Serial.println();
-        #endif
+        }
         
         if (states < 0)
         {

@@ -15,7 +15,8 @@
 #define SYS_REPORT   0
 #define SYS_I2C      1
 #define SYS_NODES    2
-#define SYS_MAX      3
+#define SYS_DEBUG    3
+#define SYS_MAX      4
 
 
 /** Configure the system.
@@ -26,7 +27,7 @@ class Configure
 
     int topMenu = 0;      // Top menu being shown
     int sysMenu = 0;      // System menu being shown.
-    int expMenu = 0;      // Report menu being shown.
+    int expMenu = 0;      // Export menu being shown.
     int node    = 0;      // The node we're configuring.
     int pin     = 0;      // The pin we're configuring.
     
@@ -130,6 +131,8 @@ class Configure
                              break;
             case SYS_NODES:  displaySystemNodesParams();
                              break;
+            case SYS_DEBUG:  displaySystemDebugParams();
+                             break;
             default:         systemFail(M_PARAMS, sysMenu, 0);
                              break;
         }
@@ -166,6 +169,15 @@ class Configure
     void displaySystemNodesParams()
     {
         lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
+    }
+
+
+    /** Display System's report parameter.
+     */
+    void displaySystemDebugParams()
+    {
+        lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
+        lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_LEN_OPTION);    
     }
 
 
@@ -439,6 +451,8 @@ class Configure
                                         case SYS_NODES:  mapHardware();
                                                          displayAll();
                                                          break;
+                                        case SYS_DEBUG:  changed = menuSystemDebug();
+                                                         break;
                                         default:         systemFail(M_SYSTEM, sysMenu, 0);
                                     }
                                     
@@ -488,7 +502,7 @@ class Configure
             }
         }
 
-        markField(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, 5, false);
+        markField(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, LCD_COL_REPORT_LENGTH, false);
         
         return changed;
     }
@@ -547,6 +561,48 @@ class Configure
             systemData.i2cOutputBaseID = params[2];
         }
 
+        return changed;
+    }
+
+
+    /** Process System redebug menu.
+     *  Reurn true if changes made.
+     */
+    boolean menuSystemDebug()
+    {
+        boolean finished = false;
+        boolean changed = false;
+        int index = 0;
+
+        markField(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, LCD_COL_DEBUG_LENGTH, true);
+
+        while (!finished)
+        {
+            switch (waitForButton())
+            {
+                case BUTTON_NONE:   break;
+                case BUTTON_UP:     systemData.debugLevel += 2;     // Allow for decrement in BUTTON_DOWN code below.
+                                    if (systemData.debugLevel > DEBUG_MAX)
+                                    {
+                                        systemData.debugLevel = 1;
+                                    }
+                case BUTTON_DOWN:   systemData.debugLevel -= 1;
+                                    if (systemData.debugLevel < 0)
+                                    {
+                                        systemData.debugLevel = DEBUG_MAX - 1;
+                                    }
+                                    lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel % DEBUG_MAX], LCD_COL_DEBUG_LENGTH);
+                                    changed = true;
+                                    break;
+                case BUTTON_SELECT: break;
+                case BUTTON_LEFT:   finished = true;
+                                    break;
+                case BUTTON_RIGHT:  break;
+            }
+        }
+
+        markField(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, 5, false);
+        
         return changed;
     }
 

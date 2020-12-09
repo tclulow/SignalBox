@@ -146,28 +146,27 @@ class OutputDef
 
 
     /** Prints an Output's definition.
+     *  Only when debug level is high enough (at callers discretion).
      */
-    void printDef(const char* aHeader, uint8_t aPin)
+    void printDef(PGM_P aHeader, uint8_t aPin)
     {
-        #if DEBUG
-            Serial.print(millis());
-            Serial.print("\t");
-            Serial.print(aHeader);
-            Serial.print(aPin);
-            Serial.print("\ttype ");
-            Serial.print(getType(),  HEX);
-            Serial.print(", state ");
-            Serial.print(getState(), HEX);
-            Serial.print(", Lo ");
-            Serial.print(getLo(),    HEX);
-            Serial.print(", Hi ");
-            Serial.print(getHi(),    HEX);
-            Serial.print(", pace ");
-            Serial.print(getPace(),  HEX);
-            Serial.print(", delay ");
-            Serial.print(getDelay(), HEX);
-            Serial.println();
-        #endif
+        Serial.print(millis());
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(aHeader));
+        Serial.print(aPin);
+        Serial.print(PGMT(M_DEBUG_TYPE));
+        Serial.print(getType(),  HEX);
+        Serial.print(PGMT(M_DEBUG_STATE));
+        Serial.print(getState(), HEX);
+        Serial.print(PGMT(M_DEBUG_LO));
+        Serial.print(getLo(),    HEX);
+        Serial.print(PGMT(M_DEBUG_HI));
+        Serial.print(getHi(),    HEX);
+        Serial.print(PGMT(M_DEBUG_PACE));
+        Serial.print(getPace(),  HEX);
+        Serial.print(PGMT(M_DEBUG_DELAY));
+        Serial.print(getDelay(), HEX);
+        Serial.println();
     }
 
     
@@ -283,8 +282,11 @@ OutputDef outputDefs[OUTPUT_PIN_MAX];
  */
 void loadOutput(int aPin)
 {
-    EEPROM.get(OUTPUT_BASE + aPin * sizeof(OutputDef), outputDefs[aPin]); 
-    outputDefs[aPin].printDef("Load", aPin);
+    EEPROM.get(OUTPUT_BASE + aPin * sizeof(OutputDef), outputDefs[aPin]);
+    if (isDebug(DEBUG_FULL))
+    { 
+        outputDefs[aPin].printDef(M_DEBUG_LOAD, aPin);
+    }
 }
 
 
@@ -295,7 +297,10 @@ void saveOutput(int aPin)
     if (aPin < OUTPUT_PIN_MAX)
     {
         EEPROM.put(OUTPUT_BASE + aPin * sizeof(OutputDef), outputDefs[aPin]);
-        outputDefs[aPin].printDef("Save", aPin);
+        if (isDebug(DEBUG_FULL))
+        {
+            outputDefs[aPin].printDef(M_DEBUG_SAVE, aPin);
+        }
     }
 }
 

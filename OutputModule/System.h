@@ -4,8 +4,8 @@
 #define _System_h
 
 
-#define MAGIC_NUMBER 0x50616e6f       // Magic number = "Pano.
-#define VERSION      0x0021           // Version number of software.
+#define MAGIC_NUMBER 0x50616e6f     // Magic number = "Pano.
+#define VERSION      0x0021         // Version number of software.
 
 
 /** Data describing an Output's operation.
@@ -22,6 +22,7 @@ struct SystemData
     uint8_t i2cOutputBaseID = 0;
     
     uint8_t i2cModuleID     = 0;    // The module number we're using.
+    uint8_t debugLevel      = 0;    // Debugginf level.
     
     char    rfu[20]         = "RFUrfu OutputModule";        // RFU. 32 bytes in all.
 };
@@ -35,19 +36,22 @@ SystemData systemData;
 /** Load SystemData from EEPROM
  *  Return true if valid
  */
-boolean loadSystemData()
-{
-    EEPROM.get(SYSTEM_BASE, systemData);
-    return systemData.magic != MAGIC_NUMBER;
-}
+boolean loadSystemData();
 
 
 /** Save SystemData.
  */
-void saveSystemData()
-{
-    EEPROM.put(SYSTEM_BASE, systemData);
-}
+void saveSystemData();
+
+
+/** Is debugging enabled at this level?
+ */
+boolean isDebug(uint8_t aLevel);
+
+
+/** Sets the debugging level.
+ */
+void setDebug(uint8_t aLevel);
 
 
 #endif

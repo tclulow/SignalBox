@@ -9,6 +9,12 @@
 #define DELAY_START     2000    // Pause during start-up to avoid swamping Serial IO.
 #define DELAY_BLINK      250    // Blink interval when showing version number.
 
+#define DEBUG_NONE         0    // Debug levels.
+#define DEBUG_BRIEF        1
+#define DEBUG_FULL         2
+#define DEBUG_DETAIL       3
+#define DEBUG_MAX          4
+
 
 // Useful characters
 const char CHAR_SPACE   = ' ';
@@ -17,9 +23,11 @@ const char CHAR_NEWLINE = '\n';
 const char CHAR_RETURN  = '\r';
 const char CHAR_NULL    = 0;
 
-const char CHAR_HASH    = '#';
 const char CHAR_DOT     = '.';
+const char CHAR_COMMA   = ',';
 const char CHAR_COLON   = ':';
+const char CHAR_DASH    = '-';
+const char CHAR_HASH    = '#';
 const char CHAR_LEFT    = '<';
 const char CHAR_RIGHT   = '>';
 const char CHAR_STAR    = '*';
@@ -62,12 +70,15 @@ void initialise()
         }
     }
 
-    Serial.print(PGMT(M_SOFTWARE));
-    Serial.print(CHAR_SPACE);
-    Serial.print(PGMT(M_VERSION));
-    Serial.print(CHAR_SPACE);
-    Serial.print(PGMT(M_VERSION_DATE));
-    Serial.println();
+    if (isDebug(DEBUG_NONE))
+    {
+        Serial.print(PGMT(M_SOFTWARE));
+        Serial.print(CHAR_SPACE);
+        Serial.print(PGMT(M_VERSION));
+        Serial.print(CHAR_SPACE);
+        Serial.print(PGMT(M_VERSION_DATE));
+        Serial.println();
+    }
 }
 
 #endif

@@ -2,7 +2,7 @@
 # Check common files have no differences
 
 cd ~/JavaDev/Pentad/Arduino/Panel
-for FILE in Comms.h Common.h Output.h
+for FILE in Comms.h Common.h Debug.h Output.h
 do
     echo $FILE
     diff $FILE ../OutputModule

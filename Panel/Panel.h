@@ -6,10 +6,6 @@
 // A pin that will force calibration at start-up
 #define PIN_CALIBRATE    11
 
-// Useful characters
-const char HEX_CHARS[]  = "0123456789abcdef";
-const char EDIT_CHARS[] = "ABC";
-
 
 /** Map the Input and Output nodes.
  */

@@ -45,6 +45,9 @@
 #define LCD_COL_REPORT_PARAM  8   // Report parameter.
 #define LCD_COL_REPORT_LENGTH 5   // Report parameter length.
 
+#define LCD_COL_DEBUG_PARAM   8   // Debug parameter.
+#define LCD_COL_DEBUG_LENGTH  6   // Debug parameter length.
+
 #define LCD_COL_EXP_STATUS    7   // Export status.
 
 #define LCD_COL_INPUT_OUTPUT  8   // Input's outputs(3) start at this col.

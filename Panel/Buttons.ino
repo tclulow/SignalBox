@@ -32,16 +32,17 @@ void calibrateButtons()
         systemData.buttons[button] = (previous + value) / 2;
         previous = value;
 
-        #if DEBUG
+        if (isDebug(DEBUG_DETAIL))
+        {
             Serial.print(millis());
-            Serial.print("\tButton ");
+            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_BUTTONS[button]));
-            Serial.print(", value=");
+            Serial.print(PGMT(M_DEBUG_VALUE));
             Serial.print(value, HEX);
-            Serial.print(", mark=");
+            Serial.print(PGMT(M_DEBUG_TARGET));
             Serial.print(systemData.buttons[button], HEX);
             Serial.println();
-        #endif
+        }
 
         // Wait for button to be released.
         while (analogRead(0) < BUTTON_THRESHHOLD);
@@ -51,34 +52,47 @@ void calibrateButtons()
 }
 
 
+int lastButton = -1;
 /** Read the input button pressed.
  *  Return one of the constants above.
  */
 int readButton()
 {
-    int value = analogRead(BUTTON_ANALOG);
+    int button = 0;
+    int value  = analogRead(BUTTON_ANALOG);
 
-//    #if DEBUG
-//        static int previous = 0;
-//        if (value != previous)
-//        {
-//            previous = value;
-//            Serial.print(millis());
-//            Serial.print(" ");
-//            Serial.println(value);
-//        }
-//    #endif
+//    static int previous = 0;
+//    if (value != previous)
+//    {
+//        previous = value;
+//        Serial.print(millis());
+//        Serial.print(" ");
+//        Serial.println(value);
+//    }
 
-    for (int button = 0; button < BUTTON_LIMIT; button++)
+    for (button = 0; button < BUTTON_LIMIT; button++)
     {
         if (value >= systemData.buttons[button])
         {
-            return button;
+            break;
         }
     }
 
-    // Shouldn't get here, but return end case.
-    return BUTTON_RIGHT;
+    if (   (button != lastButton)
+        && (isDebug(DEBUG_DETAIL)))
+    {
+        Serial.print(millis());
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_DEBUG_BUTTON));
+        Serial.print(CHAR_SPACE);
+        Serial.print(PGMT(M_BUTTONS[button]));
+        Serial.print(PGMT(M_DEBUG_VALUE));
+        Serial.print(value, HEX);
+        Serial.println();
+    }
+    lastButton = button;
+    
+    return button;
 }
 
 

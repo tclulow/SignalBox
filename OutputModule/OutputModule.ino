@@ -7,10 +7,11 @@
 
 #include "Config.h"
 #include "Messages.h"
+#include "Debug.h"
+#include "System.h"
 #include "Common.h"
 #include "Memory.h"
 #include "Comms.h"
-#include "System.h"
 #include "Output.h"
 
 
@@ -84,8 +85,11 @@ void setup()
     Wire.onReceive(processReceipt);
     Wire.onRequest(processRequest);
 
-    Serial.print("Module ID: ");
-    Serial.println(systemData.i2cModuleID, HEX);
+    if (isDebug(DEBUG_NONE))
+    {
+        Serial.print("Module ID: ");
+        Serial.println(systemData.i2cModuleID, HEX);
+    }
 }
 
 
@@ -142,21 +146,47 @@ void firstRun()
 }
 
 
+/** Report the status of an output during it's move.
+ *  Only when debug level is high enough (at callers discretion).
+ */
+void reportOutput(PGM_P aHeader, uint8_t aPin)
+{
+    Serial.print(millis());
+    Serial.print(CHAR_TAB);
+    Serial.print(PGMT(aHeader));
+    Serial.print(aPin, HEX);
+    Serial.print(PGMT(M_DEBUG_TYPE));
+    Serial.print(outputDefs[aPin].getType(), HEX);
+    Serial.print(PGMT(M_DEBUG_STATE));
+    Serial.print(outputDefs[aPin].getState(), HEX);
+    Serial.print(PGMT(M_DEBUG_TARGET));
+    Serial.print(outputDefs[aPin].getTarget(), HEX);
+    Serial.print(PGMT(M_DEBUG_ALT_TARGET));
+    Serial.print(outputDefs[aPin].getAltTarget(), HEX);
+    Serial.print(PGMT(M_DEBUG_STEPS));
+    Serial.print(outputs[aPin].steps, HEX);
+    Serial.print(PGMT(M_DEBUG_STEP));
+    Serial.print(outputs[aPin].step, HEX);
+    Serial.print(PGMT(M_DEBUG_VALUE));
+    Serial.print(outputs[aPin].value, HEX);
+    Serial.print(PGMT(M_DEBUG_ALT));
+    Serial.print(outputs[aPin].alt, HEX);
+    Serial.print(PGMT(M_DEBUG_DELAY));
+    Serial.print(outputs[aPin].delay);
+    Serial.println();
+}
+
+
 /** Initialise an Output.
  *  Detach/attach servo as necessary.
  *  Set outputs entry if movement necessary.
  */
 void initOutput(int aPin, uint8_t aOldType)
 {
-    #if DEBUG
-        Serial.print(millis());
-        Serial.print("\tinit pin=");
-        Serial.print(aPin, HEX);
-        Serial.print(", oldType=");
-        Serial.print(aOldType, HEX);
-        Serial.println();
-        reportOutput(aPin);
-    #endif
+    if (isDebug(DEBUG_BRIEF))
+    {
+        reportOutput(M_DEBUG_INIT, aPin);
+    }
         
     // Detach servo if currently attached and no longer required.
     if (   (isServo(aOldType))
@@ -222,14 +252,17 @@ void initOutput(int aPin, uint8_t aOldType)
  */
 void processRequest()
 {
-    #if DEBUG
-        Serial.print(millis());
-        Serial.print("\tRequest(): requestCmd=");
-        Serial.print(requestCmd, HEX);
-        Serial.print(", requestPin=");
-        Serial.print(requestPin, HEX);
+    if (isDebug(DEBUG_BRIEF))
+    {
         Serial.println();
-    #endif
+        Serial.print(millis());
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_DEBUG_REQUEST));
+        Serial.print(requestPin, HEX);
+        Serial.print(PGMT(M_DEBUG_CMD));
+        Serial.print(requestCmd, HEX);
+        Serial.println();
+    }
     
     switch (requestCmd)
     {
@@ -264,12 +297,15 @@ void returnStates()
     
     Wire.write(states);
 
-    #if DEBUG
+    if (isDebug(DEBUG_BRIEF))
+    {
         Serial.print(millis());
-        Serial.print("\tStates ");
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_DEBUG_STATES));
+        Serial.print(CHAR_SPACE);
         Serial.print(states, HEX);
         Serial.println();
-    #endif
+    }
 }
 
 
@@ -277,7 +313,7 @@ void returnStates()
  */
 void returnDef()
 {
-    outputDefs[requestPin].printDef("Send", requestPin);
+    outputDefs[requestPin].printDef(M_DEBUG_SEND, requestPin);
     outputDefs[requestPin].write();
 }
 
@@ -294,16 +330,19 @@ void processReceipt(int aLen)
     
         command &= COMMS_CMD_MASK;
 
-        #if DEBUG
-            Serial.print(millis());
-            Serial.print("\tReceipt(");
-            Serial.print(aLen, HEX);
-            Serial.print("): cmd=");
-            Serial.print(command, HEX);
-            Serial.print(", pin=");
-            Serial.print(pin, HEX);
+        if (isDebug(DEBUG_BRIEF))
+        {
             Serial.println();
-        #endif
+            Serial.print(millis());
+            Serial.print(CHAR_TAB);
+            Serial.print(PGMT(M_DEBUG_RECEIPT));
+            Serial.print(pin, HEX);
+            Serial.print(PGMT(M_DEBUG_LEN));
+            Serial.print(aLen, HEX);
+            Serial.print(PGMT(M_DEBUG_CMD));
+            Serial.print(command, HEX);
+            Serial.println();
+        }
             
         switch (command)
         {
@@ -338,23 +377,46 @@ void processReceipt(int aLen)
     else
     {
         // Null receipt - Just the master seeing if we exist.
-        #if DEBUG
-            Serial.print(millis());
-            Serial.print("\tReceipt(");
-            Serial.print(aLen, HEX);
-            Serial.print(")");
+        if (isDebug(DEBUG_BRIEF))
+        {
             Serial.println();
-        #endif
+            Serial.print(millis());
+            Serial.print(CHAR_TAB);
+            Serial.print(PGMT(M_DEBUG_RECEIPT));
+            Serial.print(CHAR_SPACE);
+            Serial.print(PGMT(M_DEBUG_LEN));
+            Serial.print(aLen, HEX);
+            Serial.println();
+        }
     }
     
     // Consume unexpected data.
     if (Wire.available())
     {
-        Serial.print("Unexpected data: ");
-        Serial.println(Wire.available(), HEX);
+        if (isDebug(DEBUG_NONE))
+        {
+            Serial.println();
+            Serial.print(millis());
+            Serial.print(CHAR_TAB);
+            Serial.print(PGMT(M_DEBUG_UNEXPECTED));
+            Serial.print(CHAR_SPACE);
+            Serial.print(PGMT(M_DEBUG_LEN));
+            Serial.print(Wire.available(), HEX);
+            Serial.print(CHAR_COLON);
+        }
+        
         while (Wire.available())
         {
-            Wire.read();
+            uint8_t ch = Wire.read();
+            if (isDebug(DEBUG_NONE))
+            {
+                Serial.print(CHAR_SPACE);
+                Serial.print(ch, HEX);
+            }
+        }
+        if (isDebug(DEBUG_NONE))
+        {
+            Serial.println();
         }
     }
 }
@@ -370,11 +432,16 @@ void processWrite(uint8_t aPin, boolean aSave)
     
     if (Wire.available() < COMMS_LEN_WRITE)
     {
-        #if DEBUG
+        if (isDebug(DEBUG_NONE))
+        {
             Serial.print(millis());
-            Serial.print((aSave ? "\tSave: " : "\tWrite: "));
-            Serial.println(Wire.available(), HEX);
-        #endif
+            Serial.print(CHAR_TAB);
+            Serial.print(aSave ? PGMT(M_DEBUG_SAVE) : PGMT(M_DEBUG_WRITE));
+            Serial.print(aPin, HEX);
+            Serial.print(PGMT(M_DEBUG_LEN));
+            Serial.print(Wire.available(), HEX);
+            Serial.println();
+        }
     }
     else
     {
@@ -389,7 +456,7 @@ void processWrite(uint8_t aPin, boolean aSave)
         }
         else
         {
-            outputDefs[aPin].printDef("Write", aPin);
+            outputDefs[aPin].printDef(M_DEBUG_WRITE, aPin);
         }
     }
 }
@@ -399,17 +466,18 @@ void processWrite(uint8_t aPin, boolean aSave)
  */
 void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 {
-    #if DEBUG
+    if (isDebug(DEBUG_BRIEF))
+    {
         Serial.print(millis());
-        Serial.print("\tAction: ");
-        Serial.print("pin=");
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_DEBUG_ACTION));
         Serial.print(aPin, HEX);    
-        Serial.print(", state=");
+        Serial.print(PGMT(M_DEBUG_STATE));
         Serial.print(aState, HEX);    
-        Serial.print(", delay=");
+        Serial.print(PGMT(M_DEBUG_DELAY));
         Serial.print(aDelay, HEX);    
         Serial.println();
-    #endif
+    }
     
     outputDefs[aPin].setState(aState);
     
@@ -455,9 +523,16 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     }
     else
     {
-        Serial.print("Unknown outputType ");
-        Serial.print(outputDefs[aPin].getType());
-        Serial.println();
+        if (isDebug(DEBUG_NONE))
+        {
+            Serial.print(millis());
+            Serial.print(CHAR_TAB);
+            Serial.print(PGMT(M_DEBUG_UNKNOWN));
+            Serial.print(aPin);
+            Serial.print(PGMT(M_DEBUG_TYPE));
+            Serial.print(outputDefs[aPin].getType());
+            Serial.println();
+        }
     }
 
     // Set the Output's movement characteristics.
@@ -468,86 +543,12 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     {
         saveOutput(aPin);
     }
-    
-    reportOutput(aPin);
+
+    if (isDebug(DEBUG_FULL))
+    {
+        reportOutput(M_DEBUG_MOVE, aPin);
+    }
 }
-
-
-/** Report the status of an output during it's move
- */
-void reportOutput(uint8_t aPin)
-{
-    // Report Output movement.
-    #if DEBUG
-        Serial.print(millis());
-        Serial.print("\tOutput: pin=");
-        Serial.print(aPin, HEX);
-        Serial.print(", type=");
-        Serial.print(outputDefs[aPin].getType(), HEX);
-        Serial.print(", state=");
-        Serial.print(outputDefs[aPin].getState(), HEX);
-        Serial.print(", target=");
-        Serial.print(outputDefs[aPin].getTarget(), HEX);
-        Serial.print(", altTarget=");
-        Serial.print(outputDefs[aPin].getAltTarget(), HEX);
-        Serial.print(", steps=");
-        Serial.print(outputs[aPin].steps, HEX);
-        Serial.print(", step=");
-        Serial.print(outputs[aPin].step, HEX);
-        Serial.print(", value=");
-        Serial.print(outputs[aPin].value, HEX);
-        Serial.print(", alt=");
-        Serial.print(outputs[aPin].alt, HEX);
-        Serial.print(", delay=");
-        Serial.print(outputs[aPin].delay);
-        Serial.println();
-    #endif
-}
-
-
-///** Action a request.
-// */
-//void actionReceipt(uint8_t aPin, uint8_t aType, uint8_t aTarget, uint8_t aPace, uint8_t aState, uint8_t aDelay)
-//{
-//    #if DEBUG
-//        Serial.print(millis());
-//        Serial.print("\tAction: ");
-//        Serial.print("pin=");
-//        Serial.print(aPin, HEX);    
-//        Serial.print(", type=");
-//        Serial.print(aType, HEX);    
-//        Serial.print(", target=");
-//        Serial.print(aTarget, HEX);    
-//        Serial.print(", pace=");
-//        Serial.print(aPace, HEX);    
-//        Serial.print(", state=");
-//        Serial.print(aState, HEX);    
-//        Serial.print(", delay=");
-//        Serial.print(aDelay);
-//        Serial.println();
-//    #endif
-//
-//    // If the pin's type has changed, action it.
-//    if (aType != outputDefs[aPin].getType())
-//    {
-//        setOutputType(aPin, aType);
-//    }
-//
-//    // Update Output's definition.
-//    outputDefs[aPin].setState(aState);
-//    if (aState)
-//    {
-//        outputDefs[aPin].setHi(aTarget);
-//    }
-//    else
-//    {
-//        outputDefs[aPin].setLo(aTarget); 
-//    }
-//    outputDefs[aPin].setPace(aPace);
-//    outputDefs[aPin].setDelay(aDelay);
-//
-//    actionReceipt(aPin, aState);
-//}
 
 
 /** Step all the Servos if necessary.
@@ -575,6 +576,13 @@ void stepServo(int aPin)
 {
     if (outputs[aPin].step < outputs[aPin].steps)
     {
+//        // Report initial position if debug level high enough.
+//        if (   (isDebug(DEBUG_FULL))
+//            && (outputs[aPin].step == 0))
+//        {
+//            reportOutput(M_DEBUG_MOVE, aPin);
+//        }
+
         outputs[aPin].step += 1;
 
         // Calculate Servo's new position.
@@ -609,11 +617,13 @@ void stepServo(int aPin)
         outputs[aPin].servo.write(outputs[aPin].value);
         digitalWrite(LED_BUILTIN, HIGH);                    // Indicate work in progress;
 
-        // DEBUG Test code to report activity.
-        if (   (outputs[aPin].step == 1)
-            || (outputs[aPin].step == outputs[aPin].steps))
+        // Report activity if debug level high enough.
+        if (   (isDebug(DEBUG_DETAIL))
+            || (   (isDebug(DEBUG_FULL))
+                && (   (outputs[aPin].step == 1)
+                    || (outputs[aPin].step == outputs[aPin].steps))))
         {
-            reportOutput(aPin);
+            reportOutput(M_DEBUG_MOVE, aPin);
         }
     }
 }
@@ -675,12 +685,14 @@ void stepLed(int aPin)
             }
         }
 
-//        // DEBUG Test code to report activity.
-//        if (   (outputs[aPin].step == 1)
-//            || (outputs[aPin].step == outputs[aPin].steps))
-//        {
-//            reportOutput(aPin);
-//        }
+        // Report activity if debug level high enough.
+        if (   (isDebug(DEBUG_DETAIL))
+            || (   (isDebug(DEBUG_FULL))
+                && (   (outputs[aPin].step == 1)
+                    || (outputs[aPin].step == outputs[aPin].steps))))
+        {
+            reportOutput(M_DEBUG_MOVE, aPin);
+        }
     }
 }
 
@@ -781,20 +793,15 @@ void stepFlash(uint8_t aPin)
             outputs[aPin].step = 0;
         }
 
-//        // DEBUG Test code to report activity.
-//        if (   (outputs[aPin].step  == 1)
-//            || (outputs[aPin].steps == 0))
-//        {
-//            reportOutput(aPin);
-//        }
+        // Report activity if debug level high enough.
+        if (   (isDebug(DEBUG_DETAIL))
+            || (   (isDebug(DEBUG_FULL))
+                && (   (outputs[aPin].step == 1)
+                    || (outputs[aPin].step == outputs[aPin].steps))))
+        {
+            reportOutput(M_DEBUG_MOVE, aPin);
+        }
     }
-
-//    // Test code to report activity.
-//    if (   (outputs[aPin].step == 1)
-//        || (outputs[aPin].step == outputs[aPin].steps))
-//    {
-//        reportOutput(aPin);
-//    }
 }
 
 
@@ -802,8 +809,8 @@ void stepFlash(uint8_t aPin)
 //long start = 0;
 //long count = 0;
 
-// DEBUG test marker
-int testRun = 0;
+//// DEBUG test marker
+//int testRun = 0;
 
 /** Main loop.
  */
