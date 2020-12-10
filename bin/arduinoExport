@@ -1,0 +1,48 @@
+#!/bin/bash
+# Read (export) a file from Arduino
+
+# Useful constants
+DEVICES=/dev/ttyUSB
+
+# Get parameters
+FILE=${1}
+PORT=${DEVICES}${2:-0}
+
+
+if [ -z "$1" ]
+then
+    echo "Usage $0 <file to export to>"
+    exit
+fi
+
+if [ ! -w ${PORT} ]
+then
+    echo No USB port ${PORT}
+    echo Available ports:
+    /usr/bin/ls -1 ${DEVICES}* | /usr/bin/sed 's/^/    /'
+    exit
+fi
+
+if [ -e ${FILE} ]
+then
+    echo "File ${FILE} already exists"
+    echo -n "Overwrite? "
+    read RESPONSE
+    if [ "${RESPONSE}" != "y" -a "${RESPONSE}" != "Y" ]
+    then
+        echo "Aborted"
+        exit
+    fi
+fi
+
+
+echo "Press control-C when complete"
+
+(
+    while read LINE		# Read a line from the arduino
+    do
+        echo "$LINE"		# Send a line to the file
+    done < ${PORT}
+) > ${FILE}
+
+
