@@ -488,17 +488,17 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     systemData.reportLevel += 2;     // Allow for decrement in BUTTON_DOWN code below.
+                case BUTTON_UP:     systemData.reportLevel += 2;                    // Allow for decrement in BUTTON_DOWN code below.
                                     if (systemData.reportLevel > REPORT_MAX)
                                     {
                                         systemData.reportLevel = 1;
                                     }
                 case BUTTON_DOWN:   systemData.reportLevel -= 1;
-                                    if (systemData.reportLevel < 0)
+                                    if (systemData.reportLevel >= REPORT_MAX)       // Unsigned, so level wraps around at -1
                                     {
                                         systemData.reportLevel = REPORT_MAX - 1;
                                     }
-                                    lcd.printAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemData.reportLevel % REPORT_MAX], LCD_COL_REPORT_LENGTH);
+                                    lcd.printAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemData.reportLevel], LCD_COL_REPORT_LENGTH);
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: break;
@@ -587,17 +587,20 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     systemData.debugLevel += 2;     // Allow for decrement in BUTTON_DOWN code below.
+                case BUTTON_UP:     systemData.debugLevel += 2;                 // Allow for decrement in BUTTON_DOWN code below.
                                     if (systemData.debugLevel > DEBUG_MAX)
                                     {
                                         systemData.debugLevel = 1;
                                     }
                 case BUTTON_DOWN:   systemData.debugLevel -= 1;
-                                    if (systemData.debugLevel < 0)
+                                    if (systemData.debugLevel >= DEBUG_MAX)     // Unsigned, so level wraps around at -1.
                                     {
                                         systemData.debugLevel = DEBUG_MAX - 1;
                                     }
-                                    lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel % DEBUG_MAX], LCD_COL_DEBUG_LENGTH);
+                                    Serial.print("debugLevel: ");
+                                    Serial.print(systemData.debugLevel);
+                                    Serial.println();
+                                    lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_COL_DEBUG_LENGTH);
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: break;
