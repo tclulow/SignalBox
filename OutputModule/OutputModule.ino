@@ -374,7 +374,7 @@ void processReceipt(int aLen)
                                    break;
             case COMMS_CMD_SAVE:   processWrite(pin, true);     // Process the Output's data and save it.
                                    break;
-            case COMMS_CMD_RESET:  loadOutput(pin);
+            case COMMS_CMD_RESET:  processReset(pin);
                                    break;
             default:               if (isDebug(DEBUG_NONE))
                                    {
@@ -454,11 +454,12 @@ void processWrite(uint8_t aPin, boolean aSave)
     }
     else
     {
+        persisting = aSave;         // Change persisting state based on Save vs Write.
+
         // Read the Output definition and save it.
         outputDefs[aPin].read();
         initOutput(aPin, oldType);
 
-        persisting = aSave;         // Change persisting state based on Save vs Write.
         if (aSave)
         {
             saveOutput(aPin);
@@ -468,6 +469,18 @@ void processWrite(uint8_t aPin, boolean aSave)
             outputDefs[aPin].printDef(M_DEBUG_WRITE, aPin);
         }
     }
+}
+
+
+/** Process a reset command.
+ */
+void processReset(uint8_t aPin)
+{
+    uint8_t oldType = outputDefs[aPin].getType();
+    
+    persisting = true;    
+    loadOutput(aPin);
+    initOutput(aPin, oldType);
 }
 
 
