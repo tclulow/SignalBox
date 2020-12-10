@@ -35,7 +35,7 @@ then
     fi
 fi
 
-
+echo "Read from ${PORT} to ${FILE}"
 echo "Press control-C when complete"
 
 (
