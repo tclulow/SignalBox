@@ -5,7 +5,7 @@
 
 
 #define MAGIC_NUMBER    0x50616e6c          // Magic number = Panl.
-#define VERSION         0x0021              // Version number of software.
+#define VERSION         0x0022              // Version number of software.  See also M_VERSION.
 
 #define SYSTEM_RFU      7                   // 7 rfu bytes in systemData.
 #define DEFAULT_REPORT  REPORT_LONG         // Default reporting to long.
