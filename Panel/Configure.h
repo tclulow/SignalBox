@@ -630,6 +630,7 @@ class Configure
     void menuImport()
     {
         importExport.doImport();
+        displayAll();
     }
 
 

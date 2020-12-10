@@ -30,7 +30,7 @@ class ImportExport
         lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
         if (!strcmp_P(wordBuffer, M_SYSTEM))
         {
-            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SYSTEM);
+            importSystem();
         }
         else if (!strcmp_P(wordBuffer, M_INPUT))
         {
@@ -51,7 +51,16 @@ class ImportExport
         skipLine();
     }
     
-    
+
+    /** Import the system def.
+     *  Nothing to do but report the fact.
+     */
+    void importSystem()
+    {
+        lcd.printAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_SYSTEM, LCD_LEN_OPTION);
+    }
+
+
     /** Import an Input
      */
     void importInput()
@@ -88,6 +97,8 @@ class ImportExport
                 inputDef.setDisabled(index, wordBuffer[strlen(wordBuffer) - 1] == CHAR_STAR);
             }
 
+            lcd.printAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_INPUT, LCD_LEN_OPTION);
+            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT_TYPES[inputType], LCD_LEN_OPTION);
             lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[node]);
             lcd.printAt(LCD_COL_PIN , LCD_ROW_BOT, HEX_CHARS[pin]);
             saveInput();
@@ -127,9 +138,11 @@ class ImportExport
             pace = readData();
             outputDef.setPace(pace >> OUTPUT_PACE_SHIFT);
             outputDef.setDelay(pace & OUTPUT_DELAY_MASK);
-        
-            lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[outputNode]);
-            lcd.printAt(LCD_COL_PIN , LCD_ROW_BOT, HEX_CHARS[outputPin]);
+
+            lcd.printAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_OUTPUT, LCD_LEN_OPTION);
+            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[type], LCD_LEN_OPTION);
+            lcd.printAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[outputNode]);
+            lcd.printAt(LCD_COL_PIN ,  LCD_ROW_BOT, HEX_CHARS[outputPin]);
             writeOutput(true);
         }
     }
@@ -224,6 +237,7 @@ class ImportExport
                     && (messageTick < millis()))
                 {
                     messageTick = 0;
+                    lcd.clearRow(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP);
                     lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
                     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
                 }
@@ -395,6 +409,7 @@ class ImportExport
      */
     void doImport()
     {
+        messageTick = 1;            // Ensure "waiting" message appears.
         waitForButtonRelease();
     
         // Clear the buffer
@@ -420,8 +435,6 @@ class ImportExport
                 }
             }
         }
-    
-        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
     }
     
     
@@ -429,8 +442,11 @@ class ImportExport
      */
     void doExport(int aExport)
     {
+        uint8_t debugLevel = getDebug();
+
         lcd.printAt(LCD_COL_EXP_STATUS, LCD_ROW_BOT, M_EXPORTING);
-    
+        setDebug(DEBUG_NONE);
+        
         switch(aExport)
         {
             case EXP_ALL:     exportSystem();
@@ -447,6 +463,7 @@ class ImportExport
         }
     
         lcd.clearRow(LCD_COL_EXP_STATUS, LCD_ROW_BOT);
+        setDebug(debugLevel);
     }
 };
 
