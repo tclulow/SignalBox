@@ -25,9 +25,9 @@ class Configure
 {
     private:
 
-    int topMenu = 0;      // Top menu being shown
-    int sysMenu = 0;      // System menu being shown.
-    int expMenu = 0;      // Export menu being shown.
+    uint8_t topMenu = 0;    // Top menu being shown
+    uint8_t sysMenu = 0;    // System menu being shown.
+    uint8_t expMenu = 0;    // Export menu being shown.
     int node    = 0;      // The node we're configuring.
     int pin     = 0;      // The pin we're configuring.
     
@@ -331,16 +331,10 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     topMenu += 2;     // Use +1 to compensate for the -1 that the code below will do.
-                                    if (topMenu > TOP_MAX)
-                                    {
-                                        topMenu = 1;
-                                    }
+                case BUTTON_UP:     topMenu += 2;           // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   topMenu -= 1;
-                                    if (topMenu < 0)
-                                    {
-                                        topMenu = TOP_MAX - 1;
-                                    }
+                                    topMenu += TOP_MAX;     // Ensure in-range.
+                                    topMenu %= TOP_MAX;
                                     displayAll();
                                     markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
                                     break;
@@ -388,15 +382,9 @@ class Configure
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     sysMenu += 2;     // Use +1 to compensate for the -1 that the code below will do.
-                                    if (sysMenu > SYS_MAX)
-                                    {
-                                        sysMenu = 1;
-                                    }
                 case BUTTON_DOWN:   sysMenu -= 1;
-                                    if (sysMenu < 0)
-                                    {
-                                        sysMenu = SYS_MAX - 1;
-                                    }
+                                    sysMenu += SYS_MAX;     // Ensure in-range.
+                                    sysMenu %= SYS_MAX;
                                     displayDetailSystem();
                                     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                                     break;
@@ -488,16 +476,10 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     systemData.reportLevel += 2;                    // Allow for decrement in BUTTON_DOWN code below.
-                                    if (systemData.reportLevel > REPORT_MAX)
-                                    {
-                                        systemData.reportLevel = 1;
-                                    }
+                case BUTTON_UP:     systemData.reportLevel += 2;              // Allow for decrement in BUTTON_DOWN code below.
                 case BUTTON_DOWN:   systemData.reportLevel -= 1;
-                                    if (systemData.reportLevel >= REPORT_MAX)       // Unsigned, so level wraps around at -1
-                                    {
-                                        systemData.reportLevel = REPORT_MAX - 1;
-                                    }
+                                    systemData.reportLevel += REPORT_MAX;     // Ensure in-range.
+                                    systemData.reportLevel %= REPORT_MAX;
                                     lcd.printAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemData.reportLevel], LCD_COL_REPORT_LENGTH);
                                     changed = true;
                                     break;
@@ -587,19 +569,10 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     systemData.debugLevel += 2;                 // Allow for decrement in BUTTON_DOWN code below.
-                                    if (systemData.debugLevel > DEBUG_MAX)
-                                    {
-                                        systemData.debugLevel = 1;
-                                    }
+                case BUTTON_UP:     systemData.debugLevel += 2;             // Allow for decrement in BUTTON_DOWN code below.
                 case BUTTON_DOWN:   systemData.debugLevel -= 1;
-                                    if (systemData.debugLevel >= DEBUG_MAX)     // Unsigned, so level wraps around at -1.
-                                    {
-                                        systemData.debugLevel = DEBUG_MAX - 1;
-                                    }
-                                    Serial.print("debugLevel: ");
-                                    Serial.print(systemData.debugLevel);
-                                    Serial.println();
+                                    systemData.debugLevel += DEBUG_MAX;     // Ensure in-range.
+                                    systemData.debugLevel %= DEBUG_MAX;
                                     lcd.printAt(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_COL_DEBUG_LENGTH);
                                     changed = true;
                                     break;
@@ -629,16 +602,10 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     expMenu += 2;     // Use +1 to compensate for the -1 that the code below will do.
-                                    if (expMenu > EXP_MAX)
-                                    {
-                                        expMenu = 1;
-                                    }
+                case BUTTON_UP:     expMenu += 2;           // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   expMenu -= 1;
-                                    if (expMenu < 0)
-                                    {
-                                        expMenu = EXP_MAX - 1;
-                                    }
+                                    expMenu += EXP_MAX;     // Ensure in-range.
+                                    expMenu %= EXP_MAX;
                                     displayDetailExport();
                                     break;
                 case BUTTON_SELECT: break;
@@ -811,16 +778,10 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     inputType += 2;     // Use +1 to compensate for the -1 that the code below will do.
-                                    if (inputType > INPUT_TYPE_MAX)
-                                    {
-                                        inputType = 1;
-                                    }
+                case BUTTON_UP:     inputType += 2;                 // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   inputType -= 1;
-                                    if (inputType < 0)
-                                    {
-                                        inputType = INPUT_TYPE_MAX - 1;
-                                    }
+                                    inputType += INPUT_TYPE_MAX;    // Ensure in-range.
+                                    inputType %= INPUT_TYPE_MAX;
                                     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT_TYPES[inputType], LCD_LEN_OPTION);
                                     changed = true;
                                     break;
@@ -888,7 +849,7 @@ class Configure
         boolean finished = false;
         boolean changed  = false;
 
-        int     index    = 0;
+        uint8_t index    = 0;
 
         lcd.clearRow(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT);
         lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, EDIT_CHARS[index]);
@@ -900,16 +861,10 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     index += 2;     // Use +1 to compensate for the -1 that the code below will do.
-                                    if (index > INPUT_OUTPUT_MAX)
-                                    {
-                                        index = 1;
-                                    }
+                case BUTTON_UP:     index += 2;                     // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   index -= 1;
-                                    if (index < 0)
-                                    {
-                                        index = INPUT_OUTPUT_MAX - 1;
-                                    }
+                                    index += INPUT_OUTPUT_MAX;      // Ensure in-range.
+                                    index %= INPUT_OUTPUT_MAX;
                                     lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, EDIT_CHARS[index]);
                                     displayInputEdit(index);
                                     break;
@@ -1083,11 +1038,9 @@ class Configure
      */
     void menuOutput()
     {
-        boolean finished = false;
-        boolean changed  = false;
-
-        // Retrieve type
-        int outputType = outputDef.getType();
+        boolean finished   = false;
+        boolean changed    = false;
+        uint8_t outputType = outputDef.getType();       // Retrieve type
 
         // Mark the field.
         markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
@@ -1097,16 +1050,10 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     outputType += 2;     // Use +1 to compensate for the -1 that the code below will do.
-                                    if (outputType > OUTPUT_TYPE_MAX)
-                                    {
-                                        outputType = 1;
-                                    }
+                case BUTTON_UP:     outputType += 2;                    // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   outputType -= 1;
-                                    if (outputType < 0)
-                                    {
-                                        outputType = OUTPUT_TYPE_MAX - 1;
-                                    }
+                                    outputType += OUTPUT_TYPE_MAX;      // Ensure in-range.
+                                    outputType %= OUTPUT_TYPE_MAX;
                                     outputDef.setType(outputType);
                                     writeOutput(false);
                                     
@@ -1434,9 +1381,9 @@ class Configure
     {
         if (aCol > 0)
         {
-            lcd.printAt(aCol - 1,    aRow, aShow ? CHAR_RIGHT : CHAR_SPACE);
+            lcd.printAt(aCol - 1, aRow, aShow ? CHAR_RIGHT : CHAR_SPACE);
         }
-        lcd.printAt(aCol + aLen, aRow, aShow ? CHAR_LEFT  : CHAR_SPACE);
+        lcd.printAt(aCol + aLen, aRow, aShow ? CHAR_LEFT : CHAR_SPACE);
     }
 
 
