@@ -313,7 +313,10 @@ void returnStates()
  */
 void returnDef()
 {
-    outputDefs[requestPin].printDef(M_DEBUG_SEND, requestPin);
+    if (isDebug(DEBUG_FULL))
+    {
+        outputDefs[requestPin].printDef(M_DEBUG_SEND, requestPin);
+    }
     outputDefs[requestPin].write();
 }
 
@@ -349,6 +352,9 @@ void processReceipt(int aLen)
             case COMMS_CMD_STATES: requestCmd = command;    // Record the command.
                                    // requestPin = pin;     // Not interested in the pin.
                                    break;
+            case COMMS_CMD_DEBUG:  setDebug(pin);           // Pin is used for the debug level.
+                                   saveSystemData();
+                                   break;
             case COMMS_CMD_SET_LO:  
             case COMMS_CMD_SET_HI: if (Wire.available())
                                    {
@@ -370,8 +376,12 @@ void processReceipt(int aLen)
                                    break;
             case COMMS_CMD_RESET:  loadOutput(pin);
                                    break;
-            default:               Serial.print("\tUnrecognised command: ");
-                                   Serial.println(command, HEX);
+            default:               if (isDebug(DEBUG_NONE))
+                                   {
+                                       Serial.print(millis());
+                                       Serial.print("\tUnrecognised command: ");
+                                       Serial.println(command, HEX);
+                                   }
         }
     }
     else
@@ -399,7 +409,6 @@ void processReceipt(int aLen)
             Serial.print(millis());
             Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_UNEXPECTED));
-            Serial.print(CHAR_SPACE);
             Serial.print(PGMT(M_DEBUG_LEN));
             Serial.print(Wire.available(), HEX);
             Serial.print(CHAR_COLON);

@@ -24,4 +24,9 @@ void processInputOutputs(boolean aNewState);
 int sendOutputCommand(uint8_t aValue, uint8_t aPace, uint8_t aDelay, uint8_t aState);
 
 
+/** Sends the current debug level to all the connected outputs.
+ */
+void sendDebugLevel();
+
+
 #endif

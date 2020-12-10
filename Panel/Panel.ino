@@ -301,6 +301,22 @@ void convertEzyBus()
 }
 
 
+/** Sends the current debug level to all the connected outputs.
+ */
+void sendDebugLevel()
+{
+    for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
+    {
+        if (isOutputNode(node))
+        {
+            Wire.beginTransmission(systemData.i2cOutputBaseID + node);
+            Wire.write(COMMS_CMD_DEBUG | (getDebug() & COMMS_PIN_MASK));    // Use pin field for the debug level.
+            Wire.endTransmission();
+        }
+    }
+}
+
+
 /** Scan all the inputs.
  *  Process any that have changed.
  */

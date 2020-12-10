@@ -376,8 +376,9 @@ class Configure
      */
     void menuSystem()
     {
-        boolean finished = false;
-        boolean changed = false;
+        boolean finished   = false;
+        boolean changed    = false;
+        uint8_t debugLevel = getDebug();
 
         markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
 
@@ -404,6 +405,10 @@ class Configure
                                         if (confirm())
                                         {
                                             saveSystemData();
+                                            if (debugLevel != getDebug())
+                                            {
+                                                sendDebugLevel();
+                                            }
                                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
                                             delay(DELAY_READ);
                                             displayDetailSystem();
@@ -451,7 +456,8 @@ class Configure
                                         case SYS_NODES:  mapHardware();
                                                          displayAll();
                                                          break;
-                                        case SYS_DEBUG:  changed = menuSystemDebug();
+                                        case SYS_DEBUG:  debugLevel = getDebug();
+                                                         changed = menuSystemDebug();
                                                          break;
                                         default:         systemFail(M_SYSTEM, sysMenu, 0);
                                     }

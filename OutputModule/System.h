@@ -22,7 +22,7 @@ struct SystemData
     uint8_t i2cOutputBaseID = 0;
     
     uint8_t i2cModuleID     = 0;    // The module number we're using.
-    uint8_t debugLevel      = 0;    // Debugginf level.
+    uint8_t debugLevel      = 0;    // Debugging level.
     
     char    rfu[20]         = "RFUrfu OutputModule";        // RFU. 32 bytes in all.
 };

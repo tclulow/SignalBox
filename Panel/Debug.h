@@ -7,6 +7,7 @@
 // Debug messages
 const char M_DEBUG_ACTION[]     PROGMEM = "Action";
 const char M_DEBUG_BUTTON[]     PROGMEM = "Button";
+const char M_DEBUG_DEBUG[]      PROGMEM = "Debug";
 const char M_DEBUG_INIT[]       PROGMEM = "Init";
 const char M_DEBUG_LOAD[]       PROGMEM = "Load";
 const char M_DEBUG_MOVE[]       PROGMEM = "Move";

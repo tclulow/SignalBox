@@ -28,6 +28,14 @@ boolean isDebug(uint8_t aLevel)
 }
 
 
+/** Gets the debugging level.
+ */
+uint8_t getDebug()
+{
+    return systemData.debugLevel;
+}
+
+
 /** Sets the debugging level.
  */
 void setDebug(uint8_t aLevel)

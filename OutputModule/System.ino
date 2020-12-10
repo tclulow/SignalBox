@@ -8,7 +8,6 @@
 boolean loadSystemData()
 {
     EEPROM.get(SYSTEM_BASE, systemData);
-    systemData.debugLevel = DEBUG_BRIEF;     // TODO - remove this.
     return systemData.magic != MAGIC_NUMBER;
 }
 
