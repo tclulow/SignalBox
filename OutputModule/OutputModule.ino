@@ -241,8 +241,8 @@ void initOutput(int aPin, uint8_t aOldType)
     else
     {
         // All other outputs, turn pins off. 
-        digitalWrite(OUTPUT_BASE_PIN + aPin, 0);
-        digitalWrite(ioPins[aPin], 0);
+        digitalWrite(OUTPUT_BASE_PIN + aPin, LOW);
+        digitalWrite(ioPins[aPin], LOW);
     }
 }
 
