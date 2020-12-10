@@ -314,7 +314,7 @@ class ImportExport
         {
             if (isInputNode(node))
             {
-                for (int pin = 0; pin < INPUT_NODE_SIZE; pin++)
+                for (int pin = 0; pin < INPUT_PIN_MAX; pin++)
                 {
                     loadInput(node, pin);
     

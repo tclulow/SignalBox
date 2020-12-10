@@ -332,7 +332,7 @@ void scanInputs()
             if (pins != currentSwitchState[node])
             {
                 // Process all the changed pins.
-                for (int pin = 0, mask = 1; pin < INPUT_NODE_SIZE; pin++, mask <<= 1)
+                for (int pin = 0, mask = 1; pin < INPUT_PIN_MAX; pin++, mask <<= 1)
                 {
                     int state = pins & mask;
                     if (state != (currentSwitchState[node] & mask))

@@ -716,8 +716,8 @@ class Configure
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     pin += 2;                                               // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   pin -= 1;
-                                    pin += (aIsInput ? INPUT_NODE_SIZE : OUTPUT_PIN_MAX);   // Ensure within range.
-                                    pin %= (aIsInput ? INPUT_NODE_SIZE : OUTPUT_PIN_MAX);
+                                    pin += (aIsInput ? INPUT_PIN_MAX : OUTPUT_PIN_MAX);     // Ensure within range.
+                                    pin %= (aIsInput ? INPUT_PIN_MAX : OUTPUT_PIN_MAX);
                                     lcd.printAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[pin]);
                                     if (aIsInput)
                                     {

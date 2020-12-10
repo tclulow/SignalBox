@@ -4,11 +4,11 @@
 #define _Input_h
 
 // Input nodes.
-#define INPUT_NODE_SIZE          16     // 16 inputs to each node.
 #define INPUT_NODE_MAX            8     // Maximum nodes.
 #define INPUT_NODE_ALL_MASK    0xff     // All input nodes present.
 #define INPUT_NODE_MASK        0x07     // 3 bits for 8 nodes.
 #define INPUT_NODE_SHIFT          4     // Shift input number this amount to get a node number.
+#define INPUT_PIN_MAX            16     // 16 inputs to each node.
 #define INPUT_PIN_MASK         0x0f     // Mask to get input pin within a node.
 
 // Mask for Input options

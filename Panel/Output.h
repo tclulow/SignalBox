@@ -4,7 +4,7 @@
 #define _Output_h
 
 // Output nodes.
-#define OUTPUT_PIN_MAX            8   // 8 outputs to each node.        Was OUTPUT_NODE_SIZE
+#define OUTPUT_PIN_MAX            8   // 8 outputs to each node.
 #define OUTPUT_PIN_MASK           7   // 3 bits for 8 pins withing an output node.
 #define OUTPUT_NODE_MAX          16   // Maximum nodes.
 #define OUTPUT_NODE_MASK       0x0f   // 4 bits for 16 nodes.
