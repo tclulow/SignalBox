@@ -72,7 +72,7 @@ void writeOutput(boolean aSave)
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);
-        Serial.print(PGMT(M_DEBUG_READ));
+        Serial.print(PGMT(aSave ? M_DEBUG_SAVE : M_DEBUG_WRITE));
         Serial.print(outputNode, HEX);
         Serial.print(outputPin, HEX);
         Serial.println();
