@@ -28,8 +28,8 @@ class Configure
     uint8_t topMenu = 0;    // Top menu being shown
     uint8_t sysMenu = 0;    // System menu being shown.
     uint8_t expMenu = 0;    // Export menu being shown.
-    int node    = 0;      // The node we're configuring.
-    int pin     = 0;      // The pin we're configuring.
+    uint8_t node    = 0;    // The node we're configuring.
+    uint8_t pin     = 0;    // The pin we're configuring.
     
 
     /** Display all current data.
@@ -714,16 +714,10 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     pin += 2;     // Use +1 to compensate for the -1 that the code below will do.
-                                    if (pin > (aIsInput ? INPUT_NODE_SIZE : OUTPUT_PIN_MAX))
-                                    {
-                                        pin = 1;
-                                    }
+                case BUTTON_UP:     pin += 2;                                               // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   pin -= 1;
-                                    if (pin < 0)
-                                    {
-                                        pin = aIsInput ? INPUT_NODE_SIZE - 1 : OUTPUT_PIN_MAX - 1;
-                                    }
+                                    pin += (aIsInput ? INPUT_NODE_SIZE : OUTPUT_PIN_MAX);   // Ensure within range.
+                                    pin %= (aIsInput ? INPUT_NODE_SIZE : OUTPUT_PIN_MAX);
                                     lcd.printAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[pin]);
                                     if (aIsInput)
                                     {
