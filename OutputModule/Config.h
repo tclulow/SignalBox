@@ -3,8 +3,6 @@
 #ifndef _Config_h
 #define _Config_h
 
-#define DEBUG false
-
 
 #define STEP_SERVO           50  // Delay (msecs) between steps of a Servo.
 #define STEP_LED             10  // Delay (msecs) between steps of a LED.

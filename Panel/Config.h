@@ -3,7 +3,6 @@
 #ifndef _Config_h
 #define _Config_h
 
-#define DEBUG true
 
 #define STEP_SCAN             20    // Steps in msecs between scans of the input switches.
 #define STEP_HEARTBEAT       200    // Steps in msecs between changes of the heartbeat indicator.
