@@ -90,6 +90,7 @@ const char M_OFF[]             PROGMEM = "Off";
 const char M_DISABLED[]        PROGMEM = "..";
 
 // Configuration - Output.
+const char M_NEW_NODE_NO[]     PROGMEM = "New node#";
 const char M_SERVO[]           PROGMEM = "Servo";
 const char M_SIGNAL[]          PROGMEM = "Signal";
 const char M_LED[]             PROGMEM = "LED";

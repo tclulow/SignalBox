@@ -45,7 +45,7 @@ class Configure
                              node &= INPUT_NODE_MASK;
                              if (!isInputNode(node))
                              {
-                                 node = nextNode(node, 1, true);
+                                 node = nextNode(node, 1, true, true);
                              }
                              displayNode();
                              break;
@@ -53,7 +53,7 @@ class Configure
                              node &= OUTPUT_NODE_MASK;
                              if (!isOutputNode(node))
                              {
-                                 node = nextNode(node, 1, false);
+                                 node = nextNode(node, 1, false, true);
                              }
                              displayNode();
                              break;
@@ -87,6 +87,16 @@ class Configure
     }
 
 
+    /** Display move node ID.
+     */
+    void displayNewNode(uint8_t aNode)
+    {
+        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_NEW_NODE_NO);
+        lcd.printAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[aNode]);
+    }
+
+    
     /** Display the detail line of the menu.
      */
     void displayDetail()
@@ -653,11 +663,17 @@ class Configure
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     adjust += 2;     // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   adjust -= 1;
-                                    node = nextNode(node, adjust, aIsInput);
+                                    node = nextNode(node, adjust, aIsInput, true);
                                     lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[node]);
                                     displayDetail();
                                     break;
-                case BUTTON_SELECT: break;
+                case BUTTON_SELECT: if (!aIsInput)
+                                    {
+                                        markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
+                                        menuNewNode();
+                                        markField(LCD_COL_NODE, LCD_ROW_TOP, 1, true);
+                                    }
+                                    break;
                 case BUTTON_LEFT:   finished = true;
                                     markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
                                     break;
@@ -673,10 +689,11 @@ class Configure
     }
 
 
-    /** Find the next (live) node in the given direction.
-     *  Load the node's data.
+    /** Find the next (inUse) node in the given direction.
+     *  Or not inUse if flag indicates such.
+     *  Load the node's data (if it's in use).
      */
-    uint8_t nextNode(uint8_t aStart, int aAdjust, boolean aIsInput)
+    uint8_t nextNode(uint8_t aStart, int aAdjust, boolean aIsInput, boolean aInUse)
     {
         uint8_t next = aStart & (aIsInput ? INPUT_NODE_MASK : OUTPUT_NODE_MASK);
         
@@ -685,15 +702,21 @@ class Configure
             next = (next + aAdjust) & (aIsInput ? INPUT_NODE_MASK : OUTPUT_NODE_MASK);
             
             if (   (aIsInput)
-                && (isInputNode(next)))
+                && (aInUse == isInputNode(next)))
             {
-                loadInput(next, pin);
+                if (aInUse)
+                {
+                    loadInput(next, pin);
+                }
                 break;
             }
             else if (   (!aIsInput)
-                     && (isOutputNode(next)))
+                     && (aInUse == isOutputNode(next)))
             {
-                readOutput(next, pin);
+                if (aInUse)
+                {
+                    readOutput(next, pin);
+                }
                 break;
             }
         }
@@ -701,6 +724,56 @@ class Configure
         return next;
     }
 
+
+    /** Move a node to a new number.
+     */
+    void menuNewNode()
+    {
+        boolean finished = false;
+        uint8_t newNode  = nextNode(0, OUTPUT_NODE_MAX, false, false);
+        
+        displayNewNode(newNode);
+        markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
+        
+        while (!finished)
+        {
+            switch (waitForButton())
+            {
+                case BUTTON_NONE:   break;
+                case BUTTON_UP:     newNode = nextNode(newNode,  1, false, false);
+                                    lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[newNode]);
+                                    break;
+                case BUTTON_DOWN:   newNode = nextNode(newNode, -1, false, false);
+                                    lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[newNode]);
+                                    break;
+                case BUTTON_SELECT: if (confirm())
+                                    {
+                                        // moveNode(node, newNode);
+                                        finished = true;
+                                    }
+                                    else
+                                    {
+                                        displayNewNode(newNode);
+                                        markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
+                                    }
+                                    break;
+                case BUTTON_LEFT:   if (cancel())
+                                    {
+                                        finished = true;
+                                    }
+                                    else
+                                    {
+                                        displayNewNode(newNode);
+                                        markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
+                                    }
+                                    break;
+                case BUTTON_RIGHT:  break;
+            }
+        }
+
+        displayDetail();
+    }
+    
 
     /** Process Pin menu.
      */
@@ -910,7 +983,7 @@ class Configure
                                     else
                                     {
                                         // Increment the node number (to the next available) within the Input's output at this index.
-                                        inputDef.setOutputNode(aIndex, nextNode(inputDef.getOutputNode(aIndex), 1, false));
+                                        inputDef.setOutputNode(aIndex, nextNode(inputDef.getOutputNode(aIndex), 1, false, true));
                                     }
                                     
                                     displayInputEdit(aIndex);
@@ -923,7 +996,7 @@ class Configure
                                     else
                                     {
                                         // Decrement the node number (to the next available) within the Input's output at this index.
-                                        inputDef.setOutputNode(aIndex, nextNode(inputDef.getOutputNode(aIndex), -1, false));
+                                        inputDef.setOutputNode(aIndex, nextNode(inputDef.getOutputNode(aIndex), -1, false, true));
                                     }
                                     displayInputEdit(aIndex);
                                     changed = true;
