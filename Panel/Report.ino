@@ -44,5 +44,6 @@ void reportPause()
         lcd.printAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemData.reportLevel], LCD_LEN_OPTION);
 
         waitForButtonRelease();
+        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
     }
 }

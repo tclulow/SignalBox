@@ -482,14 +482,30 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
         readOutput(inputDef.getOutput(aIndex));
         outputDef.setState(aState);
         setOutputState(outputNode, outputPin, aState);
-    
-        if (reportEnabled(REPORT_SHORT))
+
+        if (reportEnabled(REPORT_PAUSE))
         {
             lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-            lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()]);
-            lcd.printAt(LCD_COL_STATE,  LCD_ROW_BOT, (aState ? M_HI : M_LO));
-            lcd.printAt(LCD_COL_NODE,   LCD_ROW_BOT, HEX_CHARS[outputNode]);
-            lcd.printAt(LCD_COL_PIN,    LCD_ROW_BOT, HEX_CHARS[outputPin]);
+            lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
+            lcd.printAt(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, HEX_CHARS[outputNode]);
+            lcd.print(HEX_CHARS[outputPin]);
+            lcd.print(CHAR_SPACE);
+            lcd.print(CHAR_SPACE);
+            lcd.print(HEX_CHARS[outputDef.getPace()]);
+            lcd.print(CHAR_SPACE);
+            lcd.print(CHAR_SPACE);
+            lcd.print(HEX_CHARS[aDelay]);
+            reportPause();
+        }
+        else if (reportEnabled(REPORT_SHORT))
+        {
+            if (aIndex == 0)
+            {
+                // lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+                lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()]);
+            }
+            lcd.printAt(LCD_COL_OUTPUT_PARAM + aIndex * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, HEX_CHARS[outputNode]);
+            lcd.print(HEX_CHARS[outputPin]);
             setDisplayTimeout(reportDelay());
             
             if (isDebug(DEBUG_BRIEF))
@@ -507,8 +523,6 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
                 Serial.print(aDelay, HEX);
                 Serial.println();
             }
-            
-            reportPause();
         }
 
         // Flashers always use their own delay as their duration.
