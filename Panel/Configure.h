@@ -822,39 +822,48 @@ class Configure
             && ((response = Wire.read()) >= 0))
         {
             response &= OUTPUT_NODE_MASK;
-            
-            // Mark the old node absent and the new one present.
-            setOutputNodeAbsent(aOldNode);
-            setOutputNodePresent(response);
-            
-            // Renumber all the effected inputs' Output nodes.
-            for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
+
+            if (aOldNode != response)       // Change actually happened.
             {
-                for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
+                // Mark the old node absent and the new one present.
+                setOutputNodeAbsent(aOldNode);
+                setOutputNodePresent(response);
+                
+                // Renumber all the effected inputs' Output nodes.
+                for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
                 {
-                    loadInput(node, pin);
-                    
-                    for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
+                    for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
                     {
-                        if (inputDef.getOutputNode(index) == aOldNode)
+                        loadInput(node, pin);
+
+                        // Adjust all the Input's Outputs if they reference either the old or new node number.
+                        for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
                         {
-                             inputDef.setOutputNode(index, aNewNode);
-                             saveInput();
+                            if (inputDef.getOutputNode(index) == aOldNode)
+                            {
+                                inputDef.setOutputNode(index, response);
+                                saveInput();
+                            }
+                            else if (inputDef.getOutputNode(index) == response)
+                            {
+                                inputDef.setOutputNode(index, aOldNode);
+                                saveInput();
+                            }
                         }
                     }
                 }
-            }
-
-            if (isDebug(DEBUG_BRIEF))
-            {
-                Serial.print(millis());
-                Serial.print(CHAR_TAB);
-                Serial.print(PGMT(M_DEBUG_RENUMBER));
-                Serial.print(CHAR_SPACE);
-                Serial.print(aOldNode, HEX);
-                Serial.print(PGMT(M_DEBUG_NODE));
-                Serial.print(aNewNode, HEX);
-                Serial.println();    
+    
+                if (isDebug(DEBUG_BRIEF))
+                {
+                    Serial.print(millis());
+                    Serial.print(CHAR_TAB);
+                    Serial.print(PGMT(M_DEBUG_RENUMBER));
+                    Serial.print(CHAR_SPACE);
+                    Serial.print(aOldNode, HEX);
+                    Serial.print(PGMT(M_DEBUG_NODE));
+                    Serial.print(aNewNode, HEX);
+                    Serial.println();    
+                }
             }
         }
         else
