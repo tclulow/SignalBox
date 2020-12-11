@@ -21,7 +21,7 @@ void saveSystemData()
 }
 
 
-uint8_t getModuleId()
+uint8_t getModuleId(boolean aIncludeBase)
 {
     uint8_t moduleId = systemData.i2cModuleID;
 
@@ -54,10 +54,18 @@ uint8_t getModuleId()
     }
 
     // Announce module ID
-    Serial.print("Module ID: ");
-    Serial.println(systemData.i2cOutputBaseID + moduleId, HEX);
+    if (   (isDebug(DEBUG_BRIEF))
+        && (aIncludeBase))
+    {
+        Serial.print(millis());
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_MODULE_ID));
+        Serial.print(CHAR_SPACE);
+        Serial.print(systemData.i2cOutputBaseID + moduleId, HEX);
+        Serial.println();
+    }
 
-    return systemData.i2cOutputBaseID + moduleId;
+    return (aIncludeBase ? systemData.i2cOutputBaseID : 0) + moduleId;
 }
 
 

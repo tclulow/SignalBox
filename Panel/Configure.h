@@ -730,7 +730,9 @@ class Configure
     void menuNewNode()
     {
         boolean finished = false;
-        uint8_t newNode  = nextNode(0, OUTPUT_NODE_MAX, false, false);
+        boolean changed  = false;
+        boolean jumpers  = false;
+        uint8_t newNode  = node;
         
         displayNewNode(newNode);
         markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
@@ -740,17 +742,53 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     newNode = nextNode(newNode,  1, false, false);
-                                    lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[newNode]);
-                                    break;
-                case BUTTON_DOWN:   newNode = nextNode(newNode, -1, false, false);
-                                    lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[newNode]);
-                                    break;
-                case BUTTON_SELECT: if (confirm())
+                case BUTTON_UP:     if (jumpers)
                                     {
-                                        node = renumberNode(node, newNode);
-                                        readOutput(node, pin);
-                                        lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[node]);
+                                        jumpers = false;
+                                    }
+                                    else
+                                    {
+                                        newNode = nextNode(newNode,  1, false, false);
+                                    }
+                                    lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[newNode]);
+                                    changed = true;
+                                    break;
+                case BUTTON_DOWN:   if (jumpers)
+                                    {
+                                        jumpers = false;
+                                    }
+                                    else
+                                    {
+                                        newNode = nextNode(newNode, -1, false, false);
+                                    }
+                                    lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[newNode]);
+                                    changed = true;
+                                    break;
+                case BUTTON_SELECT: if (   (jumpers)
+                                        || (node != newNode))
+                                    {
+                                        if (confirm())
+                                        {
+                                            node = renumberNode(node, (jumpers ? I2C_MODULE_ID_JUMPERS : newNode));
+                                            readOutput(node, pin);
+                                            lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[node]);
+                                            finished = true;
+                                        }
+                                        else
+                                        {
+                                            displayNewNode(newNode);
+                                            lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, (jumpers ? CHAR_DOT : HEX_CHARS[newNode]));
+                                            markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        finished = true;
+                                    }
+                                    break;
+                case BUTTON_LEFT:   if (   (!changed)
+                                        || (cancel()))
+                                    {
                                         finished = true;
                                     }
                                     else
@@ -759,17 +797,9 @@ class Configure
                                         markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
                                     }
                                     break;
-                case BUTTON_LEFT:   if (cancel())
-                                    {
-                                        finished = true;
-                                    }
-                                    else
-                                    {
-                                        displayNewNode(newNode);
-                                        markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
-                                    }
+                case BUTTON_RIGHT:  jumpers = !jumpers;
+                                    lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, (jumpers ? CHAR_DOT : HEX_CHARS[newNode]));
                                     break;
-                case BUTTON_RIGHT:  break;
             }
         }
 
@@ -791,9 +821,11 @@ class Configure
             && ((response = Wire.requestFrom(systemData.i2cOutputBaseID + node, OUTPUT_RENUMBER_LEN)) == OUTPUT_RENUMBER_LEN)
             && ((response = Wire.read()) >= 0))
         {
+            response &= OUTPUT_NODE_MASK;
+            
             // Mark the old node absent and the new one present.
             setOutputNodeAbsent(aOldNode);
-            setOutputNodePresent(aNewNode);
+            setOutputNodePresent(response);
             
             // Renumber all the effected inputs' Output nodes.
             for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
@@ -813,8 +845,6 @@ class Configure
                 }
             }
 
-            response = aNewNode;
-            
             if (isDebug(DEBUG_BRIEF))
             {
                 Serial.print(millis());

@@ -79,7 +79,7 @@ void setup()
     }
 
     // Start i2c communications.
-    Wire.begin(getModuleId());
+    Wire.begin(getModuleId(true));
     Wire.onReceive(processReceipt);
     Wire.onRequest(processRequest);
 }
@@ -318,10 +318,11 @@ void returnRenumber()
 {
     systemData.i2cModuleID = requestNode;
     saveSystemData();
-    Wire.write(requestNode);
+
+    Wire.write(getModuleId(false));
 
     // Now change our module ID.
-    Wire.begin(getModuleId());
+    Wire.begin(getModuleId(true));
 }
 
 
