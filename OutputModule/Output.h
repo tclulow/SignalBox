@@ -26,6 +26,7 @@
 
 // Wire response message lengths.
 #define OUTPUT_STATE_LEN          1   // One byte used to return a node's Outputs' states.
+#define OUTPUT_RENUMBER_LEN       1   // One byte used to return a node's new module ID.
 #define OUTPUT_WRITE_LEN          4   // Four bytes used to read/write OutputDef to/from OutputModule.
 
 // Defaults when initialising
@@ -364,9 +365,17 @@ char readOutputStates(uint8_t aNode);
 
 /** Record the presence of an OutputNode in the map.
  */
-void setOutputNodePresent(int aNode)
+void setOutputNodePresent(uint8_t aNode)
 {
     outputNodes |= (1 << aNode); 
+}
+
+
+/** Record the absence of an OutputNode in the map.
+ */
+void setOutputNodeAbsent(uint8_t aNode)
+{
+    outputNodes &= ~(1 << aNode); 
 }
 
 

@@ -104,8 +104,8 @@ const char M_PACE[]            PROGMEM = "Spd";
 const char M_DELAY[]           PROGMEM = "Delay";
 
 // MCP interface.
-const char M_MCP_ERROR[]       PROGMEM = "MCP error";
-const char M_MCP_COMMS[]       PROGMEM = "MCP comms len"; 
+const char M_I2C_ERROR[]       PROGMEM = "i2c error";
+const char M_I2C_COMMS[]       PROGMEM = "i2c comms len"; 
 
 
 // Headers for the exports

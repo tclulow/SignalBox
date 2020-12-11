@@ -78,7 +78,7 @@ void mapHardware()
 
     // Scan for Output nodes.
     lcd.setCursor(0, 1);
-    for (int node = 0; node < OUTPUT_NODE_MAX; node++)
+    for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
     {
         char state = readOutputStates(node);
 
@@ -310,7 +310,7 @@ void sendDebugLevel()
         if (isOutputNode(node))
         {
             Wire.beginTransmission(systemData.i2cOutputBaseID + node);
-            Wire.write(COMMS_CMD_DEBUG | (getDebug() & COMMS_PIN_MASK));    // Use pin field for the debug level.
+            Wire.write(COMMS_CMD_DEBUG | (getDebug() & COMMS_OPTION_MASK));
             Wire.endTransmission();
         }
     }
@@ -364,12 +364,12 @@ int readInputNode(int node)
     value = Wire.endTransmission();
     if (value)
     {
-        systemFail(M_MCP_ERROR, value, DELAY_READ);
+        systemFail(M_I2C_ERROR, value, DELAY_READ);
         value = currentSwitchState[node];  // Pretend no change if comms error.
     }
     else if ((value = Wire.requestFrom(systemData.i2cInputBaseID + node, 2)) != 2)
     {
-        systemFail(M_MCP_COMMS, value, DELAY_READ);
+        systemFail(M_I2C_COMMS, value, DELAY_READ);
         value = currentSwitchState[node];  // Pretend no change if comms error.
     }
     else

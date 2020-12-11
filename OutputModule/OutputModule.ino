@@ -26,9 +26,10 @@ long tickServo = 0;
 long tickLed   = 0;
 long tickFlash = 0;
 
-// i2c request command.
-uint8_t requestCmd = COMMS_CMD_NONE;
-uint8_t requestPin = 0;
+// i2c request command parameters
+uint8_t requestCommand = COMMS_CMD_NONE;
+uint8_t requestOption  = 0;
+uint8_t requestNode    = 0;
 
 
 // An Array of Output control structures.
@@ -247,6 +248,24 @@ void initOutput(int aPin, uint8_t aOldType)
 }
 
 
+/** Report unrecognised command.
+ */
+void unrecognisedCommand(PGM_P aMessage, uint8_t aCommand, uint8_t aOption)
+{
+    if  (isDebug(DEBUG_NONE))
+    {
+        Serial.print(millis());
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(aMessage));
+        Serial.print(PGMT(M_DEBUG_COMMAND));
+        Serial.println(aCommand);
+        Serial.print(PGMT(M_DEBUG_OPTION));
+        Serial.print(aOption);
+        Serial.println();
+    }
+}
+
+
 /** Process a Request (for data).
  *  Send data to master.
  */
@@ -258,25 +277,41 @@ void processRequest()
         Serial.print(millis());
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_REQUEST));
-        Serial.print(requestPin, HEX);
-        Serial.print(PGMT(M_DEBUG_CMD));
-        Serial.print(requestCmd, HEX);
+        Serial.print(PGMT(M_DEBUG_COMMAND));
+        Serial.print(requestCommand, HEX);
+        Serial.print(PGMT(M_DEBUG_OPTION));
+        Serial.print(requestOption, HEX);
         Serial.println();
     }
     
-    switch (requestCmd)
+    switch (requestCommand)
     {
-        case COMMS_CMD_STATES: returnStates();
+        case COMMS_CMD_SYSTEM: returnSystem();
                                break;
         case COMMS_CMD_READ:   returnDef();
                                break;
-        default:               Serial.print("\tUnknown command: ");
-                               Serial.println(requestCmd);
-
+        default:               unrecognisedCommand(M_DEBUG_REQUEST, requestCommand, requestOption);
+                               break;
     }
 
     // Clear pending command.
-    requestCmd = COMMS_CMD_NONE;
+    requestCommand = COMMS_CMD_NONE;
+}
+
+
+/** Return responses for system commands.
+ */
+void returnSystem()
+{
+    switch (requestOption)
+    {
+        case COMMS_SYS_STATES:   returnStates();
+                                 break;
+        case COMMS_SYS_RENUMBER: returnRenumber();
+                                 break;
+        default:                 unrecognisedCommand(M_DEBUG_SYSTEM, requestCommand, requestOption);
+                                 break;
+    }
 }
 
 
@@ -309,15 +344,28 @@ void returnStates()
 }
 
 
+/** Return the result of a renumber request.
+ */
+void returnRenumber()
+{
+    systemData.i2cModuleID = systemData.i2cOutputBaseID + requestNode;
+    saveSystemData();
+    Wire.write(requestNode);
+
+    // Now change our module ID.
+    Wire.begin(systemData.i2cModuleID);
+}
+
+
 /** Return the requested pin's Output definition.
  */
 void returnDef()
 {
     if (isDebug(DEBUG_FULL))
     {
-        outputDefs[requestPin].printDef(M_DEBUG_SEND, requestPin);
+        outputDefs[requestOption].printDef(M_DEBUG_SEND, requestOption);
     }
-    outputDefs[requestPin].write();
+    outputDefs[requestOption].write();
 }
 
 
@@ -329,9 +377,10 @@ void processReceipt(int aLen)
     if (aLen > 0)
     {
         uint8_t command = Wire.read();
-        uint8_t pin     = command & COMMS_PIN_MASK;
+        uint8_t option  = command & COMMS_OPTION_MASK;
+        uint8_t pin     = option  & OUTPUT_PIN_MASK;
     
-        command &= COMMS_CMD_MASK;
+        command &= COMMS_COMMAND_MASK;
 
         if (isDebug(DEBUG_BRIEF))
         {
@@ -339,20 +388,20 @@ void processReceipt(int aLen)
             Serial.print(millis());
             Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_RECEIPT));
-            Serial.print(pin, HEX);
+            Serial.print(PGMT(M_DEBUG_COMMAND));
+            Serial.print(command, HEX);
+            Serial.print(PGMT(M_DEBUG_OPTION));
+            Serial.print(option, HEX);
             Serial.print(PGMT(M_DEBUG_LEN));
             Serial.print(aLen, HEX);
-            Serial.print(PGMT(M_DEBUG_CMD));
-            Serial.print(command, HEX);
             Serial.println();
         }
             
         switch (command)
         {
-            case COMMS_CMD_STATES: requestCmd = command;    // Record the command.
-                                   // requestPin = pin;     // Not interested in the pin.
+            case COMMS_CMD_SYSTEM: processSystem(option);
                                    break;
-            case COMMS_CMD_DEBUG:  setDebug(pin);           // Pin is used for the debug level.
+            case COMMS_CMD_DEBUG:  setDebug(option);            // Option is used for the debug level.
                                    saveSystemData();
                                    break;
             case COMMS_CMD_SET_LO:  
@@ -367,21 +416,17 @@ void processReceipt(int aLen)
                                        actionState(pin, command == COMMS_CMD_SET_HI, outputDefs[pin].getDelay());
                                    }
                                    break;
-            case COMMS_CMD_READ:   requestCmd = command;        // Record the command.
-                                   requestPin = pin;            // and the pin the master wants to read.
+            case COMMS_CMD_READ:   requestCommand = command;        // Record the command.
+                                   requestOption  = option;         // and the pin the master wants to read.
                                    break;
-            case COMMS_CMD_WRITE:  processWrite(pin, false);    // Process the Output's data.
+            case COMMS_CMD_WRITE:  processWrite(pin, false);        // Process the Output's data.
                                    break;
-            case COMMS_CMD_SAVE:   processWrite(pin, true);     // Process the Output's data and save it.
+            case COMMS_CMD_SAVE:   processWrite(pin, true);         // Process the Output's data and save it.
                                    break;
-            case COMMS_CMD_RESET:  processReset(pin);
+            case COMMS_CMD_RESET:  processReset(pin);               // Reset the Output.
                                    break;
-            default:               if (isDebug(DEBUG_NONE))
-                                   {
-                                       Serial.print(millis());
-                                       Serial.print("\tUnrecognised command: ");
-                                       Serial.println(command, HEX);
-                                   }
+            default:               unrecognisedCommand(M_DEBUG_RECEIPT, command, option);
+                                   break;
         }
     }
     else
@@ -427,6 +472,55 @@ void processReceipt(int aLen)
         {
             Serial.println();
         }
+    }
+}
+
+
+/** Process System command.
+ */
+void processSystem(uint8_t aOption)
+{
+    switch (aOption)
+    {
+        case COMMS_SYS_STATES:   requestCommand = COMMS_CMD_SYSTEM;
+                                 requestOption  = aOption;
+                                 break;
+        case COMMS_SYS_RENUMBER: requestCommand = COMMS_CMD_SYSTEM;
+                                 requestOption  = aOption;
+                                 processRenumber();
+                                 break;
+        default:                 unrecognisedCommand(M_DEBUG_SYSTEM, COMMS_CMD_SYSTEM, aOption);
+                                 break;
+    }
+}
+
+
+/** Process a renumber request.
+ */
+void processRenumber()
+{
+    if (Wire.available())
+    {
+        requestNode    = Wire.read();
+    }
+    else
+    {
+        if (isDebug(DEBUG_NONE))
+        {
+            Serial.print(millis());
+            Serial.print(CHAR_TAB);
+            Serial.print(PGMT(M_DEBUG_RECEIPT));
+            Serial.print(PGMT(M_DEBUG_COMMAND));
+            Serial.print(requestCommand);
+            Serial.print(PGMT(M_DEBUG_OPTION));
+            Serial.print(requestOption);
+            Serial.print(PGMT(M_DEBUG_LEN));
+            Serial.print(Wire.available());
+            Serial.println();
+        }
+        
+        // Revoke the request so it can't be actioned.
+        requestCommand == COMMS_CMD_NONE;
     }
 }
 

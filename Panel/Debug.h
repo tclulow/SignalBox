@@ -13,6 +13,7 @@ const char M_DEBUG_LOAD[]       PROGMEM = "Load";
 const char M_DEBUG_MOVE[]       PROGMEM = "Move";
 const char M_DEBUG_READ[]       PROGMEM = "Read";
 const char M_DEBUG_RECEIPT[]    PROGMEM = "Receipt";
+const char M_DEBUG_RENUMBER[]   PROGMEM = "Renumber";
 const char M_DEBUG_REQUEST[]    PROGMEM = "Request";
 const char M_DEBUG_RESET[]      PROGMEM = "Reset";
 const char M_DEBUG_SAVE[]       PROGMEM = "Save";
@@ -26,8 +27,10 @@ const char M_DEBUG_WRITE[]      PROGMEM = "Write";
 const char M_DEBUG_NODE[]        PROGMEM = ", node=";
 const char M_DEBUG_PIN[]         PROGMEM = ", pin=";
 
-const char M_DEBUG_CMD[]        PROGMEM = ", cmd=";
+const char M_DEBUG_COMMAND[]    PROGMEM = ", cmd=";
+const char M_DEBUG_OPTION[]     PROGMEM = ", opt=";
 const char M_DEBUG_LEN[]        PROGMEM = ", len=";
+const char M_DEBUG_RETURN[]     PROGMEM = ", ret=";
 
 const char M_DEBUG_INPUTS[]     PROGMEM = ", inputs=";
 const char M_DEBUG_OUTPUTS[]    PROGMEM = ", outputs=";

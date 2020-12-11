@@ -748,7 +748,8 @@ class Configure
                                     break;
                 case BUTTON_SELECT: if (confirm())
                                     {
-                                        // moveNode(node, newNode);
+                                        node = renumberNode(node, newNode);
+                                        lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[node]);
                                         finished = true;
                                     }
                                     else
@@ -772,6 +773,79 @@ class Configure
         }
 
         displayDetail();
+    }
+
+
+    /** Change an output node's number.
+     *  Return the number it was changed to (if successful).
+     */
+    uint8_t renumberNode(uint8_t aOldNode, uint8_t aNewNode)
+    {
+        int response = aOldNode;
+        
+        Wire.beginTransmission(systemData.i2cOutputBaseID + node);
+        Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_RENUMBER);
+        Wire.write(aNewNode);
+        if (   ((response = Wire.endTransmission()) == 0)
+            && ((response = Wire.requestFrom(systemData.i2cOutputBaseID + node, OUTPUT_RENUMBER_LEN)) == OUTPUT_RENUMBER_LEN)
+            && ((response = Wire.read()) >= 0))
+        {
+            // Mark the old node absent and the new one present.
+            setOutputNodeAbsent(aOldNode);
+            setOutputNodePresent(aNewNode);
+            
+            // Renumber all the effected inputs' Output nodes.
+            for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
+            {
+                for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
+                {
+                    loadInput(node, pin);
+                    
+                    for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
+                    {
+                        if (inputDef.getOutputNode(index) == aOldNode)
+                        {
+                             inputDef.setOutputNode(index, aNewNode);
+                             saveInput();
+                        }
+                    }
+                }
+            }
+
+            response = aNewNode;
+            if (isDebug(DEBUG_BRIEF))
+            {
+                Serial.print(millis());
+                Serial.print(CHAR_TAB);
+                Serial.print(PGMT(M_DEBUG_RENUMBER));
+                Serial.print(CHAR_SPACE);
+                Serial.print(aOldNode, HEX);
+                Serial.print(PGMT(M_DEBUG_NODE));
+                Serial.print(aNewNode, HEX);
+                Serial.println();    
+            }
+        }
+        else
+        {
+            if (isDebug(DEBUG_NONE))
+            {
+                Serial.print(millis());
+                Serial.print(CHAR_TAB);
+                Serial.print(PGMT(M_DEBUG_RENUMBER));
+                Serial.print(CHAR_SPACE);
+                Serial.print(aOldNode, HEX);
+                Serial.print(PGMT(M_DEBUG_NODE));
+                Serial.print(aNewNode, HEX);
+                Serial.print(PGMT(M_DEBUG_RETURN));
+                Serial.print(response, HEX);
+                Serial.println();    
+            }
+
+            systemFail(M_I2C_ERROR, response, DELAY_READ);
+            response = aOldNode;
+        }
+
+        return response;
     }
     
 

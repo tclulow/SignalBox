@@ -33,12 +33,12 @@ void readOutput(uint8_t aNode, uint8_t aPin)
     
         if (error)
         {
-            systemFail(M_MCP_ERROR, error, DELAY_READ);
+            systemFail(M_I2C_ERROR, error, DELAY_READ);
             outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
         }
         else if ((error = Wire.requestFrom(systemData.i2cOutputBaseID + outputNode, OUTPUT_WRITE_LEN)) != OUTPUT_WRITE_LEN)
         {
-            systemFail(M_MCP_COMMS, error, DELAY_READ);
+            systemFail(M_I2C_COMMS, error, DELAY_READ);
             outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
         }
         else
@@ -144,7 +144,7 @@ char readOutputStates(uint8_t aNode)
     char error = 0;
     
     Wire.beginTransmission(systemData.i2cOutputBaseID + aNode);
-    Wire.write(COMMS_CMD_STATES);
+    Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_STATES);
     if (Wire.endTransmission())
     {
         error = CHAR_DOT;       // No such node on the bus.

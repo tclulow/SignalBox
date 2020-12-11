@@ -4,12 +4,11 @@
 #define _Comms_h
 
 
-#define COMMS_CMD_MASK      0xf0    // Top 4 bits.
-#define COMMS_RFU_MASK      0x08    // RFU.
-#define COMMS_PIN_MASK      0x07    // Bottom 3 bits.
+#define COMMS_COMMAND_MASK  0xf0    // Top 4 bits.
+#define COMMS_OPTION_MASK   0x0f    // Bottom 4 bits.
 
 
-#define COMMS_CMD_STATES    0x00    // Read the state of all node's Outputs.
+#define COMMS_CMD_SYSTEM    0x00    // System commands.
 #define COMMS_CMD_DEBUG     0x10    // Set debug level.
 #define COMMS_CMD_SET_LO    0x20    // Go Lo
 #define COMMS_CMD_SET_HI    0x30    // Go Hi
@@ -20,6 +19,10 @@
 #define COMMS_CMD_RESET     0x70    // Reset output to its saved state (from its EEPROM).
 
 #define COMMS_CMD_NONE      0xff    // Null command.
+
+
+#define COMMS_SYS_STATES    0x00    // System states sub-command.
+#define COMMS_SYS_RENUMBER  0x01    // Sysatem renumber node sub-command.
 
 
 #define COMMS_LEN_WRITE        4    // Length of data sent with a COMMS_CMD_WRITE
