@@ -742,7 +742,9 @@ void stepServo(int aPin)
         // Set (or unset) Servo's digital pad when we're over halfway
         if (outputDefs[aPin].getState())
         {
-            digitalWrite(ioPins[aPin], outputs[aPin].step >  (outputs[aPin].steps >> 1));
+            // Only set pad when > half-way AND trigger has been handled.
+            digitalWrite(ioPins[aPin],    (outputs[aPin].step >  (outputs[aPin].steps >> 1))
+                                       && (outputs[aPin].alt == 0));
         }
         else
         {
