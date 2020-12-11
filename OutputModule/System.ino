@@ -59,7 +59,7 @@ uint8_t getModuleId(boolean aIncludeBase)
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);
-        Serial.print(PGMT(M_MODULE_ID));
+        Serial.print(PGMT(M_DEBUG_MODULE));
         Serial.print(CHAR_SPACE);
         Serial.print(systemData.i2cOutputBaseID + moduleId, HEX);
         Serial.println();

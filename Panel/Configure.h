@@ -859,7 +859,7 @@ class Configure
         }
         else
         {
-            if (isDebug(DEBUG_NONE))
+            if (isDebug(DEBUG_ERRORS))
             {
                 Serial.print(millis());
                 Serial.print(CHAR_TAB);

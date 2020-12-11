@@ -9,7 +9,7 @@
 
 #define SYSTEM_RFU      7                   // 7 rfu bytes in systemData.
 #define DEFAULT_REPORT  REPORT_LONG         // Default reporting to long.
-#define DEFAULT_DEBUG   DEBUG_NONE          // Default debugging to none.
+#define DEFAULT_DEBUG   DEBUG_ERRORS        // Default debugging to erors only.
 
 #define MILLIS_PER_SECOND (1000L)                       // Millisecs in a second.
 #define MILLIS_PER_MINUTE (MILLIS_PER_SECOND * 60L)     // Millisecs in a minute.

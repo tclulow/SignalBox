@@ -71,6 +71,7 @@ const char M_LONG[]            PROGMEM = "Long";
 const char M_PAUSE[]           PROGMEM = "Pause";
 
 //const char M_NONE[]            PROGMEM = "None";
+const char M_ERRORS[]          PROGMEM = "Errors";
 const char M_BRIEF[]           PROGMEM = "Brief";
 const char M_FULL[]            PROGMEM = "Full";
 //const char M_DETAIL[]          PROGMEM = "Detail";
@@ -121,7 +122,7 @@ const char* const M_SYS_TYPES[]      = { M_REPORT, M_SYS_I2C, M_NODES, M_DEBUG }
 const char* const M_REPORT_TYPES[]   = { M_ALL, M_SYSTEM, M_INPUT, M_OUTPUT };
 const char* const M_I2C_PROMPTS[]    = { M_ID_CONTROLLER, M_ID_INPUT, M_ID_OUTPUT };
 const char* const M_REPORT_PROMPTS[] = { M_NONE, M_SHORT, M_LONG, M_PAUSE };
-const char* const M_DEBUG_PROMPTS[]  = { M_NONE, M_BRIEF, M_FULL, M_DETAIL };
+const char* const M_DEBUG_PROMPTS[]  = { M_NONE, M_ERRORS, M_BRIEF, M_FULL, M_DETAIL };
 
 const char* const M_INPUT_TYPES[]    = { M_TOGGLE, M_ON_OFF, M_ON,  M_OFF };
 const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLASH, M_BLINK, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU };

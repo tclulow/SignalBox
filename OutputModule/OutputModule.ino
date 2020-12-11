@@ -220,7 +220,7 @@ void initOutput(int aPin, uint8_t aOldType)
  */
 void unrecognisedCommand(PGM_P aMessage, uint8_t aCommand, uint8_t aOption)
 {
-    if  (isDebug(DEBUG_NONE))
+    if  (isDebug(DEBUG_ERRORS))
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);
@@ -417,7 +417,7 @@ void processReceipt(int aLen)
     // Consume unexpected data.
     if (Wire.available())
     {
-        if (isDebug(DEBUG_NONE))
+        if (isDebug(DEBUG_ERRORS))
         {
             Serial.println();
             Serial.print(millis());
@@ -431,13 +431,13 @@ void processReceipt(int aLen)
         while (Wire.available())
         {
             uint8_t ch = Wire.read();
-            if (isDebug(DEBUG_NONE))
+            if (isDebug(DEBUG_ERRORS))
             {
                 Serial.print(CHAR_SPACE);
                 Serial.print(ch, HEX);
             }
         }
-        if (isDebug(DEBUG_NONE))
+        if (isDebug(DEBUG_ERRORS))
         {
             Serial.println();
         }
@@ -474,7 +474,7 @@ void processRenumber()
     }
     else
     {
-        if (isDebug(DEBUG_NONE))
+        if (isDebug(DEBUG_ERRORS))
         {
             Serial.print(millis());
             Serial.print(CHAR_TAB);
@@ -504,7 +504,7 @@ void processWrite(uint8_t aPin, boolean aSave)
     
     if (Wire.available() < COMMS_LEN_WRITE)
     {
-        if (isDebug(DEBUG_NONE))
+        if (isDebug(DEBUG_ERRORS))
         {
             Serial.print(millis());
             Serial.print(CHAR_TAB);
@@ -608,7 +608,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     }
     else
     {
-        if (isDebug(DEBUG_NONE))
+        if (isDebug(DEBUG_ERRORS))
         {
             Serial.print(millis());
             Serial.print(CHAR_TAB);
