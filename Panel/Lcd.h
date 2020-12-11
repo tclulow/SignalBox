@@ -34,10 +34,9 @@
 #define LCD_COL_MARK          6   // Marker when changing top-level option.
 #define LCD_COL_VERSION       8   // Where to put version number/date.
 #define LCD_COL_CALIBRATE     6   // Button to press.
-#define LCD_COL_STATE         8   // State of an output.
+#define LCD_COL_STATE         7   // State of an output.
 #define LCD_COL_NODE         11   // Node number.
 #define LCD_COL_PIN          14   // Pin number.
-// #define LCD_COL_STATE        14   // State of output.
 
 #define LCD_COL_I2C_PARAM     7   // I2C parameters(3) start at this col.
 #define LCD_COL_I2C_STEP      3   // Three columns per parameter.
