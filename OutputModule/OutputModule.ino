@@ -70,9 +70,6 @@ void setup()
     }
     else
     {
-//        systemData.i2cModuleID = systemData.i2cOutputBaseID + 8;    // Hard-code module ID.
-//        saveSystemData();
-
         // Recover state from EEPROM.
         for (uint8_t pin = 0; pin < IO_PINS; pin++)
         {
@@ -82,15 +79,9 @@ void setup()
     }
 
     // Start i2c communications.
-    Wire.begin(systemData.i2cModuleID);
+    Wire.begin(getModuleId());
     Wire.onReceive(processReceipt);
     Wire.onRequest(processRequest);
-
-    if (isDebug(DEBUG_NONE))
-    {
-        Serial.print("Module ID: ");
-        Serial.println(systemData.i2cModuleID, HEX);
-    }
 }
 
 
@@ -104,34 +95,11 @@ void firstRun()
     systemData.magic   = MAGIC_NUMBER;
     systemData.version = VERSION;
 
-    systemData.i2cControllerID = DEFAULT_I2C_CONTROLLER_ID;
-    systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
-    systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
-    systemData.i2cModuleID     = systemData.i2cOutputBaseID;
+    systemData.i2cControllerID = I2C_DEFAULT_CONTROLLER_ID;
+    systemData.i2cInputBaseID  = I2C_DEFAULT_INPUT_BASE_ID;
+    systemData.i2cOutputBaseID = I2C_DEFAULT_OUTPUT_BASE_ID;
+    systemData.i2cModuleID     = I2C_MODULE_ID_JUMPERS;
 
-    // Configure i2c from jumpers.
-    for (int pin = 0, mask=1; pin < JUMPER_PINS; pin++, mask <<= 1)
-    {
-        if (   (   (jumperPins[pin] >= ANALOG_PIN_FIRST)
-                && (analogRead(jumperPins[pin]) > ANALOG_PIN_CUTOFF))
-            || (   (jumperPins[pin] <  ANALOG_PIN_FIRST)
-                && (false)      // TODO - handle digital pins on TxRx
-                && (digitalRead(jumperPins[pin]))))
-        {
-            systemData.i2cModuleID |= mask;
-        }
-//        Serial.print("Jumper ");
-//        Serial.print(jumperPins[pin], HEX);
-//        Serial.print(": digital=");
-//        Serial.print(digitalRead(jumperPins[pin]), HEX);
-//        Serial.print(", analog=");
-//        Serial.print(analogRead(jumperPins[pin]), HEX);
-//        Serial.print(". ID=");
-//        Serial.print(systemData.i2cModuleID, HEX);
-//        Serial.println();
-    }
-
-    
     // Initialise EEPROM with suitable data.
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
@@ -348,12 +316,12 @@ void returnStates()
  */
 void returnRenumber()
 {
-    systemData.i2cModuleID = systemData.i2cOutputBaseID + requestNode;
+    systemData.i2cModuleID = requestNode;
     saveSystemData();
     Wire.write(requestNode);
 
     // Now change our module ID.
-    Wire.begin(systemData.i2cModuleID);
+    Wire.begin(getModuleId());
 }
 
 

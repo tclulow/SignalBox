@@ -8,6 +8,7 @@
 boolean loadSystemData()
 {
     EEPROM.get(SYSTEM_BASE, systemData);
+    // systemData.i2cModuleID = I2C_MODULE_ID_JUMPERS;
     return systemData.magic != MAGIC_NUMBER;
 }
 
@@ -17,6 +18,46 @@ boolean loadSystemData()
 void saveSystemData()
 {
     EEPROM.put(SYSTEM_BASE, systemData);
+}
+
+
+uint8_t getModuleId()
+{
+    uint8_t moduleId = systemData.i2cModuleID;
+
+    if (moduleId > OUTPUT_NODE_MAX)
+    {
+        // Configure i2c from jumpers.
+        moduleId = 0;
+        for (int pin = 0, mask=1; pin < JUMPER_PINS; pin++, mask <<= 1)
+        {
+            if (   (   (jumperPins[pin] >= ANALOG_PIN_FIRST)
+                    && (analogRead(jumperPins[pin]) > ANALOG_PIN_CUTOFF))
+                || (   (jumperPins[pin] <  ANALOG_PIN_FIRST)
+                    && (false)      // TODO - handle digital pins on TxRx
+                    && (digitalRead(jumperPins[pin]))))
+            {
+                moduleId |= mask;
+            }
+//            Serial.print(millis());
+//            Serial.print(CHAR_TAB);
+//            Serial.print("Jumper ");
+//            Serial.print(jumperPins[pin], HEX);
+//            Serial.print(": digital=");
+//            Serial.print(digitalRead(jumperPins[pin]), HEX);
+//            Serial.print(", analog=");
+//            Serial.print(analogRead(jumperPins[pin]), HEX);
+//            Serial.print(". ID=");
+//            Serial.print(systemData.i2cModuleId, HEX);
+//            Serial.println();
+        }
+    }
+
+    // Announce module ID
+    Serial.print("Module ID: ");
+    Serial.println(systemData.i2cOutputBaseID + moduleId, HEX);
+
+    return systemData.i2cOutputBaseID + moduleId;
 }
 
 

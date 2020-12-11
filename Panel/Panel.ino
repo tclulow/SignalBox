@@ -173,9 +173,9 @@ void firstRun()
     systemData.magic   = MAGIC_NUMBER;
     systemData.version = VERSION;
 
-    systemData.i2cControllerID = DEFAULT_I2C_CONTROLLER_ID;
-    systemData.i2cInputBaseID  = DEFAULT_I2C_INPUT_BASE_ID;
-    systemData.i2cOutputBaseID = DEFAULT_I2C_OUTPUT_BASE_ID;
+    systemData.i2cControllerID = I2C_DEFAULT_CONTROLLER_ID;
+    systemData.i2cInputBaseID  = I2C_DEFAULT_INPUT_BASE_ID;
+    systemData.i2cOutputBaseID = I2C_DEFAULT_OUTPUT_BASE_ID;
     systemData.reportLevel     = DEFAULT_REPORT;
     systemData.debugLevel      = DEFAULT_DEBUG;
 

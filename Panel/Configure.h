@@ -749,6 +749,7 @@ class Configure
                 case BUTTON_SELECT: if (confirm())
                                     {
                                         node = renumberNode(node, newNode);
+                                        readOutput(node, pin);
                                         lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[node]);
                                         finished = true;
                                     }
@@ -813,6 +814,7 @@ class Configure
             }
 
             response = aNewNode;
+            
             if (isDebug(DEBUG_BRIEF))
             {
                 Serial.print(millis());
