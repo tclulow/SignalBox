@@ -583,7 +583,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
                       / OUTPUT_SERVO_MAX;
         outputs[aPin].steps = steps + 1;
         
-        if (outputDefs[aPin].getType() == OUTPUT_TYPE_SERVO)
+        if (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
         {
             if (aState)
             {
