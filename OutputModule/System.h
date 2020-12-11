@@ -5,7 +5,7 @@
 
 
 #define MAGIC_NUMBER 0x50616e6f     // Magic number = "Pano".
-#define VERSION          0x0022     // Version number of software. See also M_VERSION.
+#define VERSION          0x0023     // Version number of software. See also M_VERSION.
 
 
 /** Data describing an Output's operation.
