@@ -25,7 +25,7 @@ void calibrateButtons()
     for (int button = 0; button < BUTTON_LIMIT; button++)
     {
         lcd.clearRow(LCD_COL_CALIBRATE, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_CALIBRATE, LCD_ROW_BOT, M_BUTTONS[button], LCD_LEN_OPTION);
+        lcd.printAt(LCD_COL_CALIBRATE, LCD_ROW_BOT, M_BUTTONS[button + 1], LCD_LEN_OPTION);
 
         // Record average between this button and the previous.
         while ((value = analogRead(0)) > BUTTON_THRESHHOLD);
@@ -36,7 +36,7 @@ void calibrateButtons()
         {
             Serial.print(millis());
             Serial.print(CHAR_TAB);
-            Serial.print(PGMT(M_BUTTONS[button]));
+            Serial.print(PGMT(M_BUTTONS[button + 1]));
             Serial.print(PGMT(M_DEBUG_VALUE));
             Serial.print(value, HEX);
             Serial.print(PGMT(M_DEBUG_TARGET));
