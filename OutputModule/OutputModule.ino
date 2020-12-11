@@ -49,6 +49,7 @@ struct
 void setup()
 {
     initialise();
+    randomSeed(analogRead(0));
 
     // Configure the Jumper pins for input.
     for (int pin = 0; pin < JUMPER_PINS; pin++)
@@ -568,6 +569,8 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     
     // Calculate steps and starting step.
     outputs[aPin].step = 0;
+    outputs[aPin].alt  = 0;
+
     if (outputDefs[aPin].isServo())
     {
         outputs[aPin].value = outputs[aPin].servo.read();
@@ -579,6 +582,18 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         steps = steps * outputDefs[aPin].getPaceAsSteps()
                       / OUTPUT_SERVO_MAX;
         outputs[aPin].steps = steps + 1;
+        
+        if (outputDefs[aPin].getType() == OUTPUT_TYPE_SERVO)
+        {
+            if (aState)
+            {
+                outputs[aPin].alt = (steps + random(steps)) / 3;
+            }
+            else
+            {
+                outputs[aPin].alt = random(steps) / 6;
+            }
+        }
     }
     else if (outputDefs[aPin].isLed())
     {
@@ -668,8 +683,44 @@ void stepServo(int aPin)
 //            reportOutput(M_DEBUG_MOVE, aPin);
 //        }
 
-        outputs[aPin].step += 1;
-
+        // Handle SIGNAL triggers (if set) if "ascending" (new state is "true").
+        if (   (outputDefs[aPin].getState())
+            && (outputs[aPin].alt))
+        {
+            if (outputs[aPin].alt > outputs[aPin].step)             // Ascending to trigger step.
+            {
+                outputs[aPin].step += 1;
+                if (outputs[aPin].alt == outputs[aPin].step)        // Reached the trigger step.
+                {
+                    // Set new trigger back down a bit ( 1 to 1/3 of distance travelled so far).
+                    outputs[aPin].alt -= 1 + random(outputs[aPin].step) / 3;
+                    outputs[aPin].delay = millis() + random(250);   // Up to 1/4 second delay.
+                    if (isDebug(DEBUG_FULL))
+                    {
+                        reportOutput(M_DEBUG_TRIGGER, aPin);
+                    }
+                }
+            }
+            else
+            {
+                outputs[aPin].step -= 1;
+                if (outputs[aPin].alt == outputs[aPin].step)        // Have descended to trigger step.
+                {
+                    outputs[aPin].alt = 0;                          // Remove the trigger step.
+                    outputs[aPin].delay = millis() + random(500);   // Up to 1/2 second delay.
+                    if (isDebug(DEBUG_FULL))
+                    {
+                        reportOutput(M_DEBUG_TRIGGER, aPin);
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Normal non-triggered movement.
+            outputs[aPin].step += 1;
+        }
+        
         // Calculate Servo's new position.
         if (outputs[aPin].step == outputs[aPin].steps)
         {
@@ -680,12 +731,12 @@ void stepServo(int aPin)
         else
         {
             // Intermediate step, move proportionately (step/steps) along the range (start to target).
-//            outputs[aPin].value = outputDefs[aPin].getAltTarget() 
-//                                +   (outputDefs[aPin].getTarget() - outputDefs[aPin].getAltTarget())
-//                                  * outputs[aPin].step
-//                                  / outputs[aPin].steps;
-            outputs[aPin].value += (outputDefs[aPin].getTarget() - outputs[aPin].value)
-                                 / (outputs[aPin].steps + 1 - outputs[aPin].step);
+            outputs[aPin].value = outputDefs[aPin].getAltTarget() 
+                                +   (outputDefs[aPin].getTarget() - outputDefs[aPin].getAltTarget())
+                                  * outputs[aPin].step
+                                  / outputs[aPin].steps;
+//            outputs[aPin].value += (outputDefs[aPin].getTarget() - outputs[aPin].value)
+//                                 / (outputs[aPin].steps + 1 - outputs[aPin].step);
         }
 
         // Set (or unset) Servo's digital pad when we're over halfway

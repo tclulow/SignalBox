@@ -21,6 +21,7 @@ const char M_DEBUG_SAVE[]       PROGMEM = "Save";
 const char M_DEBUG_SEND[]       PROGMEM = "Send";
 const char M_DEBUG_STATES[]     PROGMEM = "States";
 const char M_DEBUG_SYSTEM[]     PROGMEM = "System";
+const char M_DEBUG_TRIGGER[]    PROGMEM = "Trigger";
 const char M_DEBUG_UNEXPECTED[] PROGMEM = "Unexpected";
 const char M_DEBUG_UNKNOWN[]    PROGMEM = "Unknown";
 const char M_DEBUG_WRITE[]      PROGMEM = "Write";
