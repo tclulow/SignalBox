@@ -829,7 +829,7 @@ void stepLed(int aPin)
 
         // Report activity if debug level high enough.
         if (   (isDebug(DEBUG_FULL))
-            || (   (isDebug(DEBUG_FULL))
+            || (   (isDebug(DEBUG_DETAIL))
                 && (   (outputs[aPin].step == 1)
                     || (outputs[aPin].step == outputs[aPin].steps))))
         {
@@ -937,7 +937,7 @@ void stepFlash(uint8_t aPin)
 
         // Report activity if debug level high enough.
         if (   (isDebug(DEBUG_FULL))
-            || (   (isDebug(DEBUG_FULL))
+            || (   (isDebug(DEBUG_DETAIL))
                 && (   (outputs[aPin].step == 1)
                     || (outputs[aPin].step == outputs[aPin].steps))))
         {
