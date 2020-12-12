@@ -579,7 +579,7 @@ void setup()
     
     initialise();
     
-    if (isDebug(DEBUG_DETAIL))
+    if (isDebug(DEBUG_FULL))
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);

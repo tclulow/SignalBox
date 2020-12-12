@@ -756,8 +756,8 @@ void stepServo(int aPin)
         digitalWrite(LED_BUILTIN, HIGH);                    // Indicate work in progress;
 
         // Report activity if debug level high enough.
-        if (   (isDebug(DEBUG_DETAIL))
-            || (   (isDebug(DEBUG_FULL))
+        if (   (isDebug(DEBUG_FULL))
+            || (   (isDebug(DEBUG_DETAIL))
                 && (   (outputs[aPin].step == 1)
                     || (outputs[aPin].step == outputs[aPin].steps))))
         {
@@ -824,7 +824,7 @@ void stepLed(int aPin)
         }
 
         // Report activity if debug level high enough.
-        if (   (isDebug(DEBUG_DETAIL))
+        if (   (isDebug(DEBUG_FULL))
             || (   (isDebug(DEBUG_FULL))
                 && (   (outputs[aPin].step == 1)
                     || (outputs[aPin].step == outputs[aPin].steps))))
@@ -932,7 +932,7 @@ void stepFlash(uint8_t aPin)
         }
 
         // Report activity if debug level high enough.
-        if (   (isDebug(DEBUG_DETAIL))
+        if (   (isDebug(DEBUG_FULL))
             || (   (isDebug(DEBUG_FULL))
                 && (   (outputs[aPin].step == 1)
                     || (outputs[aPin].step == outputs[aPin].steps))))

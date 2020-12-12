@@ -12,8 +12,8 @@
 #define DEBUG_NONE         0    // Debug levels.
 #define DEBUG_ERRORS       1
 #define DEBUG_BRIEF        2
-#define DEBUG_FULL         3
-#define DEBUG_DETAIL       4
+#define DEBUG_DETAIL       3
+#define DEBUG_FULL         4
 #define DEBUG_MAX          5
 
 

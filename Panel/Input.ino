@@ -22,7 +22,7 @@ void loadInput(int aNode, int aPin)
     EEPROM.get(TYPES_BASE + (aNode       * TYPES_SIZE), inputTypes);
     inputType = (inputTypes >> (aPin << INPUT_TYPE_SHIFT)) & INPUT_TYPE_MASK;
 
-    if (isDebug(DEBUG_FULL))
+    if (isDebug(DEBUG_DETAIL))
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);
@@ -80,7 +80,7 @@ void saveInput()
         EEPROM.put(INPUT_BASE + (inputNumber * INPUT_SIZE), inputDef);
         EEPROM.put(TYPES_BASE + (node        * TYPES_SIZE), inputTypes);
 
-        if (isDebug(DEBUG_FULL))
+        if (isDebug(DEBUG_DETAIL))
         {
             Serial.print(millis());
             Serial.print(CHAR_TAB);

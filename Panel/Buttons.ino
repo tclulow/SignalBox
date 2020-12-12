@@ -79,7 +79,7 @@ int readButton()
     }
 
     if (   (button != lastButton)
-        && (isDebug(DEBUG_DETAIL)))
+        && (isDebug(DEBUG_FULL)))
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);

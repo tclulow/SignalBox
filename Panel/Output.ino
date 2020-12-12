@@ -17,7 +17,7 @@ void readOutput(uint8_t aNode, uint8_t aPin)
         outputNode = aNode;
         outputPin  = aPin;
 
-        if (isDebug(DEBUG_FULL))
+        if (isDebug(DEBUG_DETAIL))
         {
             Serial.print(millis());
             Serial.print(CHAR_TAB);
@@ -46,7 +46,7 @@ void readOutput(uint8_t aNode, uint8_t aPin)
             // Read the outputDef from the OutputModule.
             outputDef.read();
             
-            if (isDebug(DEBUG_FULL))
+            if (isDebug(DEBUG_DETAIL))
             {
                 outputDef.printDef(M_DEBUG_READ, outputPin);
             }
@@ -68,7 +68,7 @@ void readOutput(uint8_t aOutputNumber)
  */
 void writeOutput(boolean aSave)
 {
-    if (isDebug(DEBUG_FULL))
+    if (isDebug(DEBUG_DETAIL))
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);
@@ -90,7 +90,7 @@ void writeOutput(boolean aSave)
  */
 void writeOutputState(boolean aState, uint8_t aDelay)
 {
-    if (isDebug(DEBUG_FULL))
+    if (isDebug(DEBUG_DETAIL))
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);
@@ -116,7 +116,7 @@ void writeOutputState(boolean aState, uint8_t aDelay)
  */
 void resetOutput()
 {
-    if (isDebug(DEBUG_FULL))
+    if (isDebug(DEBUG_DETAIL))
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);
@@ -157,7 +157,7 @@ char readOutputStates(uint8_t aNode)
     {
         int states = Wire.read();
 
-        if (isDebug(DEBUG_FULL))
+        if (isDebug(DEBUG_DETAIL))
         {
             Serial.print(millis());
             Serial.print(CHAR_TAB);

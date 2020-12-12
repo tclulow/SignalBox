@@ -284,7 +284,7 @@ OutputDef outputDefs[OUTPUT_PIN_MAX];
 void loadOutput(int aPin)
 {
     EEPROM.get(OUTPUT_BASE + aPin * sizeof(OutputDef), outputDefs[aPin]);
-    if (isDebug(DEBUG_FULL))
+    if (isDebug(DEBUG_DETAIL))
     { 
         outputDefs[aPin].printDef(M_DEBUG_LOAD, aPin);
     }
@@ -298,7 +298,7 @@ void saveOutput(int aPin)
     if (aPin < OUTPUT_PIN_MAX)
     {
         EEPROM.put(OUTPUT_BASE + aPin * sizeof(OutputDef), outputDefs[aPin]);
-        if (isDebug(DEBUG_FULL))
+        if (isDebug(DEBUG_DETAIL))
         {
             outputDefs[aPin].printDef(M_DEBUG_SAVE, aPin);
         }
