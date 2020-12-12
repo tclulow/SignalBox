@@ -38,6 +38,7 @@ struct
     Servo   servo;          // The Servo (if there is one).
     uint8_t steps  = 0;     // The number of steps to take.
     uint8_t step   = 0;     // The current step.
+    uint8_t start  = 0;     // The starting position.
     uint8_t value  = 0;     // The value of the output.
     uint8_t alt    = 0;     // The value of the alternate output.
     long    delay  = 0;     // Delay start to this time.
@@ -131,8 +132,8 @@ void reportOutput(PGM_P aHeader, uint8_t aPin)
     Serial.print(outputDefs[aPin].getState(), HEX);
     Serial.print(PGMT(M_DEBUG_TARGET));
     Serial.print(outputDefs[aPin].getTarget(), HEX);
-    Serial.print(PGMT(M_DEBUG_ALT_TARGET));
-    Serial.print(outputDefs[aPin].getAltTarget(), HEX);
+    Serial.print(PGMT(M_DEBUG_START));
+    Serial.print(outputs[aPin].start, HEX);
     Serial.print(PGMT(M_DEBUG_STEPS));
     Serial.print(outputs[aPin].steps, HEX);
     Serial.print(PGMT(M_DEBUG_STEP));
@@ -574,7 +575,8 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     if (outputDefs[aPin].isServo())
     {
         outputs[aPin].value = outputs[aPin].servo.read();
-        uint32_t steps = abs(outputDefs[aPin].getTarget() - outputs[aPin].value);
+        outputs[aPin].start = outputs[aPin].value;
+        uint32_t steps = abs(outputDefs[aPin].getTarget() - outputs[aPin].start);
         if (steps > OUTPUT_SERVO_MAX)
         {
             steps = OUTPUT_SERVO_MAX;
@@ -582,8 +584,10 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         steps = steps * outputDefs[aPin].getPaceAsSteps()
                       / OUTPUT_SERVO_MAX;
         outputs[aPin].steps = steps + 1;
-        
-        if (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
+
+        // Add trigger point for SIGNALS, but only if they're travelling the whole range.
+        if (   (outputDefs[aPin].getType()      == OUTPUT_TYPE_SIGNAL)
+            && (outputDefs[aPin].getAltTarget() == outputs[aPin].start))
         {
             if (aState)
             {
@@ -731,8 +735,8 @@ void stepServo(int aPin)
         else
         {
             // Intermediate step, move proportionately (step/steps) along the range (start to target).
-            outputs[aPin].value = outputDefs[aPin].getAltTarget() 
-                                +   (outputDefs[aPin].getTarget() - outputDefs[aPin].getAltTarget())
+            outputs[aPin].value = outputs[aPin].start 
+                                +   (outputDefs[aPin].getTarget() - outputs[aPin].start)
                                   * outputs[aPin].step
                                   / outputs[aPin].steps;
 //            outputs[aPin].value += (outputDefs[aPin].getTarget() - outputs[aPin].value)

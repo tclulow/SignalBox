@@ -46,7 +46,7 @@ const char M_DEBUG_DELAY[]      PROGMEM = ", delay=";
 const char M_DEBUG_STEP[]       PROGMEM = ", step=";
 const char M_DEBUG_STEPS[]      PROGMEM = ", steps=";
 const char M_DEBUG_TARGET[]     PROGMEM = ", target=";
-const char M_DEBUG_ALT_TARGET[] PROGMEM = ", altTarget=";
+const char M_DEBUG_START[]      PROGMEM = ", start=";
 const char M_DEBUG_VALUE[]      PROGMEM = ", value=";
 const char M_DEBUG_ALT[]        PROGMEM = ", alt=";
 
