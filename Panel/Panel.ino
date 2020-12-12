@@ -1,6 +1,9 @@
 /** Control panel.
  */
 
+#define MASTER true         // The master (Uno) device.
+
+
 #include <EEPROM.h>
 #include <Wire.h>
 

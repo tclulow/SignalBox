@@ -1,6 +1,9 @@
 /** OutputModule.
  */
 
+#define MASTER false        // The is not the master, it's a nano device.
+
+
 #include <EEPROM.h>
 #include <Servo.h>
 #include <Wire.h>
