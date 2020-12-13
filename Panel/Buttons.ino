@@ -97,18 +97,22 @@ int readButton()
 
 
 /** Wait for button to be released.
+ *  With delays to suppress contact-bounce.
  */
 void waitForButtonRelease()
 {
-    while (readButton())
+    do
     {
         delay(DELAY_BUTTON_WAIT);
     }
+    while (readButton());
+
+    delay(DELAY_BUTTON_WAIT);
 }
 
 
 /** Wait for a button to be pressed.
- *  First wair for all buttons to be released.
+ *  First wait for all buttons to be released.
  *  Return the button pressed.
  */
 int waitForButton()
@@ -116,11 +120,14 @@ int waitForButton()
     int button;
     
     waitForButtonRelease();
-
-    while ((button = readButton()) == 0)
+    
+    do
     {
         delay(DELAY_BUTTON_WAIT);
     }
+    while ((button = readButton()) == 0);
+    
+    delay(DELAY_BUTTON_WAIT);
 
     return button;
 }
