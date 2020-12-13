@@ -452,6 +452,7 @@ class Configure
                                         case SYS_I2C:    changed = menuSystemI2c();
                                                          break;
                                         case SYS_NODES:  mapHardware();
+                                                         waitForButtonRelease();
                                                          displayAll();
                                                          break;
                                         case SYS_DEBUG:  debugLevel = getDebug();
