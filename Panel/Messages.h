@@ -137,9 +137,15 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
 
     
 // Common debug messages.
+
+const char M_DEBUG_DEBUG[]      PROGMEM = "Debug";
 const char M_DEBUG_LOAD[]       PROGMEM = "Load";
+const char M_DEBUG_READ[]       PROGMEM = "Read";
+const char M_DEBUG_RESET[]      PROGMEM = "Reset";
 const char M_DEBUG_SAVE[]       PROGMEM = "Save";
 const char M_DEBUG_SEND[]       PROGMEM = "Send";
+const char M_DEBUG_SET_LO[]     PROGMEM = "SetLo";
+const char M_DEBUG_SET_HI[]     PROGMEM = "SetHi";
 const char M_DEBUG_STATES[]     PROGMEM = "States";
 const char M_DEBUG_SYSTEM[]     PROGMEM = "System";
 const char M_DEBUG_WRITE[]      PROGMEM = "Write";
@@ -153,13 +159,14 @@ const char M_DEBUG_TARGET[]     PROGMEM = ", target=";
 const char M_DEBUG_TYPE[]       PROGMEM = ", type=";
 const char M_DEBUG_VALUE[]      PROGMEM = ", value=";
 
+const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG, M_DEBUG_SET_LO, M_DEBUG_SET_HI, M_DEBUG_READ, M_DEBUG_WRITE, M_DEBUG_SAVE, M_DEBUG_RESET,
+                                           M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_NONE };
+
 #if MASTER
 
     // Master-only debug messages.
     const char M_DEBUG_BUTTON[]     PROGMEM = "Button";
-    const char M_DEBUG_READ[]       PROGMEM = "Read";
     const char M_DEBUG_RENUMBER[]   PROGMEM = "Renumber";
-    const char M_DEBUG_RESET[]      PROGMEM = "Reset";
 
     const char M_DEBUG_INPUTS[]     PROGMEM = ", inputs=";
     const char M_DEBUG_NODE[]       PROGMEM = ", node=";
