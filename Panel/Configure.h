@@ -200,7 +200,7 @@ class Configure
      */
     void displayDetailExport()
     {
-        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_REPORT_TYPES[expMenu], LCD_LEN_OPTION);
+        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_EXPORT_TYPES[expMenu], LCD_LEN_OPTION);
     }
     
 
