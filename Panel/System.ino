@@ -2,12 +2,18 @@
  */
 
 
-/** Load SystemData from EEPROM
- *  Return true if valid
+/** Load SystemData from EEPROM.
+ *  Return true if valid, else don't load and return false.
  */
 boolean loadSystemData()
 {
-    EEPROM.get(SYSTEM_BASE, systemData);
+    EEPROM.get(SYSTEM_BASE, systemData.magic);  // Check the magic number
+
+    if (systemData.magic == MAGIC_NUMBER)
+    {
+        EEPROM.get(SYSTEM_BASE, systemData);
+    }
+    
     return systemData.magic == MAGIC_NUMBER;
 }
 
@@ -44,6 +50,48 @@ void setDebug(uint8_t aLevel)
     saveSystemData();
 }
 
+
+/** Show version number by flashing LED
+ *  and reporting it on Serial output.
+ */
+void initialise()
+{
+    pinMode(LED_BUILTIN, OUTPUT);   // Configure the on-board LED pin for output
+    delay(DELAY_START);             // Wait to avoid programmer conflicts.
+    Serial.begin(SERIAL_SPEED);     // Serial IO.
+    
+    for (int ind = 0; ind < strlen_P(M_VERSION); ind++)
+    {
+        char ch = pgm_read_byte_near(M_VERSION + ind);
+        if (ch >= CHAR_ZERO && ch <= CHAR_NINE)
+        {
+            while (ch-- > CHAR_ZERO)
+            {
+                digitalWrite(LED_BUILTIN, HIGH);
+                delay(DELAY_BLINK);
+                digitalWrite(LED_BUILTIN, LOW);
+                delay(DELAY_BLINK);
+            }
+        }
+        else
+        {
+            delay(DELAY_BLINK * 2);
+        }
+    }
+
+    if (isDebug(DEBUG_NONE))
+    {
+        Serial.print(PGMT(M_SOFTWARE));
+        Serial.print(CHAR_SPACE);
+        Serial.print(PGMT(M_VERSION));
+        Serial.print(CHAR_SPACE);
+        Serial.print(PGMT(M_VERSION_DATE));
+        Serial.println();
+    }
+}
+
+
+#if MASTER
 
 /** Report a system failure.
  */
@@ -93,6 +141,61 @@ void ezyBusClear()
 }
 
 
+#else
+
+/** Gets the output module ID.
+ *  Either by hardware jumperss of from EEPROM.
+ */
+uint8_t getModuleId(boolean aIncludeBase)
+{
+    uint8_t moduleId = systemData.i2cModuleID;
+
+    if (moduleId > OUTPUT_NODE_MAX)
+    {
+        // Configure i2c from jumpers.
+        moduleId = 0;
+        for (int pin = 0, mask=1; pin < JUMPER_PINS; pin++, mask <<= 1)
+        {
+            if (   (   (jumperPins[pin] >= ANALOG_PIN_FIRST)
+                    && (analogRead(jumperPins[pin]) > ANALOG_PIN_CUTOFF))
+                || (   (jumperPins[pin] <  ANALOG_PIN_FIRST)
+                    && (false)      // TODO - handle digital pins on TxRx
+                    && (digitalRead(jumperPins[pin]))))
+            {
+                moduleId |= mask;
+            }
+//            Serial.print(millis());
+//            Serial.print(CHAR_TAB);
+//            Serial.print("Jumper ");
+//            Serial.print(jumperPins[pin], HEX);
+//            Serial.print(": digital=");
+//            Serial.print(digitalRead(jumperPins[pin]), HEX);
+//            Serial.print(", analog=");
+//            Serial.print(analogRead(jumperPins[pin]), HEX);
+//            Serial.print(". ID=");
+//            Serial.print(systemData.i2cModuleId, HEX);
+//            Serial.println();
+        }
+    }
+
+    // Announce module ID
+    if (   (isDebug(DEBUG_BRIEF))
+        && (aIncludeBase))
+    {
+        Serial.print(millis());
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_DEBUG_MODULE));
+        Serial.print(CHAR_SPACE);
+        Serial.print(systemData.i2cOutputBaseID + moduleId, HEX);
+        Serial.println();
+    }
+
+    return (aIncludeBase ? systemData.i2cOutputBaseID : 0) + moduleId;
+}
+
+
+#endif
+
 /** Dump a range of the EEPROM memory.
  */
 void dumpMemory(PGM_P aMessage, int aStart, int aEnd)
@@ -119,14 +222,26 @@ void dumpMemory(PGM_P aMessage, int aStart, int aEnd)
 }
 
 
+#if MASTER
+
 /** Dump all the EEPROM memory.
  */
 void dumpMemory()
 {
     dumpMemory(M_SYSTEM, SYSTEM_BASE, SYSTEM_END);
     Serial.println();
+#if OUTPUT_BASE
+    dumpMemory(M_OUTPUT, OUTPUT_BASE, OUTPUT_END);
+    Serial.println();
+#endif
+#if INPUT_BASE
     dumpMemory(M_INPUT,  INPUT_BASE,  INPUT_END);
     Serial.println();
+#endif
+#if TYPES_BASE
     dumpMemory(M_TYPES,  TYPES_BASE,  TYPES_END);
     Serial.println();
+#endif
 }
+
+#endif

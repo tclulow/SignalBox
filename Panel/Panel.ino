@@ -11,7 +11,6 @@
 #include "Messages.h"
 #include "Debug.h"
 #include "System.h"
-#include "Common.h"
 #include "Memory.h"
 #include "Comms.h"
 #include "EzyBus.h"
@@ -174,18 +173,6 @@ void firstRun()
 {
     // Initialise SystemData.
     systemData.magic   = MAGIC_NUMBER;
-    systemData.version = VERSION;
-
-    systemData.i2cControllerID = I2C_DEFAULT_CONTROLLER_ID;
-    systemData.i2cInputBaseID  = I2C_DEFAULT_INPUT_BASE_ID;
-    systemData.i2cOutputBaseID = I2C_DEFAULT_OUTPUT_BASE_ID;
-    systemData.reportLevel     = DEFAULT_REPORT;
-    systemData.debugLevel      = DEFAULT_DEBUG;
-
-    for (int rfu = 0; rfu < SYSTEM_RFU; rfu++)
-    {
-        systemData.rfu[rfu] = 0;
-    }
 
     //Calibrate the LCD buttons.
     calibrateButtons();

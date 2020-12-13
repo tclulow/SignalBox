@@ -12,8 +12,6 @@
 #include "Messages.h"
 #include "Debug.h"
 #include "System.h"
-#include "Common.h"
-#include "Memory.h"
 #include "Comms.h"
 #include "Output.h"
 
@@ -69,7 +67,7 @@ void setup()
     }
 
     // Load SystemData from EEPROM and check it's valid.
-    if (loadSystemData())
+    if (!loadSystemData())
     {
         firstRun();
     }
@@ -94,16 +92,8 @@ void setup()
  */
 void firstRun()
 {
-    Serial.println("FirstRun");
-    
     // Initialise SystemData.
     systemData.magic   = MAGIC_NUMBER;
-    systemData.version = VERSION;
-
-    systemData.i2cControllerID = I2C_DEFAULT_CONTROLLER_ID;
-    systemData.i2cInputBaseID  = I2C_DEFAULT_INPUT_BASE_ID;
-    systemData.i2cOutputBaseID = I2C_DEFAULT_OUTPUT_BASE_ID;
-    systemData.i2cModuleID     = I2C_MODULE_ID_JUMPERS;
 
     // Initialise EEPROM with suitable data.
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
