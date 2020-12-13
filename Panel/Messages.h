@@ -16,6 +16,12 @@ const char M_STARTUP[]         PROGMEM = "Startup";
 const char M_UPDATE[]          PROGMEM = "Update ";
 
 
+// General messages (shared)
+const char M_SYSTEM[]          PROGMEM = "System";
+const char M_OUTPUT[]          PROGMEM = "Output";
+const char M_INPUT[]           PROGMEM = "Input";
+const char M_TYPES[]           PROGMEM = "Types";
+
 // Configuration - Output.
 const char M_NEW_NODE_NO[]     PROGMEM = "New node#";
 const char M_NONE[]            PROGMEM = "None";
@@ -71,15 +77,11 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
     
     // Configuration - general.
     const char M_CONFIG[]          PROGMEM = "Configure";
-    const char M_SYSTEM[]          PROGMEM = "System";
     const char M_DETAIL[]          PROGMEM = "Detail";
     const char M_PARAMS[]          PROGMEM = "Params";
-    const char M_OUTPUT[]          PROGMEM = "Output";
-    const char M_INPUT[]           PROGMEM = "Input";
     const char M_EXPORT[]          PROGMEM = "Export";
     const char M_IMPORT[]          PROGMEM = "Import";
     const char M_ALL[]             PROGMEM = "All";
-    const char M_TYPES[]           PROGMEM = "Types";
     
     // Configuration - System.
     const char M_REPORT[]          PROGMEM = "Report";

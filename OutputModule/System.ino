@@ -222,8 +222,6 @@ void dumpMemory(PGM_P aMessage, int aStart, int aEnd)
 }
 
 
-#if MASTER
-
 /** Dump all the EEPROM memory.
  */
 void dumpMemory()
@@ -243,5 +241,3 @@ void dumpMemory()
     Serial.println();
 #endif
 }
-
-#endif

@@ -80,6 +80,11 @@ void setup()
         }
     }
 
+    if (isDebug(DEBUG_FULL))
+    {
+        dumpMemory();
+    }
+
     // Start i2c communications.
     Wire.begin(getModuleId(true));
     Wire.onReceive(processReceipt);

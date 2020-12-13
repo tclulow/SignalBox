@@ -201,8 +201,6 @@ void printHex(int aValue, int aDigits)
 }
 
 
-#if MASTER
-
 /** Dump a range of the EEPROM memory.
  */
 void dumpMemory(PGM_P aMessage, int aStart, int aEnd);
@@ -212,6 +210,5 @@ void dumpMemory(PGM_P aMessage, int aStart, int aEnd);
  */
 void dumpMemory();
 
-#endif
 
 #endif
