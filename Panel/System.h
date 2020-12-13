@@ -121,7 +121,7 @@ struct SystemData
     
     int     buttons[6];                                     // Configuration of analog buttons.
     
-    char    rfu[12];                                        // RFU. 32 bytes in all.
+    char    rfu[6];                                         // RFU. 32 bytes in all.
 };
 
 
