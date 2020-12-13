@@ -49,6 +49,11 @@ void saveSystemData()
         Serial.print(CHAR_SPACE);
         Serial.print(systemData.reportLevel,     HEX);
         Serial.println();
+
+        if (isDebug(DEBUG_FULL))
+        {
+            dumpMemory(M_SYSTEM, SYSTEM_BASE, SYSTEM_END);
+        }
     }
 }
 
