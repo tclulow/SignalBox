@@ -28,6 +28,10 @@ class Configure
     uint8_t topMenu = 0;    // Top menu being shown
     uint8_t sysMenu = 0;    // System menu being shown.
     uint8_t expMenu = 0;    // Export menu being shown.
+    uint8_t outNode = 0;    // The output node we last configured.
+    uint8_t outPin  = 0;    // The output pin we last configured.
+    uint8_t inpNode = 0;    // The input node we last configured.
+    uint8_t inpPin  = 0;    // The input pin we last configured.
     uint8_t node    = 0;    // The node we're configuring.
     uint8_t pin     = 0;    // The pin we're configuring.
     
@@ -41,20 +45,12 @@ class Configure
         {
             case TOP_SYSTEM: displaySystem();
                              break;
-            case TOP_INPUT:  pin  &= INPUT_PIN_MASK;
-                             node &= INPUT_NODE_MASK;
-                             if (!isInputNode(node))
-                             {
-                                 node = nextNode(node, 1, true, true);
-                             }
+            case TOP_INPUT:  node = inpNode;
+                             pin  = inpPin;
                              displayNode();
                              break;
-            case TOP_OUTPUT: pin  &= OUTPUT_PIN_MASK;
-                             node &= OUTPUT_NODE_MASK;
-                             if (!isOutputNode(node))
-                             {
-                                 node = nextNode(node, 1, false, true);
-                             }
+            case TOP_OUTPUT: node = outNode;
+                             pin  = outPin;
                              displayNode();
                              break;
             case TOP_EXPORT: 
@@ -329,8 +325,16 @@ class Configure
         boolean finished = false;
 
         // Initialise state.
-        loadInput(node, pin);
-        readOutput(node, pin);
+        if (!isInputNode(inpNode))
+        {
+            inpNode = nextNode(inpNode, 1, true, true);
+        }
+        if (!isOutputNode(outNode))
+        {
+            outNode = nextNode(outNode, 1, false, true);
+        }
+        loadInput(inpNode, inpPin);
+        readOutput(outNode, outPin);
         
         lcd.clear();
         displayAll();
@@ -357,8 +361,12 @@ class Configure
                                         case TOP_SYSTEM: menuSystem();
                                                          break;
                                         case TOP_INPUT:  menuNode(true);
+                                                         inpNode = node;
+                                                         inpPin = pin;
                                                          break;
                                         case TOP_OUTPUT: menuNode(false);
+                                                         outNode = node;
+                                                         outPin = pin;
                                                          break;
                                         case TOP_EXPORT: menuExport();
                                                          break;
