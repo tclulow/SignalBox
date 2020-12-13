@@ -80,6 +80,7 @@ void setup()
         }
     }
 
+    // Dump memory in raw format if debug-full.
     if (isDebug(DEBUG_FULL))
     {
         dumpMemory();

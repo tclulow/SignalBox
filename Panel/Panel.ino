@@ -600,6 +600,12 @@ void setup()
         saveSystemData();
     }
 
+    // Dump memory in raw format if debug-full.
+    if (isDebug(DEBUG_FULL))
+    {
+        dumpMemory();
+    }
+
     // Check if version update required.
     if (systemData.version != VERSION)
     {
