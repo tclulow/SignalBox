@@ -25,7 +25,7 @@
 #define MILLIS_PER_MINUTE   (MILLIS_PER_SECOND * 60L)   // Millisecs in a minute.
 #define MILLIS_PER_HOUR     (MILLIS_PER_MINUTE * 60L)   // Millisecs per hour.
 
-#define SERIAL_SPEED  115200    // Speed of the serial port.
+#define SERIAL_SPEED   19200    // Speed of the serial port.
 #define DELAY_START     2000    // Pause during start-up to avoid swamping Serial IO.
 #define DELAY_BLINK      250    // Blink interval when showing version number.
 
