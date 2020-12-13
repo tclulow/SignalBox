@@ -300,6 +300,18 @@ void sendDebugLevel()
             Wire.beginTransmission(systemData.i2cOutputBaseID + node);
             Wire.write(COMMS_CMD_DEBUG | (getDebug() & COMMS_OPTION_MASK));
             Wire.endTransmission();
+
+            if (isDebug(DEBUG_BRIEF))
+            {
+                Serial.print(millis());
+                Serial.print(CHAR_TAB);
+                Serial.print(PGMT(M_DEBUG_DEBUG));
+                Serial.print(PGMT(M_DEBUG_NODE));
+                Serial.print(node);
+                Serial.print(CHAR_SPACE);
+                Serial.print(PGMT(M_DEBUG_PROMPTS[getDebug()]));
+                Serial.println();
+            }
         }
     }
 }
