@@ -371,7 +371,6 @@ void processReceipt(int aLen)
             case COMMS_CMD_SYSTEM: processSystem(option);
                                    break;
             case COMMS_CMD_DEBUG:  setDebug(option);            // Option is used for the debug level.
-                                   saveSystemData();
                                    break;
             case COMMS_CMD_SET_LO:  
             case COMMS_CMD_SET_HI: if (Wire.available())
