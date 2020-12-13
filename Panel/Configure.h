@@ -435,6 +435,7 @@ class Configure
                                         }
                                         else
                                         {
+                                            saveSystemData();
                                             displayDetailSystem();
                                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                                         }

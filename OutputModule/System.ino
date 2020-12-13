@@ -29,6 +29,7 @@ void saveSystemData()
         Serial.print(millis());
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_SYSTEM));
+        Serial.print(CHAR_SPACE);
         Serial.print(PGMT(M_DEBUG_I2C));
         Serial.print(CHAR_SPACE);
         Serial.print(systemData.i2cControllerID, HEX);
@@ -73,7 +74,6 @@ uint8_t getDebug()
 void setDebug(uint8_t aLevel)
 {
     systemData.debugLevel = aLevel;
-    saveSystemData();
 }
 
 
