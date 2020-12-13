@@ -23,6 +23,32 @@ boolean loadSystemData()
 void saveSystemData()
 {
     EEPROM.put(SYSTEM_BASE, systemData);
+
+    if (isDebug(DEBUG_BRIEF))
+    {
+        Serial.print(millis());
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_DEBUG_SYSTEM));
+        Serial.print(PGMT(M_DEBUG_I2C));
+        Serial.print(CHAR_SPACE);
+        Serial.print(systemData.i2cControllerID, HEX);
+        Serial.print(CHAR_SPACE);
+        Serial.print(systemData.i2cInputBaseID,  HEX);
+        Serial.print(CHAR_SPACE);
+        Serial.print(systemData.i2cOutputBaseID, HEX);
+        Serial.print(CHAR_SPACE);
+        Serial.print(systemData.i2cModuleID,     HEX);
+
+        Serial.print(CHAR_SPACE);
+        Serial.print(PGMT(M_DEBUG_DEBUG));
+        Serial.print(CHAR_SPACE);
+        Serial.print(systemData.debugLevel,      HEX);
+        Serial.print(CHAR_SPACE);
+        Serial.print(PGMT(M_DEBUG_REPORT));
+        Serial.print(CHAR_SPACE);
+        Serial.print(systemData.reportLevel,     HEX);
+        Serial.println();
+    }
 }
 
 

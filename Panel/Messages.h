@@ -52,7 +52,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
     const char M_SAVED[]           PROGMEM = "Change saved    ";
     const char M_CANCELLED[]       PROGMEM = "Change cancelled";
     const char M_FAILURE[]         PROGMEM = "System error";
-    // const char M_TODO[]            PROGMEM = "TODO";
+    // const char M_TODO[]         PROGMEM = "TODO";
     
     // Calibrate LCD buttons.
     const char M_CALIBRATE[]       PROGMEM = "Calibrate button";
@@ -92,23 +92,20 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
     const char M_SYS_I2C[]         PROGMEM = "i2cID";
     const char M_DEBUG[]           PROGMEM = "Debug";
     
-    // const char M_NONE[]            PROGMEM = "None";
+    // const char M_NONE[]         PROGMEM = "None";
     const char M_SHORT[]           PROGMEM = "Short";
     const char M_LONG[]            PROGMEM = "Long";
     const char M_PAUSE[]           PROGMEM = "Pause";
     
-    //const char M_NONE[]            PROGMEM = "None";
+    //const char M_NONE[]          PROGMEM = "None";
     const char M_ERRORS[]          PROGMEM = "Errors";
     const char M_BRIEF[]           PROGMEM = "Brief";
-    //const char M_DETAIL[]          PROGMEM = "Detail";
+    //const char M_DETAIL[]        PROGMEM = "Detail";
     const char M_FULL[]            PROGMEM = "Full";
     
     const char M_ID_CONTROLLER[]   PROGMEM = "Con";
     const char M_ID_INPUT[]        PROGMEM = "Inp";
     const char M_ID_OUTPUT[]       PROGMEM = "Out";
-    
-    // const char M_MOD[]             PROGMEM = "Mod";
-    // const char M_PIN[]             PROGMEM = "Pin";
     
     // Configuration - Input.
     const char M_TOGGLE[]          PROGMEM = "Toggle";
@@ -118,8 +115,8 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
     const char M_DISABLED[]        PROGMEM = "..";
     
     // MCP interface.
-    const char M_I2C_ERROR[]       PROGMEM = "i2c error";
-    const char M_I2C_COMMS[]       PROGMEM = "i2c comms len"; 
+    const char M_I2C_ERROR[]       PROGMEM = "I2C error";
+    const char M_I2C_COMMS[]       PROGMEM = "I2C comms len"; 
     
     
     // Headers for the exports
@@ -145,8 +142,10 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
 // Common debug messages.
 
 const char M_DEBUG_DEBUG[]      PROGMEM = "Debug";
+const char M_DEBUG_I2C[]        PROGMEM = "I2C";
 const char M_DEBUG_LOAD[]       PROGMEM = "Load";
 const char M_DEBUG_READ[]       PROGMEM = "Read";
+const char M_DEBUG_REPORT[]     PROGMEM = "Report";
 const char M_DEBUG_RESET[]      PROGMEM = "Reset";
 const char M_DEBUG_SAVE[]       PROGMEM = "Save";
 const char M_DEBUG_SEND[]       PROGMEM = "Send";
