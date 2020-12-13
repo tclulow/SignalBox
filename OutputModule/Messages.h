@@ -9,7 +9,11 @@
 
 
 // Software versioning.
-const char M_SOFTWARE[]        PROGMEM = "Panel";
+#if MASTER
+    const char M_SOFTWARE[]    PROGMEM = "Panel";
+#else
+    const char M_SOFTWARE[]    PROGMEM = "Output module";
+#endif
 const char M_VERSION[]         PROGMEM = "v2.3";        // See also system.VERSION.
 const char M_VERSION_DATE[]    PROGMEM = "Dec 2020";
 const char M_STARTUP[]         PROGMEM = "Startup";
