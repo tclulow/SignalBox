@@ -156,9 +156,9 @@ class OutputDef
         Serial.print(PGMT(aHeader));
         Serial.print(aPin);
         Serial.print(PGMT(M_DEBUG_TYPE));
-        Serial.print(getType(),  HEX);
+        Serial.print(PGMT(M_OUTPUT_TYPES[getType() & OUTPUT_TYPE_MASK]));
         Serial.print(PGMT(M_DEBUG_STATE));
-        Serial.print(getState(), HEX);
+        Serial.print(PGMT(getState() ? M_HI : M_LO));
         Serial.print(PGMT(M_DEBUG_LO));
         Serial.print(getLo(),    HEX);
         Serial.print(PGMT(M_DEBUG_HI));

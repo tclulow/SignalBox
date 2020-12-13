@@ -10,7 +10,6 @@
 
 #include "Config.h"
 #include "Messages.h"
-#include "Debug.h"
 #include "System.h"
 #include "Comms.h"
 #include "Output.h"
@@ -120,9 +119,9 @@ void reportOutput(PGM_P aHeader, uint8_t aPin)
     Serial.print(PGMT(aHeader));
     Serial.print(aPin, HEX);
     Serial.print(PGMT(M_DEBUG_TYPE));
-    Serial.print(outputDefs[aPin].getType(), HEX);
+    Serial.print(PGMT(M_OUTPUT_TYPES[outputDefs[aPin].getType() & OUTPUT_TYPE_MASK]));
     Serial.print(PGMT(M_DEBUG_STATE));
-    Serial.print(outputDefs[aPin].getState(), HEX);
+    Serial.print(PGMT(outputDefs[aPin].getState() ? M_HI : M_LO));
     Serial.print(PGMT(M_DEBUG_TARGET));
     Serial.print(outputDefs[aPin].getTarget(), HEX);
     Serial.print(PGMT(M_DEBUG_START));
@@ -221,7 +220,7 @@ void unrecognisedCommand(PGM_P aMessage, uint8_t aCommand, uint8_t aOption)
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(aMessage));
         Serial.print(PGMT(M_DEBUG_COMMAND));
-        Serial.println(aCommand);
+        Serial.print(aCommand, HEX);
         Serial.print(PGMT(M_DEBUG_OPTION));
         Serial.print(aOption);
         Serial.println();
@@ -241,7 +240,7 @@ void processRequest()
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_REQUEST));
         Serial.print(PGMT(M_DEBUG_COMMAND));
-        Serial.print(requestCommand, HEX);
+        Serial.print(PGMT(M_DEBUG_COMMANDS[requestCommand >> COMMS_COMMAND_SHIFT]));
         Serial.print(PGMT(M_DEBUG_OPTION));
         Serial.print(requestOption, HEX);
         Serial.println();
@@ -353,7 +352,7 @@ void processReceipt(int aLen)
             Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_RECEIPT));
             Serial.print(PGMT(M_DEBUG_COMMAND));
-            Serial.print(command, HEX);
+            Serial.print(PGMT(M_DEBUG_COMMANDS[command >> COMMS_COMMAND_SHIFT]));
             Serial.print(PGMT(M_DEBUG_OPTION));
             Serial.print(option, HEX);
             Serial.print(PGMT(M_DEBUG_LEN));
@@ -475,7 +474,7 @@ void processRenumber()
             Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_RECEIPT));
             Serial.print(PGMT(M_DEBUG_COMMAND));
-            Serial.print(requestCommand);
+            Serial.print(PGMT(M_DEBUG_COMMANDS[requestCommand >> COMMS_COMMAND_SHIFT]));
             Serial.print(PGMT(M_DEBUG_OPTION));
             Serial.print(requestOption);
             Serial.print(PGMT(M_DEBUG_LEN));
@@ -553,7 +552,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         Serial.print(PGMT(M_DEBUG_ACTION));
         Serial.print(aPin, HEX);    
         Serial.print(PGMT(M_DEBUG_STATE));
-        Serial.print(aState, HEX);    
+        Serial.print(PGMT(aState ? M_HI : M_LO));    
         Serial.print(PGMT(M_DEBUG_DELAY));
         Serial.print(aDelay, HEX);    
         Serial.println();
@@ -627,7 +626,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             Serial.print(PGMT(M_DEBUG_UNKNOWN));
             Serial.print(aPin);
             Serial.print(PGMT(M_DEBUG_TYPE));
-            Serial.print(outputDefs[aPin].getType());
+            Serial.print(PGMT(M_OUTPUT_TYPES[outputDefs[aPin].getType() & OUTPUT_TYPE_MASK]));
             Serial.println();
         }
     }

@@ -98,7 +98,7 @@ void writeOutputState(boolean aState, uint8_t aDelay)
         Serial.print(outputNode, HEX);
         Serial.print(outputPin, HEX);
         Serial.print(PGMT(M_DEBUG_STATE));
-        Serial.print(aState, HEX);
+        Serial.print(PGMT(aState ? M_HI : M_LO));
         Serial.print(PGMT(M_DEBUG_DELAY));
         Serial.print(aDelay, HEX);
         Serial.println();
