@@ -119,7 +119,7 @@ class ImportExport
     void importOutput()
     {
         uint8_t type = 0;
-        uint8_t pace = 0;
+        int     pace = 0;
         
         outputNode = readData();
         outputPin  = outputNode & OUTPUT_PIN_MASK;
@@ -144,8 +144,16 @@ class ImportExport
             outputDef.setLo(readData());
             outputDef.setHi(readData());
             pace = readData();
-            outputDef.setPace(pace >> OUTPUT_PACE_SHIFT);
-            outputDef.setDelay(pace & OUTPUT_DELAY_MASK);
+            if (pace >= 0)
+            {
+                outputDef.setPace(pace >> OUTPUT_PACE_SHIFT);
+                outputDef.setDelay(pace & OUTPUT_DELAY_MASK);
+            }
+            else
+            {
+                outputDef.setPace(OUTPUT_DEFAULT_PACE);
+                outputDef.setDelay(OUTPUT_DEFAULT_DELAY);
+            }
 
             lcd.printAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_OUTPUT, LCD_LEN_OPTION);
             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[type], LCD_LEN_OPTION);
