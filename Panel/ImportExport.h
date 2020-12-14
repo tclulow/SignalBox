@@ -88,13 +88,21 @@ class ImportExport
             importError();
         }
         else
-        {  
+        {
+            // Read all the Input's Outputs.
             for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
             {
-                uint8_t value = readData();
-                inputDef.setOutputNode(index, (value >> 4) & OUTPUT_NODE_MASK);
-                inputDef.setOutputPin(index,  (value     ) & OUTPUT_PIN_MASK);
-                inputDef.setDisabled(index, wordBuffer[strlen(wordBuffer) - 1] == CHAR_STAR);
+                int value = readData();
+                if (value >= 0)
+                {
+                    inputDef.setOutputNode(index, (value >> 4) & OUTPUT_NODE_MASK);
+                    inputDef.setOutputPin(index,  (value     ) & OUTPUT_PIN_MASK);
+                    inputDef.setDisabled(index, wordBuffer[strlen(wordBuffer) - 1] == CHAR_STAR);
+                }
+                else
+                {
+                    inputDef.setDisabled(index, true);
+                }
             }
 
             lcd.printAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_INPUT, LCD_LEN_OPTION);
@@ -154,7 +162,11 @@ class ImportExport
     {
         int value = 0;
         int len = readWord();
-        if (len > 0)
+        if (len <= 0)
+        {
+            value = -1;
+        }
+        else
         {
             value = hexValue(wordBuffer[0]) << 4;
             if (len == 1)
@@ -212,17 +224,20 @@ class ImportExport
                 return;
             }
         }
+
+        lastChar = CHAR_SPACE;
     }
     
     
     /** Read a word from the Serial.
+     *  Don't read beyond end-of-line
      */
     int readWord()
     {
         int index = 0;
-    
+
         // Read upto WORD_BUFFER_LENGTH characters.
-        for (index = 0; index < WORD_BUFFER_LENGTH; )
+        for (index = 0; !endOfLine() && index < WORD_BUFFER_LENGTH; )
         {
             while ((lastChar = Serial.read()) < 0)
             {
