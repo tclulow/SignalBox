@@ -12,7 +12,7 @@
 #define INPUT_PIN_MASK         0x0f     // Mask to get input pin within a node.
 
 // Mask for Input options
-#define INPUT_OUTPUT_MAX          3     // Number of outputs each input can control.
+#define INPUT_OUTPUT_MAX          6     // Number of outputs each input can control.
 #define INPUT_DISABLED_MASK    0x80     // The Input's output is disabled.
 #define INPUT_OUTPUT_MASK      0x7f     // Mask to get the Input's output without the flag above.
 
@@ -26,6 +26,9 @@
 #define INPUT_TYPE_ON             2     // An on Input.
 #define INPUT_TYPE_OFF            3     // An off Input.
 #define INPUT_TYPE_MAX            4     // Limit of Input types.
+
+// The name of an Input's Output at the given index
+#define INPUT_OUTPUT_ID(index)  ((char)(CHAR_UPPER_A + index))
 
 
 // Mask for MCP device none or all bits.

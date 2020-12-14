@@ -1045,7 +1045,7 @@ class Configure
         uint8_t index    = 0;
 
         lcd.clearRow(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, (CHAR_UPPER_A + index));
+        lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, (INPUT_OUTPUT_ID(index)));
         displayInputEdit(index);
         markField(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, 1, true);
 
@@ -1058,7 +1058,7 @@ class Configure
                 case BUTTON_DOWN:   index -= 1;
                                     index += INPUT_OUTPUT_MAX;      // Ensure in-range.
                                     index %= INPUT_OUTPUT_MAX;
-                                    lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, (CHAR_UPPER_A + index));
+                                    lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, (INPUT_OUTPUT_ID(index)));
                                     displayInputEdit(index);
                                     break;
                 case BUTTON_SELECT: if (index == 0)

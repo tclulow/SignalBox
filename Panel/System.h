@@ -56,7 +56,7 @@
 
     // InputDef saved in EEPROM
     #define INPUT_BASE   SYSTEM_END                                     // EEPROM base of Input data.
-    #define INPUT_SIZE   3 // sizeof(InputDef)                          // TODO - re-instate this  Size of InputData entry.
+    #define INPUT_SIZE   6 // sizeof(InputDef)                          // TODO - re-instate this  Size of InputData entry.
     #define INPUT_MAX    (INPUT_NODE_MAX * INPUT_PIN_MAX)               // Maximum inputs (16 nodes with 8 pins each).
     #define INPUT_END    (INPUT_BASE + INPUT_SIZE * INPUT_MAX)          // End of Input EEPROM.
 

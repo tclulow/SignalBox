@@ -47,82 +47,83 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
 #if MASTER
 
     // General messages.
-    const char M_CONFIRM[]         PROGMEM = "Confirm? Sel=Yes";
-    const char M_CANCEL[]          PROGMEM = "Cancel?  Sel=Yes";
-    const char M_SAVED[]           PROGMEM = "Change saved    ";
-    const char M_CANCELLED[]       PROGMEM = "Change cancelled";
-    const char M_FAILURE[]         PROGMEM = "System error";
-    // const char M_TODO[]         PROGMEM = "TODO";
+    const char M_CONFIRM[]          PROGMEM = "Confirm? Sel=Yes";
+    const char M_CANCEL[]           PROGMEM = "Cancel?  Sel=Yes";
+    const char M_SAVED[]            PROGMEM = "Change saved    ";
+    const char M_CANCELLED[]        PROGMEM = "Change cancelled";
+    const char M_FAILURE[]          PROGMEM = "System error";
+    // const char M_TODO[]          PROGMEM = "TODO";
     
     // Calibrate LCD buttons.
-    const char M_CALIBRATE[]       PROGMEM = "Calibrate button";
-    const char M_PRESS[]           PROGMEM = "Press";
-    const char M_SELECT[]          PROGMEM = "Select";
-    const char M_LEFT[]            PROGMEM = "Left";
-    const char M_DOWN[]            PROGMEM = "Down";
-    const char M_UP[]              PROGMEM = "Up";
-    const char M_RIGHT[]           PROGMEM = "Right";
+    const char M_CALIBRATE[]        PROGMEM = "Calibrate button";
+    const char M_PRESS[]            PROGMEM = "Press";
+    const char M_SELECT[]           PROGMEM = "Select";
+    const char M_LEFT[]             PROGMEM = "Left";
+    const char M_DOWN[]             PROGMEM = "Down";
+    const char M_UP[]               PROGMEM = "Up";
+    const char M_RIGHT[]            PROGMEM = "Right";
     
     // Start-up and first-run messages.
-    const char M_SETUP[]           PROGMEM = "Setup";
-    const char M_INITIALISING[]    PROGMEM = "Initialising";
-    const char M_EZY_FOUND[]       PROGMEM = "EzyBus  detected";
-    const char M_EZY_UPDATE[]      PROGMEM = "Update?  Sel=Yes";
-    const char M_EZY_UPDATING[]    PROGMEM = "EzyBus  updating";
+    const char M_SETUP[]            PROGMEM = "Setup";
+    const char M_INITIALISING[]     PROGMEM = "Initialising";
+    const char M_EZY_FOUND[]        PROGMEM = "EzyBus  detected";
+    const char M_EZY_UPDATE[]       PROGMEM = "Update?  Sel=Yes";
+    const char M_EZY_UPDATING[]     PROGMEM = "EzyBus  updating";
     
-    const char M_NODES[]           PROGMEM = "Nodes";
-    const char M_NO_INPUTS[]       PROGMEM = "No input nodes";
-    const char M_NO_OUTPUTS[]      PROGMEM = "No output nodes";
-    const char M_INIT_INPUTS[]     PROGMEM = "Init inputs";
+    const char M_NODES[]            PROGMEM = "Nodes";
+    const char M_NO_INPUTS[]        PROGMEM = "No input nodes";
+    const char M_NO_OUTPUTS[]       PROGMEM = "No output nodes";
+    const char M_INIT_INPUTS[]      PROGMEM = "Init inputs";
     
     // Import/export actions.
-    const char M_EXPORTING[]       PROGMEM = "Exporting";
-    const char M_WAITING[]         PROGMEM = "Waiting";
+    const char M_EXPORTING[]        PROGMEM = "Exporting";
+    const char M_WAITING[]          PROGMEM = "Waiting";
     
     // Configuration - general.
-    const char M_CONFIG[]          PROGMEM = "Configure";
-    const char M_DETAIL[]          PROGMEM = "Detail";
-    const char M_PARAMS[]          PROGMEM = "Params";
-    const char M_EXPORT[]          PROGMEM = "Export";
-    const char M_IMPORT[]          PROGMEM = "Import";
-    const char M_ALL[]             PROGMEM = "All";
+    const char M_CONFIG[]           PROGMEM = "Configure";
+    const char M_DETAIL[]           PROGMEM = "Detail";
+    const char M_PARAMS[]           PROGMEM = "Params";
+    const char M_EXPORT[]           PROGMEM = "Export";
+    const char M_IMPORT[]           PROGMEM = "Import";
+    const char M_ALL[]              PROGMEM = "All";
     
     // Configuration - System.
-    const char M_REPORT[]          PROGMEM = "Report";
-    const char M_SYS_I2C[]         PROGMEM = "i2cID";
-    const char M_DEBUG[]           PROGMEM = "Debug";
+    const char M_REPORT[]           PROGMEM = "Report";
+    const char M_SYS_I2C[]          PROGMEM = "i2cID";
+    const char M_DEBUG[]            PROGMEM = "Debug";
     
-    // const char M_NONE[]         PROGMEM = "None";
-    const char M_SHORT[]           PROGMEM = "Short";
-    const char M_LONG[]            PROGMEM = "Long";
-    const char M_PAUSE[]           PROGMEM = "Pause";
+    // const char M_NONE[]          PROGMEM = "None";
+    const char M_SHORT[]            PROGMEM = "Short";
+    const char M_LONG[]             PROGMEM = "Long";
+    const char M_PAUSE[]            PROGMEM = "Pause";
     
-    //const char M_NONE[]          PROGMEM = "None";
-    const char M_ERRORS[]          PROGMEM = "Errors";
-    const char M_BRIEF[]           PROGMEM = "Brief";
-    //const char M_DETAIL[]        PROGMEM = "Detail";
-    const char M_FULL[]            PROGMEM = "Full";
+    //const char M_NONE[]           PROGMEM = "None";
+    const char M_ERRORS[]           PROGMEM = "Errors";
+    const char M_BRIEF[]            PROGMEM = "Brief";
+    //const char M_DETAIL[]         PROGMEM = "Detail";
+    const char M_FULL[]             PROGMEM = "Full";
     
-    const char M_ID_CONTROLLER[]   PROGMEM = "Con";
-    const char M_ID_INPUT[]        PROGMEM = "Inp";
-    const char M_ID_OUTPUT[]       PROGMEM = "Out";
+    const char M_ID_CONTROLLER[]    PROGMEM = "Con";
+    const char M_ID_INPUT[]         PROGMEM = "Inp";
+    const char M_ID_OUTPUT[]        PROGMEM = "Out";
     
     // Configuration - Input.
-    const char M_TOGGLE[]          PROGMEM = "Toggle";
-    const char M_ON_OFF[]          PROGMEM = "On/Off";
-    const char M_ON[]              PROGMEM = "On";
-    const char M_OFF[]             PROGMEM = "Off";
-    const char M_DISABLED[]        PROGMEM = "..";
+    const char M_TOGGLE[]           PROGMEM = "Toggle";
+    const char M_ON_OFF[]           PROGMEM = "On/Off";
+    const char M_ON[]               PROGMEM = "On";
+    const char M_OFF[]              PROGMEM = "Off";
+    const char M_DISABLED[]         PROGMEM = "..";
     
     // MCP interface.
-    const char M_I2C_ERROR[]       PROGMEM = "I2C error";
-    const char M_I2C_COMMS[]       PROGMEM = "I2C comms len"; 
+    const char M_I2C_ERROR[]        PROGMEM = "I2C error";
+    const char M_I2C_COMMS[]        PROGMEM = "I2C comms len"; 
     
     
     // Headers for the exports
-    const char M_EXPORT_SYSTEM[]   PROGMEM = "#System\tVersion\tDetail\tControl\tInput\tOutput\tReport";
-    const char M_EXPORT_INPUT[]    PROGMEM = "#Input\tNode\tPin\tType\tOutputA\tOutputB\tOutputC";
-    const char M_EXPORT_OUTPUT[]   PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd\tDelay";
+    const char M_EXPORT_SYSTEM[]    PROGMEM = "#System\tVersion\tDetail\tControl\tInput\tOutput\tReport";
+    const char M_EXPORT_INPUT[]     PROGMEM = "#Input\tNode\tPin\tType";
+    const char M_EXPORT_INPUT_OUT[] PROGMEM = "\tOutput";
+    const char M_EXPORT_OUTPUT[]    PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd\tDelay";
     
     
     // Array of (pointers to) certain messages.

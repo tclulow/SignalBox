@@ -322,7 +322,13 @@ class ImportExport
     
     void exportInputs()
     {
-        Serial.println(PGMT(M_EXPORT_INPUT));
+        Serial.print(PGMT(M_EXPORT_INPUT));
+        for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
+        {
+            Serial.print(PGMT(M_EXPORT_INPUT_OUT));
+            Serial.print(INPUT_OUTPUT_ID(index));
+        }
+        Serial.println();
     
         for (int node = 0; node < INPUT_NODE_MAX; node++)
         {

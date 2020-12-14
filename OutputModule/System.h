@@ -56,7 +56,7 @@
 
     // InputDef saved in EEPROM
     #define INPUT_BASE   SYSTEM_END                                     // EEPROM base of Input data.
-    #define INPUT_SIZE   3 // sizeof(InputDef)                          // TODO - re-instate this  Size of InputData entry.
+    #define INPUT_SIZE   6 // sizeof(InputDef)                          // TODO - re-instate this  Size of InputData entry.
     #define INPUT_MAX    (INPUT_NODE_MAX * INPUT_PIN_MAX)               // Maximum inputs (16 nodes with 8 pins each).
     #define INPUT_END    (INPUT_BASE + INPUT_SIZE * INPUT_MAX)          // End of Input EEPROM.
 
@@ -81,7 +81,6 @@
 
 // Useful characters
 const char HEX_CHARS[]  = "0123456789abcdef";
-const char EDIT_CHARS[] = "ABC";
 
 const char CHAR_SPACE   = ' ';
 const char CHAR_TAB     = '\t';
@@ -100,6 +99,7 @@ const char CHAR_STAR    = '*';
 const char CHAR_ZERO    = '0';
 const char CHAR_NINE    = '9';
 const char CHAR_LOWER_A = 'a';
+const char CHAR_UPPER_A = 'A';
 
 
 /** Data describing an Output's operation.
