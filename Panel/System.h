@@ -81,7 +81,6 @@
 
 // Useful characters
 const char HEX_CHARS[]  = "0123456789abcdef";
-const char EDIT_CHARS[] = "ABC";
 
 const char CHAR_SPACE   = ' ';
 const char CHAR_TAB     = '\t';
@@ -100,6 +99,7 @@ const char CHAR_STAR    = '*';
 const char CHAR_ZERO    = '0';
 const char CHAR_NINE    = '9';
 const char CHAR_LOWER_A = 'a';
+const char CHAR_UPPER_A = 'A';
 
 
 /** Data describing an Output's operation.
