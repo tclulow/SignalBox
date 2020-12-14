@@ -568,12 +568,13 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     
     // Calculate steps and starting step.
     outputs[aPin].step = 0;
-    outputs[aPin].alt  = 0;
 
     if (outputDefs[aPin].isServo())
     {
         outputs[aPin].value = outputs[aPin].servo.read();
         outputs[aPin].start = outputs[aPin].value;
+        outputs[aPin].alt   = 0;
+
         uint32_t steps = abs(outputDefs[aPin].getTarget() - outputs[aPin].start);
         if (steps > OUTPUT_SERVO_MAX)
         {
