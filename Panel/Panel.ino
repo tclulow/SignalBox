@@ -85,7 +85,6 @@ void mapHardware()
         if (state == 0)
         {
             lcd.print(HEX_CHARS[node]);
-            setOutputNodePresent(node);
         }
         else
         {
