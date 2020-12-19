@@ -464,8 +464,7 @@ class Configure
                                                          waitForButtonRelease();
                                                          displayAll();
                                                          break;
-                                        case SYS_DEBUG:  debugLevel = getDebug();
-                                                         changed = menuSystemDebug();
+                                        case SYS_DEBUG:  changed = menuSystemDebug();
                                                          break;
                                         default:         systemFail(M_SYSTEM, sysMenu, 0);
                                     }
