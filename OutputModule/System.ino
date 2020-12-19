@@ -85,7 +85,7 @@ void setDebug(uint8_t aLevel)
 /** Show version number by flashing LED
  *  and reporting it on Serial output.
  */
-void initialise()
+void flashVersion()
 {
     pinMode(LED_BUILTIN, OUTPUT);   // Configure the on-board LED pin for output
     delay(DELAY_START);             // Wait to avoid programmer conflicts.

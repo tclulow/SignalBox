@@ -49,7 +49,6 @@ struct
  */
 void setup()
 {
-    initialise();
     randomSeed(analogRead(0));
 
     // Configure the Jumper pins for input.
@@ -80,16 +79,19 @@ void setup()
         }
     }
 
+    // Start i2c communications.
+    Wire.begin(getModuleId(true));
+    Wire.onReceive(processReceipt);
+    Wire.onRequest(processRequest);
+
+    // Flash out version number on the built-in LED
+    flashVersion();
+
     // Dump memory in raw format if debug-full.
     if (isDebug(DEBUG_FULL))
     {
         dumpMemory();
     }
-
-    // Start i2c communications.
-    Wire.begin(getModuleId(true));
-    Wire.onReceive(processReceipt);
-    Wire.onRequest(processRequest);
 }
 
 
