@@ -816,13 +816,13 @@ void stepLed(int aPin)
             // Intermediate step, move proportionately (step/steps) along the range (start to target).
             if (outputDefs[aPin].getState())
             {
-                outputs[aPin].value  = outputDefs[aPin].getTarget() * outputs[aPin].step / outputs[aPin].steps;
-                outputs[aPin].alt   -= outputs[aPin].alt   / (outputs[aPin].steps + 1 - outputs[aPin].step);
+                outputs[aPin].value += (outputDefs[aPin].getTarget() - outputs[aPin].value) / (outputs[aPin].steps + 1 - outputs[aPin].step);
+                outputs[aPin].alt   -= outputs[aPin].alt                                    / (outputs[aPin].steps + 1 - outputs[aPin].step);
             }
             else
             {
-                outputs[aPin].value -= outputs[aPin].value / (outputs[aPin].steps + 1 - outputs[aPin].step);
-                outputs[aPin].alt    = outputDefs[aPin].getTarget() * outputs[aPin].step / outputs[aPin].steps;
+                outputs[aPin].value -= outputs[aPin].value                                  / (outputs[aPin].steps + 1 - outputs[aPin].step);
+                outputs[aPin].alt   += (outputDefs[aPin].getTarget() - outputs[aPin].alt)   / (outputs[aPin].steps + 1 - outputs[aPin].step);
             }
         }
 
