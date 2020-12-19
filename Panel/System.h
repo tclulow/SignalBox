@@ -159,7 +159,7 @@ void setDebug(uint8_t aLevel);
 /** Show version number by flashing LED
  *  and reporting it on Serial output.
  */
-void initialise();
+void flashVersion();
 
 
 #if MASTER

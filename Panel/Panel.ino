@@ -576,8 +576,6 @@ void setup()
         lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SETUP);
     }
     
-    initialise();
-    
     if (isDebug(DEBUG_FULL))
     {
         Serial.print(millis());
@@ -594,6 +592,9 @@ void setup()
         Serial.println();
     }
 
+    // Flash our version nmber on the built-in LED.
+    flashVersion();
+    
     // Initialise subsystems.
     Wire.begin(systemData.i2cControllerID);   // I2C network
     pinMode(PIN_CALIBRATE, INPUT_PULLUP);     // Calibration input pin (11).
