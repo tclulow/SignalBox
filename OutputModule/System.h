@@ -96,6 +96,7 @@ const char CHAR_HASH    = '#';
 const char CHAR_LEFT    = '<';
 const char CHAR_RIGHT   = '>';
 const char CHAR_STAR    = '*';
+const char CHAR_QUERY   = '?';
 const char CHAR_ZERO    = '0';
 const char CHAR_NINE    = '9';
 const char CHAR_LOWER_A = 'a';
