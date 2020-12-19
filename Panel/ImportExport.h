@@ -18,8 +18,8 @@
  */
 class ImportExport
 {
-    char lastChar;                              // Last character read.
-    char wordBuffer[WORD_BUFFER_LENGTH + 1];    // Buffer to read characters
+    int  lastChar;                              // Last character read.
+    char wordBuffer[WORD_BUFFER_LENGTH + 1];    // Buffer to read characters with null terminator on the end.
     long messageTick = 1L;                      // Time the last message was emitted.
 
 
@@ -34,12 +34,10 @@ class ImportExport
         }
         else if (!strcmp_P(wordBuffer, M_INPUT))
         {
-            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT);
             importInput();
         }
         else if (!strcmp_P(wordBuffer, M_OUTPUT))
         {
-            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT);
             importOutput();
         }
         else
@@ -162,6 +160,32 @@ class ImportExport
             writeOutput(true);
         }
     }
+
+
+    /** Read a character into lastChar when available.
+     *  Abandon reading if a button is pressed.
+     *  Output Waiting message if we wait a long time.
+     */
+    int readChar()
+    {
+        while (   (!readButton())
+               && (!Serial.available()))
+        {
+            delay(DELAY_BUTTON_WAIT);
+
+            // Clear message if there's no activity.
+            if (   (messageTick > 0)
+                && (messageTick < millis()))
+            {
+                messageTick = 0;
+                lcd.clearRow(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP);
+                lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
+            }
+        }
+
+        return Serial.read();
+    }
     
     
     /** Read (hexadecimal) data.
@@ -190,6 +214,7 @@ class ImportExport
                 value |= hexValue(wordBuffer[1]);
             }
         }
+
         return value;
     }
     
@@ -221,19 +246,11 @@ class ImportExport
      */
     void skipLine()
     {
-        while (lastChar != CHAR_NEWLINE)
+        while (   (!readButton())
+               && (lastChar != CHAR_NEWLINE))
         {
-            if (Serial.available())
-            {
-                lastChar = Serial.read();
-            }
-            if (readButton())
-            {
-                return;
-            }
+            lastChar = readChar();
         }
-
-        lastChar = CHAR_SPACE;
     }
     
     
@@ -244,30 +261,16 @@ class ImportExport
     {
         int index = 0;
 
+        lastChar = CHAR_NULL;
+        
         // Read upto WORD_BUFFER_LENGTH characters.
-        for (index = 0; !endOfLine() && index < WORD_BUFFER_LENGTH; )
+        while (   (!readButton())
+               && (!endOfLine())
+               && (index < WORD_BUFFER_LENGTH))
         {
-            while ((lastChar = Serial.read()) < 0)
-            {
-                if (readButton())
-                {
-                    return 0;
-                }
-                delay(DELAY_BUTTON_WAIT);
-    
-                // Clear message if there's no activity.
-                if (   (messageTick > 0)
-                    && (messageTick < millis()))
-                {
-                    messageTick = 0;
-                    lcd.clearRow(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP);
-                    lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-                    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
-                }
-            }
-    
-            if (   (lastChar <  0)
-                || (lastChar == CHAR_SPACE)
+            lastChar = readChar();
+
+            if (   (lastChar == CHAR_SPACE)
                 || (lastChar == CHAR_TAB)
                 || (lastChar == CHAR_NEWLINE)
                 || (lastChar == CHAR_RETURN))
@@ -286,8 +289,8 @@ class ImportExport
         }
     
         // Add terminator to word.
-        wordBuffer[index] = CHAR_NULL; 
-        
+        wordBuffer[index] = CHAR_NULL;
+
         return index; 
     }
 
@@ -296,24 +299,26 @@ class ImportExport
      */
     void importError()
     {
-            // Report unrecognised import line.
+        // Report unrecognised import line.
+        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+        lcd.print(wordBuffer);
+        lcd.print("(");
+        lcd.print(wordBuffer[strlen(wordBuffer) - 1], HEX);
+        lcd.print(")");
+        lcd.print(CHAR_QUERY);
+
+        // Wait for user-input. BUTTON_RIGHT will continue, others will abort import.
+        if (waitForButton() == BUTTON_RIGHT)
+        {
             lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-            lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
-            lcd.print(wordBuffer);
-            lcd.print("?");
-    
-            // Wait for user-input. BUTTON_RIGHT will continue, others will abort import.
-            if (waitForButton() == BUTTON_RIGHT)
-            {
-                lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
-                waitForButtonRelease();
-                skipLine();
-            }
-            else
-            {
-                lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-            }
+            lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_WAITING);
+            waitForButtonRelease();
+        }
+        else
+        {
+            lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        }
     }
 
     /** Export the system parameters.
@@ -438,6 +443,8 @@ class ImportExport
      */
     void doImport()
     {
+        int len = 0;
+        
         messageTick = 1;            // Ensure "waiting" message appears.
         waitForButtonRelease();
     
@@ -448,10 +455,10 @@ class ImportExport
         }
 
         // Keep going until until button pressed.
-        while (!readButton())
+        while (   ((len = readWord()) >= 0)
+               && (!readButton()))
         {
-            int chars = readWord();
-            if (chars > 0)
+            if (len > 0)
             {
                 if (wordBuffer[0] == CHAR_HASH)
                 {

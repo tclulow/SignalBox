@@ -600,7 +600,7 @@ void setup()
     pinMode(PIN_CALIBRATE, INPUT_PULLUP);     // Calibration input pin (11).
 
     // Deal with first run (software has never been run before).
-    if (!loadSystemData())      // || ezyBusDetected())
+    if (!loadSystemData())
     {
         firstRun();
     }
