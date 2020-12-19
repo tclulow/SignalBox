@@ -54,18 +54,18 @@
 
 #if MASTER
 
+    // Input types saved in EEPROM
+    #define TYPES_BASE   SYSTEM_END                                     // EEPROM base of Input type data.
+    #define TYPES_SIZE   4 // sizeof(uint32_t)                          // Size of Input types.
+    #define TYPES_END    (TYPES_BASE + TYPES_SIZE * INPUT_NODE_MAX)     // End of Input Types EEPROM.
+
     // InputDef saved in EEPROM
-    #define INPUT_BASE   SYSTEM_END                                     // EEPROM base of Input data.
+    #define INPUT_BASE   TYPES_END                                      // EEPROM base of Input data.
     #define INPUT_SIZE   6 // sizeof(InputDef)                          // TODO - re-instate this  Size of InputData entry.
     #define INPUT_MAX    (INPUT_NODE_MAX * INPUT_PIN_MAX)               // Maximum inputs (16 nodes with 8 pins each).
     #define INPUT_END    (INPUT_BASE + INPUT_SIZE * INPUT_MAX)          // End of Input EEPROM.
 
-    // Input types saved in EEPROM
-    #define TYPES_BASE   INPUT_END                                      // EEPROM base of Input type data.
-    #define TYPES_SIZE   sizeof(uint32_t)                               // Size of Input types.
-    #define TYPES_END    (TYPES_BASE + TYPES_SIZE * INPUT_NODE_MAX)     // End of Input Types EEPROM.
-
-    #define EEPROM_END   TYPES_END                                      // End of EEPROM memory
+    #define EEPROM_END   INPUT_END                                      // End of EEPROM memory
 
 #else
 

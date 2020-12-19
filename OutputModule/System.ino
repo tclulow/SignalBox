@@ -263,12 +263,12 @@ void dumpMemory()
     dumpMemory(M_OUTPUT, OUTPUT_BASE, OUTPUT_END);
     Serial.println();
 #endif
-#if INPUT_BASE
-    dumpMemory(M_INPUT,  INPUT_BASE,  INPUT_END);
-    Serial.println();
-#endif
 #if TYPES_BASE
     dumpMemory(M_TYPES,  TYPES_BASE,  TYPES_END);
+    Serial.println();
+#endif
+#if INPUT_BASE
+    dumpMemory(M_INPUT,  INPUT_BASE,  INPUT_END);
     Serial.println();
 #endif
 }
