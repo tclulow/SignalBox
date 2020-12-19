@@ -303,9 +303,6 @@ class ImportExport
         lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
         lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
         lcd.print(wordBuffer);
-        lcd.print("(");
-        lcd.print(wordBuffer[strlen(wordBuffer) - 1], HEX);
-        lcd.print(")");
         lcd.print(CHAR_QUERY);
 
         // Wait for user-input. BUTTON_RIGHT will continue, others will abort import.
