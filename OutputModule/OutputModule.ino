@@ -332,7 +332,7 @@ void returnRenumber()
  */
 void returnDef()
 {
-    if (isDebug(DEBUG_FULL))
+    if (isDebug(DEBUG_DETAIL))
     {
         outputDefs[requestOption].printDef(M_DEBUG_SEND, requestOption);
     }
@@ -553,7 +553,7 @@ void processReset(uint8_t aPin)
  */
 void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 {
-    if (isDebug(DEBUG_BRIEF))
+    if (isDebug(DEBUG_DETAIL))
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);
@@ -649,7 +649,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         saveOutput(aPin);
     }
 
-    if (isDebug(DEBUG_FULL))
+    if (isDebug(DEBUG_DETAIL))
     {
         reportOutput(M_DEBUG_MOVE, aPin);
     }
