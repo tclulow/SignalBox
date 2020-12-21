@@ -17,6 +17,12 @@ void mapHardware();
 void processInputOutputs(boolean aNewState);
 
 
+/** Process an Input's n'th Output, setting it to the given state.
+ *  Accumulate delay before or after movement depending on direction outputs are being processed.
+ */
+uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay);
+
+
 /** Send a command to an output node.
  *  Return error code if any.
  *  Forward reference required for Configure class.

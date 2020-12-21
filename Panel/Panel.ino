@@ -386,6 +386,7 @@ int readInputNode(int node)
 void processInput(uint8_t aState)
 {
     boolean newState = false;
+    uint8_t first    = 0;           // The Input's first active Output.
     
     // Process all input state changes for Toggles, only state going low for other Input types.
     if (   (aState == 0)
@@ -396,8 +397,15 @@ void processInput(uint8_t aState)
         {
             case INPUT_TYPE_TOGGLE: newState = aState != 0;     // Set state to that of the Toggle.
                                     break;
-            case INPUT_TYPE_ON_OFF: readOutput(inputDef.getOutput(0));      // TODO - avoid reading Outputs.
-                                    newState = !outputDef.getState();
+            case INPUT_TYPE_ON_OFF: for (first = 0; first < INPUT_OUTPUT_MAX; first++)
+                                    {
+                                        if (!inputDef.isDisabled(first))
+                                        {
+                                            readOutput(inputDef.getOutput(first));      // TODO - avoid reading Outputs.
+                                            newState = !outputDef.getState();
+                                            break;
+                                        }
+                                    }
                                     // newState = !getOutputState(inputDef.getOutputNode(0), inputDef.getOutputPin(0));
                                     break;
             case INPUT_TYPE_ON:     newState = true;            // Set the state.
@@ -414,6 +422,9 @@ void processInput(uint8_t aState)
             lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (newState ? M_HI : M_LO));
             lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
             lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
+
+            readOutput(inputDef.getOutput(first));
+            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
             setDisplayTimeout(reportDelay());
             
             if (isDebug(DEBUG_BRIEF))
@@ -473,7 +484,7 @@ void processInputOutputs(boolean aNewState)
  */
 uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
 {
-    uint8_t delay = aDelay;
+    uint8_t delay    = aDelay;
     
     // Process the Input's zeroth Output, and others if not disabled.
     if (!inputDef.isDisabled(aIndex))
@@ -498,12 +509,8 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
         }
         else if (reportEnabled(REPORT_SHORT))
         {
-            if (aIndex == 0)
-            {
-                // lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-                lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()]);
-            }
-            lcd.printAt(LCD_COL_OUTPUT_PARAM + aIndex * LCD_COL_OUTPUT_STEP, LCD_ROW_BOT, HEX_CHARS[outputNode]);
+            lcd.print(CHAR_SPACE);
+            lcd.print(HEX_CHARS[outputNode]);
             lcd.print(HEX_CHARS[outputPin]);
             setDisplayTimeout(reportDelay());
             

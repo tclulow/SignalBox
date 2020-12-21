@@ -1060,16 +1060,7 @@ class Configure
                                     lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, (INPUT_OUTPUT_ID(index)));
                                     displayInputEdit(index);
                                     break;
-                case BUTTON_SELECT: if (index == 0)
-                                    {
-                                        testInput();
-                                    }
-                                    else
-                                    {
-                                        changed = true;
-                                        inputDef.setDisabled(index, !inputDef.isDisabled(index));
-                                        displayInputEdit(index);
-                                    }
+                case BUTTON_SELECT: testInputOutput(index);
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
@@ -1125,17 +1116,10 @@ class Configure
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: if (aIndex == 0)
-                                    {
-                                        testInput();
-                                    }
-                                    else
-                                    {
-                                        // Enable/disable this output.
-                                        changed = true;
-                                        inputDef.setDisabled(aIndex, !inputDef.isDisabled(aIndex));
-                                        displayInputEdit(aIndex);
-                                    }
+                case BUTTON_SELECT: // Enable/disable this output.
+                                    changed = true;
+                                    inputDef.setDisabled(aIndex, !inputDef.isDisabled(aIndex));
+                                    displayInputEdit(aIndex);
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
@@ -1188,16 +1172,9 @@ class Configure
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: if (aIndex == 0)
-                                    {
-                                        testInput();
-                                    }
-                                    else
-                                    {
-                                        changed = true;
-                                        inputDef.setDisabled(aIndex, !inputDef.isDisabled(aIndex));
-                                        displayInputEdit(aIndex);
-                                    }
+                case BUTTON_SELECT: changed = true;
+                                    inputDef.setDisabled(aIndex, !inputDef.isDisabled(aIndex));
+                                    displayInputEdit(aIndex);
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
@@ -1223,6 +1200,20 @@ class Configure
         processInputOutputs(!currentState);
         waitForButtonRelease();
         processInputOutputs(currentState);
+    }
+
+
+    /** Operate the Input's specified Output to test if it works.
+     */
+    void testInputOutput(uint8_t aIndex)
+    {
+        boolean currentState = false;
+        
+        readOutput(inputDef.getOutput(aIndex));
+        currentState = outputDef.getState();
+        processInputOutput(aIndex, !currentState, 0);
+        waitForButtonRelease();
+        processInputOutput(aIndex,  currentState, 0);
     }
 
 
