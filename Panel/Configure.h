@@ -32,8 +32,6 @@ class Configure
     uint8_t outPin  = 0;    // The output pin we last configured.
     uint8_t inpNode = 0;    // The input node we last configured.
     uint8_t inpPin  = 0;    // The input pin we last configured.
-    uint8_t node    = 0;    // The node we're configuring.
-    uint8_t pin     = 0;    // The pin we're configuring.
     
 
     /** Display all current data.
@@ -45,13 +43,9 @@ class Configure
         {
             case TOP_SYSTEM: displaySystem();
                              break;
-            case TOP_INPUT:  node = inpNode;
-                             pin  = inpPin;
-                             displayNode();
+            case TOP_INPUT:  displayNode(true);
                              break;
-            case TOP_OUTPUT: node = outNode;
-                             pin  = outPin;
-                             displayNode();
+            case TOP_OUTPUT: displayNode(false);
                              break;
             case TOP_EXPORT: 
             case TOP_IMPORT: displaySystem();
@@ -75,11 +69,11 @@ class Configure
 
     /** Display the node/pin selection line of the menu.
      */
-    void displayNode()
+    void displayNode(boolean aIsInput)
     {
         lcd.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
-        lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[node]);
-        lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[pin]);
+        lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[aIsInput ? inpNode : outNode]);
+        lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[aIsInput ? inpPin  : outPin]);
     }
 
 
@@ -348,8 +342,6 @@ class Configure
         {
             outNode = nextNode(outNode, 1, false, true);
         }
-        loadInput(inpNode, inpPin);
-        readOutput(outNode, outPin);
         
         lcd.clear();
         displayAll();
@@ -357,6 +349,9 @@ class Configure
 
         while (!finished)
         {
+            loadInput(inpNode, inpPin);
+            readOutput(outNode, outPin);
+
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
@@ -376,12 +371,8 @@ class Configure
                                         case TOP_SYSTEM: menuSystem();
                                                          break;
                                         case TOP_INPUT:  menuNode(true);
-                                                         inpNode = node;
-                                                         inpPin = pin;
                                                          break;
                                         case TOP_OUTPUT: menuNode(false);
-                                                         outNode = node;
-                                                         outPin = pin;
                                                          break;
                                         case TOP_EXPORT: menuExport();
                                                          break;
@@ -389,6 +380,7 @@ class Configure
                                                          break;
                                         default:         systemFail(M_CONFIG, topMenu, 0);
                                     }
+
                                     markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
                                     break;
             }
@@ -653,8 +645,6 @@ class Configure
         }
 
         markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
-        loadInput(node, pin);
-        readOutput(node, pin);
     }
 
 
@@ -687,8 +677,16 @@ class Configure
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     adjust += 2;     // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   adjust -= 1;
-                                    node = nextNode(node, adjust, aIsInput, true);
-                                    lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[node]);
+                                    if (aIsInput)
+                                    {
+                                        inpNode = nextNode(inpNode, adjust, aIsInput, true);    
+                                    }
+                                    else
+                                    {
+                                        outNode = nextNode(outNode, adjust, aIsInput, true);
+                                    }
+                                    
+                                    lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[aIsInput ? inpNode : outNode]);
                                     displayDetail();
                                     break;
                 case BUTTON_SELECT: if (!aIsInput)
@@ -730,7 +728,7 @@ class Configure
             {
                 if (aInUse)
                 {
-                    loadInput(next, pin);
+                    loadInput(next, inpPin);
                 }
                 break;
             }
@@ -739,7 +737,7 @@ class Configure
             {
                 if (aInUse)
                 {
-                    readOutput(next, pin);
+                    readOutput(next, outPin);
                 }
                 break;
             }
@@ -756,7 +754,7 @@ class Configure
         boolean finished = false;
         boolean changed  = false;
         boolean jumpers  = false;
-        uint8_t newNode  = node;
+        uint8_t newNode  = outNode;
         
         displayNewNode(newNode);
         markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
@@ -789,13 +787,13 @@ class Configure
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: if (   (jumpers)
-                                        || (node != newNode))
+                                        || (outNode != newNode))
                                     {
                                         if (confirm())
                                         {
-                                            node = renumberNode(node, (jumpers ? I2C_MODULE_ID_JUMPERS : newNode));
-                                            readOutput(node, pin);
-                                            lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[node]);
+                                            outNode = renumberNode(outNode, (jumpers ? I2C_MODULE_ID_JUMPERS : newNode));
+                                            readOutput(outNode, outPin);
+                                            lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[outNode]);
                                             finished = true;
                                         }
                                         else
@@ -838,11 +836,11 @@ class Configure
     {
         int response = aOldNode;
         
-        Wire.beginTransmission(systemData.i2cOutputBaseID + node);
+        Wire.beginTransmission(systemData.i2cOutputBaseID + outNode);
         Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_RENUMBER);
         Wire.write(aNewNode);
         if (   ((response = Wire.endTransmission()) == 0)
-            && ((response = Wire.requestFrom(systemData.i2cOutputBaseID + node, OUTPUT_RENUMBER_LEN)) == OUTPUT_RENUMBER_LEN)
+            && ((response = Wire.requestFrom(systemData.i2cOutputBaseID + outNode, OUTPUT_RENUMBER_LEN)) == OUTPUT_RENUMBER_LEN)
             && ((response = Wire.read()) >= 0))
         {
             response &= OUTPUT_NODE_MASK;
@@ -927,19 +925,30 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     pin += 2;                                               // Use +1 to compensate for the -1 that the code below will do.
-                case BUTTON_DOWN:   pin -= 1;
-                                    pin += (aIsInput ? INPUT_PIN_MAX : OUTPUT_PIN_MAX);     // Ensure within range.
-                                    pin %= (aIsInput ? INPUT_PIN_MAX : OUTPUT_PIN_MAX);
-                                    lcd.printAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[pin]);
-                                    if (aIsInput)
+                case BUTTON_UP:     if (aIsInput)
                                     {
-                                        loadInput(node, pin);
+                                        inpPin = (inpPin + 1) & INPUT_PIN_MASK;
+                                        loadInput(inpNode, inpPin);
                                     }
                                     else
                                     {
-                                        readOutput(node, pin);
+                                        outPin = (outPin + 1) & OUTPUT_PIN_MASK;
+                                        readOutput(outNode, outPin);
                                     }
+                                    lcd.printAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[aIsInput ? inpPin : outPin]);
+                                    displayDetail();
+                                    break;
+                case BUTTON_DOWN:   if (aIsInput)
+                                    {
+                                        inpPin = (inpPin - 1) & INPUT_PIN_MASK;
+                                        loadInput(inpNode, inpPin);
+                                    }
+                                    else
+                                    {
+                                        outPin = (outPin - 1) & OUTPUT_PIN_MASK;
+                                        readOutput(outNode, outPin);
+                                    }
+                                    lcd.printAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[aIsInput ? inpPin : outPin]);
                                     displayDetail();
                                     break;
                 case BUTTON_SELECT: if (aIsInput)
@@ -1017,7 +1026,7 @@ class Configure
                                     {
                                         if (cancel())
                                         {
-                                            loadInput(node, pin);
+                                            loadInput(outNode, outPin);
                                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
                                             delay(DELAY_READ);
                                             displayDetailInput();
@@ -1045,7 +1054,7 @@ class Configure
         markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
 
         // Ensure output node is reset (we may have corrupted it when chaninging an Input's Outputs).
-        readOutput(node, pin);
+        readOutput(outNode, outPin);
     }
 
 
@@ -1303,7 +1312,7 @@ class Configure
                                         default:                 systemFail(M_OUTPUT, outputType, 0);
                                     }
 
-                                    displayNode();
+                                    displayNode(true);
                                     displayOutputParams(outputDef.getType());
                                     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                                     break;
@@ -1326,7 +1335,7 @@ class Configure
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
         
         outputDef.setState(false);
-        writeOutput(pin);
+        writeOutput(outPin);
 
         while (!finished)
         {
@@ -1378,7 +1387,7 @@ class Configure
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
         
         outputDef.setState(state);
-        writeOutput(pin);
+        writeOutput(outPin);
         
         return changed;
     }
@@ -1394,7 +1403,7 @@ class Configure
         markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
 
         outputDef.setState(true);
-        writeOutput(pin);
+        writeOutput(outPin);
 
         while (!finished)
         {
@@ -1447,7 +1456,7 @@ class Configure
         markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
 
         outputDef.setState(false);
-        writeOutput(pin);
+        writeOutput(outPin);
                 
         return changed;
     }
