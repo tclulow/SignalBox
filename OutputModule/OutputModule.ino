@@ -36,12 +36,13 @@ uint8_t requestNode    = 0;
 struct 
 {
     Servo   servo;          // The Servo (if there is one).
-    uint8_t steps  = 0;     // The number of steps to take.
-    uint8_t step   = 0;     // The current step.
-    uint8_t start  = 0;     // The starting position.
-    uint8_t value  = 0;     // The value of the output.
-    uint8_t alt    = 0;     // The value of the alternate output.
-    long    delay  = 0;     // Delay start to this time.
+    uint8_t steps   = 0;    // The number of steps to take.
+    uint8_t step    = 0;    // The current step.
+    uint8_t start   = 0;    // The starting position.
+    uint8_t value   = 0;    // The value of the output.
+    uint8_t alt     = 0;    // The value of the alternate output.
+    long    startAt = 0;    // Start at this time.
+    long    stopAt  = 0;    // Stop at this time.
 } outputs[IO_PINS];
 
 
@@ -142,8 +143,10 @@ void reportOutput(PGM_P aHeader, uint8_t aPin)
     Serial.print(outputs[aPin].value, HEX);
     Serial.print(PGMT(M_DEBUG_ALT));
     Serial.print(outputs[aPin].alt, HEX);
-    Serial.print(PGMT(M_DEBUG_DELAY));
-    Serial.print(outputs[aPin].delay);
+    Serial.print(PGMT(M_DEBUG_START_AT));
+    Serial.print(outputs[aPin].startAt);
+    Serial.print(PGMT(M_DEBUG_STOP_AT));
+    Serial.print(outputs[aPin].stopAt);
     Serial.println();
 }
 
@@ -553,7 +556,7 @@ void processReset(uint8_t aPin)
  */
 void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 {
-    if (isDebug(DEBUG_DETAIL))
+    if (isDebug(DEBUG_BRIEF))
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);
@@ -565,15 +568,24 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         Serial.print(aDelay, HEX);    
         Serial.println();
     }
-    
+
+    // Set the Output to the new state.
     outputDefs[aPin].setState(aState);
     
-    // Calculate steps and starting step.
-    outputs[aPin].step = 0;
+    // Set start delay and stop time.
+    outputs[aPin].startAt = millis() + DELAY_MULTIPLIER * aDelay;
+    outputs[aPin].stopAt  = 0;
+    if (outputDefs[aPin].getDelay())
+    {
+        outputs[aPin].stopAt = millis() + DELAY_MULTIPLIER * (aDelay + outputDefs[aPin].getDelay());
+    }
 
+    // Start at step zero.
+    outputs[aPin].step   = 0;
+
+    // Output type-specific parameters.
     if (outputDefs[aPin].isServo())
     {
-        outputs[aPin].delay = (aDelay == 0 ? 0 : millis() + DELAY_MULTIPLIER * aDelay);
         outputs[aPin].value = outputs[aPin].servo.read();
         outputs[aPin].start = outputs[aPin].value;
         outputs[aPin].alt   = 0;
@@ -603,7 +615,6 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     }
     else if (outputDefs[aPin].isLed())
     {
-        outputs[aPin].delay = (aDelay == 0 ? 0 : millis() + DELAY_MULTIPLIER * aDelay);
         outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
     }
     else if (outputDefs[aPin].isFlasher())
@@ -624,7 +635,6 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         else
         {
             // Flash as required.
-            outputs[aPin].delay = outputDefs[aPin].getDelay() == 0 ? 0 : millis() + DELAY_MULTIPLIER * outputDefs[aPin].getDelay();
             outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
             outputs[aPin].step  = outputs[aPin].steps;
         }
@@ -665,8 +675,8 @@ void stepServos()
     {
         if (outputDefs[pin].isServo())
         {
-            if (   (outputs[pin].delay == 0)
-                || (outputs[pin].delay <= now))
+            if (   (outputs[pin].startAt == 0)
+                || (outputs[pin].startAt <= now))
             {
                 stepServo(pin);
             }
@@ -699,7 +709,7 @@ void stepServo(int aPin)
                 {
                     // Set new trigger back down a bit ( 1 to 1/3 of distance travelled so far).
                     outputs[aPin].alt -= 1 + random(outputs[aPin].step) / 3;
-                    outputs[aPin].delay = millis() + random(250);   // Up to 1/4 second delay.
+                    outputs[aPin].startAt = millis() + random(250); // Up to 1/4 second delay.
                     if (isDebug(DEBUG_FULL))
                     {
                         reportOutput(M_DEBUG_TRIGGER, aPin);
@@ -712,7 +722,7 @@ void stepServo(int aPin)
                 if (outputs[aPin].alt == outputs[aPin].step)        // Have descended to trigger step.
                 {
                     outputs[aPin].alt = 0;                          // Remove the trigger step.
-                    outputs[aPin].delay = millis() + random(500);   // Up to 1/2 second delay.
+                    outputs[aPin].startAt = millis() + random(500); // Up to 1/2 second delay.
                     if (isDebug(DEBUG_FULL))
                     {
                         reportOutput(M_DEBUG_TRIGGER, aPin);
@@ -781,8 +791,8 @@ void stepLeds()
     {
         if (outputDefs[pin].getType() == OUTPUT_TYPE_LED)
         {
-            if (   (outputs[pin].delay == 0)
-                || (outputs[pin].delay <= now))
+            if (   (outputs[pin].startAt == 0)
+                || (outputs[pin].startAt <= now))
             {
                 stepLed(pin);
             }
@@ -870,10 +880,10 @@ void stepFlash(uint8_t aPin)
     outputs[aPin].step += 1;
     if (outputs[aPin].step >= outputs[aPin].steps)
     {
-        if (   (   (outputs[aPin].delay > 0)
-                && (outputs[aPin].delay < now))
-            || (   (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
-                && (outputDefs[aPin].getState() == 0)))
+        if (   (outputs[aPin].stopAt > 0)
+            && (outputs[aPin].stopAt < now))
+//            || (   (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
+//                && (outputDefs[aPin].getState() == 0)))
         {
             // Stop flashing.
             outputs[aPin].steps = 0;

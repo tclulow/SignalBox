@@ -80,6 +80,7 @@
 
 
 // Useful characters
+#define HEX_MAX  16
 const char HEX_CHARS[]  = "0123456789abcdef";
 
 const char CHAR_SPACE   = ' ';

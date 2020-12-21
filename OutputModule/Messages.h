@@ -112,7 +112,6 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
     const char M_ON_OFF[]           PROGMEM = "On/Off";
     const char M_ON[]               PROGMEM = "On";
     const char M_OFF[]              PROGMEM = "Off";
-    const char M_DISABLED[]         PROGMEM = "..";
     
     // MCP interface.
     const char M_I2C_ERROR[]        PROGMEM = "I2C error";
@@ -160,7 +159,9 @@ const char M_DEBUG_DELAY[]      PROGMEM = ", delay=";
 const char M_DEBUG_HI[]         PROGMEM = ", hi=";
 const char M_DEBUG_LO[]         PROGMEM = ", lo=";
 const char M_DEBUG_PACE[]       PROGMEM = ", pace=";
+const char M_DEBUG_START_AT[]   PROGMEM = ", startAt=";
 const char M_DEBUG_STATE[]      PROGMEM = ", state=";
+const char M_DEBUG_STOP_AT[]    PROGMEM = ", stopAt=";
 const char M_DEBUG_TARGET[]     PROGMEM = ", target=";
 const char M_DEBUG_TYPE[]       PROGMEM = ", type=";
 const char M_DEBUG_VALUE[]      PROGMEM = ", value=";
