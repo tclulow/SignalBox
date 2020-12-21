@@ -573,6 +573,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 
     if (outputDefs[aPin].isServo())
     {
+        outputs[aPin].delay = (aDelay == 0 ? 0 : millis() + DELAY_MULTIPLIER * aDelay);
         outputs[aPin].value = outputs[aPin].servo.read();
         outputs[aPin].start = outputs[aPin].value;
         outputs[aPin].alt   = 0;
@@ -602,6 +603,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     }
     else if (outputDefs[aPin].isLed())
     {
+        outputs[aPin].delay = (aDelay == 0 ? 0 : millis() + DELAY_MULTIPLIER * aDelay);
         outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
     }
     else if (outputDefs[aPin].isFlasher())
@@ -615,13 +617,14 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 
         // Turn Flashers off immediately if state = Lo and an indefinite time (delay = 0).
         if (   (!outputDefs[aPin].getState())
-            && (aDelay == 0))
+            && (outputDefs[aPin].getDelay() == 0))
         {
             outputs[aPin].steps = 0;
         }
         else
         {
             // Flash as required.
+            outputs[aPin].delay = outputDefs[aPin].getDelay() == 0 ? 0 : millis() + DELAY_MULTIPLIER * outputDefs[aPin].getDelay();
             outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
             outputs[aPin].step  = outputs[aPin].steps;
         }
@@ -639,9 +642,6 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             Serial.println();
         }
     }
-
-    // Set the Output's movement characteristics.
-    outputs[aPin].delay  = (aDelay == 0 ? 0 : millis() + DELAY_MULTIPLIER * aDelay);
 
     // Save the new state if persisting is enabled.
     if (persisting)
