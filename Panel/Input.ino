@@ -37,7 +37,7 @@ void loadInput(int aNode, int aPin)
             Serial.print(CHAR_SPACE);
             Serial.print(inputDef.getOutputNode(index), HEX);
             Serial.print(inputDef.getOutputPin(index), HEX);
-            if (inputDef.isDisabled(index))
+            if (inputDef.isDelay(index))
             {
                 Serial.print(CHAR_STAR);
             }
@@ -95,7 +95,7 @@ void saveInput()
                 Serial.print(CHAR_SPACE);
                 Serial.print(inputDef.getOutputNode(index), HEX);
                 Serial.print(inputDef.getOutputPin(index), HEX);
-                if (inputDef.isDisabled(index))
+                if (inputDef.isDelay(index))
                 {
                     Serial.print(CHAR_STAR);
                 }

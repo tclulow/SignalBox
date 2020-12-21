@@ -225,21 +225,29 @@ class Configure
      */
     void displayDetailInputOutput()
     {
-        int col = LCD_COL_INPUT_OUTPUT;
-
         lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
-        for (int index = 0; index < INPUT_OUTPUT_MAX; index++, col += LCD_COL_INPUT_STEP)
+        lcd.setCursor(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT);
+        
+        for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
         {
-            if (inputDef.isDisabled(index))
+            if (inputDef.isDelay(index))
             {
-                lcd.printAt(col, LCD_ROW_BOT, M_DISABLED);    
+                lcd.print(CHAR_DOT);
+                if (inputDef.getOutputPin(index) == 0)
+                {
+                    lcd.print(CHAR_DOT);
+                }
+                else
+                {
+                    lcd.print(HEX_CHARS[inputDef.getOutputPin(index)]);
+                }
             }
             else
             {
-                lcd.setCursor(col, LCD_ROW_BOT);
                 lcd.print(HEX_CHARS[inputDef.getOutputNode(index)]);
                 lcd.print(HEX_CHARS[inputDef.getOutputPin(index)]);
             }
+            lcd.print(CHAR_SPACE);
         }
     }
     
@@ -248,10 +256,17 @@ class Configure
      */
     void displayInputEdit(int aIndex)
     {
-        if (inputDef.isDisabled(aIndex))
+        if (inputDef.isDelay(aIndex))
         {
             lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, CHAR_DOT);
-            lcd.printAt(LCD_COL_PIN,  LCD_ROW_BOT, CHAR_DOT);
+            if (inputDef.getOutputPin(aIndex) == 0)
+            {
+                lcd.printAt(LCD_COL_PIN,  LCD_ROW_BOT, CHAR_DOT);
+            }
+            else
+            {
+                lcd.printAt(LCD_COL_PIN,  LCD_ROW_BOT, HEX_CHARS[inputDef.getOutputPin(aIndex)]);
+            }
         }
         else
         {
@@ -1091,9 +1106,9 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     if (inputDef.isDisabled(aIndex))
+                case BUTTON_UP:     if (inputDef.isDelay(aIndex))
                                     {
-                                        inputDef.setDisabled(aIndex, false);
+                                        inputDef.setDelay(aIndex, false);
                                     }
                                     else
                                     {
@@ -1104,9 +1119,9 @@ class Configure
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
-                case BUTTON_DOWN:   if (inputDef.isDisabled(aIndex))
+                case BUTTON_DOWN:   if (inputDef.isDelay(aIndex))
                                     {
-                                        inputDef.setDisabled(aIndex, false);
+                                        inputDef.setDelay(aIndex, false);
                                     }
                                     else
                                     {
@@ -1118,7 +1133,7 @@ class Configure
                                     break;
                 case BUTTON_SELECT: // Enable/disable this output.
                                     changed = true;
-                                    inputDef.setDisabled(aIndex, !inputDef.isDisabled(aIndex));
+                                    inputDef.setDelay(aIndex, !inputDef.isDelay(aIndex));
                                     displayInputEdit(aIndex);
                                     break;
                 case BUTTON_LEFT:   finished = true;
@@ -1139,7 +1154,7 @@ class Configure
     boolean menuInputOutputPin(int aIndex)
     {
         boolean finished = false;
-        boolean changed = false;
+        boolean changed  = false;
 
         markField(LCD_COL_PIN, LCD_ROW_BOT, 1, true);
 
@@ -1148,33 +1163,19 @@ class Configure
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     if (inputDef.isDisabled(aIndex))
-                                    {
-                                        inputDef.setDisabled(aIndex, false);
-                                    }
-                                    else
-                                    {
-                                        // Increment the pin number within the Input's output at this index.
-                                        inputDef.setOutputPin(aIndex, inputDef.getOutputPin(aIndex) + 1);
-                                    }
+                case BUTTON_UP:     // Increment the pin number within the Input's output at this index.
+                                    inputDef.setOutputPin(aIndex, inputDef.getOutputPin(aIndex) + 1);
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
-                case BUTTON_DOWN:   if (inputDef.isDisabled(aIndex))
-                                    {
-                                        inputDef.setDisabled(aIndex, false);
-                                    }
-                                    else
-                                    {
-                                        // Decrement the pin number within the Input's output at this index.
-                                        inputDef.setOutputPin(aIndex, inputDef.getOutputPin(aIndex) - 1);
-                                    }
+                case BUTTON_DOWN:   // Decrement the pin number within the Input's output at this index.
+                                    inputDef.setOutputPin(aIndex, inputDef.getOutputPin(aIndex) - 1);
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: changed = true;
-                                    inputDef.setDisabled(aIndex, !inputDef.isDisabled(aIndex));
-                                    displayInputEdit(aIndex);
+                case BUTTON_SELECT: //changed = true;
+                                    //inputDef.setDisabled(aIndex, !inputDef.isDisabled(aIndex));
+                                    //displayInputEdit(aIndex);
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;

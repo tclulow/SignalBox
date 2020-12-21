@@ -221,10 +221,12 @@ void defaultSetup()
         for (outputPin = 0; outputPin < OUTPUT_PIN_MAX; outputPin++)
         {
             // Create an input.
-            for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
+            inputDef.setOutput(0, inputNumber);     // Map 1-1 inputs to outputs.
+            inputDef.setDelay(0, false);
+            for (int index = 1; index < INPUT_OUTPUT_MAX; index++)
             {
-                inputDef.setOutput(index, inputNumber);
-                inputDef.setDisabled(index, index != 0);
+                inputDef.setOutput(index, 0);       // Zero-length delay.
+                inputDef.setDelay(index, true);
             }
 
             saveInput();
@@ -278,10 +280,12 @@ void convertEzyBus()
     for (inputNumber = 0; inputNumber < INPUT_MAX; inputNumber++)
     {
         // Create an input.
-        for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
+        inputDef.setOutput(0, inputNumber);
+        inputDef.setDelay(0, false);
+        for (uint8_t index = 1; index < INPUT_OUTPUT_MAX; index++)
         {
-            inputDef.setOutput(index, inputNumber);
-            inputDef.setDisabled(index, index > 0);
+            inputDef.setOutput(index, 0);       // Zero-length delay
+            inputDef.setDelay(index, true);
         }
         saveInput();
     }
@@ -399,7 +403,7 @@ void processInput(uint8_t aState)
                                     break;
             case INPUT_TYPE_ON_OFF: for (first = 0; first < INPUT_OUTPUT_MAX; first++)
                                     {
-                                        if (!inputDef.isDisabled(first))
+                                        if (!inputDef.isDelay(first))
                                         {
                                             readOutput(inputDef.getOutput(first));      // TODO - avoid reading Outputs.
                                             newState = !outputDef.getState();
@@ -464,13 +468,6 @@ void processInputOutputs(boolean aNewState)
     }
     else
     {
-        // Get initial delay from Input's zeroth output (if not a Flasher which use delay as duration).
-        readOutput(inputDef.getOutput(0));          // TODO - avoid having to fetch Output's def.
-        if (!outputDef.isFlasher())
-        {
-            delay = outputDef.getDelay();
-        }
-        
         for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
         {
             delay = processInputOutput(index, aNewState, delay);
@@ -484,10 +481,14 @@ void processInputOutputs(boolean aNewState)
  */
 uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
 {
-    uint8_t delay    = aDelay;
+    uint8_t delay = aDelay;
     
-    // Process the Input's zeroth Output, and others if not disabled.
-    if (!inputDef.isDisabled(aIndex))
+    // Process the Input's Outputs.
+    if (inputDef.isDelay(aIndex))
+    {
+        delay += inputDef.getOutputPin(aIndex);
+    }
+    else
     {
         readOutput(inputDef.getOutput(aIndex));
         outputDef.setState(aState);
@@ -531,21 +532,7 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
             }
         }
 
-        // Flashers always use their own delay as their duration.
-        if (outputDef.isFlasher())
-        {
-            writeOutputState(aState, outputDef.getDelay());
-        }
-        else
-        {
-            delay += outputDef.getDelay();      // Add in the delay.
-            if (delay > OUTPUT_DELAY_MASK)
-            {
-                delay = OUTPUT_DELAY_MASK;      // Can't delay beyond the maximum possible.
-            }
-            
-            writeOutputState(aState, (aState ? delay : aDelay));
-        }
+        writeOutputState(aState, delay);
     }
 
     return delay;

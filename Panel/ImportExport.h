@@ -93,13 +93,17 @@ class ImportExport
                 int value = readData();
                 if (value >= 0)
                 {
+                    // Active Output
                     inputDef.setOutputNode(index, (value >> 4) & OUTPUT_NODE_MASK);
                     inputDef.setOutputPin(index,  (value     ) & OUTPUT_PIN_MASK);
-                    inputDef.setDisabled(index, wordBuffer[strlen(wordBuffer) - 1] == CHAR_STAR);
+                    inputDef.setDelay(index, false);
                 }
                 else
                 {
-                    inputDef.setDisabled(index, true);
+                    // Delay
+                    inputDef.setOutputNode(index, node);
+                    inputDef.setOutputPin(index, value & OUTPUT_PIN_MASK);
+                    inputDef.setDelay(index, true);
                 }
             }
 
@@ -189,6 +193,7 @@ class ImportExport
     
     
     /** Read (hexadecimal) data.
+     *  If dots are present, return a negative number relative to -16
      */
     int readData()
     {
@@ -196,22 +201,30 @@ class ImportExport
         int len = readWord();
         if (len <= 0)
         {
-            value = -1;
+            value = -16;                        // Delay of zero (ie disabled).
         }
         else
         {
-            value = hexValue(wordBuffer[0]) << 4;
+            if (wordBuffer[0] == CHAR_DOT)      // Delay
+            {
+                value = -16;
+            }
+            else
+            {
+                value = hexValue(wordBuffer[0]) << 4;
+            }
+            
             if (len == 1)
             {
                 len = readWord();
                 if (len > 0)
                 {
-                    value |= hexValue(wordBuffer[0]);
+                    value += hexValue(wordBuffer[0]);
                 }
             }
             else
             {
-                value |= hexValue(wordBuffer[1]);
+                value += hexValue(wordBuffer[1]);
             }
         }
 
@@ -220,16 +233,16 @@ class ImportExport
     
 
     /** Convert a character to it's HEX value.
+     *  Returns zero for illegal chars.
      */
     int hexValue(char aChar)
     {
-        if (aChar > CHAR_NINE)
+        for (int value = sizeof(HEX_CHARS) - 1; value >0; value--)
         {
-            return (aChar - CHAR_LOWER_A + 10) & 0xf;
-        }
-        else
-        {
-            return (aChar - CHAR_ZERO        ) & 0xf;
+            if (aChar == HEX_CHARS[value])
+            {
+                return value;
+            }
         }
     }
     
@@ -238,7 +251,8 @@ class ImportExport
      */
     boolean endOfLine()
     {
-        return lastChar == CHAR_NEWLINE;
+        return    lastChar == CHAR_NEWLINE
+               || lastChar == CHAR_RETURN;
     }
     
     
@@ -247,7 +261,8 @@ class ImportExport
     void skipLine()
     {
         while (   (!readButton())
-               && (lastChar != CHAR_NEWLINE))
+               && (lastChar != CHAR_NEWLINE)
+               && (lastChar != CHAR_RETURN))
         {
             lastChar = readChar();
         }
@@ -320,7 +335,7 @@ class ImportExport
 
     /** Export the system parameters.
      */
-    void exportSystem()
+    void exportSystem(boolean aIncludeDump)
     {
         Serial.println(PGMT(M_EXPORT_SYSTEM));
         
@@ -340,8 +355,11 @@ class ImportExport
         Serial.print(PGMT(M_REPORT_PROMPTS[systemData.reportLevel]));
         Serial.println();
         Serial.println();
-    
-        dumpMemory();
+
+        if (aIncludeDump)
+        {
+            dumpMemory();
+        }
     }
     
     
@@ -374,12 +392,24 @@ class ImportExport
                     for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
                     {
                         Serial.print(CHAR_TAB);
-                        printHex(inputDef.getOutputNode(index), 1);
-                        Serial.print(CHAR_SPACE);
-                        printHex(inputDef.getOutputPin(index),  1);
-                        if (inputDef.isDisabled(index))
+                        if (inputDef.isDelay(index))
                         {
-                            Serial.print(CHAR_STAR);
+                            Serial.print(CHAR_DOT);
+                            Serial.print(CHAR_SPACE);
+                            if (inputDef.getOutputPin(index) == 0)
+                            {
+                                Serial.print(CHAR_DOT);
+                            }
+                            else
+                            {
+                                printHex(inputDef.getOutputPin(index),  1);
+                            }
+                        }
+                        else
+                        {
+                            printHex(inputDef.getOutputNode(index), 1);
+                            Serial.print(CHAR_SPACE);
+                            printHex(inputDef.getOutputPin(index),  1);
                         }
                     }
                     Serial.println();
@@ -482,11 +512,11 @@ class ImportExport
         
         switch(aExport)
         {
-            case EXP_ALL:     exportSystem();
+            case EXP_ALL:     exportSystem(debugLevel >= DEBUG_FULL);
                               exportInputs();
                               exportOutputs();
                               break;
-            case EXP_SYSTEM:  exportSystem();
+            case EXP_SYSTEM:  exportSystem(debugLevel >= DEBUG_FULL);
                               break;
             case EXP_INPUTS:  exportInputs();
                               break;
