@@ -44,9 +44,6 @@ class ImportExport
         {
             importError();
         }
-    
-        // Skip rest of line.
-        skipLine();
     }
     
 
@@ -193,7 +190,7 @@ class ImportExport
     
     
     /** Read (hexadecimal) data.
-     *  If dots are present, return a negative number relative to -16
+     *  If dots are present, return a negative number relative to -HEX_LEN
      */
     int readData()
     {
@@ -201,13 +198,13 @@ class ImportExport
         int len = readWord();
         if (len <= 0)
         {
-            value = -16;                        // Delay of zero (ie disabled).
+            value = -HEX_MAX;                        // Delay of zero (ie disabled).
         }
         else
         {
             if (wordBuffer[0] == CHAR_DOT)      // Delay
             {
-                value = -16;
+                value = -HEX_MAX;
             }
             else
             {
@@ -228,6 +225,9 @@ class ImportExport
             }
         }
 
+        Serial.print("readData=");
+        Serial.println(value, HEX);
+        
         return value;
     }
     
@@ -237,22 +237,34 @@ class ImportExport
      */
     int hexValue(char aChar)
     {
-        for (int value = sizeof(HEX_CHARS) - 1; value >0; value--)
+        for (int value = HEX_MAX - 1; value >= 0; value--)
         {
             if (aChar == HEX_CHARS[value])
             {
                 return value;
             }
         }
+
+        return 0;
     }
     
     
     /** Are we at end-of-line?
      */
-    boolean endOfLine()
+    boolean isEndOfLine()
     {
         return    lastChar == CHAR_NEWLINE
                || lastChar == CHAR_RETURN;
+    }
+
+
+    /** Is latest character white-space?
+     */
+    boolean isWhiteSpace()
+    {
+        return    (lastChar == CHAR_SPACE)
+               || (lastChar == CHAR_TAB)
+               || (isEndOfLine());
     }
     
     
@@ -260,12 +272,17 @@ class ImportExport
      */
     void skipLine()
     {
+        Serial.print("skipLine='");
+
         while (   (!readButton())
-               && (lastChar != CHAR_NEWLINE)
-               && (lastChar != CHAR_RETURN))
+               && (!isEndOfLine()))
         {
+            Serial.print((char)lastChar);
             lastChar = readChar();
         }
+        Serial.println("'");
+
+        lastChar = CHAR_SPACE;
     }
     
     
@@ -276,19 +293,14 @@ class ImportExport
     {
         int index = 0;
 
-        lastChar = CHAR_NULL;
-        
         // Read upto WORD_BUFFER_LENGTH characters.
         while (   (!readButton())
-               && (!endOfLine())
+               && (!isEndOfLine())
                && (index < WORD_BUFFER_LENGTH))
         {
             lastChar = readChar();
 
-            if (   (lastChar == CHAR_SPACE)
-                || (lastChar == CHAR_TAB)
-                || (lastChar == CHAR_NEWLINE)
-                || (lastChar == CHAR_RETURN))
+            if (isWhiteSpace())
             {
                 if (index == 0)
                 {
@@ -305,6 +317,10 @@ class ImportExport
     
         // Add terminator to word.
         wordBuffer[index] = CHAR_NULL;
+
+        Serial.print("readWord='");
+        Serial.print(wordBuffer);
+        Serial.println("'");
 
         return index; 
     }
@@ -485,18 +501,15 @@ class ImportExport
         while (   ((len = readWord()) >= 0)
                && (!readButton()))
         {
-            if (len > 0)
+            if (   (len > 0)
+                && (wordBuffer[0] != CHAR_HASH))
             {
-                if (wordBuffer[0] == CHAR_HASH)
-                {
-                    skipLine();
-                }
-                else
-                {
-                    importLine();
-                    messageTick = millis() + DELAY_READ;
-                }
+                importLine();
+                messageTick = millis() + DELAY_READ;
             }
+
+            // Skip rest of line.
+            skipLine();
         }
     }
     
