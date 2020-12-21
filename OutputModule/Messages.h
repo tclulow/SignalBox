@@ -155,13 +155,11 @@ const char M_DEBUG_STATES[]     PROGMEM = "States";
 const char M_DEBUG_SYSTEM[]     PROGMEM = "System";
 const char M_DEBUG_WRITE[]      PROGMEM = "Write";
 
-const char M_DEBUG_DELAY[]      PROGMEM = ", delay=";
+const char M_DEBUG_DELAY_TO[]   PROGMEM = ", delayTo=";
 const char M_DEBUG_HI[]         PROGMEM = ", hi=";
 const char M_DEBUG_LO[]         PROGMEM = ", lo=";
 const char M_DEBUG_PACE[]       PROGMEM = ", pace=";
-const char M_DEBUG_START_AT[]   PROGMEM = ", startAt=";
 const char M_DEBUG_STATE[]      PROGMEM = ", state=";
-const char M_DEBUG_STOP_AT[]    PROGMEM = ", stopAt=";
 const char M_DEBUG_TARGET[]     PROGMEM = ", target=";
 const char M_DEBUG_TYPE[]       PROGMEM = ", type=";
 const char M_DEBUG_VALUE[]      PROGMEM = ", value=";

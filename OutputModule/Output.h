@@ -165,7 +165,7 @@ class OutputDef
         Serial.print(getHi(),    HEX);
         Serial.print(PGMT(M_DEBUG_PACE));
         Serial.print(getPace(),  HEX);
-        Serial.print(PGMT(M_DEBUG_DELAY));
+        Serial.print(PGMT(M_DEBUG_DELAY_TO));
         Serial.print(getDelay(), HEX);
         Serial.println();
     }
