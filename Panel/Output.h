@@ -316,7 +316,7 @@ boolean isServo(uint8_t aType)
 }
 
 
-#else   // Methods for loading/saving outputs to/from EEPROM in the OutputModule.
+#else   // Methods for managing Outputs in the Panel.
 
 
 /** Variables for working with an Output.
@@ -326,7 +326,7 @@ uint8_t    outputNode   = 0;    // Current Output node.
 uint8_t    outputPin    = 0;    // Current Output pin.
 OutputDef  outputDef;           // Definition of current Output.
 
-uint8_t    outputStates[OUTPUT_NODE_MAX];   // State of all the attached output module's Outputs.
+uint8_t    outputStates[OUTPUT_NODE_MAX];   // State of all the attached output modules' Outputs.
 
 
 /** Read an Output's data from an OutputModule.
