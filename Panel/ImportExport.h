@@ -121,7 +121,7 @@ class ImportExport
         int     pace = 0;
         
         outputNode = readData();
-        outputPin  = outputNode & OUTPUT_PIN_MASK;
+        outputPin  = (outputNode     ) & OUTPUT_PIN_MASK;
         outputNode = (outputNode >> 4) & OUTPUT_NODE_MASK;
         
         readWord();
@@ -140,6 +140,7 @@ class ImportExport
         else
         {
             outputDef.setType(type);
+            outputDef.setState(getOutputState(outputNode, outputPin));
             outputDef.setLo(readData());
             outputDef.setHi(readData());
             pace = readData();
