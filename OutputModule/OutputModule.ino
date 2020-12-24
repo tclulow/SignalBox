@@ -78,7 +78,7 @@ void setup()
             initOutput(pin, OUTPUT_TYPE_NONE);
 
             // Ensure BLINK outputs with indefinite time are actioned and actually flash.
-            if (   (outputDefs[pin].getType() == OUTPUT_TYPE_BLINK)
+            if (   (outputDefs[pin].isFlasher())
                 && (outputDefs[pin].getState())
                 && (outputDefs[pin].getDelay() == 0))
             {
