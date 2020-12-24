@@ -165,7 +165,7 @@ class OutputDef
         Serial.print(getHi(),    HEX);
         Serial.print(PGMT(M_DEBUG_PACE));
         Serial.print(getPace(),  HEX);
-        Serial.print(PGMT(M_DEBUG_DELAY));
+        Serial.print(PGMT(M_DEBUG_DELAY_TO));
         Serial.print(getDelay(), HEX);
         Serial.println();
     }
@@ -316,7 +316,7 @@ boolean isServo(uint8_t aType)
 }
 
 
-#else   // Methods for managing Outputs in the Panel.
+#else   // Methods for loading/saving outputs to/from EEPROM in the OutputModule.
 
 
 /** Variables for working with an Output.
@@ -326,7 +326,7 @@ uint8_t    outputNode   = 0;    // Current Output node.
 uint8_t    outputPin    = 0;    // Current Output pin.
 OutputDef  outputDef;           // Definition of current Output.
 
-uint8_t    outputStates[OUTPUT_NODE_MAX];   // State of all the attached output modules' Outputs.
+uint8_t    outputStates[OUTPUT_NODE_MAX];   // State of all the attached output module's Outputs.
 
 
 /** Read an Output's data from an OutputModule.
@@ -347,7 +347,7 @@ void writeOutput(boolean aSave);
 
 /** Write a change of state to the Output module.
  */
-void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay);
+void writeOutputState(boolean aState, uint8_t aDelay);
 
 
 /** Reset current Output. 
@@ -400,7 +400,7 @@ void setOutputStates(uint8_t aNode, uint8_t aStates)
 void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState)
 {
     uint8_t mask = 1 << aPin;
-
+    
     outputStates[aNode] &= ~mask;
     if (aState)
     {
