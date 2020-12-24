@@ -437,10 +437,11 @@ void processInput(uint8_t aState)
                 Serial.print(millis());
                 Serial.print(CHAR_TAB);
                 Serial.print(PGMT(M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]));
-                Serial.print(CHAR_SPACE);
+                Serial.print(PGMT(M_DEBUG_STATE));
                 Serial.print(PGMT(newState ? M_HI : M_LO));
-                Serial.print(CHAR_SPACE);
+                Serial.print(PGMT(M_DEBUG_NODE));
                 Serial.print((inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK, HEX);
+                Serial.print(PGMT(M_DEBUG_PIN));
                 Serial.print((inputNumber                    ) & INPUT_PIN_MASK,  HEX);
                 Serial.println();
             }
@@ -516,6 +517,22 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
             lcd.print(HEX_CHARS[outNode]);
             lcd.print(HEX_CHARS[outPin]);
             setDisplayTimeout(reportDelay());
+        }
+
+        if (isDebug(DEBUG_BRIEF))
+        {
+            Serial.print(millis());
+            Serial.print(CHAR_TAB);
+            Serial.print(PGMT(M_OUTPUT));
+            Serial.print(PGMT(M_DEBUG_STATE));
+            Serial.print(PGMT(aState ? M_HI : M_LO));
+            Serial.print(PGMT(M_DEBUG_NODE));
+            Serial.print(outNode, HEX);
+            Serial.print(PGMT(M_DEBUG_PIN));
+            Serial.print(outPin,  HEX);
+            Serial.print(PGMT(M_DEBUG_DELAY_TO));
+            Serial.print(aDelay, HEX);
+            Serial.println();
         }
 
         writeOutputState(outNode, outPin, aState, endDelay);
