@@ -50,6 +50,8 @@ struct
 void setup()
 {
     randomSeed(analogRead(0));
+    delay(DELAY_START);             // Wait to avoid programmer conflicts.
+    Serial.begin(SERIAL_SPEED);     // Serial IO.
 
     // Configure the Jumper pins for input.
     for (int pin = 0; pin < JUMPER_PINS; pin++)
@@ -77,12 +79,18 @@ void setup()
             loadOutput(pin);
             initOutput(pin, OUTPUT_TYPE_NONE);
 
-            // Ensure BLINK outputs with indefinite time are actioned and actually flash.
+            // Indefinite flashers that are high must be started.
             if (   (outputDefs[pin].isFlasher())
                 && (outputDefs[pin].getState())
                 && (outputDefs[pin].getDelay() == 0))
             {
-                actionState(pin, true, 0);
+                actionState(pin, outputDefs[pin].getState(), 0);
+            }
+            else if (outputDefs[pin].getType() == OUTPUT_TYPE_BLINK)
+            {
+                // BLINKs must be completely off.
+                outputs[pin].value = 0;
+                outputs[pin].alt   = 0;
             }
         }
     }
@@ -212,7 +220,7 @@ void initOutput(int aPin, uint8_t aOldType)
             outputs[aPin].value = 0;
             outputs[aPin].alt   = outputDefs[aPin].getLo();
         }
-        outputs[aPin].steps = 0;            // Ensure there's no flashing.
+        outputs[aPin].steps = 0;            // No flashing.
     }
     else
     {
@@ -627,7 +635,14 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         {
             outputs[aPin].steps = 0;
             outputs[aPin].value = 0;
-            outputs[aPin].alt   = outputDefs[aPin].getLo();
+            if (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
+            {
+                outputs[aPin].alt = 0;
+            }
+            else
+            {
+                outputs[aPin].alt = outputDefs[aPin].getLo();
+            }
         }
         else
         {
@@ -896,7 +911,14 @@ void stepFlash(uint8_t aPin)
             else
             {
                 outputs[aPin].value = 0;
-                outputs[aPin].alt   = outputDefs[aPin].getLo();
+                if (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
+                {
+                    outputs[aPin].alt = 0;
+                }
+                else
+                {
+                    outputs[aPin].alt = outputDefs[aPin].getLo();
+                }
             }
 
 //            // DEBUG - report flickering metrics.
