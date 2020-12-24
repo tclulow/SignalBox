@@ -1554,16 +1554,16 @@ class Configure
     {
         if (outputDef.isFlasher())
         {
-            writeOutputState(true,  aIncludeDelay ? outputDef.getDelay() : 0);
+            writeOutputState(outputNode, outputPin, true,  aIncludeDelay ? outputDef.getDelay() : 0);
             waitForButtonRelease();
-            writeOutputState(false, aIncludeDelay ? outputDef.getDelay() : 0);
+            writeOutputState(outputNode, outputPin, false, aIncludeDelay ? outputDef.getDelay() : 0);
             writeOutput(false);
         }
         else
         {
-            writeOutputState(!outputDef.getState(), aIncludeDelay ? outputDef.getDelay() : 0);
+            writeOutputState(outputNode, outputPin, !outputDef.getState(), aIncludeDelay ? outputDef.getDelay() : 0);
             waitForButtonRelease();
-            writeOutputState( outputDef.getState(), aIncludeDelay ? outputDef.getDelay() : 0);
+            writeOutputState(outputNode, outputPin,  outputDef.getState(), aIncludeDelay ? outputDef.getDelay() : 0);
         }
     }
 

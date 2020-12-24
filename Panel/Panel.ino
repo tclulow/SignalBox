@@ -88,7 +88,7 @@ void mapHardware()
         }
         else
         {
-            lcd.print(CHAR_DOT); 
+            lcd.print(state); 
         }
     }
 
@@ -405,12 +405,10 @@ void processInput(uint8_t aState)
                                     {
                                         if (!inputDef.isDelay(first))
                                         {
-                                            readOutput(inputDef.getOutput(first));      // TODO - avoid reading Outputs.
-                                            newState = !outputDef.getState();
+                                            newState = !getOutputState(inputDef.getOutputNode(0), inputDef.getOutputPin(0));
                                             break;
                                         }
                                     }
-                                    // newState = !getOutputState(inputDef.getOutputNode(0), inputDef.getOutputPin(0));
                                     break;
             case INPUT_TYPE_ON:     newState = true;            // Set the state.
                                     break;
@@ -426,10 +424,12 @@ void processInput(uint8_t aState)
             lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (newState ? M_HI : M_LO));
             lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
             lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
+            lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
-            readOutput(inputDef.getOutput(first));
-            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
-            setDisplayTimeout(reportDelay());
+//            // Show output type
+//            readOutput(inputDef.getOutput(first));
+//            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
+//            setDisplayTimeout(reportDelay());
             
             if (isDebug(DEBUG_BRIEF))
             {
@@ -455,7 +455,7 @@ void processInput(uint8_t aState)
  */
 void processInputOutputs(boolean aNewState)
 {
-    uint8_t delay = 0;
+    uint8_t endDelay = 0;
     
     // Process all the Input's outputs.
     // In reverse order if setting lo.
@@ -463,14 +463,14 @@ void processInputOutputs(boolean aNewState)
     {
         for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
         {
-            delay = processInputOutput(index, aNewState, delay);
+            endDelay = processInputOutput(index, aNewState, endDelay);
         }
     }
     else
     {
         for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
         {
-            delay = processInputOutput(index, aNewState, delay);
+            endDelay = processInputOutput(index, aNewState, endDelay);
         }
     }
 }
@@ -481,25 +481,27 @@ void processInputOutputs(boolean aNewState)
  */
 uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
 {
-    uint8_t delay = aDelay;
-    
+    uint8_t endDelay = aDelay;
+
+    uint8_t outNode  = inputDef.getOutputNode(aIndex);
+    uint8_t outPin   = inputDef.getOutputPin(aIndex);
+
     // Process the Input's Outputs.
     if (inputDef.isDelay(aIndex))
     {
-        delay += inputDef.getOutputPin(aIndex);
+        endDelay += inputDef.getOutputPin(aIndex);
     }
     else
     {
-        readOutput(inputDef.getOutput(aIndex));
-        outputDef.setState(aState);
-        setOutputState(outputNode, outputPin, aState);
+        setOutputState(outNode, outPin, aState);
 
         if (reportEnabled(REPORT_PAUSE))
         {
+            readOutput(inputDef.getOutput(aIndex));
             lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
             lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
-            lcd.printAt(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, HEX_CHARS[outputNode]);
-            lcd.print(HEX_CHARS[outputPin]);
+            lcd.printAt(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, HEX_CHARS[outNode]);
+            lcd.print(HEX_CHARS[outPin]);
             lcd.print(CHAR_SPACE);
             lcd.print(CHAR_SPACE);
             lcd.print(HEX_CHARS[outputDef.getPace()]);
@@ -511,31 +513,15 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
         else if (reportEnabled(REPORT_SHORT))
         {
             lcd.print(CHAR_SPACE);
-            lcd.print(HEX_CHARS[outputNode]);
-            lcd.print(HEX_CHARS[outputPin]);
+            lcd.print(HEX_CHARS[outNode]);
+            lcd.print(HEX_CHARS[outPin]);
             setDisplayTimeout(reportDelay());
-            
-            if (isDebug(DEBUG_BRIEF))
-            {
-                Serial.print(millis());
-                Serial.print(CHAR_TAB);
-                Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.getType()]));
-                Serial.print(PGMT(M_DEBUG_STATE));
-                Serial.print(PGMT(aState ? M_HI : M_LO));
-                Serial.print(PGMT(M_DEBUG_NODE));
-                Serial.print(outputNode, HEX);
-                Serial.print(PGMT(M_DEBUG_PIN));
-                Serial.print(outputPin,  HEX);
-                Serial.print(PGMT(M_DEBUG_DELAY));
-                Serial.print(aDelay, HEX);
-                Serial.println();
-            }
         }
 
-        writeOutputState(aState, delay);
+        writeOutputState(outNode, outPin, aState, endDelay);
     }
 
-    return delay;
+    return endDelay;
 }
 
 

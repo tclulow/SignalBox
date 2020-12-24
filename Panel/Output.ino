@@ -88,15 +88,15 @@ void writeOutput(boolean aSave)
 
 /** Write a change of state to the Output module.
  */
-void writeOutputState(boolean aState, uint8_t aDelay)
+void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay)
 {
     if (isDebug(DEBUG_DETAIL))
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_SEND));
-        Serial.print(outputNode, HEX);
-        Serial.print(outputPin, HEX);
+        Serial.print(aNode, HEX);
+        Serial.print(aPin, HEX);
         Serial.print(PGMT(M_DEBUG_STATE));
         Serial.print(PGMT(aState ? M_HI : M_LO));
         Serial.print(PGMT(M_DEBUG_DELAY));
@@ -104,8 +104,8 @@ void writeOutputState(boolean aState, uint8_t aDelay)
         Serial.println();
     }
 
-    Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
-    Wire.write((aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | outputPin);
+    Wire.beginTransmission(systemData.i2cOutputBaseID + aNode);
+    Wire.write((aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | aPin);
     Wire.write(aDelay);
     Wire.endTransmission();
 }
