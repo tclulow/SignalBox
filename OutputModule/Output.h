@@ -16,24 +16,22 @@
 #define OUTPUT_LED_MAX          255   // Maximum value a LED can take.
 #define OUTPUT_HI_LO_SIZE         3   // Maximum digits in a Hi/Lo display.
 
-// Masks for type, state, pace and delay options within the outputDef.
+// Masks for type, state and pace options within the outputDef.
 #define OUTPUT_STATE_MASK      0x80   // On or off, switched or not switched, 0 = lo, 1 = hi.    Was OUTPUT_STATE
 #define OUTPUT_TYPE_MASK       0x0f   // Output type mask (4 bits).
-#define OUTPUT_PACE_SHIFT         4   // Pace is in the left-most nibble.
 #define OUTPUT_PACE_MASK       0x0f   // Pace is 4 bits.
 #define OUTPUT_PACE_MULT          4   // Pace is multiplied by 16 (shifted left 4 bits).
-#define OUTPUT_DELAY_MASK      0x0f   // Delay is right-most nibble of output.pace.
 
 // Wire response message lengths.
 #define OUTPUT_STATE_LEN          1   // One byte used to return a node's Outputs' states.
 #define OUTPUT_RENUMBER_LEN       1   // One byte used to return a node's new module ID.
-#define OUTPUT_WRITE_LEN          4   // Four bytes used to read/write OutputDef to/from OutputModule.
+#define OUTPUT_WRITE_LEN          5   // Four bytes used to read/write OutputDef to/from OutputModule.
 
 // Defaults when initialising
 #define OUTPUT_DEFAULT_LO        90   // Default low  position is 90 degrees.
 #define OUTPUT_DEFAULT_HI        90   // Default high position is 90 degrees.
 #define OUTPUT_DEFAULT_PACE     0xc   // Default pace is mid-range.
-#define OUTPUT_DEFAULT_DELAY    0x0   // Default delay is none.
+#define OUTPUT_DEFAULT_RESET    0x0   // Default reset is none.
 
 
 // Output information that's shared with the output module.
@@ -56,6 +54,7 @@ class OutputDef
     uint8_t lo    = 0;
     uint8_t hi    = 0;
     uint8_t pace  = 0;
+    uint8_t reset = 0;
 
 
     public:
@@ -113,14 +112,14 @@ class OutputDef
 
     /** Set all an Output's data.
      */
-    void set(uint8_t aType, uint8_t aState, uint8_t aLo, uint8_t aHi, uint8_t aPace, uint8_t aDelay)
+    void set(uint8_t aType, uint8_t aState, uint8_t aLo, uint8_t aHi, uint8_t aPace, uint8_t aReset)
     {
         setType(aType);
         setState(aState);
         setLo(aLo);
         setHi(aHi);
         setPace(aPace);
-        setDelay(aDelay);        
+        setReset(aReset);        
     }
 
 
@@ -132,6 +131,7 @@ class OutputDef
         Wire.write(lo);
         Wire.write(hi);
         Wire.write(pace);
+        Wire.write(reset);
     }
 
 
@@ -139,10 +139,11 @@ class OutputDef
      */
     void read()
     {
-        type = Wire.read();
-        lo   = Wire.read();
-        hi   = Wire.read();
-        pace = Wire.read();
+        type  = Wire.read();
+        lo    = Wire.read();
+        hi    = Wire.read();
+        pace  = Wire.read();
+        reset = Wire.read();
     }
 
 
@@ -165,8 +166,8 @@ class OutputDef
         Serial.print(getHi(),    HEX);
         Serial.print(PGMT(M_DEBUG_PACE));
         Serial.print(getPace(),  HEX);
-        Serial.print(PGMT(M_DEBUG_DELAY_TO));
-        Serial.print(getDelay(), HEX);
+        Serial.print(PGMT(M_DEBUG_RESET_AT));
+        Serial.print(getReset(), HEX);
         Serial.println();
     }
 
@@ -243,7 +244,7 @@ class OutputDef
      */
     uint8_t getPace()
     {
-        return (pace >> OUTPUT_PACE_SHIFT) & OUTPUT_PACE_MASK;
+        return pace & OUTPUT_PACE_MASK;
     }
 
 
@@ -251,23 +252,23 @@ class OutputDef
      */
     void setPace(uint8_t aPace)
     {
-        pace = ((aPace & OUTPUT_PACE_MASK) << OUTPUT_PACE_SHIFT) | (pace & OUTPUT_DELAY_MASK);
+        pace = aPace & OUTPUT_PACE_MASK;
     }
     
     
     /** Gets the Output's type.
      */
-    uint8_t getDelay()
+    uint8_t getReset()
     {
-        return pace & OUTPUT_DELAY_MASK;
+        return reset;
     }
 
 
-    /** Set's the Output's delay.
+    /** Set's the Output's reset time.
      */
-    void setDelay(uint8_t aDelay)
+    void setReset(uint8_t aReset)
     {
-        pace = (aDelay & OUTPUT_DELAY_MASK) | (pace & (OUTPUT_PACE_MASK << OUTPUT_PACE_SHIFT));
+        reset = aReset;
     }
 };
 

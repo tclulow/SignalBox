@@ -117,8 +117,8 @@ class ImportExport
      */
     void importOutput()
     {
-        uint8_t type = 0;
-        int     pace = 0;
+        uint8_t type  = 0;
+        int     value = 0;
         
         outputNode = readData();
         outputPin  = (outputNode     ) & OUTPUT_PIN_MASK;
@@ -143,16 +143,23 @@ class ImportExport
             outputDef.setState(getOutputState(outputNode, outputPin));
             outputDef.setLo(readData());
             outputDef.setHi(readData());
-            pace = readData();
-            if (pace >= 0)
+            value = readData();
+            if (value >= 0)
             {
-                outputDef.setPace(pace >> OUTPUT_PACE_SHIFT);
-                outputDef.setDelay(pace & OUTPUT_DELAY_MASK);
+                outputDef.setPace(value);
             }
             else
             {
                 outputDef.setPace(OUTPUT_DEFAULT_PACE);
-                outputDef.setDelay(OUTPUT_DEFAULT_DELAY);
+            }
+            value = readData();
+            if (value >= 0)
+            {
+                outputDef.setReset(value);
+            }
+            else
+            {
+                outputDef.setReset(OUTPUT_DEFAULT_RESET);
             }
 
             lcd.printAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_OUTPUT, LCD_LEN_OPTION);
@@ -463,9 +470,9 @@ class ImportExport
                     Serial.print(CHAR_TAB);
                     printHex(outputDef.getHi(),    2);
                     Serial.print(CHAR_TAB);
-                    printHex(outputDef.getPace(),  1);
+                    printHex(outputDef.getPace(),  2);
                     Serial.print(CHAR_TAB);
-                    printHex(outputDef.getDelay(), 1);
+                    printHex(outputDef.getReset(), 2);
                     Serial.println();
                 }
                 Serial.println();

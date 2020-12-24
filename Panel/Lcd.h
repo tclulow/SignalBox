@@ -56,7 +56,7 @@
 #define LCD_COL_OUTPUT_LO     8   // Output's lo parameter at this col.
 #define LCD_COL_OUTPUT_HI    12   // Output's hi parameter at this col.
 #define LCD_COL_OUTPUT_PACE   8   // Output's pace parameter at this col.
-#define LCD_COL_OUTPUT_DELAY 13   // Output's delay parameter at this col.
+#define LCD_COL_OUTPUT_RESET 12   // Output's reset parameter at this col.
 
 
 /** An LCD class that can print PROGMEM messages.

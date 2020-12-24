@@ -40,6 +40,7 @@ const char M_HI[]              PROGMEM = "Hi";
 const char M_LO[]              PROGMEM = "Lo";
 const char M_PACE[]            PROGMEM = "Spd";
 const char M_DELAY[]           PROGMEM = "Delay";
+const char M_RESET[]           PROGMEM = "Reset";
 
 const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLASH, M_BLINK, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU };
 
@@ -159,6 +160,7 @@ const char M_DEBUG_DELAY_TO[]   PROGMEM = ", delayTo=";
 const char M_DEBUG_HI[]         PROGMEM = ", hi=";
 const char M_DEBUG_LO[]         PROGMEM = ", lo=";
 const char M_DEBUG_PACE[]       PROGMEM = ", pace=";
+const char M_DEBUG_RESET_AT[]   PROGMEM = ", resetAt=";
 const char M_DEBUG_STATE[]      PROGMEM = ", state=";
 const char M_DEBUG_TARGET[]     PROGMEM = ", target=";
 const char M_DEBUG_TYPE[]       PROGMEM = ", type=";

@@ -82,7 +82,7 @@ void setup()
             // Indefinite flashers that are high must be started.
             if (   (outputDefs[pin].isFlasher())
                 && (outputDefs[pin].getState())
-                && (outputDefs[pin].getDelay() == 0))
+                && (outputDefs[pin].getReset() == 0))
             {
                 actionState(pin, outputDefs[pin].getState(), 0);
             }
@@ -125,7 +125,7 @@ void firstRun()
         outputDefs[pin].setLo(OUTPUT_DEFAULT_LO);
         outputDefs[pin].setHi(OUTPUT_DEFAULT_HI);
         outputDefs[pin].setPace(OUTPUT_DEFAULT_PACE);
-        outputDefs[pin].setDelay(OUTPUT_DEFAULT_DELAY);
+        outputDefs[pin].setReset(OUTPUT_DEFAULT_RESET);
         saveOutput(pin);
     }
 
@@ -396,8 +396,8 @@ void processReceipt(int aLen)
                                    }
                                    else
                                    {
-                                       // Use delay from Output's definition.
-                                       actionState(pin, command == COMMS_CMD_SET_HI, outputDefs[pin].getDelay());
+                                       // Use zero delay.
+                                       actionState(pin, command == COMMS_CMD_SET_HI, 0);
                                    }
                                    break;
             case COMMS_CMD_READ:   requestCommand = command;        // Record the command.
@@ -631,7 +631,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 
         // Turn Flashers off immediately if state = Lo and an indefinite time (delay = 0).
         if (   (!outputDefs[aPin].getState())
-            && (outputDefs[aPin].getDelay() == 0))
+            && (outputDefs[aPin].getReset() == 0))
         {
             outputs[aPin].steps = 0;
             outputs[aPin].value = 0;
@@ -647,7 +647,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         else
         {
             // Flash as required.
-            outputs[aPin].delayTo = outputDefs[aPin].getDelay() == 0 ? 0 : millis() + DELAY_MULTIPLIER * outputDefs[aPin].getDelay();
+            outputs[aPin].delayTo = outputDefs[aPin].getReset() == 0 ? 0 : millis() + DELAY_MULTIPLIER * outputDefs[aPin].getReset();
             outputs[aPin].steps   = outputDefs[aPin].getPaceAsSteps() + 1;
             outputs[aPin].step    = outputs[aPin].steps;
         }

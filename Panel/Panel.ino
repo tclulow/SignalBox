@@ -268,7 +268,7 @@ void convertEzyBus()
             EEPROM.get(ezyBus++, value);
             value = (value >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK;
             outputDef.setPace(value);
-            outputDef.setDelay(0);
+            outputDef.setReset(OUTPUT_DEFAULT_RESET);
 
             writeOutput(true);
         }

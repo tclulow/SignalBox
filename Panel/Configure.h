@@ -294,7 +294,7 @@ class Configure
             col += LCD_COL_OUTPUT_STEP;
             lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getPace(),  1);
             col += LCD_COL_OUTPUT_STEP - 1;
-            lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getDelay(), 1);
+            lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getReset(), 2);
         }
     }
 
@@ -318,12 +318,12 @@ class Configure
     void displayOutputDelayPace()
     {
         lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_TOP);
-        lcd.printAt(LCD_COL_OUTPUT_DELAY - 2, LCD_ROW_TOP, M_DELAY);
         lcd.printAt(LCD_COL_OUTPUT_PACE  - 1, LCD_ROW_TOP, M_PACE);
+        lcd.printAt(LCD_COL_OUTPUT_RESET - 1, LCD_ROW_TOP, M_RESET);
 
-        lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_OUTPUT_PACE,  LCD_ROW_BOT, HEX_CHARS[outputDef.getPace()]);
-        lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[outputDef.getDelay()]);
+        lcd.clearRow(LCD_COL_OUTPUT_PARAM,   LCD_ROW_BOT);
+        lcd.printAt(LCD_COL_OUTPUT_PACE,     LCD_ROW_BOT, HEX_CHARS[outputDef.getPace()]);
+        lcd.printAtDec(LCD_COL_OUTPUT_RESET, LCD_ROW_BOT, outputDef.getReset(), OUTPUT_HI_LO_SIZE);
     }
     
 
@@ -1495,7 +1495,7 @@ class Configure
                 case BUTTON_LEFT:   finished = true;
                                     break;
                 case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, 1, false);
-                                    changed |= menuOutputDelay();
+                                    changed |= menuOutputReset();
                                     markField(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, 1, true);
                                     break;
             }
@@ -1507,29 +1507,41 @@ class Configure
     }
 
 
-    /** Process the Output's Pace parameter.
+    /** Process the Output's Reset parameter.
      */
-    boolean menuOutputDelay()
+    boolean menuOutputReset()
     {
         boolean finished = false;
         boolean changed  = false;
-        uint8_t value    = outputDef.getDelay();
 
-        markField(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, 1, true);
+        markField(LCD_COL_OUTPUT_RESET, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
 
         while (!finished)
         {
+            int autoRepeat = DELAY_BUTTON_DELAY;
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     value = (value + 1) & OUTPUT_DELAY_MASK;
-                                    outputDef.setDelay(value);
-                                    lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[value]);
+                case BUTTON_UP:     do
+                                    {
+                                        outputDef.setReset(outputDef.getReset() + 1);
+                                        lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getReset(), OUTPUT_HI_LO_SIZE);
+                                        delay(autoRepeat);
+                                        autoRepeat = DELAY_BUTTON_REPEAT;
+                                    }
+                                    while (readButton() != 0);
+                                    writeOutput(false);
                                     changed = true;
                                     break;
-                case BUTTON_DOWN:   value = (value - 1) & OUTPUT_DELAY_MASK;
-                                    outputDef.setDelay(value);
-                                    lcd.printAt(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, HEX_CHARS[value]);
+                case BUTTON_DOWN:   do
+                                    {
+                                        outputDef.setReset(outputDef.getReset() - 1);
+                                        lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getReset(), OUTPUT_HI_LO_SIZE);
+                                        delay(autoRepeat);
+                                        autoRepeat = DELAY_BUTTON_REPEAT;
+                                    }
+                                    while (readButton() != 0);
+                                    writeOutput(false);
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: testOutput(true);
@@ -1540,7 +1552,7 @@ class Configure
             }
         }
 
-        markField(LCD_COL_OUTPUT_DELAY, LCD_ROW_BOT, 1, false);
+        markField(LCD_COL_OUTPUT_RESET, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
 
         return changed;
     }
@@ -1550,20 +1562,22 @@ class Configure
      *  Most outputs change state and then change back again.
      *  Flashers always go Hi first, then Lo.
      */
-    void testOutput(boolean aIncludeDelay)
+    void testOutput(boolean aIncludeReset)
     {
+        uint8_t reset = aIncludeReset ? outputDef.getReset() : 0;
+        
         if (outputDef.isFlasher())
         {
-            writeOutputState(outputNode, outputPin, true,  aIncludeDelay ? outputDef.getDelay() : 0);
+            writeOutputState(outputNode, outputPin, true,  reset);
             waitForButtonRelease();
-            writeOutputState(outputNode, outputPin, false, aIncludeDelay ? outputDef.getDelay() : 0);
+            writeOutputState(outputNode, outputPin, false, reset);
             writeOutput(false);
         }
         else
         {
-            writeOutputState(outputNode, outputPin, !outputDef.getState(), aIncludeDelay ? outputDef.getDelay() : 0);
+            writeOutputState(outputNode, outputPin, !outputDef.getState(), reset);
             waitForButtonRelease();
-            writeOutputState(outputNode, outputPin,  outputDef.getState(), aIncludeDelay ? outputDef.getDelay() : 0);
+            writeOutputState(outputNode, outputPin,  outputDef.getState(), reset);
         }
     }
 
