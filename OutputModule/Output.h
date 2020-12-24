@@ -347,7 +347,7 @@ void writeOutput(boolean aSave);
 
 /** Write a change of state to the Output module.
  */
-void writeOutputState(boolean aState, uint8_t aDelay);
+void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay);
 
 
 /** Reset current Output. 
