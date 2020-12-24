@@ -12,7 +12,7 @@
 #define INPUT_PIN_MASK         0x0f     // Mask to get input pin within a node.
 
 // Mask for Input options
-#define INPUT_OUTPUT_MAX          6     // Number of outputs each input can control.
+#define INPUT_OUTPUT_MAX          7     // Number of outputs each input can control. See also EEPROM in System.h
 #define INPUT_DELAY_FLAG       0x80     // The Input's output is a delay.
 #define INPUT_OUTPUT_MASK      0x7f     // Mask to get the Input's output without the flag above.
 #define INPUT_DELAY_MASK       0x0f     // Mask to get the Input's delay without flag above.
