@@ -562,7 +562,10 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
  */
 void setup()
 {
-    lcd.begin(LCD_COLS, LCD_ROWS);            // LCD panel.
+    delay(DELAY_START);                 // Wait to avoid programmer conflicts.
+    Serial.begin(SERIAL_SPEED);         // Serial IO.
+    
+    lcd.begin(LCD_COLS, LCD_ROWS);      // LCD panel.
     announce();
     if (loadSystemData())
     {

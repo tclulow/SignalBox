@@ -88,8 +88,6 @@ void setDebug(uint8_t aLevel)
 void flashVersion()
 {
     pinMode(LED_BUILTIN, OUTPUT);   // Configure the on-board LED pin for output
-    delay(DELAY_START);             // Wait to avoid programmer conflicts.
-    Serial.begin(SERIAL_SPEED);     // Serial IO.
     
     for (int ind = 0; ind < strlen_P(M_VERSION); ind++)
     {
