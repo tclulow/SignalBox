@@ -76,6 +76,14 @@ void setup()
         {
             loadOutput(pin);
             initOutput(pin, OUTPUT_TYPE_NONE);
+
+            // Ensure BLINK outputs with indefinite time are actioned and actually flash.
+            if (   (outputDefs[pin].getType() == OUTPUT_TYPE_BLINK)
+                && (outputDefs[pin].getState())
+                && (outputDefs[pin].getDelay() == 0))
+            {
+                actionState(pin, true, 0);
+            }
         }
     }
 
@@ -204,10 +212,7 @@ void initOutput(int aPin, uint8_t aOldType)
             outputs[aPin].value = 0;
             outputs[aPin].alt   = outputDefs[aPin].getLo();
         }
-        outputs[aPin].steps = 0;            // Ensure there's no flashing
-
-        // TODO - Ensure BLINK Outputs blink if they're Hi and have delay-0 (indefinite).
-        // But only at start-up, not when configuring.
+        outputs[aPin].steps = 0;            // Ensure there's no flashing.
     }
     else
     {
@@ -621,13 +626,15 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             && (outputDefs[aPin].getDelay() == 0))
         {
             outputs[aPin].steps = 0;
+            outputs[aPin].value = 0;
+            outputs[aPin].alt   = outputDefs[aPin].getLo();
         }
         else
         {
             // Flash as required.
-            outputs[aPin].delayTo = millis() + DELAY_MULTIPLIER * outputDefs[aPin].getDelay();
-            outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
-            outputs[aPin].step  = outputs[aPin].steps;
+            outputs[aPin].delayTo = outputDefs[aPin].getDelay() == 0 ? 0 : millis() + DELAY_MULTIPLIER * outputDefs[aPin].getDelay();
+            outputs[aPin].steps   = outputDefs[aPin].getPaceAsSteps() + 1;
+            outputs[aPin].step    = outputs[aPin].steps;
         }
     }
     else
