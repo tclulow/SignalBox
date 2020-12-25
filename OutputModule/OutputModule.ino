@@ -755,6 +755,13 @@ void stepServo(int aPin)
             // Last step, make sure to hit the target bang-on.
             outputs[aPin].value = outputDefs[aPin].getTarget();
             digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
+            
+            // If there's a reset, reset the servo after the specified delay.
+            if (   (outputDefs[aPin].getState())
+                && (outputDefs[aPin].getReset() > 0))
+            {
+                actionState(aPin, false, outputDefs[aPin].getReset());
+            }
         }
         else
         {
@@ -763,8 +770,6 @@ void stepServo(int aPin)
                                 +   (outputDefs[aPin].getTarget() - outputs[aPin].start)
                                   * outputs[aPin].step
                                   / outputs[aPin].steps;
-//            outputs[aPin].value += (outputDefs[aPin].getTarget() - outputs[aPin].value)
-//                                 / (outputs[aPin].steps + 1 - outputs[aPin].step);
         }
 
         // Set (or unset) Servo's digital pad when we're over halfway
@@ -834,6 +839,13 @@ void stepLed(int aPin)
             {
                 outputs[aPin].value = 0;
                 outputs[aPin].alt   = outputDefs[aPin].getTarget();
+            }
+
+            // If there's a reset, reset the LED after the specified delay.
+            if (   (outputDefs[aPin].getState())
+                && (outputDefs[aPin].getReset() > 0))
+            {
+                actionState(aPin, false, outputDefs[aPin].getReset());
             }
         }
         else
