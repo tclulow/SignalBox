@@ -18,7 +18,7 @@
 #define ANALOG_PIN_CUTOFF 0x200  // When usinging analog pin for digital purposes, cutoff at this value (half of full range 0-3ff).     
 
 
-#define DELAY_MULTIPLIER  1000  // Multiply delay values by this amount (convert to seconds).
+#define DELAY_MULTIPLIER  1000L  // Multiply delay values by this amount (convert to seconds).
 
 
 // The module jumper pins
