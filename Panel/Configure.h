@@ -283,18 +283,21 @@ class Configure
      */
     void displayOutputParams(int aType)
     {
-        int col = LCD_COL_OUTPUT_PARAM;
+        lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT);
+        lcd.setCursor(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT);
         
-        lcd.clearRow(col, LCD_ROW_BOT);
         if (aType != OUTPUT_TYPE_NONE)
         {    
-            lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getLo(),    2);
-            col += LCD_COL_OUTPUT_STEP;
-            lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getHi(),    2);
-            col += LCD_COL_OUTPUT_STEP;
-            lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getPace(),  1);
-            col += LCD_COL_OUTPUT_STEP - 1;
-            lcd.printAtHex(col, LCD_ROW_BOT, outputDef.getReset(), 2);
+            lcd.printHex(outputDef.getLo(),    2);
+            lcd.print(CHAR_SPACE);
+            lcd.printHex(outputDef.getHi(),    2);
+            lcd.print(CHAR_SPACE);
+            lcd.printHex(outputDef.getPace(),  1);
+            lcd.print(CHAR_SPACE);
+            if (outputDef.getReset() > 0)
+            {
+                lcd.print(CHAR_HASH);
+            }
         }
     }
 
