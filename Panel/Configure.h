@@ -1312,7 +1312,7 @@ class Configure
                                         default:                 systemFail(M_OUTPUT, outputType, 0);
                                     }
 
-                                    displayNode(true);
+                                    displayNode(false);
                                     displayOutputParams(outputDef.getType());
                                     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                                     break;
