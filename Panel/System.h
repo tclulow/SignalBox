@@ -118,7 +118,7 @@ struct SystemData
     uint8_t i2cOutputBaseID = I2C_DEFAULT_OUTPUT_BASE_ID;
     uint8_t i2cModuleID     = I2C_MODULE_ID_JUMPERS;        // The module number we're using - default, use hardware.
 
-    uint8_t debugLevel      = DEBUG_FULL;                   // Debugging level.
+    uint8_t debugLevel      = DEBUG_ERRORS;                 // Debugging level.
     uint8_t reportLevel     = REPORT_LONG;                  // Reporting level.
     
     int     buttons[6];                                     // Configuration of analog buttons.
