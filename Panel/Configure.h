@@ -957,7 +957,7 @@ class Configure
                                     }
                                     else
                                     {
-                                        testOutput(false);
+                                        testOutput();
                                     }
                                     break;
                 case BUTTON_LEFT:   finished = true;
@@ -1373,7 +1373,7 @@ class Configure
                                     writeOutput(false);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: testOutput(false);
+                case BUTTON_SELECT: testOutput();
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
@@ -1441,7 +1441,7 @@ class Configure
                                     writeOutput(false);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: testOutput(false);
+                case BUTTON_SELECT: testOutput();
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
@@ -1490,7 +1490,7 @@ class Configure
                                     writeOutput(false);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: testOutput(false);
+                case BUTTON_SELECT: testOutput();
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
@@ -1544,7 +1544,7 @@ class Configure
                                     writeOutput(false);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: testOutput(true);
+                case BUTTON_SELECT: testOutput();
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
@@ -1562,22 +1562,20 @@ class Configure
      *  Most outputs change state and then change back again.
      *  Flashers always go Hi first, then Lo.
      */
-    void testOutput(boolean aIncludeReset)
+    void testOutput()
     {
-        uint8_t reset = aIncludeReset ? outputDef.getReset() : 0;
-        
         if (outputDef.isFlasher())
         {
-            writeOutputState(outputNode, outputPin, true,  reset);
+            writeOutputState(outputNode, outputPin, true,  0);
             waitForButtonRelease();
-            writeOutputState(outputNode, outputPin, false, reset);
+            writeOutputState(outputNode, outputPin, false, 0);
             writeOutput(false);
         }
         else
         {
-            writeOutputState(outputNode, outputPin, !outputDef.getState(), reset);
+            writeOutputState(outputNode, outputPin, !outputDef.getState(), 0);
             waitForButtonRelease();
-            writeOutputState(outputNode, outputPin,  outputDef.getState(), reset);
+            writeOutputState(outputNode, outputPin,  outputDef.getState(), 0);
         }
     }
 

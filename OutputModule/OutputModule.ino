@@ -757,7 +757,8 @@ void stepServo(int aPin)
             digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
             
             // If there's a reset, reset the servo after the specified delay.
-            if (   (outputDefs[aPin].getState())
+            if (   (persisting)
+                && (outputDefs[aPin].getState())
                 && (outputDefs[aPin].getReset() > 0))
             {
                 actionState(aPin, false, outputDefs[aPin].getReset());
@@ -842,7 +843,8 @@ void stepLed(int aPin)
             }
 
             // If there's a reset, reset the LED after the specified delay.
-            if (   (outputDefs[aPin].getState())
+            if (   (persisting)
+                && (outputDefs[aPin].getState())
                 && (outputDefs[aPin].getReset() > 0))
             {
                 actionState(aPin, false, outputDefs[aPin].getReset());
