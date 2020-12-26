@@ -602,18 +602,12 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
                       / OUTPUT_SERVO_MAX;
         outputs[aPin].steps = steps + 1;
 
-        // Add trigger point for SIGNALS, but only if they're travelling the whole range.
+        // Add trigger point for SIGNALS, but only if they're ascending the whole range.
         if (   (outputDefs[aPin].getType()      == OUTPUT_TYPE_SIGNAL)
-            && (outputDefs[aPin].getAltTarget() == outputs[aPin].start))
+            && (outputDefs[aPin].getAltTarget() == outputs[aPin].start)
+            && (aState))
         {
-            if (aState)
-            {
-                outputs[aPin].alt = (steps + random(steps)) / 3;
-            }
-            else
-            {
-                outputs[aPin].alt = random(steps) / 6;
-            }
+            outputs[aPin].alt = (steps + random(steps)) / 3;
         }
     }
     else if (outputDefs[aPin].isLed())
@@ -686,7 +680,8 @@ void stepServos()
     // Move any Outputs that need moving.
     for (int pin = 0; pin < IO_PINS; pin++)
     {
-        if (outputDefs[pin].isServo())
+        if (   (outputDefs[pin].isServo())
+            && (outputs[pin].steps > 0))
         {
             if (   (outputs[pin].delayTo == 0)
                 || (outputs[pin].delayTo <= now))
@@ -702,7 +697,7 @@ void stepServos()
  */
 void stepServo(int aPin)
 {
-    if (outputs[aPin].step < outputs[aPin].steps)
+    if (outputs[aPin].step <= outputs[aPin].steps)
     {
 //        // Report initial position if debug level high enough.
 //        if (   (isDebug(DEBUG_FULL))
@@ -711,18 +706,20 @@ void stepServo(int aPin)
 //            reportOutput(M_DEBUG_MOVE, aPin);
 //        }
 
-        // Handle SIGNAL triggers (if set) if "ascending" (new state is "true").
-        if (   (outputDefs[aPin].getState())
-            && (outputs[aPin].alt))
+        // Handle SIGNAL triggers (if set).
+        if (outputs[aPin].alt)
         {
-            if (outputs[aPin].alt > outputs[aPin].step)             // Ascending to trigger step.
+            if (outputs[aPin].alt > outputs[aPin].step)                 // Ascending to trigger step.
             {
                 outputs[aPin].step += 1;
-                if (outputs[aPin].alt == outputs[aPin].step)        // Reached the trigger step.
+                if (outputs[aPin].alt == outputs[aPin].step)            // Reached the trigger step.
                 {
-                    // Set new trigger back down a bit ( 1 to 1/3 of distance travelled so far).
-                    outputs[aPin].alt -= 1 + random(outputs[aPin].step) / 3;
-                    outputs[aPin].delayTo = millis() + random(250); // Up to 1/4 second delay.
+                    // Set new trigger back down a bit (up to 1/3).
+                    outputs[aPin].alt -= 1 + random(outputs[aPin].step)
+                                           * SIGNAL_PAUSE_PERCENTAGE
+                                           / 100;
+                    outputs[aPin].delayTo = millis() + random(SIGNAL_PAUSE_DELAY);
+                    
                     if (isDebug(DEBUG_FULL))
                     {
                         reportOutput(M_DEBUG_TRIGGER, aPin);
@@ -732,10 +729,14 @@ void stepServo(int aPin)
             else
             {
                 outputs[aPin].step -= 1;
-                if (outputs[aPin].alt == outputs[aPin].step)        // Have descended to trigger step.
+                if (outputs[aPin].alt >= outputs[aPin].step)            // Have descended to trigger step.
                 {
-                    outputs[aPin].alt = 0;                          // Remove the trigger step.
-                    outputs[aPin].delayTo = millis() + random(500); // Up to 1/2 second delay.
+                    outputs[aPin].alt = 0;                              // Remove the trigger step.
+                    if (outputDefs[aPin].getState())
+                    {
+                        outputs[aPin].delayTo = millis() + random(SIGNAL_PAUSE_RESTART);
+                    }
+                    
                     if (isDebug(DEBUG_FULL))
                     {
                         reportOutput(M_DEBUG_TRIGGER, aPin);
@@ -755,13 +756,34 @@ void stepServo(int aPin)
             // Last step, make sure to hit the target bang-on.
             outputs[aPin].value = outputDefs[aPin].getTarget();
             digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
-            
-            // If there's a reset, reset the servo after the specified delay.
+
+            // Signals might "bounce" if descending
             if (   (persisting)
-                && (outputDefs[aPin].getState())
-                && (outputDefs[aPin].getReset() > 0))
+                && (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
+                && (!outputDefs[aPin].getState())
+                && (random(100) < SIGNAL_BOUNCE_CHANCE))
             {
-                actionState(aPin, false, outputDefs[aPin].getReset());
+                // Go back a little.
+                outputs[aPin].alt = outputs[aPin].steps - random(outputs[aPin].steps)
+                                                        * SIGNAL_BOUNCE_PERCENTAGE
+                                                        / 100;
+                if (isDebug(DEBUG_FULL))
+                {
+                    reportOutput(M_DEBUG_TRIGGER, aPin);
+                }
+            }
+            else
+            {
+                // Stop further movement.
+                outputs[aPin].steps = 0;
+                
+                // If there's a reset, reset the servo after the specified delay.
+                if (   (persisting)
+                    && (outputDefs[aPin].getState())
+                    && (outputDefs[aPin].getReset() > 0))
+                {
+                    actionState(aPin, false, outputDefs[aPin].getReset());
+                }
             }
         }
         else
