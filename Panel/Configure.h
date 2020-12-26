@@ -1185,9 +1185,7 @@ class Configure
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: //changed = true;
-                                    //inputDef.setDisabled(aIndex, !inputDef.isDisabled(aIndex));
-                                    //displayInputEdit(aIndex);
+                case BUTTON_SELECT: testInputOutput(aIndex);
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
