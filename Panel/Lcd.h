@@ -223,6 +223,12 @@ class LCD: public LiquidCrystal
 
 /** A singleton instance of the class.
  *  Initialize the LCD library with the numbers of the interface pins
+ *  
+ *  LiquidCrystal(rs,     enable,                 d4, d5, d6, d7)
+ *  LiquidCrystal(rs, rw, enable,                 d4, d5, d6, d7)
+ *  LiquidCrystal(rs,     enable, d0, d1, d2, d3, d4, d5, d6, d7)
+ *  LiquidCrystal(rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7) 
+ *  
  *  Typical options:
  *  LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
  *  LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
