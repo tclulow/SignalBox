@@ -258,6 +258,24 @@ void dumpMemory(PGM_P aMessage, int aStart, int aEnd)
             printHex(EEPROM.read(base + offs), 2);
         }
 
+        Serial.print(CHAR_SPACE);
+        Serial.print(CHAR_SPACE);
+        Serial.print(CHAR_SPACE);
+
+        for (int offs = 0; offs < 16; offs++)
+        {
+            char ch = EEPROM.read(base + offs);
+            if (   (ch >= CHAR_SPACE)
+                && (ch <= CHAR_TILDE))
+            {
+                Serial.print(ch);    
+            }
+            else
+            {
+                Serial.print(CHAR_DOT);
+            }
+        }
+
         Serial.println();
     }
 }

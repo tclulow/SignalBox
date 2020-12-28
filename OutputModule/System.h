@@ -89,19 +89,20 @@ const char CHAR_NEWLINE = '\n';
 const char CHAR_RETURN  = '\r';
 const char CHAR_NULL    = 0;
 
-const char CHAR_DOT     = '.';
-const char CHAR_COMMA   = ',';
-const char CHAR_COLON   = ':';
-const char CHAR_DASH    = '-';
 const char CHAR_HASH    = '#';
+const char CHAR_STAR    = '*';
+const char CHAR_COMMA   = ',';
+const char CHAR_DASH    = '-';
+const char CHAR_DOT     = '.';
+const char CHAR_COLON   = ':';
 const char CHAR_LEFT    = '<';
 const char CHAR_RIGHT   = '>';
-const char CHAR_STAR    = '*';
 const char CHAR_QUERY   = '?';
+const char CHAR_TILDE   = '~';
 const char CHAR_ZERO    = '0';
 const char CHAR_NINE    = '9';
-const char CHAR_LOWER_A = 'a';
 const char CHAR_UPPER_A = 'A';
+const char CHAR_LOWER_A = 'a';
 
 
 /** Data describing an Output's operation.
