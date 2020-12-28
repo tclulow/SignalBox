@@ -117,7 +117,8 @@ void flashVersion()
         Serial.print(PGMT(M_VERSION_DATE));
         Serial.println();
     }
-
+    
+    #if !MASTER
     // Flash module number.
     delay(DELAY_BLINK * 3);
     for (uint8_t mask = 1; mask <= 0x08; mask <<= 1)
@@ -127,6 +128,7 @@ void flashVersion()
         digitalWrite(LED_BUILTIN, LOW);
         delay(DELAY_BLINK);
     }
+    #endif
 }
 
 
