@@ -5,12 +5,12 @@
 
 
 #if MASTER
-    #define MAGIC_NUMBER 0x50616e6c         // Magic number = Panl.
+    #define MAGIC_NUMBER 0x786f6253         // Magic number = "Sbox".
 #else
-    #define MAGIC_NUMBER 0x50616e6f         // Magic number = "Pano".
+    #define MAGIC_NUMBER 0x74756f53         // Magic number = "Sout".
 #endif
 
-#define VERSION         0x0023              // Version number of software.  See also M_VERSION.
+#define VERSION         0x0024              // Version number of software.  See also M_VERSION.
 
 
 // i2c node numbers.

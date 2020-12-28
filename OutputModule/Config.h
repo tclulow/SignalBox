@@ -3,7 +3,7 @@
 #ifndef _Config_h
 #define _Config_h
 
-
+#define STEP_MODULE_ID            100   // Delay (msecs) between steps of ID flashing.
 #define STEP_SERVO                 50   // Delay (msecs) between steps of a Servo.
 #define STEP_LED                   10   // Delay (msecs) between steps of a LED.
 #define STEP_FLASH                 10   // Delay (msecs) between steps of flashes of a FLASH or BLINK.

@@ -10,12 +10,12 @@
 
 // Software versioning.
 #if MASTER
-    const char M_SOFTWARE[]    PROGMEM = "Panel";
+    const char M_SOFTWARE[]    PROGMEM = "SignalBox";
 #else
     const char M_SOFTWARE[]    PROGMEM = "Output module";
 #endif
-const char M_VERSION[]         PROGMEM = "v2.3";        // See also system.VERSION.
-const char M_VERSION_DATE[]    PROGMEM = "Dec 2020";
+const char M_VERSION[]         PROGMEM = "v2.4";        // See also system.VERSION.
+const char M_VERSION_DATE[]    PROGMEM = "Dec 20";
 const char M_STARTUP[]         PROGMEM = "Startup";
 const char M_UPDATE[]          PROGMEM = "Update ";
 

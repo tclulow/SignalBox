@@ -26,6 +26,7 @@ long tickServo = 0;
 long tickLed   = 0;
 long tickFlash = 0;
 
+
 // i2c request command parameters
 uint8_t requestCommand = COMMS_CMD_NONE;
 uint8_t requestOption  = 0;
@@ -1097,34 +1098,4 @@ void loop()
 //            }
         }
     }
-}
-
-
-void test1()
-{
-//    Serial.println();
-
-    // outputDef.set(aType, aState, aLo, aHi, aPace, aDelay)
-//    outputDefs[0].set(OUTPUT_TYPE_SERVO, false,   3, 180,  0xd, 1);   saveOutput(0);
-//    outputDefs[1].set(OUTPUT_TYPE_SERVO, false,   4, 179,  0xc, 2);   saveOutput(1);
-//
-//    actionReceipt(0, true, 0);
-//    actionReceipt(1, true, 3);
-    
-//    outputDefs[pin].set(OUTPUT_TYPE_LED,   false, 100, 100,  0xc, 1);   saveOutput(pin);   actionReceipt(pin++, true, 1);
-//    outputDefs[pin].set(OUTPUT_TYPE_FLASH, false, 255,   4,  0xf, 4);   saveOutput(pin);   actionReceipt(pin++, true, 4);
-//    outputDefs[pin].set(OUTPUT_TYPE_BLINK, false,  23, 183,  0xe, 4);   saveOutput(pin);   actionReceipt(pin++, true, 4);
-    
-//    Serial.println();
-}
-
-
-void test2()
-{
-//    Serial.println();
-//
-//    actionReceipt(0, false, outputDefs[0].getDelay());
-//    actionReceipt(1, false, outputDefs[1].getDelay());
-//    
-//    Serial.println();   
 }
