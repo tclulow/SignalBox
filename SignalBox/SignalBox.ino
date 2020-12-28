@@ -185,15 +185,16 @@ void firstRun()
         if (waitForButton() == BUTTON_SELECT)
         {
             convertEzyBus();
+            defaultInputs(INPUT_TYPE_TOGGLE);
         }
         else
         {
-            defaultSetup();
+            defaultInputs(INPUT_TYPE_ON_OFF);
         }
     }
     else
     {
-        defaultSetup();
+        defaultInputs(INPUT_TYPE_ON_OFF);
     }
 
     // Save all data to EEPROM.
@@ -206,13 +207,15 @@ void firstRun()
 /** Set the default initial setup
  *  Servos with mid-position and mid-pace.
  */
-void defaultSetup()
+void defaultInputs(uint8_t aInputType)
 {
     lcd.clear();
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INITIALISING);
     lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
     inputNumber = 0;
+    inputType   = aInputType;
+    
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
         lcd.print(HEX_CHARS[node]);
@@ -253,40 +256,16 @@ void convertEzyBus()
 
         for (outputPin = 0; outputPin < OUTPUT_PIN_MAX; outputPin++)
         {
-            EEPROM.get(ezyBus++, value);
-            outputDef.setType(++value & OUTPUT_TYPE_MASK);
+            // Create an Output that reflects the Ezybus one.
             outputDef.setState(false);
-            
-            EEPROM.get(ezyBus++, value);
-            outputDef.setLo(value);        
-            
-            EEPROM.get(ezyBus++, value);
-            outputDef.setHi(value);        
-
-            // Pace was in steps of 4 (2-bits), drop one bit.
-            EEPROM.get(ezyBus++, value);
-            value = (value >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK;
-            outputDef.setPace(value);
+            outputDef.setType((EEPROM.read(ezyBus++) + 1) & OUTPUT_TYPE_MASK);                  // Output types are 1 greater then those of Ezybus.
+            outputDef.setLo(EEPROM.read(ezyBus++));        
+            outputDef.setHi(EEPROM.read(ezyBus++));        
+            outputDef.setPace((EEPROM.read(ezyBus++) >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK);   // Convert Ezybus pace.
             outputDef.setReset(OUTPUT_DEFAULT_RESET);
 
             writeOutput(true);
         }
-    }
-
-    // Create the inputs.
-    inputType = INPUT_TYPE_TOGGLE;
-
-    for (inputNumber = 0; inputNumber < INPUT_MAX; inputNumber++)
-    {
-        // Create an input.
-        inputDef.setOutput(0, inputNumber);
-        inputDef.setDelay(0, false);
-        for (uint8_t index = 1; index < INPUT_OUTPUT_MAX; index++)
-        {
-            inputDef.setOutput(index, 0);       // Zero-length delay
-            inputDef.setDelay(index, true);
-        }
-        saveInput();
     }
 }
 
@@ -561,11 +540,9 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
  */
 void setup()
 {
-    delay(DELAY_START);                 // Wait to avoid programmer conflicts.
-    Serial.begin(SERIAL_SPEED);         // Serial IO.
-    
     lcd.begin(LCD_COLS, LCD_ROWS);      // LCD panel.
     announce();
+
     if (loadSystemData())
     {
         lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_STARTUP);
@@ -574,6 +551,9 @@ void setup()
     {
         lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SETUP);
     }
+    
+    delay(DELAY_START);                 // Wait to avoid programmer conflicts.
+    Serial.begin(SERIAL_SPEED);         // Serial IO.
     
     if (isDebug(DEBUG_FULL))
     {
