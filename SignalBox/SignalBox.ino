@@ -213,12 +213,11 @@ void defaultSetup()
     lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
     inputNumber = 0;
-
-    for (outputNode = 0; outputNode < OUTPUT_NODE_MAX; outputNode++)
+    for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
-        lcd.print(HEX_CHARS[outputNode]);
+        lcd.print(HEX_CHARS[node]);
 
-        for (outputPin = 0; outputPin < OUTPUT_PIN_MAX; outputPin++)
+        for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
         {
             // Create an input.
             inputDef.setOutput(0, inputNumber);     // Map 1-1 inputs to outputs.
