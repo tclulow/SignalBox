@@ -233,9 +233,6 @@ class ImportExport
             }
         }
 
-        Serial.print("readData=");
-        Serial.println(value, HEX);
-        
         return value;
     }
     
@@ -280,15 +277,11 @@ class ImportExport
      */
     void skipLine()
     {
-        Serial.print("skipLine='");
-
         while (   (!readButton())
                && (!isEndOfLine()))
         {
-            Serial.print((char)lastChar);
             lastChar = readChar();
         }
-        Serial.println("'");
 
         lastChar = CHAR_SPACE;
     }
@@ -325,10 +318,6 @@ class ImportExport
     
         // Add terminator to word.
         wordBuffer[index] = CHAR_NULL;
-
-        Serial.print("readWord='");
-        Serial.print(wordBuffer);
-        Serial.println("'");
 
         return index; 
     }
