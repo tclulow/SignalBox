@@ -12,7 +12,7 @@
 #include "System.h"
 #include "Comms.h"
 #include "EzyBus.h"
-#include "Panel.h"
+#include "SignalBox.h"
 #include "Lcd.h"
 #include "Output.h"
 #include "Input.h"
@@ -40,8 +40,8 @@ void announce()
 {
     lcd.clear();
     lcd.printAt(LCD_COL_START,                       LCD_ROW_TOP, M_SOFTWARE);
-    lcd.printAt(LCD_COLS - strlen_P(M_VERSION_DATE), LCD_ROW_TOP, M_VERSION_DATE);
-    lcd.printAt(LCD_COLS - strlen_P(M_VERSION),      LCD_ROW_BOT, M_VERSION);
+    lcd.printAt(LCD_COLS - strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
+    lcd.printAt(LCD_COLS - strlen_P(M_VERSION_DATE), LCD_ROW_BOT, M_VERSION_DATE);
 }
 
 
