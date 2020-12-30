@@ -262,7 +262,8 @@ void convertEzyBus()
             outputDef.setPace((EEPROM.read(ezyBus++) >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK);   // Convert Ezybus pace.
             outputDef.setReset(OUTPUT_DEFAULT_RESET);
 
-            writeOutput(true);
+            writeOutput();
+            writeSaveOutput();
         }
     }
 }

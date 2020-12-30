@@ -166,7 +166,8 @@ class ImportExport
             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[type], LCD_LEN_OPTION);
             lcd.printAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[outputNode]);
             lcd.printAt(LCD_COL_PIN ,  LCD_ROW_BOT, HEX_CHARS[outputPin]);
-            writeOutput(true);
+            writeOutput();
+            writeSaveOutput();
         }
     }
 

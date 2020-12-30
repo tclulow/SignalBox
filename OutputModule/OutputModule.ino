@@ -418,9 +418,9 @@ void processReceipt(int aLen)
             case COMMS_CMD_READ:   requestCommand = command;        // Record the command.
                                    requestOption  = option;         // and the pin the master wants to read.
                                    break;
-            case COMMS_CMD_WRITE:  processWrite(pin, false);        // Process the Output's data.
+            case COMMS_CMD_WRITE:  processWrite(pin);               // Process the Output's data.
                                    break;
-            case COMMS_CMD_SAVE:   processWrite(pin, true);         // Process the Output's data and save it.
+            case COMMS_CMD_SAVE:   processSave(pin);                // Save the Output's data.
                                    break;
             case COMMS_CMD_RESET:  processReset(pin);               // Reset the Output.
                                    break;
@@ -528,7 +528,7 @@ void processRenumber()
  *  Read the Output
  *  Write the definition to the specified Output.
  */
-void processWrite(uint8_t aPin, boolean aSave)
+void processWrite(uint8_t aPin)
 {
     uint8_t oldType = outputDefs[aPin].getType();       // Remember old type.
     
@@ -538,7 +538,7 @@ void processWrite(uint8_t aPin, boolean aSave)
         {
             Serial.print(millis());
             Serial.print(CHAR_TAB);
-            Serial.print(aSave ? PGMT(M_DEBUG_SAVE) : PGMT(M_DEBUG_WRITE));
+            Serial.print(PGMT(M_DEBUG_WRITE));
             Serial.print(aPin, HEX);
             Serial.print(PGMT(M_DEBUG_LEN));
             Serial.print(Wire.available(), HEX);
@@ -547,21 +547,23 @@ void processWrite(uint8_t aPin, boolean aSave)
     }
     else
     {
-        persisting = aSave;         // Change persisting state based on Save vs Write.
+        persisting = false;                             // Stop saveing state to EEPROM.
 
         // Read the Output definition and save it.
         outputDefs[aPin].read();
         initOutput(aPin, oldType);
 
-        if (aSave)
-        {
-            saveOutput(aPin);
-        }
-        else
-        {
-            outputDefs[aPin].printDef(M_DEBUG_WRITE, aPin);
-        }
+        outputDefs[aPin].printDef(M_DEBUG_WRITE, aPin);
     }
+}
+
+
+/** Process a save command.
+ */
+void processSave(uint8_t aPin)
+{
+    persisting = true;          // Resume saving output to EEPROM.
+    saveOutput(aPin);           // And save the output.
 }
 
 
@@ -571,8 +573,8 @@ void processReset(uint8_t aPin)
 {
     uint8_t oldType = outputDefs[aPin].getType();
     
-    persisting = true;    
-    loadOutput(aPin);
+    persisting = true;          // Resume saving output to EEPROM.
+    loadOutput(aPin);           // And recpver the output's definition.
     initOutput(aPin, oldType);
 }
 

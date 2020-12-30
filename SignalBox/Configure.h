@@ -1286,7 +1286,7 @@ class Configure
                                     outputType += OUTPUT_TYPE_MAX;      // Ensure in-range.
                                     outputType %= OUTPUT_TYPE_MAX;
                                     outputDef.setType(outputType);
-                                    writeOutput(false);
+                                    writeOutput();
                                     
                                     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputType], LCD_LEN_OPTION);
                                     displayOutputParams(outputType);
@@ -1297,7 +1297,8 @@ class Configure
                                     {
                                         if (confirm())
                                         {
-                                            writeOutput(true);
+                                            // writeOutput();
+                                            writeSaveOutput();
                                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
                                             delay(DELAY_READ);
                                             displayDetailOutput();
@@ -1373,7 +1374,7 @@ class Configure
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
         
         outputDef.setState(false);
-        writeOutput(false);
+        writeOutput();
 
         while (!finished)
         {
@@ -1393,7 +1394,7 @@ class Configure
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    writeOutput(false);
+                                    writeOutput();
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   do
@@ -1408,7 +1409,7 @@ class Configure
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    writeOutput(false);
+                                    writeOutput();
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: testOutput();
@@ -1425,7 +1426,7 @@ class Configure
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
         
         outputDef.setState(state);
-        writeOutput(false);
+        writeOutput();
         
         return changed;
     }
@@ -1441,7 +1442,7 @@ class Configure
         markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
 
         outputDef.setState(true);
-        writeOutput(false);
+        writeOutput();
 
         while (!finished)
         {
@@ -1461,7 +1462,7 @@ class Configure
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    writeOutput(false);
+                                    writeOutput();
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   do
@@ -1476,7 +1477,7 @@ class Configure
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    writeOutput(false);
+                                    writeOutput();
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: testOutput();
@@ -1494,7 +1495,7 @@ class Configure
         markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
 
         outputDef.setState(false);
-        writeOutput(false);
+        writeOutput();
                 
         return changed;
     }
@@ -1519,13 +1520,13 @@ class Configure
                 case BUTTON_UP:     value = (value + 1) & OUTPUT_PACE_MASK;
                                     outputDef.setPace(value);
                                     lcd.printAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, HEX_CHARS[value]);
-                                    writeOutput(false);
+                                    writeOutput();
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   value = (value - 1) & OUTPUT_PACE_MASK;
                                     outputDef.setPace(value);
                                     lcd.printAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, HEX_CHARS[value]);
-                                    writeOutput(false);
+                                    writeOutput();
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: testOutput();
@@ -1568,7 +1569,7 @@ class Configure
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    writeOutput(false);
+                                    writeOutput();
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   do
@@ -1579,7 +1580,7 @@ class Configure
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    writeOutput(false);
+                                    writeOutput();
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: testOutput();
@@ -1607,7 +1608,7 @@ class Configure
             writeOutputState(outputNode, outputPin, true,  0);
             waitForButtonRelease();
             writeOutputState(outputNode, outputPin, false, 0);
-            writeOutput(false);
+            writeOutput();
         }
         else
         {

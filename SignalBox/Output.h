@@ -455,9 +455,13 @@ void readOutput(uint8_t aOutputNumber);
 
 
 /** Write an Output's data to an OutputModule.
- *  And save it if so requested.
  */
-void writeOutput(boolean aSave);
+void writeOutput();
+
+
+/** Persist an Output's data to an OutputModule.
+ */
+void writeSaveOutput();
 
 
 /** Write a change of state to the Output module.

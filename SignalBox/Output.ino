@@ -64,24 +64,44 @@ void readOutput(uint8_t aOutputNumber)
 
 
 /** Write current Output's data to its OutputModule.
- *  With save it if so requested.
  */
-void writeOutput(boolean aSave)
+void writeOutput()
 {
     if (isDebug(DEBUG_DETAIL))
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);
-        Serial.print(PGMT(aSave ? M_DEBUG_SAVE : M_DEBUG_WRITE));
+        Serial.print(PGMT(M_DEBUG_WRITE));
         Serial.print(outputNode, HEX);
         Serial.print(outputPin, HEX);
         Serial.println();
-        outputDef.printDef(aSave ? M_DEBUG_SAVE : M_DEBUG_WRITE, outputPin);
+        outputDef.printDef(M_DEBUG_WRITE, outputPin);
     }
 
     Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
-    Wire.write((aSave ? COMMS_CMD_SAVE : COMMS_CMD_WRITE) | outputPin);
+    Wire.write(COMMS_CMD_WRITE | outputPin);
     outputDef.write();
+    Wire.endTransmission();
+}
+
+
+/** Persist an Output's data to an OutputModule.
+ */
+void writeSaveOutput()
+{
+    if (isDebug(DEBUG_DETAIL))
+    {
+        Serial.print(millis());
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_DEBUG_SAVE));
+        Serial.print(outputNode, HEX);
+        Serial.print(outputPin, HEX);
+        Serial.println();
+        outputDef.printDef(M_DEBUG_SAVE, outputPin);
+    }
+
+    Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
+    Wire.write(COMMS_CMD_SAVE | outputPin);
     Wire.endTransmission();
 }
 
