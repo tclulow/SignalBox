@@ -103,12 +103,10 @@ void mapHardware()
         if (inputNodes == 0)
         {
             lcd.printAt(LCD_COL_START, row++, M_NO_INPUTS);
-            inputNodes  = INPUT_NODE_ALL_MASK;
         }
         if (outputNodes == 0)
         {
             lcd.printAt(LCD_COL_START, row++, M_NO_OUTPUTS);
-            outputNodes = OUTPUT_NODE_ALL_MASK;
         }
         delay(DELAY_READ);
     }
