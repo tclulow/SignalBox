@@ -43,9 +43,9 @@ class Configure
         {
             case TOP_SYSTEM: displaySystem();
                              break;
-            case TOP_INPUT:  displayNode(true);
+            case TOP_INPUT:  displayInputNode();
                              break;
-            case TOP_OUTPUT: displayNode(false);
+            case TOP_OUTPUT: displayOutputNode();
                              break;
             case TOP_EXPORT: 
             case TOP_IMPORT: displaySystem();
@@ -67,13 +67,26 @@ class Configure
     }
 
 
-    /** Display the node/pin selection line of the menu.
+    /** Display the output node/pin selection line of the menu.
      */
-    void displayNode(boolean aIsInput)
+    void displayOutputNode()
     {
         lcd.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
-        lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[aIsInput ? inpNode : outNode]);
-        lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[aIsInput ? inpPin  : outPin]);
+        if (isOutput(outNode))
+        {
+            lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[outNode]);
+            lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[outPin]);
+        }
+    }
+
+    
+    /** Display the input node/pin selection line of the menu.
+     */
+    void displayInputNode()
+    {
+        lcd.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
+        lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[inpNode]);
+        lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[inpPin]);
     }
 
 
@@ -274,8 +287,15 @@ class Configure
      */
     void displayDetailOutput()
     {
-        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
-        displayOutputParams(outputDef.getType());
+        if (isOutput(outNode))
+        {
+            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
+            displayOutputParams(outputDef.getType());
+        }
+        else
+        {
+            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_NO_OUTPUTS, LCD_COLS);
+        }
     }
 
 
@@ -353,7 +373,10 @@ class Configure
         while (!finished)
         {
             loadInput(inpNode, inpPin);
-            readOutput(outNode, outPin);
+            if (isOutput(outNode))
+            {
+                readOutput(outNode, outPin);
+            }
 
             switch (waitForButton())
             {
@@ -375,7 +398,10 @@ class Configure
                                                          break;
                                         case TOP_INPUT:  menuNode(true);
                                                          break;
-                                        case TOP_OUTPUT: menuNode(false);
+                                        case TOP_OUTPUT: if (isOutput(outNode))     // Maybe there are no outputs connected.
+                                                         {
+                                                            menuNode(false);
+                                                         }
                                                          break;
                                         case TOP_EXPORT: menuExport();
                                                          break;
@@ -729,10 +755,7 @@ class Configure
             if (   (aIsInput)
                 && (aInUse == isInputNode(next)))
             {
-                if (aInUse)
-                {
-                    loadInput(next, inpPin);
-                }
+                loadInput(next, inpPin);
                 break;
             }
             else if (   (!aIsInput)
@@ -744,6 +767,15 @@ class Configure
                 }
                 break;
             }
+        }
+
+        // If there are no inputs, move to next one anyway
+        if (   (aIsInput)
+            && (next == aStart)                 // Didn't find a suitable input.
+            && (aInUse != isInputNode(next)))   // And this node isn't correct either.
+        {
+            next = (next + aAdjust) & INPUT_NODE_MASK;
+            loadInput(next, inpPin);
         }
 
         return next;
@@ -1313,7 +1345,7 @@ class Configure
                                         default:                 systemFail(M_OUTPUT, outputType, 0);
                                     }
 
-                                    displayNode(false);
+                                    displayOutputNode();
                                     displayOutputParams(outputDef.getType());
                                     markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
                                     break;
