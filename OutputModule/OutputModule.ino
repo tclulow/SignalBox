@@ -532,7 +532,7 @@ void processWrite(uint8_t aPin)
 {
     uint8_t oldType = outputDefs[aPin].getType();       // Remember old type.
     
-    if (Wire.available() < COMMS_LEN_WRITE)
+    if (Wire.available() < OUTPUT_SIZE)
     {
         if (isDebug(DEBUG_ERRORS))
         {

@@ -161,6 +161,8 @@ const char M_DEBUG_HI[]         PROGMEM = ", hi=";
 const char M_DEBUG_LO[]         PROGMEM = ", lo=";
 const char M_DEBUG_PACE[]       PROGMEM = ", pace=";
 const char M_DEBUG_RESET_AT[]   PROGMEM = ", resetAt=";
+const char M_DEBUG_LOCK_HI[]    PROGMEM = ", LockHi=";
+const char M_DEBUG_LOCK_LO[]    PROGMEM = ", LockLo=";
 const char M_DEBUG_STATE[]      PROGMEM = ", state=";
 const char M_DEBUG_TARGET[]     PROGMEM = ", target=";
 const char M_DEBUG_TYPE[]       PROGMEM = ", type=";

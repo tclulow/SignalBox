@@ -26,7 +26,4 @@
 #define COMMS_SYS_RENUMBER  0x01    // Sysatem renumber node sub-command.
 
 
-#define COMMS_LEN_WRITE        5    // Length of data sent with a COMMS_CMD_WRITE
-
-
 #endif

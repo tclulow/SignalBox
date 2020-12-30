@@ -28,7 +28,6 @@
 // Wire response message lengths.
 #define OUTPUT_STATE_LEN            1   // One byte used to return a node's Outputs' states.
 #define OUTPUT_RENUMBER_LEN         1   // One byte used to return a node's new module ID.
-#define OUTPUT_WRITE_LEN            5   // Five bytes used to read/write OutputDef to/from OutputModule.
 
 // Defaults when initialising.
 #define OUTPUT_DEFAULT_LO          90   // Default low  position is 90 degrees.
@@ -217,6 +216,13 @@ class OutputDef
         Wire.write(hi);
         Wire.write(pace);
         Wire.write(reset);
+
+        Wire.write(locks);
+        for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
+        {
+            Wire.write(lockLo[index]);
+            Wire.write(lockHi[index]);
+        }
     }
 
 
@@ -229,34 +235,12 @@ class OutputDef
         hi    = Wire.read();
         pace  = Wire.read();
         reset = Wire.read();
-    }
 
-
-    /** Write the Hi or Lo locks.
-     */
-    void writeLocks(boolean aHi)
-    {
+        locks = Wire.read();
         for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
         {
-           Wire.write(aHi ? lockHi[index] : lockLo[index]);
-        }
-    }
-
-
-    /** Read the Hi or Lo locks.
-     */
-    void readLocks(boolean aHi)
-    {
-        for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
-        {
-            if (aHi)
-            {
-                lockHi[index] = Wire.read();
-            }
-            else
-            {
-                lockLo[index] = Wire.read();
-            }
+            lockLo[index] = Wire.read();
+            lockHi[index] = Wire.read();
         }
     }
 
@@ -282,6 +266,19 @@ class OutputDef
         Serial.print(getPace(),  HEX);
         Serial.print(PGMT(M_DEBUG_RESET_AT));
         Serial.print(getReset(), HEX);
+
+        Serial.print(PGMT(M_DEBUG_LOCK_HI));
+        for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
+        {
+            Serial.print(lockHi[index], HEX);
+            Serial.print(CHAR_SPACE);
+        }
+        Serial.print(PGMT(M_DEBUG_LOCK_LO));
+        for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
+        {
+            Serial.print(lockHi[index], HEX);
+            Serial.print(CHAR_SPACE);
+        }
         Serial.println();
     }
 

@@ -36,9 +36,14 @@ void readOutput(uint8_t aNode, uint8_t aPin)
             systemFail(M_I2C_ERROR, error, DELAY_READ);
             outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
         }
-        else if ((error = Wire.requestFrom(systemData.i2cOutputBaseID + outputNode, OUTPUT_WRITE_LEN)) != OUTPUT_WRITE_LEN)
+        else if ((error = Wire.requestFrom(systemData.i2cOutputBaseID + outputNode, sizeof(outputDef))) != sizeof(outputDef))
         {
             systemFail(M_I2C_COMMS, error, DELAY_READ);
+            outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
+        }
+        else if (Wire.available() != sizeof(outputDef))
+        {
+            systemFail(M_DEBUG_READ, Wire.available(), DELAY_READ);
             outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
         }
         else
@@ -50,6 +55,12 @@ void readOutput(uint8_t aNode, uint8_t aPin)
             {
                 outputDef.printDef(M_DEBUG_READ, outputPin);
             }
+        }
+
+        // Ignore any data that's left
+        while (Wire.available())
+        {
+            Wire.read();
         }
     }
 }
