@@ -361,15 +361,10 @@ class Configure
         {
             inpNode = nextNode(inpNode, 1, true, true);
         }
-        Serial.print("menuTop, outNode=");
-        Serial.print(outNode, HEX);
         if (!isOutputNode(outNode))
         {
             outNode = nextNode(outNode, 1, false, true);
         }
-        Serial.print(", configure node=");
-        Serial.print(outNode, HEX);
-        Serial.println();
         
         loadInput(inpNode, inpPin);
         if (isOutputNode(outNode))
