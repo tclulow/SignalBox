@@ -72,7 +72,7 @@ class Configure
     void displayOutputNode()
     {
         lcd.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
-        if (isOutput(outNode))
+        if (isOutputNode(outNode))
         {
             lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[outNode]);
             lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[outPin]);
@@ -287,7 +287,7 @@ class Configure
      */
     void displayDetailOutput()
     {
-        if (isOutput(outNode))
+        if (isOutputNode(outNode))
         {
             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
             displayOutputParams(outputDef.getType());
@@ -361,23 +361,28 @@ class Configure
         {
             inpNode = nextNode(inpNode, 1, true, true);
         }
+        Serial.print("menuTop, outNode=");
+        Serial.print(outNode, HEX);
         if (!isOutputNode(outNode))
         {
             outNode = nextNode(outNode, 1, false, true);
         }
+        Serial.print(", configure node=");
+        Serial.print(outNode, HEX);
+        Serial.println();
         
+        loadInput(inpNode, inpPin);
+        if (isOutputNode(outNode))
+        {
+            readOutput(outNode, outPin);
+        }
+
         lcd.clear();
         displayAll();
         markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
 
         while (!finished)
         {
-            loadInput(inpNode, inpPin);
-            if (isOutput(outNode))
-            {
-                readOutput(outNode, outPin);
-            }
-
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
@@ -398,7 +403,7 @@ class Configure
                                                          break;
                                         case TOP_INPUT:  menuNode(true);
                                                          break;
-                                        case TOP_OUTPUT: if (isOutput(outNode))     // Maybe there are no outputs connected.
+                                        case TOP_OUTPUT: if (isOutputNode(outNode))     // Maybe there are no outputs connected.
                                                          {
                                                             menuNode(false);
                                                          }
@@ -1368,7 +1373,7 @@ class Configure
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
         
         outputDef.setState(false);
-        writeOutput(outPin);
+        writeOutput(false);
 
         while (!finished)
         {
@@ -1420,7 +1425,7 @@ class Configure
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
         
         outputDef.setState(state);
-        writeOutput(outPin);
+        writeOutput(false);
         
         return changed;
     }
@@ -1436,7 +1441,7 @@ class Configure
         markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
 
         outputDef.setState(true);
-        writeOutput(outPin);
+        writeOutput(false);
 
         while (!finished)
         {
@@ -1489,7 +1494,7 @@ class Configure
         markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
 
         outputDef.setState(false);
-        writeOutput(outPin);
+        writeOutput(false);
                 
         return changed;
     }

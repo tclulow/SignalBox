@@ -533,15 +533,6 @@ boolean isOutputNode(int aNode)
 }
 
 
-/** Is an Output present?
- *  Look for output's node in outputNodes.
- */
-boolean isOutput(int aOutput)
-{
-    return isOutputNode(aOutput >> OUTPUT_NODE_SHIFT);
-}
-
-
 #endif
 
 
