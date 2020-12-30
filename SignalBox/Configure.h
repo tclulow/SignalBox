@@ -527,15 +527,15 @@ class Configure
                 case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
                                     switch (sysMenu)
                                     {
-                                        case SYS_REPORT: changed = menuSystemReport();
+                                        case SYS_REPORT: changed |= menuSystemReport();
                                                          break;
-                                        case SYS_I2C:    changed = menuSystemI2c();
+                                        case SYS_I2C:    changed |= menuSystemI2c();
                                                          break;
                                         case SYS_NODES:  mapHardware();
                                                          waitForButtonRelease();
                                                          displayAll();
                                                          break;
-                                        case SYS_DEBUG:  changed = menuSystemDebug();
+                                        case SYS_DEBUG:  changed |= menuSystemDebug();
                                                          break;
                                         default:         systemFail(M_SYSTEM, sysMenu, 0);
                                     }
@@ -556,8 +556,8 @@ class Configure
     boolean menuSystemReport()
     {
         boolean finished = false;
-        boolean changed = false;
-        int index = 0;
+        boolean changed  = false;
+        int     index    = 0;
 
         markField(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, LCD_COL_REPORT_LENGTH, true);
 
@@ -592,7 +592,7 @@ class Configure
     boolean menuSystemI2c()
     {
         boolean changed = false;
-        int index = 0;
+        int     index   = 0;
 
         int params[] = { systemData.i2cControllerID, systemData.i2cInputBaseID, systemData.i2cOutputBaseID };
         displayI2cPrompt(index);
@@ -649,8 +649,8 @@ class Configure
     boolean menuSystemDebug()
     {
         boolean finished = false;
-        boolean changed = false;
-        int index = 0;
+        boolean changed  = false;
+        int     index    = 0;
 
         markField(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, LCD_COL_DEBUG_LENGTH, true);
 
