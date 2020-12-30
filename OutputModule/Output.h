@@ -267,13 +267,13 @@ class OutputDef
         Serial.print(PGMT(M_DEBUG_RESET_AT));
         Serial.print(getReset(), HEX);
 
-        Serial.print(PGMT(M_DEBUG_LOCK_HI));
+        Serial.print(PGMT(M_DEBUG_LOCK_LO));
         for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
         {
             Serial.print(lockHi[index], HEX);
             Serial.print(CHAR_SPACE);
         }
-        Serial.print(PGMT(M_DEBUG_LOCK_LO));
+        Serial.print(PGMT(M_DEBUG_LOCK_HI));
         for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
         {
             Serial.print(lockHi[index], HEX);
