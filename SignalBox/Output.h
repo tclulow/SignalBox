@@ -144,35 +144,19 @@ class OutputDef
     }
 
 
+    /** Set the indicated lock.
+     */
+    void setLock(boolean aHi, uint8_t aIndex)
+    {
+        locks |=  (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)));
+    }
+
+
     /** Is the given lock defined?
      */
     boolean isLockDefined(boolean aHi, uint8_t aIndex)
     {
         return (locks & (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)))) != 0;
-    }
-
-
-    /** Set a lock against this output.
-     *  aHi    - Enforced when this output is Hi (else when it's Lo).
-     *  aIndex - Index of the lock, 0..OUTPUT_LOCK_MAX.
-     *  aState - The state of the other output that forces the lock.
-     *  aNode  - The node the other output is on.
-     *  aPin   - The pin of the other output.
-     */
-    void defineLock(boolean aHi, uint8_t aIndex, boolean aState, uint8_t aNode, uint8_t aPin)
-    {
-        uint8_t value = (aState ? OUTPUT_STATE_MASK : 0) | ((aNode & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT) | (aPin & OUTPUT_PIN_MASK);
-        
-        locks |= (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)));
-        
-        if (aHi)
-        {
-            lockHi[aIndex] = value;
-        }
-        else
-        {
-            lockHi[aIndex] = value;
-        }
     }
 
 

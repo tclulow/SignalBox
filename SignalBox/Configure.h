@@ -490,8 +490,6 @@ class Configure
                                             {
                                                 sendDebugLevel();
                                             }
-                                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
-                                            delay(DELAY_READ);
                                             displayDetailSystem();
                                             finished = true;
                                         }
@@ -511,8 +509,6 @@ class Configure
                                         if (cancel())
                                         {
                                             loadSystemData();
-                                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
-                                            delay(DELAY_READ);
                                             displayDetailSystem();
                                             finished = true;
                                         }
@@ -922,28 +918,41 @@ class Configure
                 // Mark the old node absent and the new one present.
                 setOutputNodeAbsent(aOldNode);
                 setOutputNodePresent(response);
+
+                lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT);
+                lcd.setCursor(LCD_COLS - INPUT_NODE_MAX, LCD_ROW_BOT);
                 
                 // Renumber all the effected inputs' Output nodes.
                 for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
                 {
-                    for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
+                    if (isOutputNode(node))
                     {
-                        loadInput(node, pin);
-
-                        // Adjust all the Input's Outputs if they reference either the old or new node number.
-                        for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
+                        lcd.print(HEX_CHARS[node]);
+                        
+                        for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
                         {
-                            if (inputDef.getOutputNode(index) == aOldNode)
+                            loadInput(node, pin);
+    
+                            // Adjust all the Input's Outputs if they reference either the old or new node number.
+                            for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
                             {
-                                inputDef.setOutputNode(index, response);
-                                saveInput();
-                            }
-                            else if (inputDef.getOutputNode(index) == response)
-                            {
-                                inputDef.setOutputNode(index, aOldNode);
-                                saveInput();
+                                if (inputDef.getOutputNode(index) == aOldNode)
+                                {
+                                    inputDef.setOutputNode(index, response);
+                                    saveInput();
+                                }
+                                else if (inputDef.getOutputNode(index) == response)
+                                {
+                                    inputDef.setOutputNode(index, aOldNode);
+                                    saveInput();
+                                }
                             }
                         }
+                    }
+                    else
+                    {
+                        lcd.print(CHAR_DOT);
                     }
                 }
     
@@ -980,6 +989,7 @@ class Configure
             response = aOldNode;
         }
 
+        delay(DELAY_READ);
         return response;
     }
     
@@ -1085,8 +1095,6 @@ class Configure
                                         if (confirm())
                                         {
                                             saveInput();
-                                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
-                                            delay(DELAY_READ);
                                             finished = true;
                                         }
                                         else
@@ -1105,8 +1113,6 @@ class Configure
                                         if (cancel())
                                         {
                                             loadInput(outNode, outPin);
-                                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
-                                            delay(DELAY_READ);
                                             finished = true;
                                         }
                                         else
@@ -1336,8 +1342,6 @@ class Configure
                                         {
                                             // writeOutput();       // Not required, all changes persistemtly write those changes to output module.
                                             writeSaveOutput();
-                                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
-                                            delay(DELAY_READ);
                                             finished = true;
                                         }
                                         else
@@ -1356,8 +1360,6 @@ class Configure
                                         if (cancel())
                                         {
                                             resetOutput();
-                                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
-                                            delay(DELAY_READ);
                                             finished = true;
                                         }
                                         else
@@ -1661,8 +1663,6 @@ class Configure
                                         {
                                             writeOutput();
                                             writeSaveOutput();
-                                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
-                                            delay(DELAY_READ);
                                             finished = true;
                                         }
                                         else
@@ -1681,8 +1681,6 @@ class Configure
                                         if (cancel())
                                         {
                                             resetOutput();
-                                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
-                                            delay(DELAY_READ);
                                             finished = true;
                                         }
                                         else
@@ -1781,7 +1779,6 @@ class Configure
                                     markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
                                     break;
             }
-            outputDef.printDef(M_LOCKS, outPin);
         }
 
         markField(LCD_COL_NODE, LCD_ROW_BOT, 1, false);
@@ -1816,7 +1813,6 @@ class Configure
                                     break;
                 case BUTTON_RIGHT:  break;
             }
-            outputDef.printDef(M_LOCKS, outPin);
         }
 
         markField(LCD_COL_PIN, LCD_ROW_BOT, 1, false);
@@ -1865,8 +1861,15 @@ class Configure
     boolean confirm()
     {
         lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CONFIRM);
+        boolean saved = waitForButton() == BUTTON_SELECT;
 
-        return waitForButton() == BUTTON_SELECT;
+        if (saved)
+        {
+            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CONFIRMED);
+        }
+
+        waitForButtonRelease();
+        return saved;
     }
 
     
@@ -1875,8 +1878,15 @@ class Configure
     boolean cancel()
     {
         lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCEL);
+        boolean cancelled = waitForButton() == BUTTON_SELECT;
 
-        return waitForButton() == BUTTON_SELECT;
+        if (cancelled)
+        {
+            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
+        }
+
+        waitForButtonRelease();
+        return cancelled;
     }
 
 

@@ -135,11 +135,13 @@ void firstRun()
         {
             for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
             {
-                outputDefs[pin].defineLock(false, index, false, moduleId, pin);
-                outputDefs[pin].defineLock(true,  index, true,  moduleId, pin);
+                outputDefs[pin].setLockNode(false, index, moduleId);
+                outputDefs[pin].setLockPin (false, index, pin);
+                outputDefs[pin].setLockNode(true,  index, moduleId);
+                outputDefs[pin].setLockPin (true,  index, pin);
             }
+            outputDefs[pin].clearLocks();
         }
-        outputDefs[pin].clearLocks();
 
         saveOutput(pin);
     }

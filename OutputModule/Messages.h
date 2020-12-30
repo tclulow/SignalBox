@@ -50,7 +50,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
     // General messages.
     const char M_CONFIRM[]          PROGMEM = "Confirm? Sel=Yes";
     const char M_CANCEL[]           PROGMEM = "Cancel?  Sel=Yes";
-    const char M_SAVED[]            PROGMEM = "Change saved    ";
+    const char M_CONFIRMED[]        PROGMEM = "Change confirmed";
     const char M_CANCELLED[]        PROGMEM = "Change cancelled";
     const char M_FAILURE[]          PROGMEM = "System error";
     // const char M_TODO[]          PROGMEM = "TODO";
