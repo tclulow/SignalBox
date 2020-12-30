@@ -375,8 +375,11 @@ class ImportExport
         }
     }
     
-    
-    void exportInputs()
+
+    /** Export the Inputs.
+     *  Only export connected inputs unless aAll is set.
+     */
+    void exportInputs(boolean aAll)
     {
         Serial.print(PGMT(M_EXPORT_INPUT));
         for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
@@ -388,7 +391,8 @@ class ImportExport
     
         for (int node = 0; node < INPUT_NODE_MAX; node++)
         {
-            if (isInputNode(node))
+            if (   (aAll)
+                || (isInputNode(node)))
             {
                 for (int pin = 0; pin < INPUT_PIN_MAX; pin++)
                 {
@@ -523,12 +527,12 @@ class ImportExport
         switch(aExport)
         {
             case EXP_ALL:     exportSystem(debugLevel >= DEBUG_FULL);
-                              exportInputs();
+                              exportInputs(true);
                               exportOutputs();
                               break;
             case EXP_SYSTEM:  exportSystem(debugLevel >= DEBUG_FULL);
                               break;
-            case EXP_INPUTS:  exportInputs();
+            case EXP_INPUTS:  exportInputs(false);
                               break;
             case EXP_OUTPUTS: exportOutputs();
                               break;
