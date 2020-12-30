@@ -19,7 +19,7 @@ if [ ! -w ${PORT} ]
 then
     echo No USB port ${PORT}
     echo Available ports:
-    /usr/bin/ls -1 ${DEVICES}* | /usr/bin/sed 's/^/    /'
+    /bin/ls -1 ${DEVICES}* | /bin/sed 's/^/    /'
     exit
 fi
 
