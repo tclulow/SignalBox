@@ -4,44 +4,47 @@
 #define _Output_h
 
 // Output nodes.
-#define OUTPUT_PIN_MAX            8   // 8 outputs to each node.
-#define OUTPUT_PIN_MASK           7   // 3 bits for 8 pins withing an output node.
-#define OUTPUT_NODE_MAX          16   // Maximum nodes.
-#define OUTPUT_NODE_MASK       0x0f   // 4 bits for 16 nodes.
-#define OUTPUT_NODE_ALL_MASK 0xffff   // All output nodes present.
-#define OUTPUT_NODE_SHIFT         3   // Shift output number this amount to get a node number.
+#define OUTPUT_PIN_MAX              8   // 8 outputs to each node.
+#define OUTPUT_PIN_MASK             7   // 3 bits for 8 pins withing an output node.
+#define OUTPUT_NODE_MAX            16   // Maximum nodes.
+#define OUTPUT_NODE_MASK         0x0f   // 4 bits for 16 nodes.
+#define OUTPUT_NODE_SHIFT           3   // Shift output number this amount to get a node number.
 
 // Output options maxima.
-#define OUTPUT_SERVO_MAX        180   // Maximum value an angle output parameter can take.
-#define OUTPUT_LED_MAX          255   // Maximum value a LED can take.
-#define OUTPUT_HI_LO_SIZE         3   // Maximum digits in a Hi/Lo display.
+#define OUTPUT_SERVO_MAX          180   // Maximum value an angle output parameter can take.
+#define OUTPUT_LED_MAX            255   // Maximum value a LED can take.
+#define OUTPUT_HI_LO_SIZE           3   // Maximum digits in a Hi/Lo display.
 
 // Masks for type, state and pace options within the outputDef.
-#define OUTPUT_STATE_MASK      0x80   // On or off, switched or not switched, 0 = lo, 1 = hi.    Was OUTPUT_STATE
-#define OUTPUT_TYPE_MASK       0x0f   // Output type mask (4 bits).
-#define OUTPUT_PACE_MASK       0x0f   // Pace is 4 bits.
-#define OUTPUT_PACE_MULT          4   // Pace is multiplied by 16 (shifted left 4 bits).
+#define OUTPUT_STATE_MASK        0x80   // On or off, switched or not switched, 0 = lo, 1 = hi.
+#define OUTPUT_NUMBER_MASK       0x7f   // Output number (node and pin) occupy these bits.
+#define OUTPUT_TYPE_MASK         0x0f   // Output type mask (4 bits).
+#define OUTPUT_PACE_MASK         0x0f   // Pace is 4 bits.
+#define OUTPUT_PACE_MULT            4   // Pace is multiplied by 16 (shifted left 4 bits).
+
+// Masks for locks.
+#define OUTPUT_LOCK_MAX             4   // Four locks of each type (Hi/Lo).
 
 // Wire response message lengths.
-#define OUTPUT_STATE_LEN          1   // One byte used to return a node's Outputs' states.
-#define OUTPUT_RENUMBER_LEN       1   // One byte used to return a node's new module ID.
-#define OUTPUT_WRITE_LEN          5   // Four bytes used to read/write OutputDef to/from OutputModule.
+#define OUTPUT_STATE_LEN            1   // One byte used to return a node's Outputs' states.
+#define OUTPUT_RENUMBER_LEN         1   // One byte used to return a node's new module ID.
+#define OUTPUT_WRITE_LEN            5   // Five bytes used to read/write OutputDef to/from OutputModule.
 
-// Defaults when initialising
-#define OUTPUT_DEFAULT_LO        90   // Default low  position is 90 degrees.
-#define OUTPUT_DEFAULT_HI        90   // Default high position is 90 degrees.
-#define OUTPUT_DEFAULT_PACE     0xc   // Default pace is mid-range.
-#define OUTPUT_DEFAULT_RESET    0x0   // Default reset is none.
+// Defaults when initialising.
+#define OUTPUT_DEFAULT_LO          90   // Default low  position is 90 degrees.
+#define OUTPUT_DEFAULT_HI          90   // Default high position is 90 degrees.
+#define OUTPUT_DEFAULT_PACE       0xc   // Default pace is mid-range.
+#define OUTPUT_DEFAULT_RESET      0x0   // Default reset is none.
 
 
-// Output information that's shared with the output module.
-#define OUTPUT_TYPE_NONE       0x00   // Placeholder to mark "no type".
-#define OUTPUT_TYPE_SERVO      0x01   // Output is a servo.
-#define OUTPUT_TYPE_SIGNAL     0x02   // Output is a signal.
-#define OUTPUT_TYPE_LED        0x03   // Output is a LED or other IO device.
-#define OUTPUT_TYPE_FLASH      0x04   // Output is a flashing LED.
-#define OUTPUT_TYPE_BLINK      0x05   // Output is a blinking LED.
-#define OUTPUT_TYPE_MAX        0x06   // Limit of output types.
+// Output types.
+#define OUTPUT_TYPE_NONE         0x00   // Placeholder to mark "no type".
+#define OUTPUT_TYPE_SERVO        0x01   // Output is a servo.
+#define OUTPUT_TYPE_SIGNAL       0x02   // Output is a signal.
+#define OUTPUT_TYPE_LED          0x03   // Output is a LED or other IO device.
+#define OUTPUT_TYPE_FLASH        0x04   // Output is a flashing LED.
+#define OUTPUT_TYPE_BLINK        0x05   // Output is a blinking LED.
+#define OUTPUT_TYPE_MAX          0x06   // Limit of output types.
 
 
 /** Definition of an Output.
@@ -50,12 +53,15 @@ class OutputDef
 {
     private:
 
-    uint8_t type  = 0;
-    uint8_t lo    = 0;
-    uint8_t hi    = 0;
-    uint8_t pace  = 0;
-    uint8_t reset = 0;
+    uint8_t type  = 0;                  // The type of the output, see OUTPUT_TYPE_...
+    uint8_t lo    = 0;                  // The Output's Lo setting.
+    uint8_t hi    = 0;                  // The Output's Hi setting.
+    uint8_t pace  = 0;                  // The pace at which the output moves.
+    uint8_t reset = 0;                  // The reset interval for the Output.
 
+    uint8_t locks = 0;                  // The enabled locks.
+    uint8_t lockLo[OUTPUT_LOCK_MAX];    // Outputs that lock this output Lo.
+    uint8_t lockHi[OUTPUT_LOCK_MAX];    // Outputs that lock this output Hi.
 
     public:
 
@@ -123,6 +129,85 @@ class OutputDef
     }
 
 
+    /** Clear all locks.
+     */
+    void clearLocks()
+    {
+        locks = 0;
+    }
+
+
+    /** Clear the indicated lock.
+     */
+    void clearLock(boolean aHi, uint8_t aIndex)
+    {
+        locks &= ~(1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)));
+    }
+
+
+    /** Is the given lock defined?
+     */
+    boolean isLockDefined(boolean aHi, uint8_t aIndex)
+    {
+        return (locks & (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)))) != 0;
+    }
+
+
+    /** Set a lock against this output.
+     *  aHi    - Enforced when this output is Hi (else when it's Lo).
+     *  aIndex - Index of the lock, 0..OUTPUT_LOCK_MAX.
+     *  aState - The state of the other output that forces the lock.
+     *  aNode  - The node the other output is on.
+     *  aPin   - The pin of the other output.
+     */
+    void defineLock(boolean aHi, uint8_t aIndex, boolean aState, uint8_t aNode, uint8_t aPin)
+    {
+        uint8_t value = (aState ? OUTPUT_STATE_MASK : 0) | ((aNode & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT) | (aPin & OUTPUT_PIN_MASK);
+        
+        locks |= (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)));
+        
+        if (aHi)
+        {
+            lockHi[aIndex] = value;
+        }
+        else
+        {
+            lockHi[aIndex] = value;
+        }
+    }
+
+
+    /** Get the selected lock's output number.
+     */
+    uint8_t getLock(boolean aHi, uint8_t aIndex)
+    {
+        if (aHi)
+        {
+            return lockHi[aIndex] & OUTPUT_NUMBER_MASK;
+        }
+        else
+        {
+            return lockLo[aIndex] & OUTPUT_NUMBER_MASK;
+        }
+    }
+
+
+    /** Get the selected locks lock state.
+     *  That's the state the other output must be in to enforce this lock.
+     */
+    boolean getLockState(boolean aHi, uint8_t aIndex)
+    {
+        if (aHi)
+        {
+            return (lockHi[aIndex] & OUTPUT_STATE_MASK) != 0;
+        }
+        else
+        {
+            return (lockLo[aIndex] & OUTPUT_STATE_MASK) != 0;
+        }
+    }
+
+
     /** Write an Output down the i2c bus.
      */
     void write()
@@ -144,6 +229,35 @@ class OutputDef
         hi    = Wire.read();
         pace  = Wire.read();
         reset = Wire.read();
+    }
+
+
+    /** Write the Hi or Lo locks.
+     */
+    void writeLocks(boolean aHi)
+    {
+        for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
+        {
+           Wire.write(aHi ? lockHi[index] : lockLo[index]);
+        }
+    }
+
+
+    /** Read the Hi or Lo locks.
+     */
+    void readLocks(boolean aHi)
+    {
+        for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
+        {
+            if (aHi)
+            {
+                lockHi[index] = Wire.read();
+            }
+            else
+            {
+                lockLo[index] = Wire.read();
+            }
+        }
     }
 
 

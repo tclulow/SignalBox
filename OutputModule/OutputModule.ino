@@ -116,6 +116,8 @@ void setup()
  */
 void firstRun()
 {
+    uint8_t moduleId = getModuleId(false);
+    
     // Initialise SystemData.
     systemData.magic   = MAGIC_NUMBER;
 
@@ -127,6 +129,18 @@ void firstRun()
         outputDefs[pin].setHi(OUTPUT_DEFAULT_HI);
         outputDefs[pin].setPace(OUTPUT_DEFAULT_PACE);
         outputDefs[pin].setReset(OUTPUT_DEFAULT_RESET);
+
+        // Initialise locks all off.
+        for (uint8_t pin = 0; pin < OUTPUT_PIN_MAX; pin++)
+        {
+            for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
+            {
+                outputDefs[pin].defineLock(false, index, false, moduleId, pin);
+                outputDefs[pin].defineLock(true,  index, true,  moduleId, pin);
+            }
+        }
+        outputDefs[pin].clearLocks();
+
         saveOutput(pin);
     }
 

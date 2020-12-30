@@ -71,7 +71,7 @@
 
     // OutputData saved in EEPROM
     #define OUTPUT_BASE  SYSTEM_END                                     // EEPROM base of OutputData.
-    #define OUTPUT_SIZE  5 // sizeof(OutputDef)                         // TODO - re-instate this  Size of OutputData entry.
+    #define OUTPUT_SIZE  sizeof(OutputDef)                              // Size of OutputData entry.
     #define OUTPUT_END   (OUTPUT_BASE + OUTPUT_SIZE * OUTPUT_PIN_MAX)   // End of OutputData EEPROM.
 
     #define EEPROM_END   OUTPUT_END                                     // End of EEPROM memory
