@@ -27,9 +27,6 @@
 #define INPUT_TYPE_OFF            3     // An off Input.
 #define INPUT_TYPE_MAX            4     // Limit of Input types.
 
-// The name of an Input's Output at the given index
-#define INPUT_OUTPUT_ID(index)  ((char)(CHAR_UPPER_A + index))
-
 
 // Mask for MCP device none or all bits.
 #define MCP_ALL_LOW   0x00

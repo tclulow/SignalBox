@@ -46,6 +46,10 @@
 #define REPORT_MAX      4       // Maximum report option.
 
 
+// An options identifying character.
+#define OPTION_ID(index)  ((char)(CHAR_UPPER_A + index))
+
+
 // System Data saved in EEPROM
 #define SYSTEM_BASE  0                                                  // EEPROM base of System data.
 #define SYSTEM_SIZE  32 //sizeof(systemData)                            // TODO - re-instate this  Size of System Data.

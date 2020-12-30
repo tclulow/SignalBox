@@ -382,7 +382,7 @@ class Configure
      */
     void displayLockEdit(boolean aHi, uint8_t aIndex)
     {
-        lcd.printAt(LCD_COL_LOCK, LCD_ROW_BOT, INPUT_OUTPUT_ID(aIndex));
+        lcd.printAt(LCD_COL_LOCK, LCD_ROW_BOT, OPTION_ID(aIndex));
         lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[outputDef.getLockNode(aHi, aIndex)]);
         lcd.printAt(LCD_COL_PIN,  LCD_ROW_BOT, HEX_CHARS[outputDef.getLockPin(aHi, aIndex)]);
     }
@@ -1145,7 +1145,7 @@ class Configure
         uint8_t index    = 0;
 
         lcd.clearRow(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, (INPUT_OUTPUT_ID(index)));
+        lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, (OPTION_ID(index)));
         displayInputEdit(index);
         markField(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, 1, true);
 
@@ -1158,7 +1158,7 @@ class Configure
                 case BUTTON_DOWN:   index -= 1;
                                     index += INPUT_OUTPUT_MAX;      // Ensure in-range.
                                     index %= INPUT_OUTPUT_MAX;
-                                    lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, (INPUT_OUTPUT_ID(index)));
+                                    lcd.printAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT, (OPTION_ID(index)));
                                     displayInputEdit(index);
                                     break;
                 case BUTTON_SELECT: testInputOutput(index);
@@ -1334,7 +1334,7 @@ class Configure
                                     {
                                         if (confirm())
                                         {
-                                            // writeOutput();
+                                            // writeOutput();       // Not required, all changes persistemtly write those changes to output module.
                                             writeSaveOutput();
                                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
                                             delay(DELAY_READ);
@@ -1732,7 +1732,7 @@ class Configure
                 case BUTTON_DOWN:   index -= 1;
                                     index += OUTPUT_LOCK_MAX;       // Ensure in-range.
                                     index %= OUTPUT_LOCK_MAX;
-                                    lcd.printAt(LCD_COL_LOCK, LCD_ROW_BOT, INPUT_OUTPUT_ID(index));
+                                    lcd.printAt(LCD_COL_LOCK, LCD_ROW_BOT, OPTION_ID(index));
                                     displayLockEdit(aHi, index);
                                     break;
                 case BUTTON_SELECT: break;
