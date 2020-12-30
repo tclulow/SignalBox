@@ -58,6 +58,8 @@
 #define LCD_COL_OUTPUT_PACE   8   // Output's pace parameter at this col.
 #define LCD_COL_OUTPUT_RESET 12   // Output's reset parameter at this col.
 
+#define LCD_COL_LOCK          8   // Outputs locks start at this col.  
+
 
 /** An LCD class that can print PROGMEM messages.
  */

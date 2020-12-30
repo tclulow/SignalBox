@@ -176,17 +176,52 @@ class OutputDef
     }
 
 
-    /** Get the selected lock's output number.
+    /** Get the selected lock's node.
      */
-    uint8_t getLock(boolean aHi, uint8_t aIndex)
+    uint8_t getLockNode(boolean aHi, uint8_t aIndex)
+    {
+        uint8_t node = aHi ? lockHi[aIndex] : lockLo[aIndex];
+
+        return (node >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK;
+    }
+
+
+    /** Set the selected lock's node.
+     */
+    void setLockNode(boolean aHi, uint8_t aIndex, uint8_t aNode)
     {
         if (aHi)
         {
-            return lockHi[aIndex] & OUTPUT_NUMBER_MASK;
+            lockHi[aIndex] = (lockHi[aIndex] & ~(OUTPUT_NODE_MASK << OUTPUT_NODE_SHIFT)) | ((aNode & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT);
         }
         else
         {
-            return lockLo[aIndex] & OUTPUT_NUMBER_MASK;
+            lockLo[aIndex] = (lockLo[aIndex] & ~(OUTPUT_NODE_MASK << OUTPUT_NODE_SHIFT)) | ((aNode & OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT);
+        }
+    }
+
+
+    /** Get the selected lock's pin.
+     */
+    uint8_t getLockPin(boolean aHi, uint8_t aIndex)
+    {
+        uint8_t pin = aHi ? lockHi[aIndex] : lockLo[aIndex];
+
+        return pin & OUTPUT_PIN_MASK;
+    }
+
+
+    /** Set the selected lock's pin.
+     */
+    void setLockPin(boolean aHi, uint8_t aIndex, uint8_t aPin)
+    {
+        if (aHi)
+        {
+            lockHi[aIndex] = (lockHi[aIndex] & ~OUTPUT_PIN_MASK) | (aPin & OUTPUT_PIN_MASK);
+        }
+        else
+        {
+            lockLo[aIndex] = (lockLo[aIndex] & ~OUTPUT_PIN_MASK) | (aPin & OUTPUT_PIN_MASK);
         }
     }
 
@@ -204,6 +239,24 @@ class OutputDef
         {
             return (lockLo[aIndex] & OUTPUT_STATE_MASK) != 0;
         }
+    }
+
+
+    /** How many locks are defined for the output.
+     */
+    uint8_t getLockCount(boolean aHi)
+    {
+        uint8_t count = 0;
+
+        for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
+        {
+            if (isLockDefined(aHi, index))
+            {
+                count+= 1;
+            }
+        }
+
+        return count;
     }
 
 
@@ -270,7 +323,7 @@ class OutputDef
         Serial.print(PGMT(M_DEBUG_LOCK_LO));
         for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
         {
-            Serial.print(lockHi[index], HEX);
+            Serial.print(lockLo[index], HEX);
             Serial.print(CHAR_SPACE);
         }
         Serial.print(PGMT(M_DEBUG_LOCK_HI));

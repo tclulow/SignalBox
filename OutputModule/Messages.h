@@ -10,37 +10,37 @@
 
 // Software versioning.
 #if MASTER
-    const char M_SOFTWARE[]    PROGMEM = "SignalBox";
+    const char M_SOFTWARE[]     PROGMEM = "SignalBox";
 #else
-    const char M_SOFTWARE[]    PROGMEM = "Output module";
+    const char M_SOFTWARE[]     PROGMEM = "Output module";
 #endif
-const char M_VERSION[]         PROGMEM = "v2.4";        // See also system.VERSION.
-const char M_VERSION_DATE[]    PROGMEM = "Dec 20";
-const char M_STARTUP[]         PROGMEM = "Startup";
-const char M_UPDATE[]          PROGMEM = "Update ";
+const char M_VERSION[]          PROGMEM = "v2.4";        // See also system.VERSION.
+const char M_VERSION_DATE[]     PROGMEM = "Dec 20";
+const char M_STARTUP[]          PROGMEM = "Startup";
+const char M_UPDATE[]           PROGMEM = "Update ";
 
 
 // General messages (shared)
-const char M_SYSTEM[]          PROGMEM = "System";
-const char M_OUTPUT[]          PROGMEM = "Output";
-const char M_INPUT[]           PROGMEM = "Input";
-const char M_TYPES[]           PROGMEM = "Types";
+const char M_SYSTEM[]           PROGMEM = "System";
+const char M_INPUT[]            PROGMEM = "Input";
+const char M_OUTPUT[]           PROGMEM = "Output";
+const char M_TYPES[]            PROGMEM = "Types";
 
 // Configuration - Output.
-const char M_NEW_NODE_NO[]     PROGMEM = "New node#";
-const char M_NONE[]            PROGMEM = "None";
-const char M_SERVO[]           PROGMEM = "Servo";
-const char M_SIGNAL[]          PROGMEM = "Signal";
-const char M_LED[]             PROGMEM = "LED";
-const char M_FLASH[]           PROGMEM = "Flash";
-const char M_BLINK[]           PROGMEM = "Blink";
-const char M_RFU[]             PROGMEM = "RFU";
+const char M_NEW_NODE_NO[]      PROGMEM = "New node#";
+const char M_NONE[]             PROGMEM = "None";
+const char M_SERVO[]            PROGMEM = "Servo";
+const char M_SIGNAL[]           PROGMEM = "Signal";
+const char M_LED[]              PROGMEM = "LED";
+const char M_FLASH[]            PROGMEM = "Flash";
+const char M_BLINK[]            PROGMEM = "Blink";
+const char M_RFU[]              PROGMEM = "RFU";
 
-const char M_HI[]              PROGMEM = "Hi";
-const char M_LO[]              PROGMEM = "Lo";
-const char M_PACE[]            PROGMEM = "Spd";
-const char M_DELAY[]           PROGMEM = "Delay";
-const char M_RESET[]           PROGMEM = "Reset";
+const char M_HI[]               PROGMEM = "Hi";
+const char M_LO[]               PROGMEM = "Lo";
+const char M_PACE[]             PROGMEM = "Spd";
+const char M_DELAY[]            PROGMEM = "Delay";
+const char M_RESET[]            PROGMEM = "Reset";
 
 const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLASH, M_BLINK, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU };
 
@@ -81,6 +81,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
     const char M_WAITING[]          PROGMEM = "Waiting";
     
     // Configuration - general.
+    const char M_LOCKS[]            PROGMEM = "Locks";
     const char M_CONFIG[]           PROGMEM = "Configure";
     const char M_DETAIL[]           PROGMEM = "Detail";
     const char M_PARAMS[]           PROGMEM = "Params";
@@ -128,7 +129,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
     
     // Array of (pointers to) certain messages.
     const char* const M_BUTTONS[]        = { M_NONE, M_SELECT, M_LEFT, M_DOWN, M_UP, M_RIGHT };
-    const char* const M_TOP_MENU[]       = { M_SYSTEM, M_INPUT, M_OUTPUT, M_EXPORT, M_IMPORT };
+    const char* const M_TOP_MENU[]       = { M_SYSTEM, M_INPUT, M_OUTPUT, M_LOCKS, M_EXPORT, M_IMPORT };
     const char* const M_SYS_TYPES[]      = { M_REPORT, M_SYS_I2C, M_NODES, M_DEBUG };
     const char* const M_EXPORT_TYPES[]   = { M_ALL, M_SYSTEM, M_INPUT, M_OUTPUT };
     const char* const M_I2C_PROMPTS[]    = { M_ID_CONTROLLER, M_ID_INPUT, M_ID_OUTPUT };

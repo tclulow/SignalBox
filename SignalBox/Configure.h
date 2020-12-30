@@ -7,9 +7,10 @@
 #define TOP_SYSTEM   0
 #define TOP_INPUT    1
 #define TOP_OUTPUT   2
-#define TOP_EXPORT   3
-#define TOP_IMPORT   4
-#define TOP_MAX      5
+#define TOP_LOCKS    3
+#define TOP_EXPORT   4
+#define TOP_IMPORT   5
+#define TOP_MAX      6
 
 // Sys menu states.
 #define SYS_REPORT   0
@@ -45,7 +46,8 @@ class Configure
                              break;
             case TOP_INPUT:  displayInputNode();
                              break;
-            case TOP_OUTPUT: displayOutputNode();
+            case TOP_OUTPUT:
+            case TOP_LOCKS:  displayOutputNode();
                              break;
             case TOP_EXPORT: 
             case TOP_IMPORT: displaySystem();
@@ -111,7 +113,8 @@ class Configure
                              break;
             case TOP_INPUT:  displayDetailInput();
                              break;
-            case TOP_OUTPUT: displayDetailOutput();
+            case TOP_OUTPUT:
+            case TOP_LOCKS:  displayDetailOutput();
                              break;
             case TOP_EXPORT: displayDetailExport();
                              break;
@@ -281,7 +284,7 @@ class Configure
             lcd.printAt(LCD_COL_PIN,  LCD_ROW_BOT, HEX_CHARS[inputDef.getOutputPin(aIndex)]);
         }
     }
-    
+
 
     /** Display Output details.
      */
@@ -289,7 +292,7 @@ class Configure
     {
         if (isOutputNode(outNode))
         {
-            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
+            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION + 1);
             displayOutputParams(outputDef.getType());
         }
         else
@@ -301,24 +304,49 @@ class Configure
 
     /** Display Output's parameters depending on type.
      */
-    void displayOutputParams(int aType)
+    void displayOutputParams(uint8_t aType)
     {
         lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT);
         lcd.setCursor(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT);
         
         if (aType != OUTPUT_TYPE_NONE)
-        {    
-            lcd.printHex(outputDef.getLo(),    2);
-            lcd.print(CHAR_SPACE);
-            lcd.printHex(outputDef.getHi(),    2);
-            lcd.print(CHAR_SPACE);
-            lcd.printHex(outputDef.getPace(),  1);
-            lcd.print(CHAR_SPACE);
-            if (outputDef.getReset() > 0)
+        {
+            if (topMenu == TOP_OUTPUT)
             {
-                lcd.print(CHAR_HASH);
+                lcd.printHex(outputDef.getLo(),    2);
+                lcd.print(CHAR_SPACE);
+                lcd.printHex(outputDef.getHi(),    2);
+                lcd.print(CHAR_SPACE);
+                lcd.printHex(outputDef.getPace(),  1);
+                lcd.print(CHAR_SPACE);
+                if (outputDef.getReset() > 0)
+                {
+                    lcd.print(CHAR_HASH);
+                }
+            }
+            else if (topMenu == TOP_LOCKS)
+            {
+                lcd.print(PGMT(M_LO));
+                lcd.print(CHAR_SPACE);
+                lcd.print(outputDef.getLockCount(false));
+                lcd.print(CHAR_SPACE);
+                lcd.print(PGMT(M_HI));
+                lcd.print(CHAR_SPACE);
+                lcd.print(outputDef.getLockCount(true));
+            }
+            else
+            {
+                systemFail(M_DETAIL, topMenu, DELAY_READ);
             }
         }
+    }
+
+
+    /** Display detail about Lo (or Hi) locks.
+     */
+    void displayDetailLocks(boolean aHi)
+    {
+        
     }
 
 
@@ -342,13 +370,23 @@ class Configure
     {
         lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_TOP);
         lcd.printAt(LCD_COL_OUTPUT_PACE  - 1, LCD_ROW_TOP, M_PACE);
-        lcd.printAt(LCD_COL_OUTPUT_RESET - 1, LCD_ROW_TOP, M_RESET);
+        lcd.printAt(LCD_COL_OUTPUT_RESET - 1, LCD_ROW_TOP, M_RESET);        
 
         lcd.clearRow(LCD_COL_OUTPUT_PARAM,   LCD_ROW_BOT);
         lcd.printAt(LCD_COL_OUTPUT_PACE,     LCD_ROW_BOT, HEX_CHARS[outputDef.getPace()]);
         lcd.printAtDec(LCD_COL_OUTPUT_RESET, LCD_ROW_BOT, outputDef.getReset(), OUTPUT_HI_LO_SIZE);
     }
-    
+
+
+    /** Display Lock parameters for edit.
+     */
+    void displayLockEdit(boolean aHi, uint8_t aIndex)
+    {
+        lcd.printAt(LCD_COL_LOCK, LCD_ROW_BOT, INPUT_OUTPUT_ID(aIndex));
+        lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[outputDef.getLockNode(aHi, aIndex)]);
+        lcd.printAt(LCD_COL_PIN,  LCD_ROW_BOT, HEX_CHARS[outputDef.getLockPin(aHi, aIndex)]);
+    }
+
 
     /** Process IO stage.
      */
@@ -398,7 +436,8 @@ class Configure
                                                          break;
                                         case TOP_INPUT:  menuNode(true);
                                                          break;
-                                        case TOP_OUTPUT: if (isOutputNode(outNode))     // Maybe there are no outputs connected.
+                                        case TOP_OUTPUT:
+                                        case TOP_LOCKS:  if (isOutputNode(outNode))     // Maybe there are no outputs connected.
                                                          {
                                                             menuNode(false);
                                                          }
@@ -708,11 +747,16 @@ class Configure
                 case BUTTON_DOWN:   adjust -= 1;
                                     if (aIsInput)
                                     {
-                                        inpNode = nextNode(inpNode, adjust, aIsInput, true);    
+                                        inpNode = nextNode(inpNode, adjust, aIsInput, true);
+                                        loadInput(inpNode, inpPin);
                                     }
                                     else
                                     {
                                         outNode = nextNode(outNode, adjust, aIsInput, true);
+                                        if (isOutputNode(outNode))
+                                        {
+                                            readOutput(outNode, outPin);
+                                        }
                                     }
                                     
                                     lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[aIsInput ? inpNode : outNode]);
@@ -742,7 +786,6 @@ class Configure
 
     /** Find the next (inUse) node in the given direction.
      *  Or not inUse if flag indicates such.
-     *  Load the node's data (if it's in use).
      */
     uint8_t nextNode(uint8_t aStart, int aAdjust, boolean aIsInput, boolean aInUse)
     {
@@ -755,16 +798,11 @@ class Configure
             if (   (aIsInput)
                 && (aInUse == isInputNode(next)))
             {
-                loadInput(next, inpPin);
                 break;
             }
             else if (   (!aIsInput)
                      && (aInUse == isOutputNode(next)))
             {
-                if (aInUse)
-                {
-                    readOutput(next, outPin);
-                }
                 break;
             }
         }
@@ -775,7 +813,6 @@ class Configure
             && (aInUse != isInputNode(next)))   // And this node isn't correct either.
         {
             next = (next + aAdjust) & INPUT_NODE_MASK;
-            loadInput(next, inpPin);
         }
 
         return next;
@@ -1004,7 +1041,14 @@ class Configure
                                     }
                                     else
                                     {
-                                        menuOutput();
+                                        if (topMenu == TOP_OUTPUT)
+                                        {
+                                            menuOutput();
+                                        }
+                                        else
+                                        {
+                                            menuLocks();
+                                        }
                                     }
                                     markField(LCD_COL_PIN, LCD_ROW_TOP, 1, true);
                                     break;
@@ -1043,7 +1087,6 @@ class Configure
                                             saveInput();
                                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
                                             delay(DELAY_READ);
-                                            displayDetailInput();
                                             finished = true;
                                         }
                                         else
@@ -1064,7 +1107,6 @@ class Configure
                                             loadInput(outNode, outPin);
                                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
                                             delay(DELAY_READ);
-                                            displayDetailInput();
                                             finished = true;
                                         }
                                         else
@@ -1086,7 +1128,7 @@ class Configure
             }
         }
 
-        markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+        displayDetailInput();
 
         // Ensure output node is reset (we may have corrupted it when chaninging an Input's Outputs).
         readOutput(outNode, outPin);
@@ -1296,7 +1338,6 @@ class Configure
                                             writeSaveOutput();
                                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
                                             delay(DELAY_READ);
-                                            displayDetailOutput();
                                             finished = true;
                                         }
                                         else
@@ -1317,7 +1358,6 @@ class Configure
                                             resetOutput();
                                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
                                             delay(DELAY_READ);
-                                            displayDetailOutput();
                                             finished = true;
                                         }
                                         else
@@ -1353,7 +1393,7 @@ class Configure
             }
         }
         
-        markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+        displayDetailOutput();
     }
 
 
@@ -1590,6 +1630,200 @@ class Configure
 
         return changed;
     }
+
+
+    /** Process Output locks.
+     */
+    boolean menuLocks()
+    {
+        boolean finished = false;
+        boolean changed  = false;
+        boolean hi       = false;
+
+        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_LO);
+        displayLockEdit(hi, 0);
+        markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+        
+        while (!finished)
+        {
+            switch (waitForButton())
+            {
+                case BUTTON_NONE:   break;
+                case BUTTON_UP:
+                case BUTTON_DOWN:   hi = !hi;
+                                    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, hi ? M_HI : M_LO);
+                                    displayLockEdit(hi, 0);
+                                    break;
+                case BUTTON_SELECT: if (changed)
+                                    {
+                                        if (confirm())
+                                        {
+                                            writeOutput();
+                                            writeSaveOutput();
+                                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SAVED);
+                                            delay(DELAY_READ);
+                                            finished = true;
+                                        }
+                                        else
+                                        {
+                                            displayDetailOutput();
+                                            markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        finished = true;
+                                    }
+                                    break;
+                case BUTTON_LEFT:   if (changed)
+                                    {
+                                        if (cancel())
+                                        {
+                                            resetOutput();
+                                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
+                                            delay(DELAY_READ);
+                                            finished = true;
+                                        }
+                                        else
+                                        {
+                                            displayDetailOutput();
+                                            markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        finished = true;
+                                    }
+                                    break;
+                case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+                                    changed |= menuLockSelect(hi);
+                                    markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+                                    break;
+            }
+        }
+
+        // markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+        displayDetailOutput();
+
+        return changed;
+    }
+
+
+    /** Select the Input Output to edit.
+     */
+    boolean menuLockSelect(boolean aHi)
+    {
+        boolean finished = false;
+        boolean changed  = false;
+
+        uint8_t index    = 0;
+
+        lcd.clearRow(LCD_COL_LOCK, LCD_ROW_BOT);
+        displayLockEdit(aHi, index);
+        markField(LCD_COL_LOCK, LCD_ROW_BOT, 1, true);
+
+        while (!finished)
+        {
+            switch (waitForButton())
+            {
+                case BUTTON_NONE:   break;
+                case BUTTON_UP:     index += 2;                     // Use +1 to compensate for the -1 that the code below will do.
+                case BUTTON_DOWN:   index -= 1;
+                                    index += OUTPUT_LOCK_MAX;       // Ensure in-range.
+                                    index %= OUTPUT_LOCK_MAX;
+                                    lcd.printAt(LCD_COL_LOCK, LCD_ROW_BOT, INPUT_OUTPUT_ID(index));
+                                    displayLockEdit(aHi, index);
+                                    break;
+                case BUTTON_SELECT: break;
+                case BUTTON_LEFT:   finished = true;
+                                    break;
+                case BUTTON_RIGHT:  markField(LCD_COL_LOCK, LCD_ROW_BOT, 1, false);
+                                    changed |= menuLockNode(aHi, index);
+                                    markField(LCD_COL_LOCK, LCD_ROW_BOT, 1, true);
+                                    break;
+            }
+        }
+
+        markField(LCD_COL_LOCK, LCD_ROW_BOT, 1, false);
+        displayLockEdit(aHi, index);
+        
+        return changed;
+    }
+
+
+    boolean menuLockNode(boolean aHi, uint8_t aIndex)
+    {
+        boolean changed  = false;
+        boolean finished = false;
+
+        markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
+
+        while (!finished)
+        {
+            switch (waitForButton())
+            {
+                case BUTTON_NONE:   break;
+                case BUTTON_UP:     outputDef.setLockNode(aHi, aIndex, nextNode(outputDef.getLockNode(aHi, aIndex),  1, false, true));
+                                    lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[outputDef.getLockNode(aHi, aIndex)]);
+                                    changed = true;
+                                    break;
+                case BUTTON_DOWN:   outputDef.setLockNode(aHi, aIndex, nextNode(outputDef.getLockNode(aHi, aIndex), -1, false, true));
+                                    lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[outputDef.getLockNode(aHi, aIndex)]);
+                                    changed = true;
+                                    break;
+                case BUTTON_SELECT: // Enable/disable this output.
+                                    break;
+                case BUTTON_LEFT:   finished = true;
+                                    break;
+                case BUTTON_RIGHT:  markField(LCD_COL_NODE, LCD_ROW_BOT, 1, false);
+                                    changed |= menuLockPin(aHi, aIndex);
+                                    markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
+                                    break;
+            }
+            outputDef.printDef(M_LOCKS, outPin);
+        }
+
+        markField(LCD_COL_NODE, LCD_ROW_BOT, 1, false);
+
+        return changed;
+    }
+
+
+    boolean menuLockPin(boolean aHi, uint8_t aIndex)
+    {
+        boolean changed  = false;
+        boolean finished = false;
+
+        markField(LCD_COL_PIN, LCD_ROW_BOT, 1, true);
+
+        while (!finished)
+        {
+            switch (waitForButton())
+            {
+                case BUTTON_NONE:   break;
+                case BUTTON_UP:     outputDef.setLockPin(aHi, aIndex, (outputDef.getLockPin(aHi, aIndex) + 1) & OUTPUT_PIN_MASK);
+                                    lcd.printAt(LCD_COL_PIN, LCD_ROW_BOT, HEX_CHARS[outputDef.getLockPin(aHi, aIndex)]);
+                                    changed = true;
+                                    break;
+                case BUTTON_DOWN:   outputDef.setLockPin(aHi, aIndex, (outputDef.getLockPin(aHi, aIndex) - 1) & OUTPUT_PIN_MASK);
+                                    lcd.printAt(LCD_COL_PIN, LCD_ROW_BOT, HEX_CHARS[outputDef.getLockPin(aHi, aIndex)]);
+                                    changed = true;
+                                    break;
+                case BUTTON_SELECT: // Enable/disable this output.
+                                    break;
+                case BUTTON_LEFT:   finished = true;
+                                    break;
+                case BUTTON_RIGHT:  break;
+            }
+            outputDef.printDef(M_LOCKS, outPin);
+        }
+
+        markField(LCD_COL_PIN, LCD_ROW_BOT, 1, false);
+
+        return changed;
+    }
+
 
 
     /** Test the current Configuration.
