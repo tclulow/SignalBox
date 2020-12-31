@@ -926,33 +926,26 @@ class Configure
                 // Renumber all the effected inputs' Output nodes.
                 for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
                 {
-                    if (isOutputNode(node))
-                    {
-                        lcd.print(HEX_CHARS[node]);
+                    lcd.print(isInputNode(node) ? HEX_CHARS[node] : CHAR_DOT);
                         
-                        for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
+                    for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
+                    {
+                        loadInput(node, pin);
+
+                        // Adjust all the Input's Outputs if they reference either the old or new node number.
+                        for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
                         {
-                            loadInput(node, pin);
-    
-                            // Adjust all the Input's Outputs if they reference either the old or new node number.
-                            for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
+                            if (inputDef.getOutputNode(index) == aOldNode)
                             {
-                                if (inputDef.getOutputNode(index) == aOldNode)
-                                {
-                                    inputDef.setOutputNode(index, response);
-                                    saveInput();
-                                }
-                                else if (inputDef.getOutputNode(index) == response)
-                                {
-                                    inputDef.setOutputNode(index, aOldNode);
-                                    saveInput();
-                                }
+                                inputDef.setOutputNode(index, response);
+                                saveInput();
+                            }
+                            else if (inputDef.getOutputNode(index) == response)
+                            {
+                                inputDef.setOutputNode(index, aOldNode);
+                                saveInput();
                             }
                         }
-                    }
-                    else
-                    {
-                        lcd.print(CHAR_DOT);
                     }
                 }
     
