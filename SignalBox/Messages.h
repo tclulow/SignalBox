@@ -81,7 +81,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
     const char M_WAITING[]          PROGMEM = "Waiting";
     
     // Configuration - general.
-    const char M_LOCKS[]            PROGMEM = "Locks";
+    const char M_LOCK[]             PROGMEM = "Lock";
     const char M_CONFIG[]           PROGMEM = "Configure";
     const char M_DETAIL[]           PROGMEM = "Detail";
     const char M_PARAMS[]           PROGMEM = "Params";
@@ -124,14 +124,16 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
     const char M_EXPORT_SYSTEM[]    PROGMEM = "#System\tVersion\tDetail\tControl\tInput\tOutput\tReport";
     const char M_EXPORT_INPUT[]     PROGMEM = "#Input\tNode\tPin\tType";
     const char M_EXPORT_INPUT_OUT[] PROGMEM = "\tOutput";
-    const char M_EXPORT_OUTPUT[]    PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd\tDelay";
-    
-    
+    const char M_EXPORT_OUTPUT[]    PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd\tReset";
+    const char M_EXPORT_LOCKS[]     PROGMEM = "#Lock\tNode\tPin";
+    const char M_EXPORT_LOCK[]      PROGMEM = "\tLock";
+
+
     // Array of (pointers to) certain messages.
     const char* const M_BUTTONS[]        = { M_NONE, M_SELECT, M_LEFT, M_DOWN, M_UP, M_RIGHT };
-    const char* const M_TOP_MENU[]       = { M_SYSTEM, M_INPUT, M_OUTPUT, M_LOCKS, M_EXPORT, M_IMPORT };
+    const char* const M_TOP_MENU[]       = { M_SYSTEM, M_INPUT, M_OUTPUT, M_LOCK, M_EXPORT, M_IMPORT };
     const char* const M_SYS_TYPES[]      = { M_REPORT, M_SYS_I2C, M_NODES, M_DEBUG };
-    const char* const M_EXPORT_TYPES[]   = { M_ALL, M_SYSTEM, M_INPUT, M_OUTPUT };
+    const char* const M_EXPORT_TYPES[]   = { M_ALL, M_SYSTEM, M_INPUT, M_OUTPUT, M_LOCK };
     const char* const M_I2C_PROMPTS[]    = { M_ID_CONTROLLER, M_ID_INPUT, M_ID_OUTPUT };
     const char* const M_REPORT_PROMPTS[] = { M_NONE, M_SHORT, M_LONG, M_PAUSE };
     const char* const M_DEBUG_PROMPTS[]  = { M_NONE, M_ERRORS, M_BRIEF, M_DETAIL, M_FULL };

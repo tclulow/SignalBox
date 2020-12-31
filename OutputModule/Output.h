@@ -136,25 +136,24 @@ class OutputDef
     }
 
 
-    /** Clear the indicated lock.
-     */
-    void clearLock(boolean aHi, uint8_t aIndex)
-    {
-        locks &= ~(1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)));
-    }
-
-
     /** Set the indicated lock.
      */
-    void setLock(boolean aHi, uint8_t aIndex)
+    void setLock(boolean aHi, uint8_t aIndex, boolean aState)
     {
-        locks |=  (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)));
+        if (aState)
+        {
+            locks |=  (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)));
+        }
+        else
+        {
+            locks &= ~(1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)));
+        }
     }
 
 
     /** Is the given lock defined?
      */
-    boolean isLockDefined(boolean aHi, uint8_t aIndex)
+    boolean isLock(boolean aHi, uint8_t aIndex)
     {
         return (locks & (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)))) != 0;
     }
@@ -243,7 +242,7 @@ class OutputDef
 
         for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
         {
-            if (isLockDefined(aHi, index))
+            if (isLock(aHi, index))
             {
                 count+= 1;
             }
