@@ -342,14 +342,6 @@ class Configure
     }
 
 
-    /** Display detail about Lo (or Hi) locks.
-     */
-    void displayDetailLocks(boolean aHi)
-    {
-        
-    }
-
-
     /** Display Output's angles with suitable prompts above.
      */
     void displayOutputAngles()
@@ -382,9 +374,10 @@ class Configure
      */
     void displayLockEdit(boolean aHi, uint8_t aIndex)
     {
-        lcd.printAt(LCD_COL_LOCK, LCD_ROW_BOT, OPTION_ID(aIndex));
-        lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[outputDef.getLockNode(aHi, aIndex)]);
-        lcd.printAt(LCD_COL_PIN,  LCD_ROW_BOT, HEX_CHARS[outputDef.getLockPin(aHi, aIndex)]);
+        lcd.printAt(LCD_COL_LOCK_SELECT, LCD_ROW_BOT, OPTION_ID(aIndex));
+        lcd.printAt(LCD_COL_LOCK_STATE,  LCD_ROW_BOT, (outputDef.getLockState(aHi, aIndex) ? M_HI : M_LO));
+        lcd.printAt(LCD_COL_NODE,        LCD_ROW_BOT, HEX_CHARS[outputDef.getLockNode(aHi, aIndex)]);
+        lcd.printAt(LCD_COL_PIN,         LCD_ROW_BOT, HEX_CHARS[outputDef.getLockPin(aHi, aIndex)]);
     }
 
 
@@ -1636,9 +1629,9 @@ class Configure
         boolean hi       = false;
 
         lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_LO);
+        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, hi ? M_HI : M_LO);
         displayLockEdit(hi, 0);
-        markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+        markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_LOCK_MARK, true);
         
         while (!finished)
         {
@@ -1661,7 +1654,7 @@ class Configure
                                         else
                                         {
                                             displayDetailOutput();
-                                            markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+                                            markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_LOCK_MARK, true);
                                         }
                                     }
                                     else
@@ -1679,7 +1672,7 @@ class Configure
                                         else
                                         {
                                             displayDetailOutput();
-                                            markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+                                            markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_LOCK_MARK, true);
                                         }
                                     }
                                     else
@@ -1687,21 +1680,21 @@ class Configure
                                         finished = true;
                                     }
                                     break;
-                case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+                case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_LOCK_MARK, false);
                                     changed |= menuLockSelect(hi);
-                                    markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, true);
+                                    markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_LOCK_MARK, true);
                                     break;
             }
         }
 
-        // markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_MARK, false);
+        // markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_LOCK_MARK, false);
         displayDetailOutput();
 
         return changed;
     }
 
 
-    /** Select the Input Output to edit.
+    /** Process the lock selection.
      */
     boolean menuLockSelect(boolean aHi)
     {
@@ -1710,9 +1703,9 @@ class Configure
 
         uint8_t index    = 0;
 
-        lcd.clearRow(LCD_COL_LOCK, LCD_ROW_BOT);
+        lcd.clearRow(LCD_COL_LOCK_MARK, LCD_ROW_BOT);
         displayLockEdit(aHi, index);
-        markField(LCD_COL_LOCK, LCD_ROW_BOT, 1, true);
+        markField(LCD_COL_LOCK_SELECT, LCD_ROW_BOT, 1, true);
 
         while (!finished)
         {
@@ -1723,26 +1716,63 @@ class Configure
                 case BUTTON_DOWN:   index -= 1;
                                     index += OUTPUT_LOCK_MAX;       // Ensure in-range.
                                     index %= OUTPUT_LOCK_MAX;
-                                    lcd.printAt(LCD_COL_LOCK, LCD_ROW_BOT, OPTION_ID(index));
+                                    lcd.printAt(LCD_COL_LOCK_SELECT, LCD_ROW_BOT, OPTION_ID(index));
                                     displayLockEdit(aHi, index);
                                     break;
                 case BUTTON_SELECT: break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
-                case BUTTON_RIGHT:  markField(LCD_COL_LOCK, LCD_ROW_BOT, 1, false);
-                                    changed |= menuLockNode(aHi, index);
-                                    markField(LCD_COL_LOCK, LCD_ROW_BOT, 1, true);
+                case BUTTON_RIGHT:  markField(LCD_COL_LOCK_SELECT, LCD_ROW_BOT, 1, false);
+                                    changed |= menuLockState(aHi, index);
+                                    markField(LCD_COL_LOCK_SELECT, LCD_ROW_BOT, 1, true);
                                     break;
             }
         }
 
-        markField(LCD_COL_LOCK, LCD_ROW_BOT, 1, false);
-        displayLockEdit(aHi, index);
+        markField(LCD_COL_LOCK_SELECT, LCD_ROW_BOT, 1, false);
+        // displayLockEdit(aHi, index);
         
         return changed;
     }
 
 
+    /** Process the lock state.
+     */
+    boolean menuLockState(boolean aHi, uint8_t aIndex)
+    {
+        boolean finished = false;
+        boolean changed  = false;
+
+        markField(LCD_COL_LOCK_STATE, LCD_ROW_BOT, LCD_COL_LOCK_MARK, true);
+
+        while (!finished)
+        {
+            switch (waitForButton())
+            {
+                case BUTTON_NONE:   break;
+                case BUTTON_UP:
+                case BUTTON_DOWN:   outputDef.setLockState(aHi, aIndex, !outputDef.getLockState(aHi, aIndex));
+                                    lcd.printAt(LCD_COL_LOCK_STATE, LCD_ROW_BOT, outputDef.getLockState(aHi, aIndex) ? M_HI : M_LO);
+                                    changed = true;
+                                    break;
+                case BUTTON_SELECT: break;
+                case BUTTON_LEFT:   finished = true;
+                                    break;
+                case BUTTON_RIGHT:  markField(LCD_COL_LOCK_STATE, LCD_ROW_BOT, LCD_COL_LOCK_MARK, false);
+                                    changed |= menuLockNode(aHi, aIndex);
+                                    markField(LCD_COL_LOCK_STATE, LCD_ROW_BOT, LCD_COL_LOCK_MARK, true);
+                                    break;
+            }
+        }
+
+        markField(LCD_COL_LOCK_STATE, LCD_ROW_BOT, LCD_COL_LOCK_MARK, false);
+        
+        return changed;
+    }
+
+
+    /** Process the lock node.
+     */
     boolean menuLockNode(boolean aHi, uint8_t aIndex)
     {
         boolean changed  = false;
@@ -1780,6 +1810,8 @@ class Configure
     }
 
 
+    /** Process the lock node.
+     */
     boolean menuLockPin(boolean aHi, uint8_t aIndex)
     {
         boolean changed  = false;

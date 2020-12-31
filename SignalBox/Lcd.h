@@ -31,7 +31,7 @@
 #define LCD_LEN_OPTION        6   // Command menu options are (padded to) this length.
 
 #define LCD_COL_START         0   // Cols for LCD state messages.
-#define LCD_COL_MARK          6   // Marker when changing top-level option.
+#define LCD_COL_MARK          6   // Marker column when changing top-level option.
 #define LCD_COL_VERSION       8   // Where to put version number/date.
 #define LCD_COL_CALIBRATE     6   // Button to press.
 #define LCD_COL_STATE         7   // State of an output.
@@ -58,7 +58,10 @@
 #define LCD_COL_OUTPUT_PACE   8   // Output's pace parameter at this col.
 #define LCD_COL_OUTPUT_RESET 12   // Output's reset parameter at this col.
 
-#define LCD_COL_LOCK          8   // Outputs locks start at this col.  
+#define LCD_COL_LOCK_MARK     2   // Marker column for lock options.
+#define LCD_COL_LOCK_SELECT   4   // Lock selection (A,B,C,D) at this column.
+#define LCD_COL_LOCK_STATE    7   // Lock state at this column.
+
 
 
 /** An LCD class that can print PROGMEM messages.

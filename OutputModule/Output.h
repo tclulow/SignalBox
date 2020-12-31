@@ -215,13 +215,22 @@ class OutputDef
      */
     boolean getLockState(boolean aHi, uint8_t aIndex)
     {
+        return ((aHi ? lockHi[aIndex] : lockLo[aIndex]) & OUTPUT_STATE_MASK) != 0;
+    }
+
+
+    /** Get the selected locks lock state.
+     *  That's the state the other output must be in to enforce this lock.
+     */
+    void setLockState(boolean aHi, uint8_t aIndex, boolean aState)
+    {
         if (aHi)
         {
-            return (lockHi[aIndex] & OUTPUT_STATE_MASK) != 0;
+            lockHi[aIndex] = (lockHi[aIndex] & ~OUTPUT_STATE_MASK) | (aState ? OUTPUT_STATE_MASK : 0);
         }
         else
         {
-            return (lockLo[aIndex] & OUTPUT_STATE_MASK) != 0;
+            lockLo[aIndex] = (lockLo[aIndex] & ~OUTPUT_STATE_MASK) | (aState ? OUTPUT_STATE_MASK : 0);
         }
     }
 
