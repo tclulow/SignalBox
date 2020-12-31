@@ -370,6 +370,16 @@ class Configure
     }
 
 
+    /** Display the lock detail.
+     */
+    void displayLockDetail(boolean aHi)
+    {
+        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, aHi ? M_HI : M_LO);
+        displayLockEdit(aHi, 0);
+    }
+
+
     /** Display Lock parameters for edit.
      */
     void displayLockEdit(boolean aHi, uint8_t aIndex)
@@ -1638,9 +1648,7 @@ class Configure
         boolean changed  = false;
         boolean hi       = false;
 
-        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, hi ? M_HI : M_LO);
-        displayLockEdit(hi, 0);
+        displayLockDetail(hi);
         markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_LOCK_MARK, true);
         
         while (!finished)
@@ -1663,7 +1671,7 @@ class Configure
                                         }
                                         else
                                         {
-                                            displayLockEdit(hi, 0);
+                                            displayLockDetail(hi);
                                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_LOCK_MARK, true);
                                         }
                                     }
@@ -1681,7 +1689,7 @@ class Configure
                                         }
                                         else
                                         {
-                                            displayLockEdit(hi, 0);
+                                            displayLockDetail(hi);
                                             markField(LCD_COL_START, LCD_ROW_BOT, LCD_COL_LOCK_MARK, true);
                                         }
                                     }
