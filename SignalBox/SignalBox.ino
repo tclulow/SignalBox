@@ -458,12 +458,17 @@ boolean isLocked(boolean aNewState)
                                 lcd.print(CHAR_SPACE);
                                 lcd.print(HEX_CHARS[outputNode]);
                                 lcd.print(HEX_CHARS[outputPin]);
-                                lcd.print(CHAR_SPACE);
                                 lcd.print(PGMT(M_VS));
-                                lcd.print(CHAR_SPACE);
                                 lcd.print(HEX_CHARS[outputDef.getLockNode(state, index)]);
                                 lcd.print(HEX_CHARS[outputDef.getLockPin(state, index)]);
                                 setDisplayTimeout(reportDelay());
+                            }
+
+                            if (isDebug(DEBUG_BRIEF))
+                            {
+                                outputDef.printDef(M_LOCK, outputPin);
+                                readOutput(outputDef.getLockNode(state, index), outputDef.getLockPin(state, index));
+                                outputDef.printDef(M_VS, outputPin);
                             }
                             
                             return true;
