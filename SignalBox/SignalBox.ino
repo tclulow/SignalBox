@@ -423,9 +423,58 @@ void processInput(uint8_t aState)
                 Serial.println();
             }
         }
-                        
-        processInputOutputs(newState);
+
+        // If not locked, process the Input's Outputs.
+        if (!isLocked(newState))
+        {
+            processInputOutputs(newState);
+        }
     }
+}
+
+
+/** Check if any of the Input's Outputs are locked.
+ */
+boolean isLocked(boolean aNewState)
+{
+    for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
+    {
+        if (!inputDef.isDelay(index))
+        {
+            readOutput(inputDef.getOutputNode(index), inputDef.getOutputPin(index));
+            boolean state = outputDef.getState() != 0;
+    
+            if (state != aNewState)
+            {
+                for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
+                {
+                    if (outputDef.isLock(state, index))
+                    {
+                        if (outputDef.getLockState(state, index) == getOutputState(outputDef.getLockNode(state, index), outputDef.getLockPin(state, index)))
+                        {
+                            if (reportEnabled(REPORT_SHORT))
+                            {
+                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_LOCK, LCD_LEN_OPTION);
+                                lcd.print(CHAR_SPACE);
+                                lcd.print(HEX_CHARS[outputNode]);
+                                lcd.print(HEX_CHARS[outputPin]);
+                                lcd.print(CHAR_SPACE);
+                                lcd.print(PGMT(M_VS));
+                                lcd.print(CHAR_SPACE);
+                                lcd.print(HEX_CHARS[outputDef.getLockNode(state, index)]);
+                                lcd.print(HEX_CHARS[outputDef.getLockPin(state, index)]);
+                                setDisplayTimeout(reportDelay());
+                            }
+                            
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
 }
 
 

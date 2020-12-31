@@ -108,6 +108,8 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
     const char M_ID_CONTROLLER[]    PROGMEM = "Con";
     const char M_ID_INPUT[]         PROGMEM = "Inp";
     const char M_ID_OUTPUT[]        PROGMEM = "Out";
+
+    const char M_VS[]               PROGMEM = "vs";
     
     // Configuration - Input.
     const char M_TOGGLE[]           PROGMEM = "Toggle";

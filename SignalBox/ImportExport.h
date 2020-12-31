@@ -178,7 +178,7 @@ class ImportExport
     }
 
 
-    /** Import an lock
+    /** Import a lock
      */
     void importLock()
     {
