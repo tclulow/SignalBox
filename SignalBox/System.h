@@ -10,7 +10,7 @@
     #define MAGIC_NUMBER 0x74756f53         // Magic number = "Sout".
 #endif
 
-#define VERSION         0x0024              // Version number of software.  See also M_VERSION.
+#define VERSION         0x0025              // Version number of software.  See also M_VERSION.
 
 
 // i2c node numbers.
