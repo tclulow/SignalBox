@@ -86,6 +86,7 @@
 // Useful characters
 #define HEX_MAX  16
 const char HEX_CHARS[]  = "0123456789abcdef";
+const byte BYTES_LO[]   = { 0, 0, 0, 0, 0x11, 0xa, 0x4, 0 };            // Custom character to indicate "Lo".
 
 const char CHAR_SPACE   = ' ';
 const char CHAR_TAB     = '\t';
@@ -102,13 +103,14 @@ const char CHAR_COLON   = ':';
 const char CHAR_LEFT    = '<';
 const char CHAR_RIGHT   = '>';
 const char CHAR_QUERY   = '?';
-const char CHAR_HAT     = '^';
+const char CHAR_HI      = '^';
 const char CHAR_TILDE   = '~';
 const char CHAR_ZERO    = '0';
 const char CHAR_NINE    = '9';
 const char CHAR_UPPER_A = 'A';
 const char CHAR_LOWER_A = 'a';
 const char CHAR_LOWER_V = 'v';
+const char CHAR_LO      = (char)0;
 
 
 /** Data describing an Output's operation.

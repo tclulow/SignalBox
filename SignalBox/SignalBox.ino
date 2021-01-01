@@ -453,11 +453,11 @@ boolean isLocked(boolean aNewState)
                         if (reportEnabled(REPORT_SHORT))
                         {
                             lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_LOCK, LCD_LEN_OPTION);
-                            lcd.print(aNewState ? CHAR_HAT : CHAR_LOWER_V);
+                            lcd.print(aNewState ? CHAR_HI : CHAR_LO);
                             lcd.print(HEX_CHARS[outputNode]);
                             lcd.print(HEX_CHARS[outputPin]);
                             lcd.print(PGMT(M_VS));
-                            lcd.print(state ? CHAR_HAT : CHAR_LOWER_V);
+                            lcd.print(state ? CHAR_HI : CHAR_LO);
                             lcd.print(HEX_CHARS[outputDef.getLockNode(aNewState, index)]);
                             lcd.print(HEX_CHARS[outputDef.getLockPin (aNewState, index)]);
                             setDisplayTimeout(reportDelay());
@@ -592,6 +592,7 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
 void setup()
 {
     lcd.begin(LCD_COLS, LCD_ROWS);      // LCD panel.
+    lcd.createChar(CHAR_LO, BYTES_LO);  // Custom character to indicate "Lo".
     announce();
 
     if (loadSystemData())
