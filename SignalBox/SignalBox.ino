@@ -39,7 +39,11 @@ long tickHeartBeat = 0;     // Time of last heartbeat.
 void announce()
 {
     lcd.clear();
-    lcd.printAt(LCD_COL_START,                       LCD_ROW_TOP, M_SOFTWARE);
+    // lcd.printAt(LCD_COL_START,                       LCD_ROW_TOP, M_SOFTWARE);
+    for (uint8_t index = 0; index < CHAR_LO; index++)
+    {
+        lcd.print((char)index);
+    }
     lcd.printAt(LCD_COLS - strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
     lcd.printAt(LCD_COLS - strlen_P(M_VERSION_DATE), LCD_ROW_BOT, M_VERSION_DATE);
 }
@@ -593,6 +597,10 @@ void setup()
 {
     lcd.begin(LCD_COLS, LCD_ROWS);      // LCD panel.
     lcd.createChar(CHAR_LO, BYTES_LO);  // Custom character to indicate "Lo".
+    for (uint8_t index = 0; index < CHAR_LO; index++)
+    {
+        lcd.createChar(index, LOGO[index]);
+    }
     announce();
 
     if (loadSystemData())
