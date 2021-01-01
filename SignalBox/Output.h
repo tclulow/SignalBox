@@ -211,6 +211,7 @@ class OutputDef
 
     /** Get the selected locks lock state.
      *  That's the state the other output must be in to enforce this lock.
+     *  return true = Hi, false = Lo.
      */
     boolean getLockState(boolean aHi, uint8_t aIndex)
     {
@@ -550,7 +551,7 @@ void setOutputNodeAbsent(uint8_t aNode)
  */
 boolean getOutputState(uint8_t aNode, uint8_t aPin)
 {
-    return outputStates[aNode] & (1 << aPin);
+    return (outputStates[aNode] & (1 << aPin)) != 0;
 }
 
 

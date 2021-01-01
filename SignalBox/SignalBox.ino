@@ -442,37 +442,35 @@ boolean isLocked(boolean aNewState)
         if (!inputDef.isDelay(index))
         {
             readOutput(inputDef.getOutputNode(index), inputDef.getOutputPin(index));
-            boolean state = outputDef.getState() != 0;
     
-            if (state != aNewState)
+            for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
             {
-                for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
+                if (outputDef.isLock(aNewState, index))
                 {
-                    if (outputDef.isLock(state, index))
+                    boolean state = getOutputState(outputDef.getLockNode(aNewState, index), outputDef.getLockPin(aNewState, index));
+                    if (outputDef.getLockState(aNewState, index) == state)
                     {
-                        if (outputDef.getLockState(state, index) == getOutputState(outputDef.getLockNode(state, index), outputDef.getLockPin(state, index)))
+                        if (reportEnabled(REPORT_SHORT))
                         {
-                            if (reportEnabled(REPORT_SHORT))
-                            {
-                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_LOCK, LCD_LEN_OPTION);
-                                lcd.print(CHAR_SPACE);
-                                lcd.print(HEX_CHARS[outputNode]);
-                                lcd.print(HEX_CHARS[outputPin]);
-                                lcd.print(PGMT(M_VS));
-                                lcd.print(HEX_CHARS[outputDef.getLockNode(state, index)]);
-                                lcd.print(HEX_CHARS[outputDef.getLockPin(state, index)]);
-                                setDisplayTimeout(reportDelay());
-                            }
-
-                            if (isDebug(DEBUG_BRIEF))
-                            {
-                                outputDef.printDef(M_LOCK, outputPin);
-                                readOutput(outputDef.getLockNode(state, index), outputDef.getLockPin(state, index));
-                                outputDef.printDef(M_VS, outputPin);
-                            }
-                            
-                            return true;
+                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_LOCK, LCD_LEN_OPTION);
+                            lcd.print(aNewState ? CHAR_HAT : CHAR_LOWER_V);
+                            lcd.print(HEX_CHARS[outputNode]);
+                            lcd.print(HEX_CHARS[outputPin]);
+                            lcd.print(PGMT(M_VS));
+                            lcd.print(state ? CHAR_HAT : CHAR_LOWER_V);
+                            lcd.print(HEX_CHARS[outputDef.getLockNode(aNewState, index)]);
+                            lcd.print(HEX_CHARS[outputDef.getLockPin (aNewState, index)]);
+                            setDisplayTimeout(reportDelay());
                         }
+
+                        if (isDebug(DEBUG_BRIEF))
+                        {
+                            outputDef.printDef(M_LOCK, outputPin);
+                            readOutput(outputDef.getLockNode(aNewState, index), outputDef.getLockPin(aNewState, index));
+                            outputDef.printDef(M_VS, outputPin);
+                        }
+                        
+                        return true;
                     }
                 }
             }

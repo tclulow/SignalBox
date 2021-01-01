@@ -102,11 +102,13 @@ const char CHAR_COLON   = ':';
 const char CHAR_LEFT    = '<';
 const char CHAR_RIGHT   = '>';
 const char CHAR_QUERY   = '?';
+const char CHAR_HAT     = '^';
 const char CHAR_TILDE   = '~';
 const char CHAR_ZERO    = '0';
 const char CHAR_NINE    = '9';
 const char CHAR_UPPER_A = 'A';
 const char CHAR_LOWER_A = 'a';
+const char CHAR_LOWER_V = 'v';
 
 
 /** Data describing an Output's operation.
