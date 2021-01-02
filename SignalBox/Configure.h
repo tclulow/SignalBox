@@ -1773,19 +1773,11 @@ class Configure
                                     lcd.printAt(LCD_COL_LOCK_SELECT, LCD_ROW_BOT, OPTION_ID(index));
                                     displayLockEdit(aHi, index);
                                     break;
-                case BUTTON_SELECT: outputDef.setLock(aHi, index, !outputDef.isLock(aHi, index));
-                                    displayLockEdit(aHi, index);
-                                    changed = true;
+                case BUTTON_SELECT: testOutput(outputDef.getLockNode(aHi, index), outputDef.getLockPin(aHi, index));
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
-                case BUTTON_RIGHT:  if (!outputDef.isLock(aHi, index))
-                                    {
-                                        outputDef.setLock(aHi, index, true);
-                                        displayLockEdit(aHi, index);
-                                        changed = true;
-                                    }
-                                    markField(LCD_COL_LOCK_SELECT, LCD_ROW_BOT, 1, false);
+                case BUTTON_RIGHT:  markField(LCD_COL_LOCK_SELECT, LCD_ROW_BOT, 1, false);
                                     changed |= menuLockState(aHi, index);
                                     markField(LCD_COL_LOCK_SELECT, LCD_ROW_BOT, 1, true);
                                     break;
@@ -1826,10 +1818,19 @@ class Configure
                                     }
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: break;
+                case BUTTON_SELECT: outputDef.setLock(aHi, aIndex, !outputDef.isLock(aHi, aIndex));
+                                    displayLockEdit(aHi, aIndex);
+                                    changed = true;
+                                    break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
-                case BUTTON_RIGHT:  markField(LCD_COL_LOCK_STATE, LCD_ROW_BOT, LCD_COL_LOCK_MARK, false);
+                case BUTTON_RIGHT:  if (!outputDef.isLock(aHi, aIndex))
+                                    {
+                                        outputDef.setLock(aHi, aIndex, true);
+                                        displayLockEdit(aHi, aIndex);
+                                        changed = true;
+                                    }
+                                    markField(LCD_COL_LOCK_STATE, LCD_ROW_BOT, LCD_COL_LOCK_MARK, false);
                                     changed |= menuLockNode(aHi, aIndex);
                                     markField(LCD_COL_LOCK_STATE, LCD_ROW_BOT, LCD_COL_LOCK_MARK, true);
                                     break;
@@ -1864,7 +1865,7 @@ class Configure
                                     lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[outputDef.getLockNode(aHi, aIndex)]);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: // Enable/disable this output.
+                case BUTTON_SELECT: testOutput(outputDef.getLockNode(aHi, aIndex), outputDef.getLockPin(aHi, aIndex));
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
@@ -1903,7 +1904,7 @@ class Configure
                                     lcd.printAt(LCD_COL_PIN, LCD_ROW_BOT, HEX_CHARS[outputDef.getLockPin(aHi, aIndex)]);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: // Enable/disable this output.
+                case BUTTON_SELECT: testOutput(outputDef.getLockNode(aHi, aIndex), outputDef.getLockPin(aHi, aIndex));
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
@@ -1937,6 +1938,17 @@ class Configure
             waitForButtonRelease();
             writeOutputState(outputNode, outputPin,  outputDef.getState(), 0);
         }
+    }
+
+
+    /** Test a specific output (not the current one).
+     *  Can't tell if it's a flasher, so just move to alternate state and back.
+     */
+    void testOutput(uint8_t aNode, uint8_t aPin)
+    {
+        writeOutputState(aNode, aPin, !getOutputState(aNode, aPin), 0);
+        waitForButtonRelease();
+        writeOutputState(aNode, aPin,  getOutputState(aNode, aPin), 0);
     }
 
 
