@@ -150,6 +150,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_FLA
 const char M_DEBUG_DEBUG[]      PROGMEM = "Debug";
 const char M_DEBUG_I2C[]        PROGMEM = "I2C";
 const char M_DEBUG_LOAD[]       PROGMEM = "Load";
+const char M_DEBUG_MOVE[]       PROGMEM = "Move";
 const char M_DEBUG_READ[]       PROGMEM = "Read";
 const char M_DEBUG_REPORT[]     PROGMEM = "Report";
 const char M_DEBUG_RESET[]      PROGMEM = "Reset";
@@ -164,12 +165,14 @@ const char M_DEBUG_WRITE[]      PROGMEM = "Write";
 const char M_DEBUG_DELAY_TO[]   PROGMEM = ", delayTo=";
 const char M_DEBUG_HI[]         PROGMEM = ", hi=";
 const char M_DEBUG_LO[]         PROGMEM = ", lo=";
+const char M_DEBUG_LOCK_HI[]    PROGMEM = ", lockHi=";
+const char M_DEBUG_LOCK_LO[]    PROGMEM = ", lockLo=";
+const char M_DEBUG_NODE[]       PROGMEM = ", node=";
 const char M_DEBUG_PACE[]       PROGMEM = ", pace=";
 const char M_DEBUG_RESET_AT[]   PROGMEM = ", resetAt=";
-const char M_DEBUG_LOCK_HI[]    PROGMEM = ", LockHi=";
-const char M_DEBUG_LOCK_LO[]    PROGMEM = ", LockLo=";
 const char M_DEBUG_STATE[]      PROGMEM = ", state=";
 const char M_DEBUG_TARGET[]     PROGMEM = ", target=";
+const char M_DEBUG_TO[]         PROGMEM = ", to=";
 const char M_DEBUG_TYPE[]       PROGMEM = ", type=";
 const char M_DEBUG_VALUE[]      PROGMEM = ", value=";
 
@@ -183,7 +186,6 @@ const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG, M_DEBU
     const char M_DEBUG_RENUMBER[]   PROGMEM = "Renumber";
 
     const char M_DEBUG_INPUTS[]     PROGMEM = ", inputs=";
-    const char M_DEBUG_NODE[]       PROGMEM = ", node=";
     const char M_DEBUG_OUTPUTS[]    PROGMEM = ", outputs=";
     const char M_DEBUG_PIN[]        PROGMEM = ", pin=";
     const char M_DEBUG_RETURN[]     PROGMEM = ", ret=";
@@ -194,7 +196,6 @@ const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG, M_DEBU
     const char M_DEBUG_ACTION[]     PROGMEM = "Action";
     const char M_DEBUG_INIT[]       PROGMEM = "Init";
     const char M_DEBUG_MODULE[]     PROGMEM = "Module";
-    const char M_DEBUG_MOVE[]       PROGMEM = "Move";
     const char M_DEBUG_RECEIPT[]    PROGMEM = "Receipt";
     const char M_DEBUG_REQUEST[]    PROGMEM = "Request";
     const char M_DEBUG_TRIGGER[]    PROGMEM = "Trigger";

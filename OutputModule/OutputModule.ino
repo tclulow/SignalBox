@@ -483,15 +483,17 @@ void processSystem(uint8_t aOption)
 {
     switch (aOption)
     {
-        case COMMS_SYS_STATES:   requestCommand = COMMS_CMD_SYSTEM;
-                                 requestOption  = aOption;
-                                 break;
-        case COMMS_SYS_RENUMBER: requestCommand = COMMS_CMD_SYSTEM;
-                                 requestOption  = aOption;
-                                 processRenumber();
-                                 break;
-        default:                 unrecognisedCommand(M_DEBUG_SYSTEM, COMMS_CMD_SYSTEM, aOption);
-                                 break;
+        case COMMS_SYS_STATES:     requestCommand = COMMS_CMD_SYSTEM;
+                                   requestOption  = aOption;
+                                   break;
+        case COMMS_SYS_RENUMBER:   requestCommand = COMMS_CMD_SYSTEM;
+                                   requestOption  = aOption;
+                                   processRenumber();
+                                   break;
+        case COMMS_SYS_MOVE_LOCKS: processMoveLocks();
+                                   break;
+        default:                   unrecognisedCommand(M_DEBUG_SYSTEM, COMMS_CMD_SYSTEM, aOption);
+                                   break;
     }
 }
 
@@ -522,6 +524,63 @@ void processRenumber()
         
         // Revoke the request so it can't be actioned.
         requestCommand == COMMS_CMD_NONE;
+    }
+}
+
+
+/** Process a move locks request
+ */
+void processMoveLocks()
+{
+    if (Wire.available())
+    {
+        uint8_t oldNode = Wire.read();
+        uint8_t newNode = oldNode & OUTPUT_NODE_MASK;
+        oldNode = (oldNode >> 4) & OUTPUT_NODE_MASK;
+
+        if (isDebug(DEBUG_DETAIL))
+        {
+            Serial.print(millis());
+            Serial.print(CHAR_TAB);
+            Serial.print(PGMT(M_DEBUG_MOVE));
+            Serial.print(PGMT(M_DEBUG_NODE));
+            Serial.print(oldNode, HEX);
+            Serial.print(PGMT(M_DEBUG_TO));
+            Serial.print(newNode, HEX);
+            Serial.println();
+        }
+
+        for (uint8_t pin = 0; pin < OUTPUT_PIN_MAX; pin++)
+        {
+            for (uint8_t hi = 0; hi < 2; hi++)
+            {
+                for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
+                {
+                    if (outputDefs[pin].getLockNode(hi, index) == oldNode)
+                    {
+                        outputDefs[pin].setLockNode(hi, index, newNode);
+                    }
+                    else if (outputDefs[pin].getLockNode(hi, index) == newNode)     // TODO - check this is really required.
+                    {
+                        outputDefs[pin].setLockNode(hi, index, oldNode);
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        if (isDebug(DEBUG_ERRORS))
+        {
+            Serial.print(millis());
+            Serial.print(CHAR_TAB);
+            Serial.print(PGMT(M_DEBUG_RECEIPT));
+            Serial.print(PGMT(M_DEBUG_COMMAND));
+            Serial.print(PGMT(M_DEBUG_COMMANDS[requestCommand >> COMMS_COMMAND_SHIFT]));
+            Serial.print(PGMT(M_DEBUG_LEN));
+            Serial.print(Wire.available());
+            Serial.println();
+        }
     }
 }
 

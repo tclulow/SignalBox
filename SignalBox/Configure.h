@@ -917,7 +917,7 @@ class Configure
     {
         int response = aOldNode;
         
-        Wire.beginTransmission(systemData.i2cOutputBaseID + outNode);
+        Wire.beginTransmission(systemData.i2cOutputBaseID + aOldNode);
         Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_RENUMBER);
         Wire.write(aNewNode);
         if (   ((response = Wire.endTransmission()) == 0)
@@ -925,6 +925,18 @@ class Configure
             && ((response = Wire.read()) >= 0))
         {
             response &= OUTPUT_NODE_MASK;
+    
+            if (isDebug(DEBUG_BRIEF))
+            {
+                Serial.print(millis());
+                Serial.print(CHAR_TAB);
+                Serial.print(PGMT(M_DEBUG_RENUMBER));
+                Serial.print(PGMT(M_DEBUG_NODE));
+                Serial.print(aOldNode, HEX);
+                Serial.print(PGMT(M_DEBUG_TO));
+                Serial.print(aNewNode, HEX);
+                Serial.println();    
+            }
 
             if (aOldNode != response)       // Change actually happened.
             {
@@ -961,17 +973,37 @@ class Configure
                         }
                     }
                 }
-    
-                if (isDebug(DEBUG_BRIEF))
+
+                // Get all Output nodes to renumber their locks.
+                lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+                lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+
+                for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
                 {
-                    Serial.print(millis());
-                    Serial.print(CHAR_TAB);
-                    Serial.print(PGMT(M_DEBUG_RENUMBER));
-                    Serial.print(CHAR_SPACE);
-                    Serial.print(aOldNode, HEX);
-                    Serial.print(PGMT(M_DEBUG_NODE));
-                    Serial.print(aNewNode, HEX);
-                    Serial.println();    
+                    lcd.print(isOutputNode(node) ? HEX_CHARS[node] : CHAR_DOT);
+                    
+                    if (isOutputNode(node))
+                    {
+                        if (isDebug(DEBUG_BRIEF))
+                        {
+                            Serial.print(millis());
+                            Serial.print(CHAR_TAB);
+                            Serial.print(PGMT(M_DEBUG_MOVE));
+                            Serial.print(PGMT(M_DEBUG_NODE));
+                            Serial.print(aOldNode, HEX);
+                            Serial.print(PGMT(M_DEBUG_TO));
+                            Serial.print(response, HEX);
+                            Serial.println();    
+                        }
+            
+                        Wire.beginTransmission(systemData.i2cOutputBaseID + node);
+                        Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_MOVE_LOCKS);
+                        Wire.write((aOldNode << 4) | response);
+                        if ((response = Wire.endTransmission()) != 0)
+                        {
+                            systemFail(M_LOCK, response, DELAY_READ);
+                        }
+                    }
                 }
             }
         }
