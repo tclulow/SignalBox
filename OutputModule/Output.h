@@ -555,12 +555,14 @@ boolean getOutputState(uint8_t aNode, uint8_t aPin)
 }
 
 
+/** Gets the states of all the given node's Outputs.
+ */
+uint8_t getOutputStates(uint8_t aNode);
+
+
 /** Sets the states of all the given node's Outputs.
  */
-void setOutputStates(uint8_t aNode, uint8_t aStates)
-{
-    outputStates[aNode] = aStates;
-}
+void setOutputStates(uint8_t aNode, uint8_t aStates);
 
 
 /** Sets the state of the given node's Output pin.

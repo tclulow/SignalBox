@@ -944,6 +944,12 @@ class Configure
                 setOutputNodeAbsent(aOldNode);
                 setOutputNodePresent(response);
 
+                // Swap the state flags of the two nodes.
+                uint8_t oldStates = getOutputStates(aOldNode);
+                setOutputStates(aOldNode, getOutputStates(response));
+                setOutputStates(response, oldStates);
+
+                // Show work as Inputs are updated.
                 lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
                 lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT);
                 lcd.setCursor(LCD_COLS - INPUT_NODE_MAX, LCD_ROW_BOT);
@@ -974,10 +980,11 @@ class Configure
                     }
                 }
 
-                // Get all Output nodes to renumber their locks.
+                // Show work as Output locks are updated.
                 lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
                 lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
+                // Renumber all the Outputs' locks as necessary.
                 for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
                 {
                     lcd.print(isOutputNode(node) ? HEX_CHARS[node] : CHAR_DOT);

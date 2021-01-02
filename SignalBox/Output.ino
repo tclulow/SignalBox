@@ -142,6 +142,22 @@ void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDela
 }
 
 
+/** Gets the states of all the given node's Outputs.
+ */
+uint8_t getOutputStates(uint8_t aNode)
+{
+    return outputStates[aNode];
+}
+
+
+/** Sets the states of all the given node's Outputs.
+ */
+void setOutputStates(uint8_t aNode, uint8_t aStates)
+{
+    outputStates[aNode] = aStates;
+}
+
+
 /** Reset current Output. 
  *  And then reload its definition.
  */
@@ -165,6 +181,7 @@ void resetOutput()
     // Reload the Output now it's been reset.
     readOutput(outputNode, outputPin);
 }
+
 
 /** Read the states of the given node's Outputs.
  *  Save in OutputStates.
