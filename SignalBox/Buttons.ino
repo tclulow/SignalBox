@@ -29,6 +29,7 @@ void calibrateButtons()
 
         // Record average between this button and the previous.
         while ((value = analogRead(0)) > BUTTON_THRESHHOLD);
+        delay(DELAY_BUTTON_WAIT);
         systemData.buttons[button] = (previous + value) / 2;
         previous = value;
 
@@ -46,6 +47,7 @@ void calibrateButtons()
 
         // Wait for button to be released.
         while (analogRead(0) < BUTTON_THRESHHOLD);
+        delay(DELAY_BUTTON_WAIT);
     }
 
     lcd.clear();
