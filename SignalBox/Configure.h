@@ -999,10 +999,7 @@ class Configure
                         Wire.beginTransmission(systemData.i2cOutputBaseID + node);
                         Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_MOVE_LOCKS);
                         Wire.write((aOldNode << 4) | response);
-                        if ((response = Wire.endTransmission()) != 0)
-                        {
-                            systemFail(M_LOCK, response, DELAY_READ);
-                        }
+                        Wire.endTransmission();
                     }
                 }
             }
