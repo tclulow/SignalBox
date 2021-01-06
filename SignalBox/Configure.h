@@ -1155,7 +1155,7 @@ class Configure
                                     {
                                         if (cancel())
                                         {
-                                            loadInput(outNode, outPin);
+                                            loadInput(inpNode, inpPin);
                                             finished = true;
                                         }
                                         else
