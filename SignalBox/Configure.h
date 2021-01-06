@@ -1177,10 +1177,10 @@ class Configure
             }
         }
 
-        displayDetailInput();
-
         // Ensure output node is reset (we may have corrupted it when chaninging an Input's Outputs).
         readOutput(outNode, outPin);
+
+        displayDetailInput();
     }
 
 
