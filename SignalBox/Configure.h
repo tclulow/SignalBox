@@ -971,11 +971,12 @@ class Configure
                                 inputDef.setOutputNode(index, response);
                                 saveInput();
                             }
-                            else if (inputDef.getOutputNode(index) == response)
-                            {
-                                inputDef.setOutputNode(index, aOldNode);
-                                saveInput();
-                            }
+//                            // Don't do this so new modules can be renumbered on top of an old module they're replacing.                            
+//                            else if (inputDef.getOutputNode(index) == response)
+//                            {
+//                                inputDef.setOutputNode(index, aOldNode);
+//                                saveInput();
+//                            }
                         }
                     }
                 }
