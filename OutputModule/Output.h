@@ -100,14 +100,6 @@ class OutputDef
     }
 
 
-    /** Gets the alt target any movement is aiming for.
-     */
-    uint8_t getAltTarget()
-    {
-        return getState() ? lo : hi;
-    }
-
-
     /** Gets the pace as steps. 
      *  From 0 -> f to 240 -> 0.
      */

@@ -41,7 +41,8 @@ struct
     uint8_t step    = 0;    // The current step.
     uint8_t start   = 0;    // The starting position.
     uint8_t value   = 0;    // The value of the output.
-    uint8_t alt     = 0;    // The value of the alternate output.
+    uint8_t alt     = 0;    // The alternate value of the output.
+    uint8_t target  = 0;    // The target value (or alt value) to aim for.
     long    delayTo = 0;    // Start at this time.
 } outputs[IO_PINS];
 
@@ -681,9 +682,9 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         outputs[aPin].steps = steps + 1;
 
         // Add trigger point for SIGNALS, but only if they're ascending the whole range.
-        if (   (outputDefs[aPin].getType()      == OUTPUT_TYPE_SIGNAL)
-            && (outputDefs[aPin].getAltTarget() == outputs[aPin].start)
-            && (aState))
+        if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
+            && (aState)
+            && (outputs[aPin].start == outputDefs[aPin].getLo()))
         {
             outputs[aPin].alt = (steps + random(steps)) / 3;
         }
