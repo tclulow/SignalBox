@@ -78,8 +78,8 @@ class OutputDef
      */
     boolean isLed()
     {
-        return getType() ==    OUTPUT_TYPE_LED
-                            || OUTPUT_TYPE_LED_4;
+        return    getType() == OUTPUT_TYPE_LED
+               || getType() == OUTPUT_TYPE_LED_4;
     }
 
 
