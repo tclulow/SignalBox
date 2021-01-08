@@ -41,9 +41,10 @@
 #define OUTPUT_TYPE_SERVO        0x01   // Output is a servo.
 #define OUTPUT_TYPE_SIGNAL       0x02   // Output is a signal.
 #define OUTPUT_TYPE_LED          0x03   // Output is a LED or other IO device.
-#define OUTPUT_TYPE_FLASH        0x04   // Output is a flashing LED.
-#define OUTPUT_TYPE_BLINK        0x05   // Output is a blinking LED.
-#define OUTPUT_TYPE_MAX          0x06   // Limit of output types.
+#define OUTPUT_TYPE_LED_4        0x04   // Output is a LED 4-aspect paired with next output.
+#define OUTPUT_TYPE_FLASH        0x05   // Output is a flashing LED.
+#define OUTPUT_TYPE_BLINK        0x06   // Output is a blinking LED.
+#define OUTPUT_TYPE_MAX          0x07   // Limit of output types.
 
 
 /** Definition of an Output.
@@ -77,7 +78,8 @@ class OutputDef
      */
     boolean isLed()
     {
-        return getType() == OUTPUT_TYPE_LED;
+        return getType() ==    OUTPUT_TYPE_LED
+                            || OUTPUT_TYPE_LED_4;
     }
 
 

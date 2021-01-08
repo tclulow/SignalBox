@@ -121,7 +121,7 @@ void writeSaveOutput()
  */
 void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay)
 {
-    if (isDebug(DEBUG_DETAIL))
+    if (isDebug(DEBUG_BRIEF))
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);

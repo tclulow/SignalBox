@@ -908,7 +908,7 @@ void stepLeds()
     // Move any Leds that need moving.
     for (int pin = 0; pin < IO_PINS; pin++)
     {
-        if (outputDefs[pin].getType() == OUTPUT_TYPE_LED)
+        if (outputDefs[pin].isLed())
         {
             if (   (outputs[pin].delayTo == 0)
                 || (outputs[pin].delayTo <= now))
