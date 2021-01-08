@@ -162,7 +162,7 @@ void reportOutput(PGM_P aHeader, uint8_t aPin)
     Serial.print(PGMT(M_DEBUG_STATE));
     Serial.print(PGMT(outputDefs[aPin].getState() ? M_HI : M_LO));
     Serial.print(PGMT(M_DEBUG_TARGET));
-    Serial.print(outputDefs[aPin].getTarget(), HEX);
+    Serial.print(outputs[aPin].target, HEX);
     Serial.print(PGMT(M_DEBUG_START));
     Serial.print(outputs[aPin].start, HEX);
     Serial.print(PGMT(M_DEBUG_STEPS));
@@ -661,6 +661,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     // Set common parameters
     outputs[aPin].delayTo = millis() + DELAY_MULTIPLIER * aDelay;
     outputs[aPin].step    = 0;
+    outputs[aPin].target  = aState ? outputDefs[aPin].getHi() : outputDefs[aPin].getLo();
 
     // Output type-specific parameters.
     if (outputDefs[aPin].isServo())
@@ -669,7 +670,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         outputs[aPin].start = outputs[aPin].value;
         outputs[aPin].alt   = 0;
 
-        uint32_t steps = abs(outputDefs[aPin].getTarget() - outputs[aPin].start);
+        uint32_t steps = abs(outputs[aPin].target - outputs[aPin].start);
         if (steps > OUTPUT_SERVO_MAX)
         {
             steps = OUTPUT_SERVO_MAX;
@@ -830,7 +831,7 @@ void stepServo(int aPin)
         if (outputs[aPin].step >= outputs[aPin].steps)
         {
             // Last step, make sure to hit the target bang-on.
-            outputs[aPin].value = outputDefs[aPin].getTarget();
+            outputs[aPin].value = outputs[aPin].target;
             digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
 
             // Signals might "bounce" if descending
@@ -866,7 +867,7 @@ void stepServo(int aPin)
         {
             // Intermediate step, move proportionately (step/steps) along the range (start to target).
             outputs[aPin].value = outputs[aPin].start 
-                                +   (outputDefs[aPin].getTarget() - outputs[aPin].start)
+                                +   (outputs[aPin].target - outputs[aPin].start)
                                   * outputs[aPin].step
                                   / outputs[aPin].steps;
         }
@@ -931,13 +932,13 @@ void stepLed(int aPin)
             // Last step, make sure to hit the target bang-on.
             if (outputDefs[aPin].getState())
             {
-                outputs[aPin].value = outputDefs[aPin].getTarget();
+                outputs[aPin].value = outputDefs[aPin].getHi();
                 outputs[aPin].alt   = 0;
             }
             else
             {
                 outputs[aPin].value = 0;
-                outputs[aPin].alt   = outputDefs[aPin].getTarget();
+                outputs[aPin].alt   = outputDefs[aPin].getLo();
             }
 
             // If there's a reset, reset the LED after the specified delay.
@@ -953,13 +954,13 @@ void stepLed(int aPin)
             // Intermediate step, move proportionately (step/steps) along the range (start to target).
             if (outputDefs[aPin].getState())
             {
-                outputs[aPin].value += (outputDefs[aPin].getTarget() - outputs[aPin].value) / (outputs[aPin].steps + 1 - outputs[aPin].step);
-                outputs[aPin].alt   -= outputs[aPin].alt                                    / (outputs[aPin].steps + 1 - outputs[aPin].step);
+                outputs[aPin].value += (outputs[aPin].target - outputs[aPin].value) / (outputs[aPin].steps + 1 - outputs[aPin].step);
+                outputs[aPin].alt   -=  outputs[aPin].alt                           / (outputs[aPin].steps + 1 - outputs[aPin].step);
             }
             else
             {
-                outputs[aPin].value -= outputs[aPin].value                                  / (outputs[aPin].steps + 1 - outputs[aPin].step);
-                outputs[aPin].alt   += (outputDefs[aPin].getTarget() - outputs[aPin].alt)   / (outputs[aPin].steps + 1 - outputs[aPin].step);
+                outputs[aPin].value -=  outputs[aPin].value                         / (outputs[aPin].steps + 1 - outputs[aPin].step);
+                outputs[aPin].alt   += (outputs[aPin].target - outputs[aPin].alt)   / (outputs[aPin].steps + 1 - outputs[aPin].step);
             }
         }
 
