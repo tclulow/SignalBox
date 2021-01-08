@@ -13,7 +13,7 @@ boolean loadSystemData()
     {
         EEPROM.get(SYSTEM_BASE, systemData);
     }
-    
+
     return systemData.magic == MAGIC_NUMBER;
 }
 
@@ -24,6 +24,12 @@ void saveSystemData()
 {
     EEPROM.put(SYSTEM_BASE, systemData);
 
+    debugSystemData();
+}
+
+
+void debugSystemData()
+{
     if (isDebug(DEBUG_BRIEF))
     {
         Serial.print(millis());
@@ -52,7 +58,7 @@ void saveSystemData()
 
         if (isDebug(DEBUG_FULL))
         {
-            dumpMemory(M_SYSTEM, SYSTEM_BASE, SYSTEM_END);
+            dumpMemory();
         }
     }
 }
