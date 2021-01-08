@@ -105,11 +105,8 @@ void setup()
     // Flash out version number on the built-in LED
     flashVersion();
 
-    // Dump memory in raw format if debug-full.
-    if (isDebug(DEBUG_FULL))
-    {
-        dumpMemory();
-    }
+    // Show system data (depending on debug level).
+    debugSystemData();
 }
 
 
@@ -828,9 +825,9 @@ void stepServo(int aPin)
             // Normal non-triggered movement.
             outputs[aPin].step += 1;
         }
-        
+
         // Calculate Servo's new position.
-        if (outputs[aPin].step == outputs[aPin].steps)
+        if (outputs[aPin].step >= outputs[aPin].steps)
         {
             // Last step, make sure to hit the target bang-on.
             outputs[aPin].value = outputDefs[aPin].getTarget();
@@ -1157,7 +1154,7 @@ void loop()
         tickFlash = now;
         stepFlashes();
     }
-    
+
     // Set LED Outputs based on their intensity value/alt, using the clock to generate a PWM signal.
     for (int pin = 0; pin < IO_PINS; pin++)
     {
