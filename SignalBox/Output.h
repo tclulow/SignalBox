@@ -78,8 +78,8 @@ class OutputDef
      */
     boolean isLed()
     {
-        return getType() ==    OUTPUT_TYPE_LED
-                            || OUTPUT_TYPE_LED_4;
+        return    getType() == OUTPUT_TYPE_LED
+               || getType() == OUTPUT_TYPE_LED_4;
     }
 
 
@@ -89,22 +89,6 @@ class OutputDef
     {
         return    (getType() == OUTPUT_TYPE_FLASH)
                || (getType() == OUTPUT_TYPE_BLINK);
-    }
-
-
-    /** Gets the target any movement is aiming for.
-     */
-    uint8_t getTarget()
-    {
-        return getState() ? hi : lo;
-    }
-
-
-    /** Gets the alt target any movement is aiming for.
-     */
-    uint8_t getAltTarget()
-    {
-        return getState() ? lo : hi;
     }
 
 
