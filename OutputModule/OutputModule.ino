@@ -716,11 +716,11 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             // Other (aPin - 1) output is wired Hi=Red,   Lo=Amber
             // This  (aPin    ) output is wired Hi=Amber, Lo=Green.
             //
-            // Colour   LED  LED_4    Off
-            // Red       Hi    Lo     This
-            // Amber     Hi    Hi     Other
-            // Amber*2   Lo    Hi     None
-            // Green     Lo    Lo     Other
+            // Colour   LED  LED_4   On      Off
+            // Red       Hi    Lo    LED     LED_4
+            // Amber     Hi    Hi    LED_4   LED
+            // Amber*2   Lo    Hi    Both    None
+            // Green     Lo    Lo    LED_4   LED
 
             outputs[aPin - 1].step   = outputs[aPin].step;                          // LED and LED_4 move with the same steps.
             outputs[aPin - 1].steps  = outputs[aPin].steps;
@@ -740,7 +740,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
                     {
                         newState = true;                                            // Move to double amber.
                         outputs[aPin].target = outputDefs[aPin].getHi();            // LED_4 is lo (amber).
-                        outputDefs[aPin - 1].setState(false);                        // LED is hi (amber)
+                        outputDefs[aPin - 1].setState(false);                       // LED is hi (amber)
                         outputs[aPin - 1].target = outputDefs[aPin - 1].getLo();    // and set its target.
                         
                     }
@@ -759,6 +759,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
                     }
                     else                                                            // Was green.
                     {
+                        // Nothing to do.                                           // Stay green.
                     }
                 }
             }
