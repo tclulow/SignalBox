@@ -306,10 +306,13 @@ class OutputDef
             {
                 if (isLock(hi, index))
                 {
-                    Serial.print(lockLo[index], HEX);
+                    Serial.print(getLockState(hi, index) ? '^' : 'v');
+                    Serial.print(getLockNode(hi, index), HEX);
+                    Serial.print(getLockPin(hi, index), HEX);
                 }
                 else
                 {
+                    Serial.print(CHAR_SPACE);
                     Serial.print(CHAR_DOT);
                     Serial.print(CHAR_DOT);
                 }
