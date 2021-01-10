@@ -631,7 +631,7 @@ void setup()
         Serial.println();
     }
 
-    // Flash our version nmber on the built-in LED.
+    // Flash our version number on the built-in LED.
     flashVersion();
     
     // Initialise subsystems.

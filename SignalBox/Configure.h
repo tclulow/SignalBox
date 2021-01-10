@@ -1383,7 +1383,6 @@ class Configure
                                     {
                                         if (confirm())
                                         {
-                                            // writeOutput();       // Not required, all changes persistemtly write those changes to output module.
                                             writeSaveOutput();
                                             finished = true;
                                         }
@@ -1402,7 +1401,6 @@ class Configure
                                     {
                                         if (cancel())
                                         {
-                                            resetOutput();
                                             finished = true;
                                         }
                                         else
@@ -1439,6 +1437,7 @@ class Configure
             }
         }
         
+        resetOutput();              // Ensure output module is in correct state (and will persist state changes).
         displayDetailOutput();
     }
 
@@ -1918,7 +1917,6 @@ class Configure
 
         return changed;
     }
-
 
 
     /** Test the current Configuration.
