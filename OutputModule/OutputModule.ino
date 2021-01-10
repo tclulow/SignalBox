@@ -240,6 +240,7 @@ void initOutput(int aPin, uint8_t aOldType)
         // Handle LED_4 as special case (if previous output is a LED).
         if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)   
             && (aPin > 0)
+            && (persisting)
             && (outputDefs[aPin - 1].getType() == OUTPUT_TYPE_LED))
         {
             if (outputDefs[aPin].getState() == outputDefs[aPin - 1].getState())
