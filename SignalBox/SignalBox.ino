@@ -441,18 +441,18 @@ void processInput(uint8_t aState)
  */
 boolean isLocked(boolean aNewState)
 {
-    for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
+    for (int inpIndex = 0; inpIndex < INPUT_OUTPUT_MAX; inpIndex++)
     {
-        if (!inputDef.isDelay(index))
+        if (!inputDef.isDelay(inpIndex))
         {
-            readOutput(inputDef.getOutputNode(index), inputDef.getOutputPin(index));
+            readOutput(inputDef.getOutputNode(inpIndex), inputDef.getOutputPin(inpIndex));
     
-            for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
+            for (uint8_t outIndex = 0; outIndex < OUTPUT_LOCK_MAX; outIndex++)
             {
-                if (outputDef.isLock(aNewState, index))
+                if (outputDef.isLock(aNewState, outIndex))
                 {
-                    boolean state = getOutputState(outputDef.getLockNode(aNewState, index), outputDef.getLockPin(aNewState, index));
-                    if (outputDef.getLockState(aNewState, index) == state)
+                    boolean state = getOutputState(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
+                    if (outputDef.getLockState(aNewState, outIndex) == state)
                     {
                         if (reportEnabled(REPORT_SHORT))
                         {
@@ -462,15 +462,15 @@ boolean isLocked(boolean aNewState)
                             lcd.print(HEX_CHARS[outputPin]);
                             lcd.print(PGMT(M_VS));
                             lcd.print(state ? CHAR_HI : CHAR_LO);
-                            lcd.print(HEX_CHARS[outputDef.getLockNode(aNewState, index)]);
-                            lcd.print(HEX_CHARS[outputDef.getLockPin (aNewState, index)]);
+                            lcd.print(HEX_CHARS[outputDef.getLockNode(aNewState, outIndex)]);
+                            lcd.print(HEX_CHARS[outputDef.getLockPin (aNewState, outIndex)]);
                             setDisplayTimeout(reportDelay());
                         }
 
                         if (isDebug(DEBUG_BRIEF))
                         {
                             outputDef.printDef(M_LOCK, outputPin);
-                            readOutput(outputDef.getLockNode(aNewState, index), outputDef.getLockPin(aNewState, index));
+                            readOutput(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
                             outputDef.printDef(M_VS, outputPin);
                         }
                         
@@ -527,8 +527,6 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
     }
     else
     {
-        setOutputState(outNode, outPin, aState);
-
         if (reportEnabled(REPORT_PAUSE))
         {
             readOutput(inputDef.getOutput(aIndex));
@@ -569,6 +567,10 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
         }
 
         writeOutputState(outNode, outPin, aState, endDelay);
+
+        // Recover all states from output module (in case LED_4 has moved one).
+        readOutputStates(outNode);
+        // setOutputState(outNode, outPin, aState);
     }
 
     return endDelay;
@@ -595,14 +597,17 @@ uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
  */
 void setup()
 {
-    lcd.begin(LCD_COLS, LCD_ROWS);      // LCD panel.
-    lcd.createChar(CHAR_LO, BYTES_LO);  // Custom character to indicate "Lo".
+    lcd.begin(LCD_COLS, LCD_ROWS);          // LCD panel.
+    lcd.createChar(CHAR_LO, BYTES_LO);      // Custom character to indicate "Lo".
     for (uint8_t index = 0; index < CHAR_LO; index++)
     {
         lcd.createChar(index, LOGO[index]);
     }
+
+    // Initial announcement/splash message.
     announce();
 
+    // Add suitable startup/setup message
     if (loadSystemData())
     {
         lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_STARTUP);
