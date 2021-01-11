@@ -377,7 +377,7 @@ void returnRenumber()
  */
 void returnDef()
 {
-    if (isDebug(DEBUG_DETAIL))
+    if (isDebug(DEBUG_BRIEF))
     {
         outputDefs[requestOption].printDef(M_DEBUG_SEND, requestOption);
     }
@@ -629,7 +629,10 @@ void processWrite(uint8_t aPin)
         outputDefs[aPin].read();
         initOutput(aPin, oldType);
 
-        outputDefs[aPin].printDef(M_DEBUG_WRITE, aPin);
+        if (isDebug(DEBUG_BRIEF))
+        {
+            outputDefs[aPin].printDef(M_DEBUG_WRITE, aPin);
+        }
     }
 }
 
@@ -722,8 +725,9 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             // Amber*2   Lo    Hi    Both    None
             // Green     Lo    Lo    LED_4   LED
 
-            outputs[aPin - 1].step   = outputs[aPin].step;                          // LED and LED_4 move with the same steps.
-            outputs[aPin - 1].steps  = outputs[aPin].steps;
+            outputs[aPin - 1].step    = outputs[aPin].step;                         // LED and LED_4 move with the same steps.
+            outputs[aPin - 1].steps   = outputs[aPin].steps;
+            outputs[aPin - 1].delayTo = outputs[aPin].delayTo;
 
             if (aState)                                                             // Set red.
             {
@@ -1023,10 +1027,22 @@ void stepLed(int aPin)
 
             // If there's a reset, reset the LED after the specified delay.
             if (   (persisting)
-                && (outputDefs[aPin].getState())
                 && (outputDefs[aPin].getReset() > 0))
             {
-                actionState(aPin, false, outputDefs[aPin].getReset());
+                if (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
+                {
+                    if (   (aPin > 0)
+                        && (outputDefs[aPin - 1].getType() == OUTPUT_TYPE_LED)      // LED_4 coupled with LED
+                        && (   (outputDefs[aPin    ].getState())                    // Not currently green
+                            || (outputDefs[aPin - 1].getState())))                  // if either output is Hi.
+                    {
+                        actionState(aPin, false, outputDefs[aPin].getReset());      // Move down 1 state.
+                    }
+                }
+                else if (outputDefs[aPin].getState())                               // Ordinary LED, currently Hi.
+                {
+                    actionState(aPin, false, outputDefs[aPin].getReset());          // Move to Lo.
+                }
             }
         }
         else
