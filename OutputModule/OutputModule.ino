@@ -727,7 +727,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 
             outputs[aPin - 1].step    = outputs[aPin].step;                         // LED and LED_4 move with the same steps.
             outputs[aPin - 1].steps   = outputs[aPin].steps;
-            outputs[aPin - 1].delayTo = outputs[aPin].delayTo;
+            outputs[aPin - 1].delayTo = outputs[aPin].delayTo;                      // and at the same time.
 
             if (aState)                                                             // Set red.
             {
