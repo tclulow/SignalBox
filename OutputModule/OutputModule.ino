@@ -708,6 +708,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     }
     else if (outputDefs[aPin].isLed())
     {
+        outputs[aPin].start = (aState ? outputDefs[aPin].getLo() : outputDefs[aPin].getHi());
         outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
 
         // Handle LED_4 as special case (if previous output is a LED).
@@ -950,10 +951,11 @@ void stepServo(int aPin)
         else
         {
             // Intermediate step, move proportionately (step/steps) along the range (start to target).
-            outputs[aPin].value = outputs[aPin].start 
-                                +   (outputs[aPin].target - outputs[aPin].start)
-                                  * outputs[aPin].step
-                                  / outputs[aPin].steps;
+            // Use long arithmetic to avoid overflow problems.
+            outputs[aPin].value = ((long)outputs[aPin].start) 
+                                +   (((long)outputs[aPin].target) - ((long)outputs[aPin].start))
+                                  * ((long)outputs[aPin].step)
+                                  / ((long)outputs[aPin].steps);
         }
 
         // Set (or unset) Servo's digital pad when we're over halfway
@@ -1047,16 +1049,17 @@ void stepLed(int aPin)
         }
         else
         {
-            // Intermediate step, move proportionately (step/steps) along the range (start to target).
+            // Intermediate step, move proportionately (step/steps) along the range (0 to target or start to 0).
+            // Use long arithmetic to avoid overflow problems.
             if (outputDefs[aPin].getState())
             {
-                outputs[aPin].value += (outputs[aPin].target - outputs[aPin].value) / (outputs[aPin].steps + 1 - outputs[aPin].step);
-                outputs[aPin].alt   -=  outputs[aPin].alt                           / (outputs[aPin].steps + 1 - outputs[aPin].step);
+                outputs[aPin].value = ((long)outputs[aPin].target) * ((long)outputs[aPin].step)                             / ((long)outputs[aPin].steps);
+                outputs[aPin].alt   = ((long)outputs[aPin].start)  * ((long)outputs[aPin].steps - (long)outputs[aPin].step) / ((long)outputs[aPin].steps);
             }
             else
             {
-                outputs[aPin].value -=  outputs[aPin].value                         / (outputs[aPin].steps + 1 - outputs[aPin].step);
-                outputs[aPin].alt   += (outputs[aPin].target - outputs[aPin].alt)   / (outputs[aPin].steps + 1 - outputs[aPin].step);
+                outputs[aPin].value = ((long)outputs[aPin].start)  * ((long)outputs[aPin].steps - (long)outputs[aPin].step) / ((long)outputs[aPin].steps);
+                outputs[aPin].alt   = ((long)outputs[aPin].target) * ((long)outputs[aPin].step)                             / ((long)outputs[aPin].steps);
             }
         }
 
