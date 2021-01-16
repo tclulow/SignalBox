@@ -708,10 +708,11 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     }
     else if (outputDefs[aPin].isLed())
     {
+        // Start is the starting position of the alternate LED (which will go to zero).
         outputs[aPin].start = (aState ? outputDefs[aPin].getLo() : outputDefs[aPin].getHi());
         outputs[aPin].steps = outputDefs[aPin].getPaceAsSteps() + 1;
 
-        // Handle LED_4 as special case (if previous output is a LED).
+        // Handle LED_4 as special case (if preceding output is a LED).
         if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)   
             && (persisting)
             && (aPin > 0)
