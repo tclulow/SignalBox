@@ -18,7 +18,6 @@
 
 // Input types
 #define INPUT_TYPE_MASK        0x03     // Input types take 2 bits each.
-#define INPUT_TYPE_MULT           2     // Input type multiplied by 2 bits per pin.
 #define INPUT_TYPE_SHIFT          1     // Input type shifted by 1 bit = multiplied by 2.
 
 #define INPUT_TYPE_TOGGLE         0     // A Toggle Input.
