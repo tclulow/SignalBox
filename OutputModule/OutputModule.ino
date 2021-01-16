@@ -1262,10 +1262,11 @@ void loop()
         if (   (outputDefs[pin].isLed())
             || (outputDefs[pin].isFlasher()))
         {
+            // Use compliment of nowMicros for alt pin to reduce the chance of both being on at once.
             digitalWrite(OUTPUT_BASE_PIN + pin,    outputs[pin].value >  0 
-                                                && outputs[pin].value >= (nowMicros & 0xff));
+                                                && outputs[pin].value >= ( nowMicros & 0xff));
             digitalWrite(ioPins[pin],              outputs[pin].alt   >  0 
-                                                && outputs[pin].alt   >= (nowMicros & 0xff));
+                                                && outputs[pin].alt   >= (~nowMicros & 0xff));
 //            // DEBUG
 //            if (pin == 1)
 //            {
