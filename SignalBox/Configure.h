@@ -1774,7 +1774,10 @@ class Configure
                                     lcd.printAt(LCD_COL_LOCK_SELECT, LCD_ROW_BOT, OPTION_ID(index));
                                     displayLockEdit(aHi, index);
                                     break;
-                case BUTTON_SELECT: testOutput(outputDef.getLockNode(aHi, index), outputDef.getLockPin(aHi, index));
+                case BUTTON_SELECT: if (outputDef.isLock(aHi, index))
+                                    {
+                                        testOutput(outputDef.getLockNode(aHi, index), outputDef.getLockPin(aHi, index));
+                                    }
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     break;
