@@ -26,7 +26,8 @@
 #define PURPLE    RGB(128, 0, 128)
 #define AZURE     RGB(0, 128, 255)
 #define ORANGE    RGB(255,128,64)
- 
+
+#define LINE_WIDTH  10      // Line width
 
 uint16_t tftID;
 
@@ -104,81 +105,132 @@ typedef struct
 } map_t;
 
 
-map_t outerMain = { RED, 3,
-                    { {  20,  70 },
-                      {  70,  20 },
-                      { 120,  20 },
-                      { 150,  50 },
-                      { 330,  50 },
-                      { 360,  20 },
-                      { 410,  20 },
-                      { 460,  70 },
-                      { 460, 250 },
-                      { 410, 300 },
-                      {  70, 300 },
-                      {  20, 250 },
-                      {  20,  70 },
-                      {   0,   0 }
+map_t outerMain = { BLUE, LINE_WIDTH,
+                    { {  20, 100 }, {  20,  70 }, {  70,  20 }, { 120,  20 }, { 170,  70 },
+                      { 320,  70 }, { 360,  20 }, { 410,  20 }, { 460,  70 },
+                      { 460, 250 }, { 410, 300 }, { 360, 300 }, { 300, 240 },
+                      {  90, 240 }, {  20, 170 }, {  20, 100 }, {   0,   0 }
                     }
                   };
 
-map_t innerMain = { BLUE, 3,
-                    { {  30,  70 },
-                      {  80,  20 },
-                      { 110,  20 },
-                      { 150,  50 },
-                      { 330,  50 },
-                      { 360,  20 },
-                      { 410,  20 },
-                      { 460,  70 },
-                      { 460, 250 },
-                      { 410, 300 },
-                      {  70, 300 },
-                      {  20, 250 },
-                      {  20,  70 },
-                      {   0,   0 }
+map_t innerMain = { GREEN, LINE_WIDTH,
+                    { {  40,  80 }, {  80,  40 }, { 110,  40 }, { 160,  90 },
+                      { 330,  90 }, { 370,  40 }, { 400,  40 }, { 440,  80 },
+                      { 440, 240 }, { 400, 280 }, { 370, 280 }, { 310, 220 },
+                      { 100, 220 }, {  40, 160 }, {  40,  80 }, {   0,   0 }
                     }
                   };
 
-map_t* allMaps[] = { &outerMain, &innerMain };
+map_t crossOver1 = { CYAN,     LINE_WIDTH, { { 370, 280 }, { 340, 280 }, {   0,   0 } } };
+map_t crossOver2 = { CYAN,     LINE_WIDTH, { { 300, 240 }, { 280, 220 }, {   0,   0 } } };
+map_t crossOver3 = { CYAN,     LINE_WIDTH, { { 100, 220 }, {  70, 220 }, {   0,   0 } } };
+map_t crossOver4 = { CYAN,     LINE_WIDTH, { { 180,  90 }, { 200,  70 }, {   0,   0 } } };
+map_t crossOver5 = { CYAN,     LINE_WIDTH, { { 320,  70 }, { 345,  70 }, {   0,   0 } } };
+map_t crossOver6 = { CYAN,     LINE_WIDTH, { { 340, 220 }, { 310, 220 }, {   0,   0 } } };
+
+map_t northSide1 = { DARKGREY, LINE_WIDTH, { { 320, 260 }, { 280, 260 }, { 260, 280 }, {  70, 280 }, {  50, 300 }, {  20, 300 }, {   0,   0 } } };
+map_t northSide2 = { DARKGREY, LINE_WIDTH, { { 320, 300 }, { 280, 300 }, { 260, 280 }, {   0,   0 }, } };
+map_t northSide3 = { DARKGREY, LINE_WIDTH, { { 110, 240 }, {  70, 280 }, {   0,   0 } } };
+map_t northSide4 = { DARKGREY, LINE_WIDTH, { {  90, 240 }, {  20, 240 }, {   0,   0 } } };
+
+map_t southSide1 = { DARKGREY, LINE_WIDTH, { { 220,  70 }, { 270,  20 }, { 360,  20 }, {   0,   0 } } };
+map_t southSide2 = { DARKGREY, LINE_WIDTH, { { 170,  40 }, { 250,  40 }, {   0,   0 } } };
+
+map_t branchLine = { MAGENTA,  LINE_WIDTH, { {  70,  70 }, { 140, 140 }, 
+                                             { 390, 140 }, { 420, 170 }, { 420, 210 }, { 390, 240 },
+                                             { 360, 240 }, { 300, 180 }, {  60, 180 }, {   0,   0 } } };
+map_t branchSide = { MAGENTA,  LINE_WIDTH, { {  82,  57 }, { 165, 140 }, {   0,   0 } } };
+map_t branchLink = { MAGENTA,  LINE_WIDTH, { { 105,  80 }, { 105, 105 }, {   0,   0 } } };
+
+map_t* allMaps[] = { &crossOver1, &crossOver2, &crossOver3, &crossOver4, &crossOver5, &crossOver6,
+                     &northSide1, &northSide2, &northSide3, &northSide4,
+                     &southSide1, &southSide2,
+                     &branchLine, &branchSide, &branchLink,
+                     &outerMain,  &innerMain
+                   };
 
 
 void drawMap(map_t* aMap)
 {
-    uint8_t  index = 0;
-    step_t  *step  = aMap->steps;
-    uint16_t fromX = step->toX;
-    uint16_t fromY = step->toY;
+    uint8_t index = 1;
+    
+    step_t  *stepPtr  = aMap->steps;
+    uint16_t fromX    = stepPtr->toX;
+    uint16_t fromY    = stepPtr->toY;
 
-    step += 1;
-    while (   (step->toX != 0)
-           || (step->toY != 0))
+    int16_t  slope    = 0;
+    int16_t  adjustX  = 0;
+    int16_t  adjustY  = 0;
+    boolean  vertical = false;
+    
+    stepPtr += 1;
+    while (   (stepPtr->toX != 0)
+           || (stepPtr->toY != 0))
     {
+        // Assume a simple case.
+        adjustX = 0;
+        adjustY = 0;
+        slope   = (fromX - stepPtr->toX) * (fromY - stepPtr->toY);      
+
+        if (slope == 0)
+        {
+            if (fromX == stepPtr->toX)
+            {
+                adjustX = fromY > stepPtr->toY ? 1 : -1;    // North / South.
+            }
+            else
+            {
+                adjustY = (fromX > stepPtr->toX ? -1 : 1);  // West / East.
+            }
+        }
+        else if (vertical)
+        {
+            adjustX = fromY > stepPtr->toY ?  1 : -1;       // NW,NE - SW/SE
+        }
+        else
+        {
+            adjustY = fromX > stepPtr->toX ? -1 :  1;       // NW,SW. NE,SE
+        }
+       
         Serial.print("step=");
-        Serial.print((int)step, HEX);
-        Serial.print(", fromX=");
+        Serial.print((int)stepPtr, HEX);
+        Serial.print(", ");
+        Serial.print(index);
+        Serial.print(",\tfromX=");
         Serial.print(fromX);
-        Serial.print(", fromY=");
+        Serial.print(",\tfromY=");
         Serial.print(fromY);
-        Serial.print(", toX=");
-        Serial.print(step->toX);
-        Serial.print(", toY=");
-        Serial.print(step->toY);
+        Serial.print(",\ttoX=");
+        Serial.print(stepPtr->toX);
+        Serial.print(", \ttoY=");
+        Serial.print(stepPtr->toY);
+        Serial.print(", \tslope=");
+        Serial.print(slope);
+        Serial.print(",\tadjustX=");
+        Serial.print(adjustX);
+        Serial.print(",\tadjustY=");
+        Serial.print(adjustY);
         Serial.println();
         
-        boolean xWidth = fromY != step->toY;
-
-        for (uint8_t width = 0; width < aMap->width; width++)
+        for (uint8_t line = 0; line < aMap->width; line++)
         {
-            tft.writeLine(fromX     + (xWidth ? width : 0), fromY     + (xWidth ? 0 : width),
-                          step->toX + (xWidth ? width : 0), step->toY + (xWidth ? 0 : width),
+            tft.writeLine(fromX        + (adjustX * line), fromY        + (adjustY * line),
+                          stepPtr->toX + (adjustX * line), stepPtr->toY + (adjustY * line),
                           aMap->colour);
         }
 
-        fromX = step->toX;
-        fromY = step->toY;
+        vertical = (slope == 0) && (fromX == stepPtr->toX);
 
-        step += 1;
+        fromX = stepPtr->toX;
+        fromY = stepPtr->toY;
+
+        tft.setCursor(fromX, fromY);
+        tft.print(index);
+        tft.print(adjustX);
+        tft.print(adjustY);
+
+        stepPtr += 1;
+        index   += 1;
     }
 }
 
@@ -186,7 +238,7 @@ void drawMap(map_t* aMap)
 
 void setup()
 {
-    Serial.begin(9600);
+    Serial.begin(19200);
     
     tft.reset();
     tftID = tft.readID();
@@ -198,6 +250,11 @@ void setup()
     tft.begin(tftID);
     tft.setRotation(1);
     tft.fillScreen(WHITE);
+
+    tft.setTextColor(BLACK);
+    tft.setTextSize(1);
+    tft.setTextWrap(false);
+    tft.setFont(&FreeSans9pt7b);
 
     // Draw all the maps.
     for (uint16_t map = 0; map < (sizeof(allMaps) / sizeof(allMaps[0])); map++)
