@@ -721,9 +721,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     else if (outputDefs[aPin].isLed())
     {
         outputs[aPin].start     = outputs[aPin].value;
-        outputs[aPin].target    = aState ? outputDefs[aPin].getHi() : 0;
         outputs[aPin].altStart  = outputs[aPin].altValue;
-        outputs[aPin].altTarget = aState ? 0 : outputDefs[aPin].getLo();
         
         // Handle LED_4 as special case (if preceding output is a LED).
         if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)   
@@ -734,80 +732,85 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             // Other (aPin - 1) LED   output is wired Hi=Red,   Lo=Amber
             // This  (aPin    ) LED_4 output is wired Hi=Amber, Lo=Green.
             //
-            // Colour   LED  LED_4   On      Off
-            // Red       Hi    Lo    LED     LED_4
-            // Amber     Hi    Hi    LED_4   LED
-            // Amber*2   Lo    Hi    Both    None
-            // Green     Lo    Lo    LED_4   LED
+            // Colour   LED  LED_4   On      Off    Phase   Next
+            // Red       Hi    Lo    LED     LED_4    1      3
+            // Amber     Hi    Hi    LED_4   LED      3      2
+            // Amber*2   Lo    Hi    Both    None     2      0
+            // Green     Lo    Lo    LED_4   LED      0      0
+            
+            static const uint8_t LED_4_NEXT_PHASE[] = { 0, 3, 0, 2 };   // Representation of table above for LED_4.
 
-            uint8_t ledPin = aPin - 1;
-            outputs[ledPin].step     = outputs[aPin].step;                      // LED and LED_4 move with the same steps.
+            // States where the pin is forced off (both outputs low)    // State 3 2 1 0
+            static const uint8_t LED_OFF   = 0x09;                      //       1 0 0 1 = 9.
+            static const uint8_t LED_4_OFF = 0x02;                      //       0 0 1 0 = 2.
+
+            boolean ledState = false;
+            uint8_t ledPin   = aPin - 1;
+            uint8_t phase    = (outputDefs[ledPin].getState()     )     // Convert state of both outputs to a phase.
+                             | (outputDefs[aPin]  .getState() << 1);
+
+            // Set common parameters for both outputs.
+            outputs[ledPin].step     = outputs[aPin].step;              // LED and LED_4 move with the same steps.
             outputs[ledPin].steps    = outputs[aPin].steps;
-            outputs[ledPin].delayTo  = outputs[aPin].delayTo;                   // and at the same time.
+            outputs[ledPin].delayTo  = outputs[aPin].delayTo;           // and at the same time.
 
-            outputs[ledPin].start    = outputs[ledPin].value;                   // LED movement common values.
+            outputs[ledPin].start    = outputs[ledPin].value;           // LED movement common values.
             outputs[ledPin].altStart = outputs[ledPin].altValue;
-
-            if (aState)                                                         // Set red.
+                 
+            Serial.print("Phase=");
+            Serial.print(phase, HEX);
+            if (aState)                                                 // Set red.
             {
-                outputDefs[ledPin].setState(true);                              // LED is hi (red).
-                outputs[ledPin].target = outputDefs[ledPin].getHi();            // and set its target.
-                outputs[ledPin].altTarget = 0;                                  // Alt target is off.
-                
-                newState = false;                                               // LED_4 is Lo
-                outputs[aPin].target = 0;                                       // and both pins off.
-                // outputs[aPin].altTarget = 0;
+                phase = 1;                                              // Which is phase 1.
             }
-            else                                                                // Set to next state.
+            else
             {
-                if (outputDefs[aPin].getState())                                // Was amber or double-amber.
-                {
-                    if (outputDefs[ledPin].getState())                          // Was amber.
-                    {
-                        outputDefs[ledPin].setState(false);                     // LED should go Lo.
-                        outputs[ledPin].target = 0;
-                        outputs[ledPin].altTarget = outputDefs[ledPin].getLo(); // set its target.
-
-                        newState = true;                                        // LED_4 state Hi.
-                        outputs[aPin].target = outputDefs[aPin].getHi();
-                        outputs[aPin].altTarget = 0;
-                    }
-                    else                                                        // Was double amber.
-                    {
-                        outputs[ledPin].target = 0;                             // LED is off.
-                        outputs[ledPin].altTarget = 0;
-
-                        //                                                      // LED_4 will change to green.
-                    }
-                }
-                else                                                            // Was red or green.
-                {
-                    if (outputDefs[ledPin].getState())                          // Was red.
-                    {
-                        outputs[ledPin].target = 0;                             // LED is off.
-                        outputs[ledPin].altTarget = 0;
-                        
-                        newState = true;                                        // LED_4 state Hi.
-                        outputs[aPin].target = outputDefs[aPin].getHi();        // set target.
-                        outputs[aPin].altTarget = 0;
-                    }
-                    else                                                        // Was green.
-                    {
-                        outputs[ledPin].target = 0;                             // LED is off.
-                        outputs[ledPin].altTarget = 0;
-                        
-                        outputs[aPin].target = 0;                               // LED_4 stay green
-                        outputs[aPin].altTarget = outputDefs[aPin].getLo();
-                    }
-                }
+                phase = LED_4_NEXT_PHASE[phase];                        // Set to next state.
             }
+
+            ledState = phase & 1;                                   // Set outputs' new states.
+            newState = phase & 2;                                   // base on new phase number.
+            Serial.print(", next=");
+            Serial.print(phase, HEX);
+            Serial.print(", LED=");
+            Serial.print(ledState ? "Hi" : "Lo");
+            Serial.print(", LED_4=");
+            Serial.print(newState ? "Hi" : "Lo");
+
+            outputs[aPin].target      = newState ? outputDefs[aPin].getHi() : 0;
+            outputs[aPin].altTarget   = newState ? 0 : outputDefs[aPin].getLo();
+            outputs[ledPin].target    = ledState ? outputDefs[aPin].getHi() : 0;
+            outputs[ledPin].altTarget = ledState ? 0 : outputDefs[aPin].getLo();
+
+            outputDefs[ledPin].setState(ledState);
+
+            if (LED_OFF & (1 << phase))                             // Force outputs off if phase demands it.
+            {
+                outputs[ledPin].target    = 0;
+                outputs[ledPin].altTarget = 0;
+                Serial.print(", LED off");
+            }
+            if (LED_4_OFF & (1 << phase))
+            {
+                outputs[aPin].target    = 0;
+                outputs[aPin].altTarget = 0;
+                Serial.print(", LED_4 off");
+            }
+            Serial.println();
 
             // Save the new state if persisting is enabled.
             if (persisting)
             {
-                saveOutput(aPin - 1);
+                saveOutput(ledPin);
             }
         }
+        else
+        {
+            // Ordinary LED
+            outputs[aPin].target    = aState ? outputDefs[aPin].getHi() : 0;
+            outputs[aPin].altTarget = aState ? 0 : outputDefs[aPin].getLo();
+        }
+
     }
     else if (outputDefs[aPin].isFlasher())
     {

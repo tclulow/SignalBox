@@ -346,7 +346,7 @@ class OutputDef
      */
     uint8_t getState()
     {
-        return type & OUTPUT_STATE_MASK;
+        return (type & OUTPUT_STATE_MASK) != 0;
     }
 
 
