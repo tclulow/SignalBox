@@ -724,33 +724,42 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         outputs[aPin].altStart  = outputs[aPin].altValue;
         
         // Handle LED_4 as special case (if preceding output is a LED).
-        if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)   
+        if (   (outputDefs[aPin].isDoubleLed())
             && (persisting)
             && (aPin > 0)
             && (outputDefs[aPin - 1].getType() == OUTPUT_TYPE_LED))
         {
-            // Other (aPin - 1) LED   output is wired Hi=Red,   Lo=Amber
-            // This  (aPin    ) LED_4 output is wired Hi=Amber, Lo=Green.
+            // Other (aPin - 1) output is wired Hi=Red,   Lo=Amber
+            // This  (aPin    ) output is wired Hi=Amber, Lo=Green.
+            // Phase is calculated using LED state for bit 1, this state for bit 0 => 0 to 3.
             //
             // Colour   LED  LED_4   On      Off    Phase   Next
             // Red       Hi    Lo    LED     LED_4    1      3
             // Amber     Hi    Hi    LED_4   LED      3      2
             // Amber*2   Lo    Hi    Both    None     2      0
             // Green     Lo    Lo    LED_4   LED      0      0
-            
-            static const uint8_t LED_4_NEXT_PHASE[] = { 0, 3, 0, 2 };   // Representation of table above for LED_4.
+            //
+            // Colour   LED   Road   On      Off    Phase   Next
+            // Red       Hi    Lo    LED     Road     1      3
+            // Amber     Hi    Hi    Both    None     3      0
+            // Amber*2   Lo    Lo    Road    LED      0      2
+            // Green     Lo    Hi    Road    LED      2      1
 
-            // States where the pin is forced off (both outputs low)    // State 3 2 1 0
-            static const uint8_t LED_OFF   = 0x09;                      //       1 0 0 1 = 9.
-            static const uint8_t LED_4_OFF = 0x02;                      //       0 0 1 0 = 2.
+            static const uint8_t LED_4_NEXT_PHASE[] = { 0, 3, 0, 2 };   // Representation of table above for LED_4.
+            static const uint8_t ROAD_NEXT_PHASE[]  = { 2, 3, 1, 0 };   // Representation of table above for ROAD.
+
+            // States where the pin is forced off (both outputs low)    // State 3 2 1 0 3 2 1 0
+            static const uint8_t LED_4_OFF = 0x92;                      //       1 0 0 1 0 0 1 0 = 0x92.
+            static const uint8_t ROAD_OFF  = 0x52;                      //       0 1 0 1 0 0 1 0 = 0x52.
 
             boolean ledState = false;
             uint8_t ledPin   = aPin - 1;
+            uint8_t offFlag  = (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4) ? LED_4_OFF : ROAD_OFF;
             uint8_t phase    = (outputDefs[ledPin].getState()     )     // Convert state of both outputs to a phase.
                              | (outputDefs[aPin]  .getState() << 1);
 
             // Set common parameters for both outputs.
-            outputs[ledPin].step     = outputs[aPin].step;              // LED and LED_4 move with the same steps.
+            outputs[ledPin].step     = outputs[aPin].step;              // Bth outputs move with the same steps.
             outputs[ledPin].steps    = outputs[aPin].steps;
             outputs[ledPin].delayTo  = outputs[aPin].delayTo;           // and at the same time.
 
@@ -759,42 +768,50 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
                  
             Serial.print("Phase=");
             Serial.print(phase, HEX);
-            if (aState)                                                 // Set red.
+            // Set to phase=1 if Hi, otherwise next state in sequence
+            if (aState)
             {
-                phase = 1;                                              // Which is phase 1.
+                phase = 1;
+            }
+            else if (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
+            {
+                phase = LED_4_NEXT_PHASE[phase];
             }
             else
             {
-                phase = LED_4_NEXT_PHASE[phase];                        // Set to next state.
+                phase = ROAD_NEXT_PHASE[phase];
             }
 
-            ledState = phase & 1;                                   // Set outputs' new states.
-            newState = phase & 2;                                   // base on new phase number.
+            // Set states accoeding to new phase.
+            ledState = phase & 1;
+            newState = phase & 2;
+            outputDefs[ledPin].setState(ledState);
+
+            // Set targets according to new states.
+            outputs[aPin].target      = newState ? outputDefs[aPin].getHi() : 0;
+            outputs[aPin].altTarget   = newState ? 0 : outputDefs[aPin].getLo();
+            outputs[ledPin].target    = ledState ? outputDefs[ledPin].getHi() : 0;
+            outputs[ledPin].altTarget = ledState ? 0 : outputDefs[ledPin].getLo();
+
             Serial.print(", next=");
             Serial.print(phase, HEX);
             Serial.print(", LED=");
             Serial.print(ledState ? "Hi" : "Lo");
-            Serial.print(", LED_4=");
+            Serial.print(", This=");
             Serial.print(newState ? "Hi" : "Lo");
 
-            outputs[aPin].target      = newState ? outputDefs[aPin].getHi() : 0;
-            outputs[aPin].altTarget   = newState ? 0 : outputDefs[aPin].getLo();
-            outputs[ledPin].target    = ledState ? outputDefs[aPin].getHi() : 0;
-            outputs[ledPin].altTarget = ledState ? 0 : outputDefs[aPin].getLo();
-
-            outputDefs[ledPin].setState(ledState);
-
-            if (LED_OFF & (1 << phase))                             // Force outputs off if phase demands it.
+            // Force off if states demand it.
+            if (offFlag & (0x10 << phase))
             {
                 outputs[ledPin].target    = 0;
                 outputs[ledPin].altTarget = 0;
                 Serial.print(", LED off");
             }
-            if (LED_4_OFF & (1 << phase))
+            if (offFlag & (0x01 << phase))
             {
                 outputs[aPin].target    = 0;
                 outputs[aPin].altTarget = 0;
-                Serial.print(", LED_4 off");
+                Serial.print(", This off");
             }
             Serial.println();
 
