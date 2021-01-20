@@ -15,6 +15,32 @@
 #include "Output.h"
 
 
+// Definitions for paired LEDS
+// Other (pin - 1) LED           output is wired Hi=Red,   Lo=Amber
+// This  (pin    ) LED_4 or ROAD output is wired Hi=Amber, Lo=Green.
+// Phase is calculated using LED state for bit 0, this state for bit 1 => 0 to 3.
+//
+// Colour   LED   LED_4  On      Off    Phase   Next
+// Red       Hi    Lo    LED     LED_4    1      3
+// Amber     Hi    Hi    LED_4   LED      3      2
+// Amber*2   Lo    Hi    Both    None     2      0
+// Green     Lo    Lo    LED_4   LED      0      0
+//
+// Colour   LED   ROAD   On      Off    Phase   Next
+// Red       Hi    Lo    LED     ROAD     1      3
+// Red&Amber Hi    Hi    Both    None     3      0
+// Green     Lo    Lo    ROAD    LED      0      2
+// Amber     Lo    Hi    ROAD    LED      2      1
+
+static const uint8_t LED_4_NEXT_PHASE[] = { 0, 3, 0, 2 };   // Representation of table above for LED_4.
+static const uint8_t ROAD_NEXT_PHASE[]  = { 2, 3, 1, 0 };   // Representation of table above for ROAD.
+
+//                                                                   Other     This
+// States where the pin is forced off (both outputs low)    // State 3 2 1 0   3 2 1 0
+static const uint8_t LED_4_OFF = 0x92;                      //       1 0 0 1   0 0 1 0 = 0x92.
+static const uint8_t ROAD_OFF  = 0x52;                      //       0 1 0 1   0 0 1 0 = 0x52.
+
+
 // Should changes be persisted?
 boolean persisting = true;
 
@@ -232,34 +258,43 @@ void initOutput(int aPin, uint8_t aOldType)
              || (outputDefs[aPin].isFlasher()))
     {
         // Ensure LEDs glow with correct intensity.
-        if (outputDefs[aPin].getState())
-        {
-            outputs[aPin].value    = outputDefs[aPin].getHi();
-            outputs[aPin].altValue = 0;
-        }
-        else
-        {
-            outputs[aPin].value    = 0;
-            outputs[aPin].altValue = outputDefs[aPin].getLo();
-        }
-        outputs[aPin].steps = 0;            // No flashing.
+        outputs[aPin].value    = outputDefs[aPin].getState() ? outputDefs[aPin].getHi() : 0;
+        outputs[aPin].altValue = outputDefs[aPin].getState() ? 0 : outputDefs[aPin].getLo();
 
-        // Handle LED_4 as special case (if previous output is a LED).
-        if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)   
+        // No flashing.
+        outputs[aPin].steps = 0;
+
+        // Handle double-LEDs as special case (if previous output is a LED).
+        // See table at top of source for states and colour sequences.
+        if (   (outputDefs[aPin].isDoubleLed())   
             && (aPin > 0)
-            && (persisting)
-            && (outputDefs[aPin - 1].getType() == OUTPUT_TYPE_LED))
+            && (outputDefs[aPin - 1].getType() == OUTPUT_TYPE_LED)
+            && (persisting))
         {
-            if (outputDefs[aPin].getState() == outputDefs[aPin - 1].getState())
+            if  (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
             {
-                outputs[aPin - 1].value = 0;        // 2 cases where LED isn't required.
-                outputs[aPin - 1].altValue = 0;
+                if (outputDefs[aPin].getState() == outputDefs[aPin - 1].getState())
+                {
+                    outputs[aPin - 1].value = 0;        // LED red isn't required.
+                    outputs[aPin - 1].altValue = 0;     // LED amber isn't required.
+                }
+                else if (!outputDefs[aPin].getState())
+                {
+                    outputs[aPin].altValue = 0;         // 1 case where LED_4 green isn't required.
+                }
             }
-            else if (!outputDefs[aPin].getState())
+            else
             {
-                outputs[aPin].altValue = 0;         // 1 case where LED_4 isn't required.
+                if (outputDefs[aPin - 1].getState())    // If LED red is on.
+                {
+                    outputs[aPin].altValue = 0;         // 2 cases where ROAD green isn't required.
+                }
+                else
+                {
+                    outputs[aPin - 1].altValue = 0;     // 2 cases where LED amber isn't required.
+                }
             }
-        }        
+        }
     }
     else
     {
@@ -729,29 +764,6 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             && (aPin > 0)
             && (outputDefs[aPin - 1].getType() == OUTPUT_TYPE_LED))
         {
-            // Other (aPin - 1) output is wired Hi=Red,   Lo=Amber
-            // This  (aPin    ) output is wired Hi=Amber, Lo=Green.
-            // Phase is calculated using LED state for bit 1, this state for bit 0 => 0 to 3.
-            //
-            // Colour   LED  LED_4   On      Off    Phase   Next
-            // Red       Hi    Lo    LED     LED_4    1      3
-            // Amber     Hi    Hi    LED_4   LED      3      2
-            // Amber*2   Lo    Hi    Both    None     2      0
-            // Green     Lo    Lo    LED_4   LED      0      0
-            //
-            // Colour   LED   Road   On      Off    Phase   Next
-            // Red       Hi    Lo    LED     Road     1      3
-            // Amber     Hi    Hi    Both    None     3      0
-            // Amber*2   Lo    Lo    Road    LED      0      2
-            // Green     Lo    Hi    Road    LED      2      1
-
-            static const uint8_t LED_4_NEXT_PHASE[] = { 0, 3, 0, 2 };   // Representation of table above for LED_4.
-            static const uint8_t ROAD_NEXT_PHASE[]  = { 2, 3, 1, 0 };   // Representation of table above for ROAD.
-
-            // States where the pin is forced off (both outputs low)    // State 3 2 1 0 3 2 1 0
-            static const uint8_t LED_4_OFF = 0x92;                      //       1 0 0 1 0 0 1 0 = 0x92.
-            static const uint8_t ROAD_OFF  = 0x52;                      //       0 1 0 1 0 0 1 0 = 0x52.
-
             boolean ledState = false;
             uint8_t ledPin   = aPin - 1;
             uint8_t offFlag  = (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4) ? LED_4_OFF : ROAD_OFF;
@@ -766,8 +778,6 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             outputs[ledPin].start    = outputs[ledPin].value;           // LED movement common values.
             outputs[ledPin].altStart = outputs[ledPin].altValue;
                  
-            Serial.print("Phase=");
-            Serial.print(phase, HEX);
             // Set to phase=1 if Hi, otherwise next state in sequence
             if (aState)
             {
@@ -783,6 +793,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             }
 
             // Set states accoeding to new phase.
+            // See table at top of source for states and colour sequences.
             ledState = phase & 1;
             newState = phase & 2;
             outputDefs[ledPin].setState(ledState);
@@ -792,13 +803,6 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             outputs[aPin].altTarget   = newState ? 0 : outputDefs[aPin].getLo();
             outputs[ledPin].target    = ledState ? outputDefs[ledPin].getHi() : 0;
             outputs[ledPin].altTarget = ledState ? 0 : outputDefs[ledPin].getLo();
-
-            Serial.print(", next=");
-            Serial.print(phase, HEX);
-            Serial.print(", LED=");
-            Serial.print(ledState ? "Hi" : "Lo");
-            Serial.print(", This=");
-            Serial.print(newState ? "Hi" : "Lo");
 
             // Force off if states demand it.
             if (offFlag & (0x10 << phase))
@@ -813,8 +817,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
                 outputs[aPin].altTarget = 0;
                 Serial.print(", This off");
             }
-            Serial.println();
-
+            
             // Save the new state if persisting is enabled.
             if (persisting)
             {

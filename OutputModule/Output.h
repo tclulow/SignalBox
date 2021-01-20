@@ -42,7 +42,7 @@
 #define OUTPUT_TYPE_SIGNAL       0x02   // Output is a signal.
 #define OUTPUT_TYPE_LED          0x03   // Output is a LED or other IO device.
 #define OUTPUT_TYPE_LED_4        0x04   // Output is a LED 4-aspect paired with next output.
-#define OUTPUT_TYPE_TRAFFIC      0x05   // Output is a LED 3-aspect road signal.
+#define OUTPUT_TYPE_ROAD         0x05   // Output is a LED 3-aspect road signal.
 #define OUTPUT_TYPE_FLASH        0x06   // Output is a flashing LED.
 #define OUTPUT_TYPE_BLINK        0x07   // Output is a blinking LED.
 #define OUTPUT_TYPE_MAX          0x08   // Limit of output types.
@@ -81,14 +81,14 @@ class OutputDef
     {
         return    getType() == OUTPUT_TYPE_LED
                || getType() == OUTPUT_TYPE_LED_4
-               || getType() == OUTPUT_TYPE_TRAFFIC;
+               || getType() == OUTPUT_TYPE_ROAD;
     }
 
 
     boolean isDoubleLed()
     {
         return    getType() == OUTPUT_TYPE_LED_4
-               || getType() == OUTPUT_TYPE_TRAFFIC;
+               || getType() == OUTPUT_TYPE_ROAD;
     }
 
 

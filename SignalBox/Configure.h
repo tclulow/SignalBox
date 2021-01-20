@@ -1424,6 +1424,7 @@ class Configure
                                                                  break;
                                         case OUTPUT_TYPE_LED:
                                         case OUTPUT_TYPE_LED_4:
+                                        case OUTPUT_TYPE_ROAD:
                                         case OUTPUT_TYPE_FLASH:
                                         case OUTPUT_TYPE_BLINK:  changed |= menuOutputLo(OUTPUT_LED_MAX);
                                                                  break;
