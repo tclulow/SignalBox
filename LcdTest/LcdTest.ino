@@ -91,18 +91,32 @@ Adafruit_GFX_Button button;
 //}
 
 
+/** A point.
+ */
 typedef struct
 {
-    uint16_t toX;
-    uint16_t toY;
-} step_t;
+    uint16_t locX;
+    uint16_t locY;
+} point_t;
 
+/** A map of points.
+ */
 typedef struct
 {
     uint16_t colour;
     uint8_t  width;
-    step_t   steps[];
+    point_t  points[];
 } map_t;
+
+/** A text.
+ */
+typedef struct
+{
+    uint16_t colour;
+    uint8_t  size;
+    point_t  loc;
+    char*    text;    
+} text_t;
 
 
 map_t outerMain = { BLUE, LINE_WIDTH,
@@ -150,92 +164,151 @@ map_t* allMaps[] = { &crossOver1, &crossOver2, &crossOver3, &crossOver4, &crossO
                    };
 
 
+// All the static texts.
+text_t texts[]   = { { BLACK, 2, { 100, 315 }, "Demo"  },
+                     { BLACK, 1, { 230, 315 }, "(c)Copyright Tony Clulow 2021" }
+                   };
+
+
+/** Draw a map.
+ *  Connect all the points in the map with a line in the given colour and width.
+ */
 void drawMap(map_t* aMap)
 {
     uint8_t index = 1;
     
-    step_t  *stepPtr  = aMap->steps;
-    uint16_t fromX    = stepPtr->toX;
-    uint16_t fromY    = stepPtr->toY;
+    point_t  *pointP  = aMap->points;  // Pointer to array of points.
+    uint16_t fromX    = pointP->locX;   // Previous X co-ordinate.
+    uint16_t fromY    = pointP->locY;   // Previous Y co-ordinate.
 
-    int16_t  slope    = 0;
-    int16_t  adjustX  = 0;
-    int16_t  adjustY  = 0;
-    boolean  vertical = false;
+    int16_t  slope    = 0;              // Slope of the line.
+    int16_t  adjustX  = 0;              // Slide line in X-direction.
+    int16_t  adjustY  = 0;              // Slide line in Y-direction.
+    boolean  vertical = false;          // Previous line was vertical.
     
-    stepPtr += 1;
-    while (   (stepPtr->toX != 0)
-           || (stepPtr->toY != 0))
+    pointP += 1;
+    while (   (pointP->locX != 0)       // End of map marker.
+           || (pointP->locY != 0))
     {
         // Assume a simple case.
         adjustX = 0;
         adjustY = 0;
-        slope   = (fromX - stepPtr->toX) * (fromY - stepPtr->toY);      
+        slope   = (fromX - pointP->locX) * (fromY - pointP->locY);      
 
         if (slope == 0)
         {
-            if (fromX == stepPtr->toX)
+            if (fromX == pointP->locX)
             {
-                adjustX = fromY > stepPtr->toY ? 1 : -1;    // North / South.
+                adjustX = fromY > pointP->locY ? 1 : -1;    // North / South.
             }
             else
             {
-                adjustY = (fromX > stepPtr->toX ? -1 : 1);  // West / East.
+                adjustY = (fromX > pointP->locX ? -1 : 1);  // West / East.
             }
         }
         else if (vertical)
         {
-            adjustX = fromY > stepPtr->toY ?  1 : -1;       // NW,NE - SW/SE
+            adjustX = fromY > pointP->locY ?  1 : -1;       // NW,NE - SW/SE
         }
         else
         {
-            adjustY = fromX > stepPtr->toX ? -1 :  1;       // NW,SW. NE,SE
+            adjustY = fromX > pointP->locX ? -1 :  1;       // NW,SW - NE,SE
         }
        
-        Serial.print("step=");
-        Serial.print((int)stepPtr, HEX);
-        Serial.print(", ");
-        Serial.print(index);
-        Serial.print(",\tfromX=");
-        Serial.print(fromX);
-        Serial.print(",\tfromY=");
-        Serial.print(fromY);
-        Serial.print(",\ttoX=");
-        Serial.print(stepPtr->toX);
-        Serial.print(", \ttoY=");
-        Serial.print(stepPtr->toY);
-        Serial.print(", \tslope=");
-        Serial.print(slope);
-        Serial.print(",\tadjustX=");
-        Serial.print(adjustX);
-        Serial.print(",\tadjustY=");
-        Serial.print(adjustY);
-        Serial.println();
+//        Serial.print("step=");
+//        Serial.print((int)pointP, HEX);
+//        Serial.print(", ");
+//        Serial.print(index);
+//        Serial.print(",\tfromX=");
+//        Serial.print(fromX);
+//        Serial.print(",\tfromY=");
+//        Serial.print(fromY);
+//        Serial.print(",\tlocX=");
+//        Serial.print(pointP->locX);
+//        Serial.print(", \tlocY=");
+//        Serial.print(pointP->locY);
+//        Serial.print(", \tslope=");
+//        Serial.print(slope);
+//        Serial.print(",\tadjustX=");
+//        Serial.print(adjustX);
+//        Serial.print(",\tadjustY=");
+//        Serial.print(adjustY);
+//        Serial.println();
         
         for (uint8_t line = 0; line < aMap->width; line++)
         {
             tft.writeLine(fromX        + (adjustX * line), fromY        + (adjustY * line),
-                          stepPtr->toX + (adjustX * line), stepPtr->toY + (adjustY * line),
+                          pointP->locX + (adjustX * line), pointP->locY + (adjustY * line),
                           aMap->colour);
         }
 
-        vertical = (slope == 0) && (fromX == stepPtr->toX);
+        vertical = (slope == 0) && (fromX == pointP->locX);
 
-        fromX = stepPtr->toX;
-        fromY = stepPtr->toY;
+        fromX = pointP->locX;
+        fromY = pointP->locY;
 
-        tft.setCursor(fromX, fromY);
-        tft.print(index);
-        tft.print(adjustX);
-        tft.print(adjustY);
+//        tft.setCursor(fromX, fromY);
+//        tft.print(index);
+//        tft.print(adjustX);
+//        tft.print(adjustY);
 
-        stepPtr += 1;
+        pointP += 1;
         index   += 1;
     }
 }
 
 
+/** Draw all the maps.
+ */
+void drawMaps()
+{
+    for (uint16_t map = 0; map < (sizeof(allMaps) / sizeof(map_t *)); map++)
+    {
+        drawMap(allMaps[map]);
+    }
+}
 
+
+void drawText(text_t* aText)
+{
+    Serial.print(aText->text);
+    Serial.print(" @ ");
+    Serial.print(aText->loc.locX);
+    Serial.print(",");
+    Serial.print(aText->loc.locY);
+    Serial.print(", size=");
+    Serial.print(aText->size);
+    Serial.println();
+    
+    tft.setTextColor(aText->colour);
+    tft.setTextSize(aText->size);
+    tft.setCursor(aText->loc.locX, aText->loc.locY);
+    tft.print(aText->text);
+}
+
+/** Draw all the texts.
+ */
+void drawTexts()
+{
+    Serial.print("text=");
+    Serial.print(sizeof(texts));
+    Serial.print(", text_t=");
+    Serial.print(sizeof(text_t));
+    Serial.print(", texts[0]=");
+    Serial.print(sizeof(texts[0]));
+    Serial.print(", all=");
+    Serial.print(sizeof(texts) / sizeof(texts[0]));
+    Serial.println();
+        
+    for (uint16_t ind = 0; ind < (sizeof(texts) / sizeof(text_t)); ind++)
+    {
+        drawText(&texts[ind]);
+    }
+}
+
+
+/** Sketch startup.
+ */
 void setup()
 {
     Serial.begin(19200);
@@ -256,11 +329,8 @@ void setup()
     tft.setTextWrap(false);
     tft.setFont(&FreeSans9pt7b);
 
-    // Draw all the maps.
-    for (uint16_t map = 0; map < (sizeof(allMaps) / sizeof(allMaps[0])); map++)
-    {
-        drawMap(allMaps[map]);
-    }
+    drawMaps();
+    drawTexts();
 
 
 //    tft.fillRoundRect(  50, 10, 100, 50, 10, RED);
