@@ -17,6 +17,9 @@
 #define SIGNAL_BOUNCE_CHANCE       66   // Percentage chance a signal may bounce.
 #define SIGNAL_BOUNCE_PERCENTAGE   15   // Percentage of travel a Signal may bounce.
 
+#define RANDOM_HI_CHANCE           60   // Chance that a RANDOM Hi output illuminates its LED.
+#define RANDOM_LO_CHANCE           40   // Chance that a RANDOM Lo output illuminates its LED.
+
 #define JUMPER_PINS                 4   // Four jumpers.
 #define IO_PINS                     8   // Eight IO pins.
 #define OUTPUT_BASE_PIN             4   // Outputs attached to this pin and the next 7 more.
