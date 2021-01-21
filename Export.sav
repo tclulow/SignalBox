@@ -1,0 +1,196 @@
+System	v2.6	i2cID	10	20	50	Long
+
+#Input	Node	Pin	Type	OutputA	OutputB	OutputC	OutputD	OutputE	OutputF	OutputG
+Input	0	0	Toggle	0 0	. .	. .	. .	. .	. .	. .
+Input	0	1	Toggle	0 1	. .	. .	. .	. .	. .	. .
+Input	0	2	On/Off	4 0	. .	. .	. .	. .	. .	. .
+Input	0	3	Toggle	0 3	. .	. .	. .	. .	. .	. .
+Input	0	4	Toggle	0 4	. .	. .	. .	. .	. .	. .
+Input	0	5	Toggle	0 5	. .	. .	. .	. .	. .	. .
+Input	0	6	Toggle	0 6	. .	. .	. .	. .	. .	. .
+Input	0	7	On	0 7	. .	. .	. .	. .	. .	. .
+Input	0	8	Toggle	1 0	. .	. .	. .	. .	. .	. .
+Input	0	9	Toggle	1 1	. .	. .	. .	. .	. .	. .
+Input	0	a	Toggle	1 2	. .	. .	. .	. .	. .	. .
+Input	0	b	On	1 3	. .	. .	. .	. .	. .	. .
+Input	0	c	Toggle	1 4	. .	. .	. .	. .	. .	. .
+Input	0	d	Toggle	1 5	. .	. .	. .	. .	. .	. .
+Input	0	e	Toggle	1 6	. .	. .	. .	. .	. .	. .
+Input	0	f	On	1 7	. .	. .	. .	. .	. .	. .
+
+Input	1	0	On/Off	4 2	0 2	. .	. .	. .	. .	. .
+Input	1	1	On/Off	0 3	. .	. .	. .	. .	. .	. .
+Input	1	2	Toggle	2 2	. .	. .	. .	. .	. .	. .
+Input	1	3	Toggle	2 3	. .	. .	. .	. .	. .	. .
+Input	1	4	Toggle	2 4	. .	. .	. .	. .	. .	. .
+Input	1	5	Toggle	2 5	. .	. .	. .	. .	. .	. .
+Input	1	6	Toggle	2 6	. .	. .	. .	. .	. .	. .
+Input	1	7	Toggle	2 7	. .	. .	. .	. .	. .	. .
+Input	1	8	Toggle	7 0	. .	. .	. .	. .	. .	. .
+Input	1	9	Toggle	7 1	. .	. .	. .	. .	. .	. .
+Input	1	a	Toggle	7 2	. .	. .	. .	. .	. .	. .
+Input	1	b	Toggle	7 3	. .	. .	. .	. .	. .	. .
+Input	1	c	Toggle	7 4	. .	. .	. .	. .	. .	. .
+Input	1	d	Toggle	7 5	. .	. .	. .	. .	. .	. .
+Input	1	e	Toggle	7 6	. .	. .	. .	. .	. .	. .
+Input	1	f	Toggle	7 7	. .	. .	. .	. .	. .	. .
+
+Input	2	0	Toggle	2 0	. .	. .	. .	. .	. .	. .
+Input	2	1	Toggle	2 1	. .	. .	. .	. .	. .	. .
+Input	2	2	Toggle	2 2	. .	. .	. .	. .	. .	. .
+Input	2	3	Toggle	2 3	. .	. .	. .	. .	. .	. .
+Input	2	4	Toggle	2 4	. .	. .	. .	. .	. .	. .
+Input	2	5	Toggle	2 5	. .	. .	. .	. .	. .	. .
+Input	2	6	Toggle	2 6	. .	. .	. .	. .	. .	. .
+Input	2	7	Toggle	2 7	. .	. .	. .	. .	. .	. .
+Input	2	8	Toggle	3 0	. .	. .	. .	. .	. .	. .
+Input	2	9	Toggle	3 1	. .	. .	. .	. .	. .	. .
+Input	2	a	Toggle	3 2	. .	. .	. .	. .	. .	. .
+Input	2	b	Toggle	3 3	. .	. .	. .	. .	. .	. .
+Input	2	c	Toggle	3 4	. .	. .	. .	. .	. .	. .
+Input	2	d	Toggle	3 5	. .	. .	. .	. .	. .	. .
+Input	2	e	Toggle	3 6	. .	. .	. .	. .	. .	. .
+Input	2	f	Toggle	3 7	. .	. .	. .	. .	. .	. .
+
+Input	3	0	Toggle	4 0	. .	. .	. .	. .	. .	. .
+Input	3	1	Toggle	4 1	. .	. .	. .	. .	. .	. .
+Input	3	2	Toggle	4 2	. .	. .	. .	. .	. .	. .
+Input	3	3	Toggle	4 3	. .	. .	. .	. .	. .	. .
+Input	3	4	Toggle	4 4	. .	. .	. .	. .	. .	. .
+Input	3	5	Toggle	4 5	. .	. .	. .	. .	. .	. .
+Input	3	6	Toggle	4 6	. .	. .	. .	. .	. .	. .
+Input	3	7	Toggle	4 7	. .	. .	. .	. .	. .	. .
+Input	3	8	Toggle	6 0	. .	. .	. .	. .	. .	. .
+Input	3	9	Toggle	6 1	. .	. .	. .	. .	. .	. .
+Input	3	a	Toggle	6 2	. .	. .	. .	. .	. .	. .
+Input	3	b	Toggle	6 3	. .	. .	. .	. .	. .	. .
+Input	3	c	Toggle	6 4	. .	. .	. .	. .	. .	. .
+Input	3	d	Toggle	6 5	. .	. .	. .	. .	. .	. .
+Input	3	e	Toggle	6 6	. .	. .	. .	. .	. .	. .
+Input	3	f	Toggle	6 7	. .	. .	. .	. .	. .	. .
+
+Input	4	0	On/Off	8 0	. 1	8 1	. 1	8 2	. .	. .
+Input	4	1	On/Off	8 1	. .	. .	. .	. .	. .	. .
+Input	4	2	On	4 1	. .	. .	. .	. .	. .	. .
+Input	4	3	Off	. .	4 1	. .	. .	. .	. .	. .
+Input	4	4	Toggle	. .	. .	. .	. .	. .	. .	. .
+Input	4	5	Toggle	8 5	. .	. .	. .	. .	. .	. .
+Input	4	6	Toggle	8 6	. .	. .	. .	. .	. .	. .
+Input	4	7	Toggle	8 7	. .	. .	. .	. .	. .	. .
+Input	4	8	Toggle	9 0	. .	. .	. .	. .	. .	. .
+Input	4	9	Toggle	9 1	. .	. .	. .	. .	. .	. .
+Input	4	a	Toggle	9 2	. .	. .	. .	. .	. .	. .
+Input	4	b	Toggle	9 3	. .	. .	. .	. .	. .	. .
+Input	4	c	Toggle	9 4	. .	. .	. .	. .	. .	. .
+Input	4	d	Toggle	9 5	. .	. .	. .	. .	. .	. .
+Input	4	e	Toggle	9 6	. .	. .	. .	. .	. .	. .
+Input	4	f	Toggle	9 7	. 7	. 7	. 7	. 7	. 7	. .
+
+Input	5	0	Toggle	a 0	. .	. .	. .	. .	. .	. .
+Input	5	1	Toggle	a 1	. .	. .	. .	. .	. .	. .
+Input	5	2	Toggle	a 2	. .	. .	. .	. .	. .	. .
+Input	5	3	Toggle	a 3	. .	. .	. .	. .	. .	. .
+Input	5	4	Toggle	a 4	. .	. .	. .	. .	. .	. .
+Input	5	5	Toggle	a 5	. .	. .	. .	. .	. .	. .
+Input	5	6	Toggle	a 6	. .	. .	. .	. .	. .	. .
+Input	5	7	Toggle	a 7	. .	. .	. .	. .	. .	. .
+Input	5	8	Toggle	b 0	. .	. .	. .	. .	. .	. .
+Input	5	9	Toggle	b 1	. .	. .	. .	. .	. .	. .
+Input	5	a	Toggle	b 2	. .	. .	. .	. .	. .	. .
+Input	5	b	Toggle	b 3	. .	. .	. .	. .	. .	. .
+Input	5	c	Toggle	b 4	. .	. .	. .	. .	. .	. .
+Input	5	d	Toggle	b 5	. .	. .	. .	. .	. .	. .
+Input	5	e	Toggle	b 6	. .	. .	. .	. .	. .	. .
+Input	5	f	Toggle	b 7	. .	. .	. .	. .	. .	. .
+
+Input	6	0	Toggle	c 0	. .	. .	. .	. .	. .	. .
+Input	6	1	Toggle	c 1	. .	. .	. .	. .	. .	. .
+Input	6	2	Toggle	c 2	. .	. .	. .	. .	. .	. .
+Input	6	3	Toggle	c 3	. .	. .	. .	. .	. .	. .
+Input	6	4	Toggle	c 4	. .	. .	. .	. .	. .	. .
+Input	6	5	Toggle	c 5	. .	. .	. .	. .	. .	. .
+Input	6	6	Toggle	c 6	. .	. .	. .	. .	. .	. .
+Input	6	7	Toggle	c 7	. .	. .	. .	. .	. .	. .
+Input	6	8	Toggle	d 0	. .	. .	. .	. .	. .	. .
+Input	6	9	Toggle	d 1	. .	. .	. .	. .	. .	. .
+Input	6	a	Toggle	d 2	. .	. .	. .	. .	. .	. .
+Input	6	b	Toggle	d 3	. .	. .	. .	. .	. .	. .
+Input	6	c	Toggle	d 4	. .	. .	. .	. .	. .	. .
+Input	6	d	Toggle	d 5	. .	. .	. .	. .	. .	. .
+Input	6	e	Toggle	d 6	. .	. .	. .	. .	. .	. .
+Input	6	f	Toggle	d 7	. .	. .	. .	. .	. .	. .
+
+Input	7	0	Toggle	e 0	. .	. .	. .	. .	. .	. .
+Input	7	1	Toggle	e 1	. .	. .	. .	. .	. .	. .
+Input	7	2	Toggle	e 2	. .	. .	. .	. .	. .	. .
+Input	7	3	Toggle	e 3	. .	. .	. .	. .	. .	. .
+Input	7	4	Toggle	e 4	. .	. .	. .	. .	. .	. .
+Input	7	5	Toggle	e 5	. .	. .	. .	. .	. .	. .
+Input	7	6	Toggle	e 6	. .	. .	. .	. .	. .	. .
+Input	7	7	Toggle	e 7	. .	. .	. .	. .	. .	. .
+Input	7	8	Toggle	f 0	. .	. .	. .	. .	. .	. .
+Input	7	9	Toggle	f 1	. .	. .	. .	. .	. .	. .
+Input	7	a	Toggle	f 2	. .	. .	. .	. .	. .	. .
+Input	7	b	Toggle	f 3	. .	. .	. .	. .	. .	. .
+Input	7	c	Toggle	f 4	. .	. .	. .	. .	. .	. .
+Input	7	d	Toggle	f 5	. .	. .	. .	. .	. .	. .
+Input	7	e	Toggle	f 6	. .	. .	. .	. .	. .	. .
+Input	7	f	Toggle	f 7	. .	. .	. .	. .	. .	. .
+
+#Output	Node	Pin	Type	Lo	Hi	Spd	Reset
+Output	0	0	None	5a	5a	0c	00
+Output	0	1	None	5a	5a	0c	00
+Output	0	2	LED	5a	5a	0d	00
+Output	0	3	Blink	5a	5a	0c	05
+Output	0	4	None	5a	5a	0c	00
+Output	0	5	None	5a	5a	0c	00
+Output	0	6	None	5a	5a	0c	00
+Output	0	7	None	5a	5a	0c	00
+
+Output	4	0	LED	30	2e	0d	00
+Output	4	1	Road	7f	ff	0d	00
+Output	4	2	LED	40	40	0c	00
+Output	4	3	None	ff	ff	0f	ff
+Output	4	4	None	ff	ff	0f	ff
+Output	4	5	None	ff	ff	0f	ff
+Output	4	6	None	ff	ff	0f	ff
+Output	4	7	None	ff	ff	0f	ff
+
+Output	8	0	Signal	00	b4	0d	00
+Output	8	1	Servo	b4	00	0b	00
+Output	8	2	Flash	10	10	0d	04
+Output	8	3	None	00	5a	00	80
+Output	8	4	None	5a	c0	00	00
+Output	8	5	None	c0	80	00	5a
+Output	8	6	None	ff	05	05	08
+Output	8	7	None	ff	ff	0f	ff
+
+#Lock	Node	Pin	LockLoA	LockLoB	LockLoC	LockLoD	LockHiA	LockHiB	LockHiC	LockHiD
+Lock	0	0	.	.	.	.	.	.	.	.
+Lock	0	1	.	.	.	.	.	.	.	.
+Lock	0	2	.	.	.	.	.	.	.	.
+Lock	0	3	.	.	.	.	.	.	.	.
+Lock	0	4	.	.	.	.	.	.	.	.
+Lock	0	5	.	.	.	.	.	.	.	.
+Lock	0	6	.	.	.	.	.	.	.	.
+Lock	0	7	.	.	.	.	.	.	.	.
+
+Lock	4	0	.	.	.	.	.	.	.	.
+Lock	4	1	Hi 8 1	Lo 8 0	.	.	.	.	.	.
+Lock	4	2	.	.	.	.	.	.	.	.
+Lock	4	3	.	.	.	.	.	.	.	.
+Lock	4	4	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7
+Lock	4	5	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7
+Lock	4	6	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7
+Lock	4	7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7
+
+Lock	8	0	Lo 4 0	Hi 4 1	.	.	.	.	.	.
+Lock	8	1	.	.	.	.	Lo 4 0	Hi 4 1	.	.
+Lock	8	2	.	.	.	.	.	.	.	.
+Lock	8	3	.	.	.	.	.	.	.	.
+Lock	8	4	.	.	.	.	.	.	.	.
+Lock	8	5	.	.	.	.	.	.	.	.
+Lock	8	6	.	.	.	.	.	.	.	.
+Lock	8	7	Lo 4 0	Lo 4 1	.	.	Hi 8 0	Hi 8 1	.	.
+
+
