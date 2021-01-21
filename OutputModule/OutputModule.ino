@@ -848,8 +848,8 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             if (aState)
             {
                 // Set outputs on randomly.
-                outputs[aPin].target    = random(100) < RANDOM_HI_CHANCE ? outputDefs[aPin].getHi() : 0;
-                outputs[aPin].altTarget = random(100) < RANDOM_LO_CHANCE ? outputDefs[aPin].getLo() : 0;
+                outputs[aPin].target    = (random(100) < RANDOM_HI_CHANCE) ? outputDefs[aPin].getHi() : 0;
+                outputs[aPin].altTarget = (random(100) < RANDOM_LO_CHANCE) ? outputDefs[aPin].getLo() : 0;
             }
             else
             {
