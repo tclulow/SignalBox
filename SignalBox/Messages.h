@@ -36,6 +36,7 @@ const char M_LED_4[]            PROGMEM = "LED_4";
 const char M_ROAD[]             PROGMEM = "Road";
 const char M_FLASH[]            PROGMEM = "Flash";
 const char M_BLINK[]            PROGMEM = "Blink";
+const char M_RANDOM[]           PROGMEM = "Random";
 const char M_RFU[]              PROGMEM = "RFU";
 
 const char M_HI[]               PROGMEM = "Hi";
@@ -44,8 +45,8 @@ const char M_PACE[]             PROGMEM = "Spd";
 const char M_DELAY[]            PROGMEM = "Delay";
 const char M_RESET[]            PROGMEM = "Reset";
 
-const char* const M_OUTPUT_TYPES[]   = { M_NONE, M_SERVO, M_SIGNAL, M_LED, M_LED_4, M_ROAD, M_FLASH, M_BLINK, 
-                                         M_RFU,  M_RFU,   M_RFU,    M_RFU, M_RFU,   M_RFU,  M_RFU,   M_RFU };
+const char* const M_OUTPUT_TYPES[]   = { M_NONE,   M_SERVO, M_SIGNAL, M_LED, M_LED_4, M_ROAD, M_FLASH, M_BLINK, 
+                                         M_RANDOM, M_RFU,   M_RFU,    M_RFU, M_RFU,   M_RFU,  M_RFU,   M_RFU };
 
 
 #if MASTER

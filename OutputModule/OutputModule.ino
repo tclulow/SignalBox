@@ -254,6 +254,12 @@ void initOutput(int aPin, uint8_t aOldType)
             outputs[aPin].servo.attach(OUTPUT_BASE_PIN + aPin);
         }
     }
+    else if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_RANDOM)
+             && (persisting))
+    {
+        // Ensure random LEDs are initialised correctly.
+        actionState(aPin, outputDefs[aPin].getState(), 0);
+    }
     else if (   (outputDefs[aPin].isLed())
              || (outputDefs[aPin].isFlasher()))
     {
@@ -824,13 +830,28 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
                 saveOutput(ledPin);
             }
         }
+        else if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_RANDOM)
+                 && (persisting))
+        {
+            if (aState)
+            {
+                // Set outputs on randomly.
+                long now = micros();
+                outputs[aPin].target    = now & 0x4 ? outputDefs[aPin].getHi() : 0;
+                outputs[aPin].altTarget = now & 0x8 ? outputDefs[aPin].getLo() : 0;
+            }
+            else
+            {
+                outputs[aPin].target    = 0;
+                outputs[aPin].altTarget = 0;
+            }
+        }
         else
         {
             // Ordinary LED
             outputs[aPin].target    = aState ? outputDefs[aPin].getHi() : 0;
             outputs[aPin].altTarget = aState ? 0 : outputDefs[aPin].getLo();
         }
-
     }
     else if (outputDefs[aPin].isFlasher())
     {
@@ -1076,16 +1097,8 @@ void stepLed(int aPin)
         if (outputs[aPin].step >= outputs[aPin].steps)
         {
             // Last step, make sure to hit the target bang-on.
-            if (outputDefs[aPin].getState())
-            {
-                outputs[aPin].value    = outputs[aPin].target;
-                outputs[aPin].altValue = 0;
-            }
-            else
-            {
-                outputs[aPin].value    = 0;
-                outputs[aPin].altValue = outputs[aPin].altTarget;
-            }
+            outputs[aPin].value    = outputs[aPin].target;
+            outputs[aPin].altValue = outputs[aPin].altTarget;
 
             // If there's a reset, reset the LED after the specified delay.
             if (   (persisting)
@@ -1099,6 +1112,14 @@ void stepLed(int aPin)
                             || (outputDefs[aPin - 1].getState())))                  // if either output is Hi.
                     {
                         actionState(aPin, false, outputDefs[aPin].getReset());      // Move down 1 state.
+                    }
+                }
+                else if (outputDefs[aPin].getType() == OUTPUT_TYPE_RANDOM)          // Random.
+                {
+                    if (outputDefs[aPin].getState())                                // If Hi, set Hi again (which may or may not illuminate LEDs).
+                    {
+                        actionState(aPin, true,   outputDefs[aPin].getReset() / 2   // Delay for reset +/- 1/2 reset.
+                                                + random(outputDefs[aPin].getReset()));
                     }
                 }
                 else if (outputDefs[aPin].getState())                               // Ordinary LED, currently Hi.

@@ -1426,7 +1426,8 @@ class Configure
                                         case OUTPUT_TYPE_LED_4:
                                         case OUTPUT_TYPE_ROAD:
                                         case OUTPUT_TYPE_FLASH:
-                                        case OUTPUT_TYPE_BLINK:  changed |= menuOutputLo(OUTPUT_LED_MAX);
+                                        case OUTPUT_TYPE_BLINK:
+                                        case OUTPUT_TYPE_RANDOM: changed |= menuOutputLo(OUTPUT_LED_MAX);
                                                                  break;
                                         default:                 systemFail(M_OUTPUT, outputType, 0);
                                     }

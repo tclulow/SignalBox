@@ -45,7 +45,8 @@
 #define OUTPUT_TYPE_ROAD         0x05   // Output is a LED 3-aspect road signal.
 #define OUTPUT_TYPE_FLASH        0x06   // Output is a flashing LED.
 #define OUTPUT_TYPE_BLINK        0x07   // Output is a blinking LED.
-#define OUTPUT_TYPE_MAX          0x08   // Limit of output types.
+#define OUTPUT_TYPE_RANDOM       0x08   // Output is a random LED.
+#define OUTPUT_TYPE_MAX          0x09   // Limit of output types.
 
 
 /** Definition of an Output.
@@ -81,7 +82,8 @@ class OutputDef
     {
         return    getType() == OUTPUT_TYPE_LED
                || getType() == OUTPUT_TYPE_LED_4
-               || getType() == OUTPUT_TYPE_ROAD;
+               || getType() == OUTPUT_TYPE_ROAD
+               || getType() == OUTPUT_TYPE_RANDOM;
     }
 
 
