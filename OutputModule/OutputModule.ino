@@ -803,11 +803,6 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
             newState = newPhase & 2;
             outputDefs[ledPin].setState(ledState);
 
-            Serial.print("oldPhase=");
-            Serial.print(oldPhase);
-            Serial.print(", newPhase=");
-            Serial.print(newPhase);
-            Serial.println();
             if (newPhase == oldPhase)
             {
                 outputs[aPin].steps = 0;                                    // Nothing to do.
