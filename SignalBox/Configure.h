@@ -686,7 +686,7 @@ class Configure
             }
         }
 
-        markField(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, 5, false);
+        markField(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, LCD_COL_DEBUG_LENGTH, false);
         
         return changed;
     }
