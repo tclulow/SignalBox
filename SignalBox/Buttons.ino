@@ -15,7 +15,7 @@ void calibrateButtons()
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_CALIBRATE);
 
     // Wait for no button being pressed
-    while (analogRead(0) < BUTTON_THRESHHOLD);
+    while (analogRead(A0) < BUTTON_THRESHHOLD);
 
     // Now start calibration
     lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_PRESS);   // Announce we're ready to start
@@ -28,7 +28,7 @@ void calibrateButtons()
         lcd.printAt(LCD_COL_CALIBRATE, LCD_ROW_BOT, M_BUTTONS[button + 1], LCD_LEN_OPTION);
 
         // Record average between this button and the previous.
-        while ((value = analogRead(0)) > BUTTON_THRESHHOLD);
+        while ((value = analogRead(A0)) > BUTTON_THRESHHOLD);
         delay(DELAY_BUTTON_WAIT);
         systemData.buttons[button] = (previous + value) / 2;
         previous = value;
@@ -46,7 +46,7 @@ void calibrateButtons()
         }
 
         // Wait for button to be released.
-        while (analogRead(0) < BUTTON_THRESHHOLD);
+        while (analogRead(A0) < BUTTON_THRESHHOLD);
         delay(DELAY_BUTTON_WAIT);
     }
 

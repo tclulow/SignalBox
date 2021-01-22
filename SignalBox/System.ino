@@ -188,7 +188,7 @@ void ezyBusClear()
 }
 
 
-#else
+#else // Not master - Slave output module.
 
 /** Gets the output module ID.
  *  Either by hardware jumperss of from EEPROM.
