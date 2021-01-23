@@ -695,8 +695,11 @@ void processWrite(uint8_t aPin)
  */
 void processSave(uint8_t aPin)
 {
+    uint8_t oldType = outputDefs[aPin].getType();
+    
     persisting = true;          // Resume saving output to EEPROM.
     saveOutput(aPin);           // And save the output.
+    initOutput(aPin, oldType);  // Ensure output is initialised to new state.
 }
 
 
@@ -707,8 +710,8 @@ void processReset(uint8_t aPin)
     uint8_t oldType = outputDefs[aPin].getType();
     
     persisting = true;          // Resume saving output to EEPROM.
-    loadOutput(aPin);           // And recpver the output's definition.
-    initOutput(aPin, oldType);
+    loadOutput(aPin);           // And recover the output's definition.
+    initOutput(aPin, oldType);  // Ensure output is initialised to new state.
 }
 
 
