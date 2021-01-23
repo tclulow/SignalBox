@@ -47,7 +47,7 @@ boolean persisting = true;
 
 // Ticking
 long now       = 0;
-long nowMicros = micros();
+long nowMicros = 0;
 long tickServo = 0;
 long tickLed   = 0;
 long tickFlash = 0;
@@ -145,7 +145,7 @@ void firstRun()
     uint8_t moduleId = getModuleId(false);
     
     // Initialise SystemData.
-    systemData.magic   = MAGIC_NUMBER;
+    systemData.magic = MAGIC_NUMBER;
 
     // Initialise EEPROM with suitable data.
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
@@ -1354,17 +1354,11 @@ void loop()
         if (   (outputDefs[pin].isLed())
             || (outputDefs[pin].isFlasher()))
         {
-            // Use compliment of nowMicros for alt pin to reduce the chance of both being on at once.
+            // Use compliment of nowMicros for alt pin to remove the chance of both being on at once.
             digitalWrite(OUTPUT_BASE_PIN + pin,    outputs[pin].value    >  0 
                                                 && outputs[pin].value    >= ( nowMicros & 0xff));
             digitalWrite(ioPins[pin],              outputs[pin].altValue >  0 
                                                 && outputs[pin].altValue >= (~nowMicros & 0xff));
-//            // DEBUG
-//            if (pin == 1)
-//            {
-//                digitalWrite(LED_BUILTIN,    outputs[pin].value >  0 
-//                                          && outputs[pin].value >= (nowMicros & 0xff));
-//            }
         }
     }
 }
