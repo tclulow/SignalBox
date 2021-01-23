@@ -22,7 +22,7 @@ then
     exit
 fi
 
-# Deploy with acrdude tool.
+# Deploy with acvdude tool.
 ${DIR}/$EXEC -C${CONFIG} -v -V -p${PART} -c${PROG} -P${PORT} -b${BAUD} -D -Uflash:w:${PATH}:i 
 
 # Check for error
