@@ -40,7 +40,7 @@ void announce()
 {
     lcd.clear();
     lcd.printAt(LCD_COL_START,                       LCD_ROW_TOP, M_SOFTWARE);
-//    for (uint8_t index = 0; index < CHAR_LO; index++)
+//    for (uint8_t index = 0; index < LOGO_LEN; index++)
 //    {
 //        lcd.print((char)index);
 //    }
