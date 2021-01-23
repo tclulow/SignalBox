@@ -11,8 +11,8 @@
 #define INPUT_PIN_MASK         0x0f     // Mask to get input pin within a node.
 
 // Mask for Input options
-#define INPUT_OUTPUT_MAX          7     // Number of outputs each input can control. See also EEPROM in System.h
-#define INPUT_DELAY_FLAG       0x80     // The Input's output is a delay.
+#define INPUT_OUTPUT_MAX          6     // Number of outputs each input can control. See also EEPROM in System.h
+// #define INPUT_DELAY_FLAG       0x80     // The Input's output is a delay.
 #define INPUT_OUTPUT_MASK      0x7f     // Mask to get the Input's output without the flag above.
 #define INPUT_DELAY_MASK       0x0f     // Mask to get the Input's delay without flag above.
 
@@ -61,6 +61,7 @@
 class InputDef
 {
     private:
+    uint8_t delayMask = 0;              // Mask showing which outputs are "delay"s.
     uint8_t output[INPUT_OUTPUT_MAX];   // The outputs conrolled by this input.
 
 
@@ -121,7 +122,7 @@ class InputDef
      */
     boolean isDelay(uint8_t aIndex)
     {
-        return output[aIndex] & INPUT_DELAY_FLAG;
+        return (delayMask & (1 << aIndex)) != 0;
     }
 
 
@@ -129,8 +130,15 @@ class InputDef
      */
     void setDelay(uint8_t aIndex, boolean aDelay)
     {
-        output[aIndex] = (output[aIndex] & ~INPUT_DELAY_FLAG)
-                       | (aDelay ? INPUT_DELAY_FLAG : 0);
+        uint8_t mask = 1 << aIndex;
+        if (aDelay)
+        {
+            delayMask |= mask;
+        }
+        else
+        {
+            delayMask &= ~mask;
+        }
     }
 };
 

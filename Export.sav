@@ -1,52 +1,52 @@
+#System	Version	Detail	Control	Input	Output	Report
 System	v2.6	i2cID	10	20	50	Long
 
-#Input	Node	Pin	Type	OutputA	OutputB	OutputC	OutputD	OutputE	OutputF	OutputG
-Input	1	0	On/Off	4 2	0 2	. .	. .	. .	. .	. .
-Input	1	1	On/Off	0 3	. .	. .	. .	. .	. .	. .
-Input	1	2	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	1	3	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	1	4	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	1	5	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	1	6	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	1	7	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	1	8	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	1	9	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	1	a	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	1	b	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	1	c	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	1	d	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	1	e	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	1	f	Toggle	. .	. .	. .	. .	. .	. .	. .
+Input	1	0	On/Off	4 2	0 2	. .	. .	. .	. .
+Input	1	1	On/Off	0 3	. .	. .	. .	. .	. .
+Input	1	2	Toggle	. .	. .	. .	. .	. .	. .
+Input	1	3	Toggle	. .	. .	. .	. .	. .	. .
+Input	1	4	Toggle	. .	. .	. .	. .	. .	. .
+Input	1	5	Toggle	. .	. .	. .	. .	. .	. .
+Input	1	6	Toggle	. .	. .	. .	. .	. .	. .
+Input	1	7	Toggle	. .	. .	. .	. .	. .	. .
+Input	1	8	Toggle	. .	. .	. .	. .	. .	. .
+Input	1	9	Toggle	. .	. .	. .	. .	. .	. .
+Input	1	a	Toggle	. .	. .	. .	. .	. .	. .
+Input	1	b	Toggle	. .	. .	. .	. .	. .	. .
+Input	1	c	Toggle	. .	. .	. .	. .	. .	. .
+Input	1	d	Toggle	. .	. .	. .	. .	. .	. .
+Input	1	e	Toggle	. .	. .	. .	. .	. .	. .
+Input	1	f	Toggle	. .	. .	. .	. .	. .	. .
 
-Input	4	0	On/Off	8 0	. 1	8 1	. 1	8 2	. .	. .
-Input	4	1	On/Off	8 1	. .	. .	. .	. .	. .	. .
-Input	4	2	On	4 1	. .	. .	. .	. .	. .	. .
-Input	4	3	Off	. .	4 1	. .	. .	. .	. .	. .
-Input	4	4	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	4	5	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	4	6	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	4	7	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	4	8	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	4	9	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	4	a	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	4	b	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	4	c	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	4	d	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	4	e	Toggle	. .	. .	. .	. .	. .	. .	. .
-Input	4	f	Toggle	. .	. .	. .	. .	. .	. .	. .
+Input	4	0	On/Off	8 0	. 1	8 1	8 2	0 0	0 1
+Input	4	1	On/Off	8 1	0 1	. .	. .	. .	. .
+Input	4	2	On	4 1	. .	. .	. .	. .	. .
+Input	4	3	Off	. .	4 1	. .	. .	. .	. .
+Input	4	4	Toggle	. .	. .	. .	. .	. .	. .
+Input	4	5	Toggle	. .	. .	. .	. .	. .	. .
+Input	4	6	Toggle	. .	. .	. .	. .	. .	. .
+Input	4	7	Toggle	. .	. .	. .	. .	. .	. .
+Input	4	8	Toggle	. .	. .	. .	. .	. .	. .
+Input	4	9	Toggle	. .	. .	. .	. .	. .	. .
+Input	4	a	Toggle	. .	. .	. .	. .	. .	. .
+Input	4	b	Toggle	. .	. .	. .	. .	. .	. .
+Input	4	c	Toggle	. .	. .	. .	. .	. .	. .
+Input	4	d	Toggle	. .	. .	. .	. .	. .	. .
+Input	4	e	Toggle	. .	. .	. .	. .	. .	. .
+Input	4	f	Toggle	. .	. .	. .	. .	. .	. .
 
 #Output	Node	Pin	Type	Lo	Hi	Spd	Reset
-Output	0	0	None	5a	5a	0c	00
-Output	0	1	None	5a	5a	0c	00
+Output	0	0	LED	5a	1f	0c	00
+Output	0	1	LED	5a	1f	0c	00
 Output	0	2	LED	5a	5a	0d	00
-Output	0	3	Blink	5a	5a	0c	05
+Output	0	3	Random	5a	5a	0c	14
 Output	0	4	None	5a	5a	0c	00
 Output	0	5	None	5a	5a	0c	00
 Output	0	6	None	5a	5a	0c	00
 Output	0	7	None	5a	5a	0c	00
 
 Output	4	0	LED	30	2e	0d	00
-Output	4	1	Road	7f	ff	0d	00
+Output	4	1	LED_4	7f	ff	0d	00
 Output	4	2	LED	40	40	0c	00
 Output	4	3	None	ff	ff	0f	ff
 Output	4	4	None	ff	ff	0f	ff
@@ -77,10 +77,10 @@ Lock	4	0	.	.	.	.	.	.	.	.
 Lock	4	1	Hi 8 1	Lo 8 0	.	.	.	.	.	.
 Lock	4	2	.	.	.	.	.	.	.	.
 Lock	4	3	.	.	.	.	.	.	.	.
-Lock	4	4	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7
-Lock	4	5	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7
-Lock	4	6	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7
-Lock	4	7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7	Hi f 7
+Lock	4	4	.	.	.	.	.	.	.	.
+Lock	4	5	.	.	.	.	.	.	.	.
+Lock	4	6	.	.	.	.	.	.	.	.
+Lock	4	7	.	.	.	.	.	.	.	.
 
 Lock	8	0	Lo 4 0	Hi 4 1	.	.	.	.	.	.
 Lock	8	1	.	.	.	.	Lo 4 0	Hi 4 1	.	.
@@ -89,6 +89,5 @@ Lock	8	3	.	.	.	.	.	.	.	.
 Lock	8	4	.	.	.	.	.	.	.	.
 Lock	8	5	.	.	.	.	.	.	.	.
 Lock	8	6	.	.	.	.	.	.	.	.
-Lock	8	7	Lo 4 0	Lo 4 1	.	.	Hi 8 0	Hi 8 1	.	.
-
+Lock	8	7	.	.	.	.	.	.	.	.
 
