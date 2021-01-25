@@ -98,7 +98,7 @@ void mapHardware()
 
     delay(DELAY_READ);
 
-    // Report abscence of hardware (and default to all if necessary).
+    // Report abscence of hardware.
     if (   (inputNodes  == 0)
         || (outputNodes == 0))
     {
@@ -299,6 +299,20 @@ void sendDebugLevel()
         }
     }
 }
+
+
+///** Scan all (know) outputs for their current state.
+// */
+//void scanOutputs()
+//{
+//    for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
+//    {
+//        if (isOutputNode(node))
+//        {
+//            readOutputStates(node);
+//        }
+//    }
+//}
 
 
 /** Scan all the inputs.
@@ -710,7 +724,10 @@ void loop()
     if (now - tickScan > STEP_SCAN)
     {
         tickScan = now;
-        scanInputs();           
+        // scanOutputs();
+        scanInputs();
+        Serial.print("scan took ");
+        Serial.println((millis() - tickScan));
     }
     
     // Show heartbeat.
