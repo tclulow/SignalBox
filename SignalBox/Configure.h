@@ -313,15 +313,22 @@ class Configure
         {
             if (topMenu == TOP_OUTPUT)
             {
-                lcd.printHex(outputDef.getLo(),    2);
+                lcd.printHex(outputDef.getLo(), 2);
                 lcd.print(CHAR_SPACE);
-                lcd.printHex(outputDef.getHi(),    2);
+                lcd.printHex(outputDef.getHi(), 2);
                 lcd.print(CHAR_SPACE);
-                lcd.printHex(outputDef.getPace(),  1);
+                lcd.printHex(outputDef.getPace(), 1);
                 lcd.print(CHAR_SPACE);
                 if (outputDef.getReset() > 0)
                 {
-                    lcd.print(CHAR_HASH);
+                    if (outputDef.getReset() < 0x10)
+                    {
+                        lcd.printHex(outputDef.getReset(), 1);
+                    }
+                    else
+                    {
+                        lcd.print(CHAR_HASH);
+                    }
                 }
             }
             else if (topMenu == TOP_LOCKS)
