@@ -726,8 +726,6 @@ void loop()
         tickScan = now;
         // scanOutputs();
         scanInputs();
-        Serial.print("scan took ");
-        Serial.println((millis() - tickScan));
     }
     
     // Show heartbeat.
