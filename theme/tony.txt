@@ -27,7 +27,7 @@ header.text.font = SansSerif,plain,12
 # GUI - CONSOLE
 console.font = Monospaced,plain,11
 console.font.macosx = Monaco,plain,10
-console.color = #ffffff
+console.color = #dddddd
 console.output.color = #000000
 console.error.color = #E34C00
 
