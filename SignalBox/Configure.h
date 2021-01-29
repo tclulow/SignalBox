@@ -455,6 +455,11 @@ class Configure
                                         case TOP_SYSTEM: menuSystem();
                                                          break;
                                         case TOP_INPUT:  menuNode(true);
+                                                         if (isOutputNode(outNode))
+                                                         {
+                                                            // The output node may have been corrupted by input node processing.
+                                                            readOutput(outNode, outPin);
+                                                         }
                                                          break;
                                         case TOP_OUTPUT:
                                         case TOP_LOCKS:  if (isOutputNode(outNode))     // Maybe there are no outputs connected.
