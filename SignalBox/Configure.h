@@ -1000,10 +1000,10 @@ class Configure
                 // Renumber all the Outputs' locks as necessary.
                 for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
                 {
-                    lcd.print(isOutputNode(node) ? HEX_CHARS[node] : CHAR_DOT);
-                    
                     if (isOutputNode(node))
                     {
+                        lcd.print(HEX_CHARS[node]);
+                    
                         if (isDebug(DEBUG_BRIEF))
                         {
                             Serial.print(millis());
@@ -1020,6 +1020,10 @@ class Configure
                         Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_MOVE_LOCKS);
                         Wire.write((aOldNode << 4) | response);
                         Wire.endTransmission();
+                    }
+                    else
+                    {
+                        lcd.print(CHAR_DOT);
                     }
                 }
             }
