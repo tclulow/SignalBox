@@ -936,7 +936,7 @@ class Configure
             && ((response = Wire.requestFrom(systemData.i2cOutputBaseID + outNode, OUTPUT_RENUMBER_LEN)) == OUTPUT_RENUMBER_LEN)
             && ((response = Wire.read()) >= 0))
         {
-            response &= OUTPUT_NODE_MASK;
+            response &= OUTPUT_NODE_MASK;       // The new node number of the Output
     
             if (isDebug(DEBUG_BRIEF))
             {
