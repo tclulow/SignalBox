@@ -51,3 +51,4 @@ void reportPause()
         lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
     }
 }
+

@@ -229,3 +229,4 @@ char readOutputStates(uint8_t aNode)
 
     return error;
 }
+

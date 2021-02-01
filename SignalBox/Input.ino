@@ -141,3 +141,4 @@ boolean isInputNode(int aNode)
     // Look for input's node in inputNodes flags.
     return (aNode < INPUT_NODE_MAX) && (inputNodes & (1 << aNode));
 }
+
