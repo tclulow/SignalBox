@@ -174,15 +174,8 @@ void setInputNodePresent(int aNode);
 
 
 /** Is an Input node present?
- *  Look for input's node in inputNodes.
  */
 boolean isInputNode(int aNode);
-
-
-/** Is an Input present?
- *  Look for input's node in inputNodes.
- */
-boolean isInput(int aInput);
 
 
 #endif
