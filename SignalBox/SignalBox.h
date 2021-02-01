@@ -1,7 +1,8 @@
-/** Constants for Panel.
+/** Constants for SignalBox.
  */
-#ifndef _Panel_h
-#define _Panel_h
+#ifndef _SignalBox_h
+#define _SignalBox_h
+
 
 // A pin that will force calibration at start-up
 #define PIN_CALIBRATE    11

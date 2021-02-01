@@ -1,3 +1,7 @@
+/** Reporting.
+ */
+
+
 /** Is reporting enabled (at a particular level)?
  */
 boolean reportEnabled(int aLevel)

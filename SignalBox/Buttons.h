@@ -25,10 +25,12 @@
  */
 void calibrateButtons();
 
+
 /** Read the input button pressed.
  *  Return one of the constants above.
  */
 int readButton();
+
 
 /** Wait for button to be released.
  */

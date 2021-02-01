@@ -1,7 +1,8 @@
-/** Input data.
+/** Reporting.
  */
 #ifndef _Report_h
 #define _Report_h
+
 
 /** Is reporting enabled (at a particular level)?
  */
