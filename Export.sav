@@ -22,7 +22,7 @@ Input	1	f	On/Off	. .	. .	. .	. .	. .	. .
 
 Input	4	0	On/Off	8 3	8 0	. 1	8 1	0 0	0 1
 Input	4	1	On/Off	8 3	0 1	. 1	8 1	. .	. .
-Input	4	2	On	4 1	. .	. .	. 4	1 0	. .
+Input	4	2	On	4 1	. .	. .	. .	. .	. .
 Input	4	3	Off	. .	4 1	. .	. .	. .	. .
 Input	4	4	On/Off	. .	. .	. .	. .	. .	. .
 Input	4	5	On/Off	. .	. .	. .	. .	. .	. .
