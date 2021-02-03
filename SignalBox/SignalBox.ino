@@ -394,7 +394,6 @@ int readInputNode(int node)
 void processInput(uint16_t aState)
 {
     boolean newState = false;
-    uint8_t first    = 0;           // TODO - move declaration to for loop. The Input's first active Output.
     
     // Process all input state changes for Toggles, only state going low for other Input types.
     if (   (aState == 0)
@@ -405,11 +404,12 @@ void processInput(uint16_t aState)
         {
             case INPUT_TYPE_TOGGLE: newState = aState != 0;     // Set state to that of the Toggle.
                                     break;
-            case INPUT_TYPE_ON_OFF: for (first = 0; first < INPUT_OUTPUT_MAX; first++)
+            case INPUT_TYPE_ON_OFF: // Find first real output (not a delay) to determine new state.
+                                    for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
                                     {
-                                        if (!inputDef.isDelay(first))
+                                        if (!inputDef.isDelay(index))
                                         {
-                                            newState = !getOutputState(inputDef.getOutputNode(0), inputDef.getOutputPin(0));
+                                            newState = !getOutputState(inputDef.getOutputNode(index), inputDef.getOutputPin(index));
                                             break;
                                         }
                                     }
@@ -431,11 +431,6 @@ void processInput(uint16_t aState)
             lcd.setCursor(LCD_COL_START + 1, LCD_ROW_BOT);
             setDisplayTimeout(reportDelay());
 
-//            // Show output type
-//            readOutput(inputDef.getOutput(first));
-//            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
-//            setDisplayTimeout(reportDelay());
-            
             if (isDebug(DEBUG_BRIEF))
             {
                 Serial.println();
