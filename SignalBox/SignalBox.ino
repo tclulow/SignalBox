@@ -39,7 +39,7 @@ uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
 
 // Ticking
 long now           = 0;     // The current time in millisecs.
-long tickScan      = 0;     // TRhe time of the last scan of input switches.
+long tickScan      = 0;     // The time of the last scan of input switches.
 long tickHeartBeat = 0;     // Time of last heartbeat.
 
 
