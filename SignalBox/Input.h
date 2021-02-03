@@ -126,7 +126,7 @@ class InputDef
     }
 
 
-    /** Sets the nth output disabled (or not).
+    /** Sets the nth output delay (or not).
      */
     void setDelay(uint8_t aIndex, boolean aDelay)
     {
