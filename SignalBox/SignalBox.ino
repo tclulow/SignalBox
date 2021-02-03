@@ -32,7 +32,7 @@
 
 
 // Timeout for the display when important messages are showing.
-long displayTimeout = 0L;
+long displayTimeout = 1L;   // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
 
 // Record state of input switchess.
 uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
@@ -126,7 +126,7 @@ void mapHardware()
 }
 
 
-/** Configure all inputs for input.
+/** Configure all inputs.
  */
 void initInputs()
 { 
@@ -134,18 +134,14 @@ void initInputs()
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INIT_INPUTS);
     lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
-    // Clear state of Inputs, all high.
-    for (int node = 0; node < INPUT_NODE_MAX; node++)
-    {
-        currentSwitchState[node] = 0xffff;
-    }
-
-    // For every Input node, set it's mode of operation.
+    // Initialise every Input node
     for(int node = 0; node < INPUT_NODE_MAX; node++)
     {
         if (isInputNode(node))
         {
             lcd.print(HEX_CHARS[node]);
+            
+            // Configure for input
             Wire.beginTransmission(systemData.i2cInputBaseID + node); 
             Wire.write(MCP_IODIRA);
             Wire.write(MCP_ALL_HIGH);
@@ -164,11 +160,26 @@ void initInputs()
             Wire.beginTransmission(systemData.i2cInputBaseID + node);
             Wire.write(MCP_GPPUB);
             Wire.write(MCP_ALL_HIGH);
-            Wire.endTransmission();  
+            Wire.endTransmission();
+
+            // Record current switch state
+            currentSwitchState[node] = readInputNode(node);
+
+//            // Ensure toggle switches are in current state.
+//            for (uint16_t pin = 0, mask = 1; pin < INPUT_PIN_MAX; pin++, mask <<= 1)
+//            {
+//                loadInput(node, pin);
+//                if (inputType == INPUT_TYPE_TOGGLE)
+//                {
+//                    processInput(currentSwitchState[node] & mask);
+//                }
+//            }
         }
         else
         {
+            // Absent input node.
             lcd.print(CHAR_DOT);
+            currentSwitchState[node] = 0xffff;
         }
     }   
     delay(DELAY_READ);
@@ -706,9 +717,6 @@ void setup()
     // Discover and initialise attached hardware.
     mapHardware();                            // Scan for attached hardware.
     initInputs();                             // Initialise all inputs.
-
-    // Announce ourselves.
-    announce();
 }
 
 
