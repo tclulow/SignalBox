@@ -227,7 +227,7 @@ void firstRun()
 
 
 /** Set the default initial setup
- *  Servos with mid-position and mid-pace.
+ *  1-1 mapping, inputs to outputs.
  */
 void defaultInputs(uint8_t aInputType)
 {
