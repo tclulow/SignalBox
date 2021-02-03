@@ -19,6 +19,7 @@
  */
 class ImportExport
 {
+    private:
     int  lastChar;                              // Last character read.
     char wordBuffer[WORD_BUFFER_LENGTH + 1];    // Buffer to read characters with null terminator on the end.
     long messageTick = 1L;                      // Time the last message was emitted.
@@ -255,7 +256,7 @@ class ImportExport
     
     
     /** Read (hexadecimal) data.
-     *  If dots are present, return a negative number relative to -HEX_LEN
+     *  If dots are present, return a negative number relative to -HEX_MAX
      */
     int readData()
     {
@@ -674,4 +675,3 @@ ImportExport importExport;
 
 
 #endif
-
