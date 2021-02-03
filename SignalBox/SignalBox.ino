@@ -339,9 +339,9 @@ void scanInputs()
             if (pins != currentSwitchState[node])
             {
                 // Process all the changed pins.
-                for (int pin = 0, mask = 1; pin < INPUT_PIN_MAX; pin++, mask <<= 1)
+                for (uint16_t pin = 0, mask = 1; pin < INPUT_PIN_MAX; pin++, mask <<= 1)
                 {
-                    int state = pins & mask;
+                    uint16_t state = pins & mask;
                     if (state != (currentSwitchState[node] & mask))
                     {
                         loadInput(node, pin);
@@ -391,10 +391,10 @@ int readInputNode(int node)
 
 /** Process the changed input.
  */
-void processInput(uint8_t aState)
+void processInput(uint16_t aState)
 {
     boolean newState = false;
-    uint8_t first    = 0;           // The Input's first active Output.
+    uint8_t first    = 0;           // TODO - move declaration to for loop. The Input's first active Output.
     
     // Process all input state changes for Toggles, only state going low for other Input types.
     if (   (aState == 0)
@@ -429,6 +429,7 @@ void processInput(uint8_t aState)
             lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
             lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
             lcd.setCursor(LCD_COL_START + 1, LCD_ROW_BOT);
+            setDisplayTimeout(reportDelay());
 
 //            // Show output type
 //            readOutput(inputDef.getOutput(first));
