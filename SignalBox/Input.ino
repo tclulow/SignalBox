@@ -4,7 +4,7 @@
 
 /** Load an Input's data from EEPROM.
  */
-void loadInput(int aInput)
+void loadInput(uint8_t aInput)
 {
     loadInput((aInput >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK, aInput & INPUT_PIN_MASK);
 }
@@ -12,7 +12,7 @@ void loadInput(int aInput)
 
 /** Load an Input's data from EEPROM.
  */
-void loadInput(int aNode, int aPin)
+void loadInput(uint8_t aNode, uint8_t aPin)
 {
     uint32_t mask = ((long)INPUT_TYPE_MASK) << (aPin << INPUT_TYPE_SHIFT);
 
@@ -72,8 +72,8 @@ void saveInput()
 {
     if (inputNumber < INPUT_MAX)
     {
-        int      node = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
-        int      pin  = (inputNumber                    ) & INPUT_PIN_MASK;
+        uint8_t  node = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
+        uint8_t  pin  = (inputNumber                    ) & INPUT_PIN_MASK;
         uint32_t mask = ((long)INPUT_TYPE_MASK) << (pin << INPUT_TYPE_SHIFT);
         
         inputTypes = (inputTypes & ~mask) | ((((long)inputType) << (pin << INPUT_TYPE_SHIFT)) & mask);
@@ -141,4 +141,3 @@ boolean isInputNode(int aNode)
     // Look for input's node in inputNodes flags.
     return (aNode < INPUT_NODE_MAX) && (inputNodes & (1 << aNode));
 }
-

@@ -107,11 +107,11 @@ void mapHardware()
 
     delay(DELAY_READ);
 
-    // Report abscence of hardware.
+    // Report absence of hardware.
     if (   (inputNodes  == 0)
         || (outputNodes == 0))
     {
-        int row = LCD_ROW_TOP;
+        uint8_t row = LCD_ROW_TOP;
         lcd.clear();
         if (inputNodes == 0)
         {
@@ -346,7 +346,7 @@ void scanInputs()
         if (isInputNode(node))                                        
         {
             // Read current state of pins and if there's been a change
-            int pins = readInputNode(node);
+            uint16_t pins = readInputNode(node);
             if (pins != currentSwitchState[node])
             {
                 // Process all the changed pins.
@@ -373,21 +373,22 @@ void scanInputs()
  *  Return current state if there's a communication error, 
  *  this will prevent any actions being performed.
  */
-int readInputNode(int node)
+uint16_t readInputNode(int node)
 {
-    int value = 0;
+    int      error = 0;
+    uint16_t value = 0;
 
     Wire.beginTransmission(systemData.i2cInputBaseID + node);    
     Wire.write(MCP_GPIOA);
-    value = Wire.endTransmission();
-    if (value)
+    error = Wire.endTransmission();
+    if (error)
     {
-        systemFail(M_I2C_ERROR, value, DELAY_READ);
+        systemFail(M_I2C_ERROR, error, DELAY_READ);
         value = currentSwitchState[node];  // Pretend no change if comms error.
     }
     else if ((value = Wire.requestFrom(systemData.i2cInputBaseID + node, 2)) != 2)
     {
-        systemFail(M_I2C_COMMS, value, DELAY_READ);
+        systemFail(M_I2C_COMMS, error, DELAY_READ);
         value = currentSwitchState[node];  // Pretend no change if comms error.
     }
     else

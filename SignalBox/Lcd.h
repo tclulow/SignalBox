@@ -85,10 +85,10 @@ class LCD: public LiquidCrystal
     /** Print a PROGMEM message to the LCD.
      *  Pad with spaces to aSize.
      */
-    void print_P(PGM_P messagePtr, int aSize)
+    void print_P(PGM_P messagePtr, uint8_t aSize)
     {
         print(PGMT(messagePtr));
-        int padding = aSize - strlen_P(messagePtr);
+        int8_t padding = aSize - strlen_P(messagePtr);
         while (padding-- > 0)
         {
             print(CHAR_SPACE);
@@ -99,7 +99,7 @@ class LCD: public LiquidCrystal
     /** Print a message at a particular location.
      *  Pad with spaces to aSize.
      */
-    void printAt(int col, int row, PGM_P messagePtr, int aSize)
+    void printAt(uint8_t col, uint8_t row, PGM_P messagePtr, uint8_t aSize)
     {
         setCursor(col, row);
         print_P(messagePtr, aSize);
@@ -109,7 +109,7 @@ class LCD: public LiquidCrystal
     /** Print a message at a particular location.
      *  No padding.
      */
-    void printAt(int col, int row, PGM_P messagePtr)
+    void printAt(uint8_t col, uint8_t row, PGM_P messagePtr)
     {
         printAt(col, row, messagePtr, 0);
     }
@@ -117,7 +117,7 @@ class LCD: public LiquidCrystal
 
     /** Print a character at a particular location.
      */
-    void printAt(int col, int row, char aChar)
+    void printAt(uint8_t col, uint8_t row, char aChar)
     {
         setCursor(col, row);
         print(aChar);
@@ -127,7 +127,7 @@ class LCD: public LiquidCrystal
     /** Print a number as a string of hex digits at the specified location.
      *  Padded with leading zeros to length aDigits.
      */
-    void printAtHex(int col, int row, int aValue, int aDigits)
+    void printAtHex(uint8_t col, uint8_t row, int aValue, uint8_t aDigits)
     {
         setCursor(col, row);
         printHex(aValue, aDigits);
@@ -137,9 +137,9 @@ class LCD: public LiquidCrystal
     /** Print a number as a string of hex digits.
      *  Padded with leading zeros to length aDigits.
      */
-    void printHex(int aValue, int aDigits)
+    void printHex(int aValue, uint8_t aDigits)
     {
-        for (int digit = aDigits - 1; digit >= 0; digit--)
+        for (int8_t digit = aDigits - 1; digit >= 0; digit--)
         {
             print(HEX_CHARS[(aValue >> (4 * digit)) & 0xf]);
         }
@@ -149,7 +149,7 @@ class LCD: public LiquidCrystal
     /** Print a number as a string of dec digits at the specified location.
      *  Padded with leading spaces to length aDigits.
      */
-    void printAtDec(int col, int row, int aValue, int aDigits)
+    void printAtDec(uint8_t col, uint8_t row, int aValue, uint8_t aDigits)
     {
         setCursor(col, row);
         printDec(aValue, aDigits, CHAR_SPACE);
@@ -213,7 +213,7 @@ class LCD: public LiquidCrystal
 
     /** Clear a row from the given column to the end.
      */
-    void clearRow(int aCol, int aRow)
+    void clearRow(uint8_t aCol, uint8_t aRow)
     {
         int spaces = 0;
         setCursor(aCol, aRow);
@@ -242,4 +242,3 @@ LCD lcd(8, 9, 4, 5, 6, 7);
 
 
 #endif
-

@@ -214,7 +214,7 @@ uint8_t getModuleId(boolean aIncludeBase);
 /** Print a number as a string of hex digits.
  *  Padded with leading zeros to length aDigits.
  */
-void printHex(int aValue, int aDigits)
+void printHex(int aValue, uint8_t aDigits)
 {
     for (int digit = aDigits - 1; digit >= 0; digit--)
     {
@@ -234,4 +234,3 @@ void dumpMemory();
 
 
 #endif
-

@@ -145,8 +145,8 @@ class InputDef
 
 /** Variables for working with an Input.
  */
-int        inputNodes  = 0;   // Bit map of Input nodes present.
-int        inputNumber = 0;   // Current Input number.
+uint16_t   inputNodes  = 0;   // Bit map of Input nodes present.
+uint8_t    inputNumber = 0;   // Current Input number.
 InputDef   inputDef;          // Definition of the current Input.
 uint32_t   inputTypes  = 0L;  // The types of the Inputs. 2 bits per pin, 16 pins per node = 32 bits.
 uint8_t    inputType   = 0;   // Type of the current Input (2 bits, INPUT_TYPE_MASK).
@@ -159,7 +159,7 @@ void loadInput(int aInput);
 
 /** Load an Input's data from EEPROM.
  */
-void loadInput(int aNode, int aInput);
+void loadInput(uint8_t aNode, uint8_t aInput);
 
 
 /** Save an Input's data to EEPROM.
@@ -179,4 +179,3 @@ boolean isInputNode(int aNode);
 
 
 #endif
-
