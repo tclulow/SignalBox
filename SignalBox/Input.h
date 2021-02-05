@@ -13,7 +13,7 @@
 // Mask for Input options
 #define INPUT_OUTPUT_MAX          6     // Number of outputs each input can control. See also EEPROM in System.h
 // #define INPUT_DELAY_FLAG       0x80     // The Input's output is a delay.
-#define INPUT_OUTPUT_MASK      0x7f     // Mask to get the Input's output without the flag above.
+// #define INPUT_OUTPUT_MASK      0x7f     // Mask to get the Input's output without the flag above.
 #define INPUT_DELAY_MASK       0x0f     // Mask to get the Input's delay without flag above.
 
 // Input types
@@ -105,7 +105,7 @@ class InputDef
      */
     uint8_t getOutput(uint8_t aIndex)
     {
-        return output[aIndex] & INPUT_OUTPUT_MASK;
+        return output[aIndex];
     }
 
 
@@ -113,8 +113,7 @@ class InputDef
      */
     void setOutput(uint8_t aIndex, uint8_t aOutputNumber)
     {
-        output[aIndex] = (output[aIndex] & ~INPUT_OUTPUT_MASK)
-                       | (aOutputNumber  &  INPUT_OUTPUT_MASK);
+        output[aIndex] = aOutputNumber;
     }
 
 

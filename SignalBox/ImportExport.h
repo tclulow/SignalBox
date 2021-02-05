@@ -70,9 +70,8 @@ class ImportExport
         int pin  = 0;
         int mask = 0;
         
-        node = readData();
-        pin  = node & INPUT_PIN_MASK;
-        node = (node >> 4) & INPUT_NODE_MASK;       // Node number is in upper nibble
+        node = readData() & INPUT_NODE_MASK;
+        pin  = readData() & INPUT_PIN_MASK;
         loadInput(node, pin);
     
         readWord();
@@ -97,15 +96,15 @@ class ImportExport
                 if (value >= 0)
                 {
                     // Active Output
-                    inputDef.setOutputNode(index, (value >> 4) & OUTPUT_NODE_MASK);
-                    inputDef.setOutputPin(index,  (value     ) & OUTPUT_PIN_MASK);
+                    inputDef.setOutputNode(index, value & OUTPUT_NODE_MASK);
+                    inputDef.setOutputPin(index, readData() & OUTPUT_PIN_MASK);
                     inputDef.setDelay(index, false);
                 }
                 else
                 {
                     // Delay
                     inputDef.setOutputNode(index, node);
-                    inputDef.setOutputPin(index, value & OUTPUT_PIN_MASK);
+                    inputDef.setOutputPin(index, readData() & OUTPUT_PIN_MASK);
                     inputDef.setDelay(index, true);
                 }
             }
@@ -126,9 +125,8 @@ class ImportExport
         uint8_t type  = 0;
         int     value = 0;
         
-        outputNode = readData();
-        outputPin  = (outputNode     ) & OUTPUT_PIN_MASK;
-        outputNode = (outputNode >> 4) & OUTPUT_NODE_MASK;
+        outputNode = readData() & OUTPUT_NODE_MASK;
+        outputPin  = readData() & OUTPUT_PIN_MASK;
         
         readWord();
         for (type = 0; type < OUTPUT_TYPE_MAX; type++)
@@ -185,9 +183,8 @@ class ImportExport
     {
         int value = 0;
         
-        outputNode = readData();
-        outputPin  = (outputNode     ) & OUTPUT_PIN_MASK;
-        outputNode = (outputNode >> 4) & OUTPUT_NODE_MASK;
+        outputNode = readData() & OUTPUT_NODE_MASK;
+        outputPin  = readData() & OUTPUT_PIN_MASK;
         if (isOutputNode(outputNode))
         {
             readOutput(outputNode, outputPin);
@@ -211,8 +208,8 @@ class ImportExport
                         else
                         {
                             outputDef.setLock(hi, index, true);
-                            outputDef.setLockNode(hi, index, (value >> 4) & OUTPUT_NODE_MASK);
-                            outputDef.setLockPin (hi, index, (value     ) & OUTPUT_PIN_MASK);
+                            outputDef.setLockNode(hi, index, value      & OUTPUT_NODE_MASK);
+                            outputDef.setLockPin (hi, index, readData() & OUTPUT_PIN_MASK);
                         }
                     }
                 }
@@ -256,38 +253,44 @@ class ImportExport
     
     
     /** Read (hexadecimal) data.
+     *  Special-case: letters G-V represent 0x10 to 0x1f.
      *  If dots are present, return a negative number relative to -HEX_MAX
      */
     int readData()
     {
-        int value = 0;
-        int len = readWord();
+        char ch;
+        int  value = 0;
+        int  len   = readWord();
+
         if (len <= 0)
         {
-            value = -HEX_MAX;                        // Delay of zero (ie disabled).
+            value = -HEX_MAX;                   // Nothing to read.
         }
         else
         {
-            if (wordBuffer[0] == CHAR_DOT)      // Delay
+            for (uint8_t index = 0; index < len; index++)
             {
-                value = -HEX_MAX;
-            }
-            else
-            {
-                value = hexValue(wordBuffer[0]) << 4;
-            }
-            
-            if (len == 1)
-            {
-                len = readWord();
-                if (len > 0)
+                ch = wordBuffer[index];
+                value <<= 4;
+
+                if (ch >= CHAR_LOWER_A)
                 {
-                    value += hexValue(wordBuffer[0]);
+                    value += (int)(10 + ch - CHAR_LOWER_A);
                 }
-            }
-            else
-            {
-                value += hexValue(wordBuffer[1]);
+                else if (ch >= CHAR_UPPER_A)
+                {
+                    value += (int)(10 + ch - CHAR_UPPER_A);
+                }
+                else if (ch >= CHAR_ZERO)
+                {
+                    value += (int)(ch - CHAR_ZERO);
+                }
+                else
+                {
+                    // Fail if anything else (including CHAR_DOT).
+                    value = -HEX_MAX;
+                    break;
+                }
             }
         }
 
@@ -295,23 +298,6 @@ class ImportExport
     }
     
 
-    /** Convert a character to it's HEX value.
-     *  Returns zero for illegal chars.
-     */
-    int hexValue(char aChar)
-    {
-        for (int value = HEX_MAX - 1; value >= 0; value--)
-        {
-            if (aChar == HEX_CHARS[value])
-            {
-                return value;
-            }
-        }
-
-        return 0;
-    }
-    
-    
     /** Are we at end-of-line?
      */
     boolean isEndOfLine()
@@ -439,6 +425,7 @@ class ImportExport
      */
     void exportInputs(boolean aAll)
     {
+        // Output header comment
         Serial.print(PGMT(M_EXPORT_INPUT));
         for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
         {
@@ -446,7 +433,8 @@ class ImportExport
             Serial.print(OPTION_ID(index));
         }
         Serial.println();
-    
+
+        // Output all the inputs
         for (int node = 0; node < INPUT_NODE_MAX; node++)
         {
             if (   (aAll)
@@ -458,9 +446,9 @@ class ImportExport
     
                     Serial.print(PGMT(M_INPUT));
                     Serial.print(CHAR_TAB);
-                    printHex(node, 1);
+                    Serial.print(HEX_CHARS[node]);
                     Serial.print(CHAR_TAB);
-                    printHex(pin, 1);
+                    Serial.print(HEX_CHARS[pin]);
                     Serial.print(CHAR_TAB);
                     Serial.print(PGMT(M_INPUT_TYPES[inputType]));
                     
@@ -477,14 +465,14 @@ class ImportExport
                             }
                             else
                             {
-                                printHex(inputDef.getOutputPin(index),  1);
+                                Serial.print(HEX_CHARS[inputDef.getOutputPin(index)]);
                             }
                         }
                         else
                         {
-                            printHex(inputDef.getOutputNode(index), 1);
+                            Serial.print(HEX_CHARS[inputDef.getOutputNode(index)]);
                             Serial.print(CHAR_SPACE);
-                            printHex(inputDef.getOutputPin(index),  1);
+                            Serial.print(HEX_CHARS[inputDef.getOutputPin(index)]);
                         }
                     }
                     Serial.println();
@@ -512,9 +500,9 @@ class ImportExport
     
                     Serial.print(PGMT(M_OUTPUT));
                     Serial.print(CHAR_TAB);
-                    printHex(node, 1);
+                    Serial.print(HEX_CHARS[node]);
                     Serial.print(CHAR_TAB);
-                    printHex(pin, 1);
+                    Serial.print(HEX_CHARS[pin]);
                     Serial.print(CHAR_TAB);
                     Serial.print(PGMT(M_OUTPUT_TYPES[outputDef.getType()]));
                     Serial.print(CHAR_TAB);

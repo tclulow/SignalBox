@@ -96,8 +96,8 @@ const byte LOGO[][8]    = { // { 0x00, 0x00, 0x0e, 0x1f, 0x0f, 0x0f, 0x0f, 0x04 
 const byte BYTES_LO[]   = { 0, 0, 0, 0, 0x11, 0xa, 0x4, 0 };
 
 // Useful characters
-#define HEX_MAX  16
-const char HEX_CHARS[]  = "0123456789abcdef";
+#define HEX_MAX  32
+const char HEX_CHARS[]  = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
 
 const char CHAR_SPACE   = ' ';
 const char CHAR_TAB     = '\t';
@@ -120,7 +120,6 @@ const char CHAR_ZERO    = '0';
 const char CHAR_NINE    = '9';
 const char CHAR_UPPER_A = 'A';
 const char CHAR_LOWER_A = 'a';
-const char CHAR_LOWER_V = 'v';
 const char CHAR_LO      = (char)LOGO_LEN;
 
 

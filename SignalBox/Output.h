@@ -5,9 +5,9 @@
 
 // Output nodes.
 #define OUTPUT_PIN_MAX              8   // 8 outputs to each node.
-#define OUTPUT_PIN_MASK             7   // 3 bits for 8 pins withing an output node.
-#define OUTPUT_NODE_MAX            16   // Maximum nodes.
-#define OUTPUT_NODE_MASK         0x0f   // 4 bits for 16 nodes.
+#define OUTPUT_PIN_MASK             7   // 3 bits for 8 pins withing an output node.outputNodes
+#define OUTPUT_NODE_MAX            32   // Maximum nodes.
+#define OUTPUT_NODE_MASK         0x1f   // 5 bits for 32 nodes.
 #define OUTPUT_NODE_SHIFT           3   // Shift output number this amount to get a node number.
 
 // Output options maxima.
@@ -64,6 +64,7 @@ class OutputDef
     uint8_t locks = 0;                  // The enabled locks.
     uint8_t lockLo[OUTPUT_LOCK_MAX];    // Outputs that lock this output Lo.
     uint8_t lockHi[OUTPUT_LOCK_MAX];    // Outputs that lock this output Hi.
+    uint8_t lockState = 0;              // Lock is against output being Hi (else Lo).
 
     public:
 
@@ -133,7 +134,7 @@ class OutputDef
     }
 
 
-    /** Set the indicated lock.
+    /** Set the indicated lock active (or not).
      */
     void setLock(boolean aHi, uint8_t aIndex, boolean aState)
     {
@@ -212,7 +213,7 @@ class OutputDef
      */
     boolean getLockState(boolean aHi, uint8_t aIndex)
     {
-        return ((aHi ? lockHi[aIndex] : lockLo[aIndex]) & OUTPUT_STATE_MASK) != 0;
+        return lockState & (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0))) != 0;
     }
 
 
@@ -221,13 +222,13 @@ class OutputDef
      */
     void setLockState(boolean aHi, uint8_t aIndex, boolean aState)
     {
-        if (aHi)
+        if (aState)
         {
-            lockHi[aIndex] = (lockHi[aIndex] & ~OUTPUT_STATE_MASK) | (aState ? OUTPUT_STATE_MASK : 0);
+            lockState |=  (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)));
         }
         else
         {
-            lockLo[aIndex] = (lockLo[aIndex] & ~OUTPUT_STATE_MASK) | (aState ? OUTPUT_STATE_MASK : 0);
+            lockState &= ~(1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)));
         }
     }
 
@@ -266,6 +267,7 @@ class OutputDef
             Wire.write(lockLo[index]);
             Wire.write(lockHi[index]);
         }
+        Wire.write(lockState);
     }
 
 
@@ -285,6 +287,7 @@ class OutputDef
             lockLo[index] = Wire.read();
             lockHi[index] = Wire.read();
         }
+        lockState = Wire.read();
     }
 
 
@@ -485,7 +488,7 @@ boolean isServo(uint8_t aType)
 
 /** Variables for working with an Output.
  */
-int        outputNodes  = 0;    // Bit map of Output nodes present.
+long       outputNodes  = 0;    // Bit map of Output nodes present (as many as OUTPUT_NODE_MAX - 32 bits).
 uint8_t    outputNode   = 0;    // Current Output node.
 uint8_t    outputPin    = 0;    // Current Output pin.
 OutputDef  outputDef;           // Definition of current Output.
@@ -591,4 +594,3 @@ boolean isOutputNode(int aNode)
 #endif
 
 #endif
-

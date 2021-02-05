@@ -75,6 +75,10 @@ void mapHardware()
     lcd.setCursor(LCD_COLS - INPUT_NODE_MAX, 0);
     
     // Scan for Input nodes.
+    lcd.clear();
+    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_NODES);
+    lcd.setCursor(LCD_COLS - INPUT_NODE_MAX, 0);
+    
     for (int node = 0; node < INPUT_NODE_MAX; node++)
     {
         Wire.beginTransmission(systemData.i2cInputBaseID + node);
@@ -88,11 +92,18 @@ void mapHardware()
             setInputNodePresent(node);
         }
     }
-
+    delay(DELAY_READ);
+    
     // Scan for Output nodes.
-    lcd.setCursor(0, 1);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+
     for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
     {
+        if (node == LCD_COLS)
+        {
+            lcd.setCursor(0, 1);
+        }
         char state = readOutputStates(node);
 
         if (state == 0)
@@ -272,7 +283,7 @@ void convertEzyBus()
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_UPDATING);
     lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
-    for (outputNode = 0; outputNode < OUTPUT_NODE_MAX; outputNode++)
+    for (outputNode = 0; outputNode < EZY_NODE_MAX; outputNode++)
     {
         lcd.print(HEX_CHARS[outputNode]);
 
