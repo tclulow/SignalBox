@@ -29,7 +29,7 @@
 #define OUTPUT_NUMBER_MASK       0x7f   // Output number (node and pin) occupy these bits.
 #define OUTPUT_TYPE_MASK         0x0f   // Output type mask (4 bits).
 #define OUTPUT_PACE_MASK         0x0f   // Pace is 4 bits.
-#define OUTPUT_PACE_MULT            4   // Pace is multiplied by 16 (shifted left 4 bits).
+#define OUTPUT_PACE_SHIFT           4   // Pace is multiplied by 16 (shifted left 4 bits).
 
 // Masks for locks.
 #define OUTPUT_LOCK_MAX             4   // Four locks of each type (Hi/Lo).
@@ -118,7 +118,7 @@ class OutputDef
      */
     uint8_t getPaceAsSteps()
     {
-        return (OUTPUT_PACE_MASK - getPace()) << OUTPUT_PACE_MULT;
+        return (OUTPUT_PACE_MASK - getPace()) << OUTPUT_PACE_SHIFT;
     }
 
 
