@@ -70,10 +70,6 @@ void setDisplayTimeout(long aTimeout)
  */
 void mapHardware()
 {
-    lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_NODES);
-    lcd.setCursor(LCD_COLS - INPUT_NODE_MAX, 0);
-    
     // Scan for Input nodes.
     lcd.clear();
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_NODES);
@@ -93,16 +89,17 @@ void mapHardware()
         }
     }
     delay(DELAY_READ);
+    waitForButtonRelease();     // Allow more time ro read display
     
     // Scan for Output nodes.
     lcd.clear();
-    lcd.setCursor(0, 0);
+    lcd.setCursor(LCD_COL_START, LCD_ROW_TOP);
 
     for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
     {
         if (node == LCD_COLS)
         {
-            lcd.setCursor(0, 1);
+            lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
         }
         char state = readOutputStates(node);
 
@@ -115,8 +112,8 @@ void mapHardware()
             lcd.print(state); 
         }
     }
-
     delay(DELAY_READ);
+    waitForButtonRelease();     // Allow more time ro read display
 
     // Report absence of hardware.
     if (   (inputNodes  == 0)
