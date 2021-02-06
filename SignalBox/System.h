@@ -56,7 +56,7 @@
 #define REPORT_MAX      4       // Maximum report option.
 
 
-// An options identifying character.
+// Options identified by a character.
 #define OPTION_ID(index)  ((char)(CHAR_UPPER_A + index))
 
 
