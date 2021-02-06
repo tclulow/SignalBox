@@ -1,4 +1,13 @@
 /** Output data.
+ *
+ *
+ *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
+ *
+ *  This work is licensed under the:
+ *      Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+ *      http://creativecommons.org/licenses/by-nc-sa/4.0/
+ *
+ *   For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
 #ifndef _Output_h
 #define _Output_h
@@ -207,13 +216,13 @@ class OutputDef
     }
 
 
-    /** Get the selected locks lock state.
+    /** Get the selected lock's lock state.
      *  That's the state the other output must be in to enforce this lock.
      *  return true = Hi, false = Lo.
      */
     boolean getLockState(boolean aHi, uint8_t aIndex)
     {
-        return lockState & (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0))) != 0;
+        return (lockState & (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)))) != 0;
     }
 
 

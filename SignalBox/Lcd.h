@@ -1,24 +1,18 @@
 /** LCD extension of LiquidCrystal
- *  
- * The circuit:
- * LCD RS pin to digital pin 12m
- * LCD Enable pin to digital pin 11
- * LCD D4 pin to digital pin 5
- * LCD D5 pin to digital pin 4
- * LCD D6 pin to digital pin 3
- * LCD D7 pin to digital pin 2
- * LCD R/W pin to ground
- * LCD VSS pin to ground
- * LCD VCC pin to 5V
- * 10K resistor:
- * ends to +5V and ground
- * wiper to LCD VO pin (pin 3)
- * 
+ *
+ *
+ *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
+ *
+ *  This work is licensed under the:
+ *      Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+ *      http://creativecommons.org/licenses/by-nc-sa/4.0/
+ *
+ *   For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
 #ifndef _LCD_h
 #define _LCD_h
 
-// include the library code:
+// include the LCD library code:
 #include <LiquidCrystal.h>
 
 

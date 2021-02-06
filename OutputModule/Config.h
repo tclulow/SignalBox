@@ -1,4 +1,13 @@
 /** Config data.
+ *
+ *
+ *  (c)Copyright Tony Clulow  2021  tony.clulow@pentadtech.com
+ *
+ *  This work is licensed under the:
+ *      Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+ *      http://creativecommons.org/licenses/by-nc-sa/4.0/
+ *
+ *   For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
 #ifndef _Config_h
 #define _Config_h
@@ -38,4 +47,3 @@ const uint8_t ioPins[IO_PINS]         = { 3, 2, A3, A2, A1, A0, 13, 12 };
 
 
 #endif
-
