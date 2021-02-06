@@ -14,7 +14,7 @@
 
 // Output nodes.
 #define OUTPUT_PIN_MAX              8   // 8 outputs to each node.
-#define OUTPUT_PIN_MASK             7   // 3 bits for 8 pins withing an output node.outputNodes
+#define OUTPUT_PIN_MASK             7   // 3 bits for 8 pins withing an output node.
 #define OUTPUT_NODE_MAX            32   // Maximum nodes.
 #define OUTPUT_NODE_MASK         0x1f   // 5 bits for 32 nodes.
 #define OUTPUT_NODE_SHIFT           3   // Shift output number this amount to get a node number.
