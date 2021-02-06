@@ -765,9 +765,10 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 //        steps = steps * outputDefs[aPin].getPaceAsSteps()
 //                      / OUTPUT_SERVO_MAX;
         // Adjust steps in proportion to the range to be moved.
-        outputs[aPin].steps = ((long)outputs[aPin].steps)
+        outputs[aPin].steps = ((long)outputs[aPin].steps - 1)
                             * (abs(((long)outputs[aPin].target) - ((long)outputs[aPin].start)))
-                            / ((long)OUTPUT_SERVO_MAX);
+                            / ((long)OUTPUT_SERVO_MAX)
+                            + 1;
 
         // Add trigger point for SIGNALS, but only if they're ascending the whole range.
         if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
@@ -987,7 +988,7 @@ void stepServo(int aPin)
                                                   / 100;
                     outputs[aPin].delayTo = millis() + random(SIGNAL_PAUSE_DELAY);
                     
-                    if (isDebug(DEBUG_FULL))
+                    if (isDebug(DEBUG_DETAIL))
                     {
                         reportOutput(M_DEBUG_TRIGGER, aPin);
                     }
@@ -1004,7 +1005,7 @@ void stepServo(int aPin)
                         outputs[aPin].delayTo = millis() + random(SIGNAL_PAUSE_RESTART);
                     }
                     
-                    if (isDebug(DEBUG_FULL))
+                    if (isDebug(DEBUG_DETAIL))
                     {
                         reportOutput(M_DEBUG_TRIGGER, aPin);
                     }
@@ -1034,7 +1035,7 @@ void stepServo(int aPin)
                 outputs[aPin].altValue = outputs[aPin].steps - random(outputs[aPin].steps)
                                                                * SIGNAL_BOUNCE_PERCENTAGE
                                                                / 100;
-                if (isDebug(DEBUG_FULL))
+                if (isDebug(DEBUG_DETAIL))
                 {
                     reportOutput(M_DEBUG_TRIGGER, aPin);
                 }
@@ -1042,7 +1043,7 @@ void stepServo(int aPin)
             else
             {
                 // Stop further movement.
-                outputs[aPin].steps = 0;
+                // outputs[aPin].steps = 0;
                 
                 // If there's a reset, reset the servo after the specified delay.
                 if (   (persisting)
