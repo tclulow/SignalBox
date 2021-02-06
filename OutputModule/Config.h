@@ -12,11 +12,9 @@
 #ifndef _Config_h
 #define _Config_h
 
-#define STEP_MODULE_ID            100   // Delay (msecs) between steps of ID flashing.
 #define STEP_SERVO                 25   // Delay (msecs) between steps of a Servo.
 #define STEP_LED                    5   // Delay (msecs) between steps of a LED.
 #define STEP_FLASH                 10   // Delay (msecs) between steps of flashes of a FLASH or BLINK.
-#define STEP_FLICKER_MASK        0x0c   // Mask 2 bits (not right-most which are always 0) to gererate 1-in-4 chance of flicker.
 #define MAX_PACE                  124   // Maximum pace value.
 #define PACE_STEPS                128   // Pace adjustment when converting to steps.
 
