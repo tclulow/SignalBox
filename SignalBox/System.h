@@ -19,7 +19,7 @@
     #define MAGIC_NUMBER 0x74756f53         // Magic number = "Sout".
 #endif
 
-#define VERSION         0x0026              // Version number of software.  See also M_VERSION.
+#define VERSION         0x0300              // Version number of software.  See also M_VERSION.
 
 
 // i2c node numbers.
@@ -37,6 +37,7 @@
 #define SERIAL_SPEED   19200    // Speed of the serial port.
 #define DELAY_START     2000    // Pause during start-up to avoid swamping Serial IO.
 #define DELAY_BLINK      250    // Blink interval when showing version number.
+#define DELAY_BLINK_LONG 750    // Blink to show zero, or gap between sections.
 
 
 // Debug levels.

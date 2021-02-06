@@ -107,7 +107,14 @@ void flashVersion()
     for (int ind = 0; ind < strlen_P(M_VERSION); ind++)
     {
         char ch = pgm_read_byte_near(M_VERSION + ind);
-        if (ch >= CHAR_ZERO && ch <= CHAR_NINE)
+        if (ch == CHAR_ZERO)
+        {
+            digitalWrite(LED_BUILTIN, HIGH);
+            delay(DELAY_BLINK_LONG);
+            digitalWrite(LED_BUILTIN, LOW);
+            delay(DELAY_BLINK);
+        }
+        else if (ch > CHAR_ZERO && ch <= CHAR_NINE)
         {
             while (ch-- > CHAR_ZERO)
             {
@@ -119,7 +126,7 @@ void flashVersion()
         }
         else
         {
-            delay(DELAY_BLINK * 2);
+            delay(DELAY_BLINK_LONG);
         }
     }
 
@@ -135,11 +142,11 @@ void flashVersion()
     
     #if !MASTER
     // Flash module number.
-    delay(DELAY_BLINK * 3);
-    for (uint8_t mask = 1; mask <= 0x08; mask <<= 1)
+    delay(DELAY_BLINK_LONG);
+    for (uint8_t mask = 1; mask <= OUTPUT_NODE_MASK; mask <<= 1)
     {
         digitalWrite(LED_BUILTIN, HIGH);
-        delay(DELAY_BLINK * (getModuleId(false) & mask ? 3 : 1));
+        delay((getModuleId(false) & mask) ? DELAY_BLINK_LONG : DELAY_BLINK);
         digitalWrite(LED_BUILTIN, LOW);
         delay(DELAY_BLINK);
     }
