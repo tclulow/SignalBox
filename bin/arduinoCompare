@@ -2,7 +2,7 @@
 # Check common files have no differences
 
 cd ~/JavaDev/Pentad/Arduino/SignalBox
-for FILE in Comms.h Messages.h Output.h System.h System.ino
+for FILE in Comms.h Config.h Messages.h Output.h System.h System.ino
 do
     echo $FILE
     diff $FILE ../OutputModule

@@ -12,6 +12,16 @@
 #ifndef _Config_h
 #define _Config_h
 
+
+#define DELAY_READ          2000    // Delay in msecs when the LCD may need to be read by an operator.
+#define DELAY_BUTTON_WAIT     20    // Delay when waiting for button state to change - debounce.
+#define DELAY_BUTTON_DELAY   250    // Delay before auto-repeating button.
+#define DELAY_BUTTON_REPEAT  100    // Auto-repeat button when held continuously.
+
+#define STEP_SCAN             50    // Steps in msecs between scans of the input switches.
+#define STEP_HEARTBEAT       200    // Steps in msecs between changes of the heartbeat indicator.
+
+
 #define STEP_SERVO                 25   // Delay (msecs) between steps of a Servo.
 #define STEP_LED                    5   // Delay (msecs) between steps of a LED.
 #define STEP_FLASH                 10   // Delay (msecs) between steps of flashes of a FLASH or BLINK.
@@ -37,11 +47,15 @@
 #define DELAY_MULTIPLIER        1000L   // Multiply delay values by this amount (convert to seconds).
 
 
+#if !MASTER
+
 // The module jumper pins
 const uint8_t jumperPins[JUMPER_PINS] = { 1, 0, A7, A6 };
 
 // The digital IO pins.
 const uint8_t ioPins[IO_PINS]         = { 3, 2, A3, A2, A1, A0, 13, 12 };
 
+
+#endif
 
 #endif
