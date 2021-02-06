@@ -207,13 +207,13 @@ class OutputDef
     }
 
 
-    /** Get the selected locks lock state.
+    /** Get the selected lock's lock state.
      *  That's the state the other output must be in to enforce this lock.
      *  return true = Hi, false = Lo.
      */
     boolean getLockState(boolean aHi, uint8_t aIndex)
     {
-        return lockState & (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0))) != 0;
+        return (lockState & (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)))) != 0;
     }
 
 
