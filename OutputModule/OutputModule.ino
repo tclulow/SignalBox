@@ -1029,6 +1029,7 @@ void stepServo(int aPin)
             if (   (persisting)
                 && (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
                 && (!outputDefs[aPin].getState())
+                && (outputs[aPin].steps > 1)
                 && (random(100) < SIGNAL_BOUNCE_CHANCE))
             {
                 // Go back a little.
