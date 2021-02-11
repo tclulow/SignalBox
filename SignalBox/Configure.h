@@ -48,6 +48,15 @@ class Configure
      */
     void displayAll()
     {
+        displayTop();
+        displayDetail();
+    }
+
+
+    /** Display the top row of data.
+     */
+    void displayTop()
+    {
         lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_TOP_MENU[topMenu], LCD_LEN_OPTION);
         switch (topMenu)
         {
@@ -64,8 +73,6 @@ class Configure
             default:         systemFail(M_ALL, topMenu, 0);
                              break;
         }
-
-        displayDetail();
     }
 
 
@@ -894,7 +901,8 @@ class Configure
                                         {
                                             outNode = renumberNode(outNode, (jumpers ? I2C_MODULE_ID_JUMPERS : newNode));
                                             readOutput(outNode, outPin);
-                                            lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[outNode]);
+                                            displayTop();
+                                            // lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[outNode]);
                                             finished = true;
                                         }
                                         else
@@ -1000,14 +1008,18 @@ class Configure
                         }
                     }
                 }
+                delay(DELAY_READ);
 
                 // Show work as Output locks are updated.
-                lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-                lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+                lcd.clear();
 
                 // Renumber all the Outputs' locks as necessary.
                 for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
                 {
+                    if (node == LCD_COLS)
+                    {
+                        lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+                    }
                     if (isOutputNode(node))
                     {
                         lcd.print(HEX_CHARS[node]);
