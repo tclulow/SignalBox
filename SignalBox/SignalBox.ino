@@ -68,7 +68,7 @@ void setDisplayTimeout(long aTimeout)
 
 /** Map the Input and Output nodes.
  */
-void mapHardware()
+void scanHardware()
 {
     // Scan for Input nodes.
     lcd.clear();
@@ -727,7 +727,7 @@ void setup()
     }
 
     // Discover and initialise attached hardware.
-    mapHardware();                            // Scan for attached hardware.
+    scanHardware();                           // Scan for attached hardware.
     initInputs();                             // Initialise all inputs.
 }
 

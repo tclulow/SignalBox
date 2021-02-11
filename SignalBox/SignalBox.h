@@ -17,9 +17,9 @@
 #define PIN_CALIBRATE    11
 
 
-/** Map the Input and Output nodes.
+/** Scan for attached hardware (Input and Output nodes).
  */
-void mapHardware();
+void scanHardware();
 
 
 /** Process all the Input's Outputs.

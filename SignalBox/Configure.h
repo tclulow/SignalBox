@@ -572,7 +572,7 @@ class Configure
                                                          break;
                                         case SYS_I2C:    changed |= menuSystemI2c();
                                                          break;
-                                        case SYS_NODES:  mapHardware();
+                                        case SYS_NODES:  scanHardware();
                                                          displayAll();
                                                          break;
                                         case SYS_DEBUG:  changed |= menuSystemDebug();
