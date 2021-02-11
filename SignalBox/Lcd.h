@@ -60,16 +60,16 @@
 
 /** An LCD class that can print PROGMEM messages.
  */
-class LCD: public LiquidCrystal
+class Lcd: public LiquidCrystal
 {
     public:
-    LCD(uint8_t rs,  uint8_t enable, 
+    Lcd(uint8_t rs,  uint8_t enable, 
             uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3):
             LiquidCrystal(rs, enable, d0, d1, d2, d3)
     {
     }
 
-    LCD(uint8_t rs, uint8_t rw, uint8_t enable,
+    Lcd(uint8_t rs, uint8_t rw, uint8_t enable,
             uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3):
             LiquidCrystal(rs, rw, enable, d0, d1, d2, d3)
     {
@@ -232,7 +232,7 @@ class LCD: public LiquidCrystal
  *  LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
  *  LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
  */
-LCD lcd(8, 9, 4, 5, 6, 7);
+Lcd lcd(8, 9, 4, 5, 6, 7);
 
 
 #endif
