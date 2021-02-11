@@ -94,13 +94,13 @@ void setup()
     Serial.begin(SERIAL_SPEED);     // Serial IO.
 
     // Configure the Jumper pins for input.
-    for (int pin = 0; pin < JUMPER_PINS; pin++)
+    for (uint8_t pin = 0; pin < JUMPER_PINS; pin++)
     {
         pinMode(jumperPins[pin], INPUT_PULLUP);
     }
 
     // Configure the IO pins for output.
-    for (int pin = 0; pin < IO_PINS; pin++)
+    for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
         pinMode(OUTPUT_BASE_PIN + pin, OUTPUT);
         pinMode(ioPins[pin], OUTPUT);
@@ -226,7 +226,7 @@ void reportOutput(PGM_P aHeader, uint8_t aPin)
  *  Detach/attach servo as necessary.
  *  Set outputs entry if movement necessary.
  */
-void initOutput(int aPin, uint8_t aOldType)
+void initOutput(uint8_t aPin, uint8_t aOldType)
 {
     if (isDebug(DEBUG_BRIEF))
     {
@@ -946,7 +946,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
 void stepServos()
 {
     // Move any Outputs that need moving.
-    for (int pin = 0; pin < IO_PINS; pin++)
+    for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
         if (   (outputDefs[pin].isServo())
             && (outputs[pin].steps > 0))
@@ -963,7 +963,7 @@ void stepServos()
 
 /** Step a Servo to its next position.
  */
-void stepServo(int aPin)
+void stepServo(uint8_t aPin)
 {
     if (outputs[aPin].step <= outputs[aPin].steps)
     {
@@ -1098,7 +1098,7 @@ void stepServo(int aPin)
 void stepLeds()
 {
     // Move any Leds that need moving.
-    for (int pin = 0; pin < IO_PINS; pin++)
+    for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
         if (outputDefs[pin].isLed())
         {
@@ -1114,7 +1114,7 @@ void stepLeds()
 
 /** Step a Led to its next intensity.
  */
-void stepLed(int aPin)
+void stepLed(uint8_t aPin)
 {
     if (outputs[aPin].step < outputs[aPin].steps)
     {
@@ -1185,7 +1185,7 @@ void stepLed(int aPin)
 void stepFlashes()
 {
     // Flash any Outputs that need flashing.
-    for (int pin = 0; pin < IO_PINS; pin++)
+    for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
         if (outputDefs[pin].isFlasher())
         {
@@ -1361,7 +1361,7 @@ void loop()
     }
 
     // Set LED Outputs based on their intensity value/alt, using the clock to generate a PWM signal.
-    for (int pin = 0; pin < IO_PINS; pin++)
+    for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
         if (   (outputDefs[pin].isLed())
             || (outputDefs[pin].isFlasher()))
