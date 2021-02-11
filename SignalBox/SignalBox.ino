@@ -675,6 +675,9 @@ void setup()
         Serial.println();
     }
 
+    // Initialise alternate button pins.
+    initButtonPins();
+    
     // Flash our version number on the built-in LED.
     flashVersion();
     

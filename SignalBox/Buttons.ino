@@ -65,7 +65,7 @@ void calibrateButtons()
 
 int lastButton = -1;
 /** Read the input button pressed.
- *  Return one of the constants above.
+ *  Return one of the button constants.
  */
 int readButton()
 {
@@ -81,11 +81,25 @@ int readButton()
 //        Serial.println(value);
 //    }
 
+    // See if BUTTON_ANALOG is pressed.
     for (button = 0; button < BUTTON_LIMIT; button++)
     {
         if (value >= systemData.buttons[button])
         {
             break;
+        }
+    }
+
+    // If no BUTTON_ANALOG pressed.
+    if (button == BUTTON_NONE)
+    {
+        // Scan alternate buttons.
+        for (button = BUTTON_LIMIT; button > BUTTON_NONE; button--)
+        {
+            if (!digitalRead(BUTTON_PINS[button]))
+            {
+                break;
+            }
         }
     }
 
