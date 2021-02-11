@@ -104,7 +104,7 @@ void flashVersion()
 {
     pinMode(LED_BUILTIN, OUTPUT);   // Configure the on-board LED pin for output
     
-    for (int ind = 0; ind < strlen_P(M_VERSION); ind++)
+    for (uint8_t ind = 0; ind < strlen_P(M_VERSION); ind++)
     {
         char ch = pgm_read_byte_near(M_VERSION + ind);
         if (ch == CHAR_ZERO)
@@ -217,7 +217,7 @@ uint8_t getModuleId(boolean aIncludeBase)
     {
         // Configure i2c from jumpers.
         moduleId = 0;
-        for (int pin = 0, mask=1; pin < JUMPER_PINS; pin++, mask <<= 1)
+        for (uint8_t pin = 0, mask=1; pin < JUMPER_PINS; pin++, mask <<= 1)
         {
             if (   (   (jumperPins[pin] >= ANALOG_PIN_FIRST)
                     && (analogRead(jumperPins[pin]) > ANALOG_PIN_CUTOFF))

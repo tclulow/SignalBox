@@ -209,9 +209,8 @@ class Lcd: public LiquidCrystal
      */
     void clearRow(uint8_t aCol, uint8_t aRow)
     {
-        int spaces = 0;
         setCursor(aCol, aRow);
-        for (spaces = 0; spaces < LCD_COLS - aCol; spaces++)
+        for (uint8_t spaces = 0; spaces < LCD_COLS - aCol; spaces++)
         {
             print(CHAR_SPACE);
         }

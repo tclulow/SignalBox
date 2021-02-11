@@ -160,7 +160,7 @@ uint8_t    inputType   = 0;   // Type of the current Input (2 bits, INPUT_TYPE_M
 
 /** Load an Input's data from EEPROM.
  */
-void loadInput(int aInput);
+void loadInput(uint8_t aInput);
 
 
 /** Load an Input's data from EEPROM.
@@ -176,12 +176,12 @@ void saveInput();
 
 /** Record the presence of an InputNode in the map.
  */
-void setInputNodePresent(int aNode);
+void setInputNodePresent(uint8_t aNode);
 
 
 /** Is an Input node present?
  */
-boolean isInputNode(int aNode);
+boolean isInputNode(uint8_t aNode);
 
 
 #endif

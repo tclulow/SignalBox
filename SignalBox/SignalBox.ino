@@ -75,7 +75,7 @@ void mapHardware()
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_NODES);
     lcd.setCursor(LCD_COLS - INPUT_NODE_MAX, 0);
     
-    for (int node = 0; node < INPUT_NODE_MAX; node++)
+    for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
         Wire.beginTransmission(systemData.i2cInputBaseID + node);
         if (Wire.endTransmission())   
@@ -143,7 +143,7 @@ void initInputs()
     lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
     // Initialise every Input node
-    for(int node = 0; node < INPUT_NODE_MAX; node++)
+    for(uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
         if (isInputNode(node))
         {
@@ -255,7 +255,7 @@ void defaultInputs(uint8_t aInputType)
             // Create an input.
             inputDef.setOutput(0, inputNumber);     // Map 1-1 inputs to outputs.
             inputDef.setDelay(0, false);
-            for (int index = 1; index < INPUT_OUTPUT_MAX; index++)
+            for (uint8_t index = 1; index < INPUT_OUTPUT_MAX; index++)
             {
                 inputDef.setOutput(index, 0);       // Zero-length delay.
                 inputDef.setDelay(index, true);
@@ -381,7 +381,7 @@ void scanInputs()
  *  Return current state if there's a communication error, 
  *  this will prevent any actions being performed.
  */
-uint16_t readInputNode(int node)
+uint16_t readInputNode(uint8_t node)
 {
     int      error = 0;
     uint16_t value = 0;
@@ -480,7 +480,7 @@ void processInput(uint16_t aState)
  */
 boolean isLocked(boolean aNewState)
 {
-    for (int inpIndex = 0; inpIndex < INPUT_OUTPUT_MAX; inpIndex++)
+    for (uint8_t inpIndex = 0; inpIndex < INPUT_OUTPUT_MAX; inpIndex++)
     {
         if (!inputDef.isDelay(inpIndex))
         {
@@ -552,7 +552,7 @@ void processInputOutputs(boolean aNewState)
 /** Process an Input's n'th Output, setting it to the given state.
  *  Accumulate delay before or after movement depending on direction outputs are being processed.
  */
-uint8_t processInputOutput(int aIndex, uint8_t aState, uint8_t aDelay)
+uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
 {
     uint8_t endDelay = aDelay;
 

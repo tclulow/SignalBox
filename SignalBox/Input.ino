@@ -137,7 +137,7 @@ void saveInput()
 
 /** Record the presence of an InputNode in the map.
  */
-void setInputNodePresent(int aNode)
+void setInputNodePresent(uint8_t aNode)
 {
     inputNodes |= (1 << aNode); 
 }
@@ -145,7 +145,7 @@ void setInputNodePresent(int aNode)
 
 /** Is an Input node present?
  */
-boolean isInputNode(int aNode)
+boolean isInputNode(uint8_t aNode)
 {
     // Look for input's node in inputNodes flags.
     return (aNode < INPUT_NODE_MAX) && (inputNodes & (1 << aNode));

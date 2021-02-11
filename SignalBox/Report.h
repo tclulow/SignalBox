@@ -15,7 +15,7 @@
 
 /** Is reporting enabled (at a particular level)?
  */
-boolean reportEnabled(int aLevel);
+boolean reportEnabled(uint8_t aLevel);
 
 
 /** Length of time to wait for depending on the reporting level.

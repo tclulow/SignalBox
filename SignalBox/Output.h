@@ -457,7 +457,7 @@ OutputDef outputDefs[OUTPUT_PIN_MAX];
 
 /** Load an Output's definition from EEPROM.
  */
-void loadOutput(int aPin)
+void loadOutput(uint8_t aPin)
 {
     EEPROM.get(OUTPUT_BASE + aPin * sizeof(OutputDef), outputDefs[aPin]);
     if (isDebug(DEBUG_DETAIL))
@@ -469,7 +469,7 @@ void loadOutput(int aPin)
 
 /** Save an Output's definition to EEPROM.
  */
-void saveOutput(int aPin)
+void saveOutput(uint8_t aPin)
 {
     if (aPin < OUTPUT_PIN_MAX)
     {
@@ -594,7 +594,7 @@ void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState)
 /** Is an Output node present?
  *  Look for Output's node in outputNodes.
  */
-boolean isOutputNode(int aNode)
+boolean isOutputNode(uint8_t aNode)
 {
     return (aNode < OUTPUT_NODE_MAX) && (outputNodes & (1 << aNode));
 }

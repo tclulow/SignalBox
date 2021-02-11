@@ -63,13 +63,13 @@ void calibrateButtons()
 }
 
 
-int lastButton = -1;
+uint8_t lastButton = 0xff;
 /** Read the input button pressed.
  *  Return one of the button constants.
  */
-int readButton()
+uint8_t readButton()
 {
-    int button = 0;
+    uint8_t button = 0;
     int value  = analogRead(BUTTON_ANALOG);
 
 //    static int previous = 0;
@@ -140,9 +140,9 @@ void waitForButtonRelease()
  *  First wait for all buttons to be released.
  *  Return the button pressed.
  */
-int waitForButton()
+uint8_t waitForButton()
 {
-    int button;
+    uint8_t button;
     
     waitForButtonRelease();
     
@@ -150,7 +150,7 @@ int waitForButton()
     {
         delay(DELAY_BUTTON_WAIT);
     }
-    while ((button = readButton()) == 0);
+    while ((button = readButton()) == BUTTON_NONE);
     
     delay(DELAY_BUTTON_WAIT);
 

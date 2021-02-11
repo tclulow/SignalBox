@@ -184,7 +184,7 @@ class Configure
      */
     void displaySystemI2cParams()
     {
-        int col = LCD_COL_I2C_PARAM;
+        uint8_t col = LCD_COL_I2C_PARAM;
 
         lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
         
@@ -215,7 +215,7 @@ class Configure
 
     /** Display an i2c parameter's prompt above it.
      */
-    void displayI2cPrompt(int aParam)
+    void displayI2cPrompt(uint8_t aParam)
     {
         lcd.clearRow(LCD_COL_I2C_PARAM, LCD_ROW_TOP);
         lcd.printAt(LCD_COL_I2C_PARAM + aParam * LCD_COL_I2C_STEP, LCD_ROW_TOP, M_I2C_PROMPTS[aParam], LCD_LEN_OPTION);
@@ -254,7 +254,7 @@ class Configure
         lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
         lcd.setCursor(LCD_COL_INPUT_OUTPUT, LCD_ROW_BOT);
         
-        for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
+        for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
         {
             if (inputDef.isDelay(index))
             {
@@ -280,7 +280,7 @@ class Configure
 
     /** Display an Input's output settings, node and pin.
      */
-    void displayInputEdit(int aIndex)
+    void displayInputEdit(uint8_t aIndex)
     {
         if (inputDef.isDelay(aIndex))
         {
@@ -597,7 +597,6 @@ class Configure
     {
         boolean finished = false;
         boolean changed  = false;
-        int     index    = 0;
 
         markField(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, LCD_COL_REPORT_LENGTH, true);
 
@@ -634,7 +633,7 @@ class Configure
         boolean changed = false;
         int     index   = 0;
 
-        int params[] = { systemData.i2cControllerID, systemData.i2cInputBaseID, systemData.i2cOutputBaseID };
+        uint8_t params[] = { systemData.i2cControllerID, systemData.i2cInputBaseID, systemData.i2cOutputBaseID };
         displayI2cPrompt(index);
         markField(LCD_COL_I2C_PARAM, LCD_ROW_BOT, 2, true);
 
@@ -690,7 +689,6 @@ class Configure
     {
         boolean finished = false;
         boolean changed  = false;
-        int     index    = 0;
 
         markField(LCD_COL_DEBUG_PARAM, LCD_ROW_BOT, LCD_COL_DEBUG_LENGTH, true);
 
@@ -827,7 +825,7 @@ class Configure
     {
         uint8_t next = aStart & (aIsInput ? INPUT_NODE_MASK : OUTPUT_NODE_MASK);
         
-        for (int i = 0; i < (aIsInput ? INPUT_NODE_MAX : OUTPUT_NODE_MAX); i++)
+        for (uint8_t ind = 0; ind < (aIsInput ? INPUT_NODE_MAX : OUTPUT_NODE_MAX); ind++)
         {
             next = (next + aAdjust) & (aIsInput ? INPUT_NODE_MASK : OUTPUT_NODE_MASK);
             
@@ -1265,7 +1263,7 @@ class Configure
 
     /** Process an Input's Output's node.
      */
-    boolean menuInputOutputNode(int aIndex)
+    boolean menuInputOutputNode(uint8_t aIndex)
     {
         boolean changed  = false;
         boolean finished = false;
@@ -1322,7 +1320,7 @@ class Configure
     }
 
 
-    boolean menuInputOutputPin(int aIndex)
+    boolean menuInputOutputPin(uint8_t aIndex)
     {
         boolean finished = false;
         boolean changed  = false;
@@ -1482,7 +1480,7 @@ class Configure
 
     /** Process Output's Lo parameter (0-180) menu.
      */
-    boolean menuOutputLo(int aLimit)
+    boolean menuOutputLo(uint8_t aLimit)
     {
         boolean finished = false;
         boolean changed  = false;
@@ -1552,7 +1550,7 @@ class Configure
 
     /** Process the Output Hi parameter.
      */
-    boolean menuOutputHi(int aLimit)
+    boolean menuOutputHi(uint8_t aLimit)
     {
         boolean finished = false;
         boolean changed  = false;
