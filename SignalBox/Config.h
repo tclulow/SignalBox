@@ -13,18 +13,26 @@
 #define _Config_h
 
 
-#define DELAY_READ          2000    // Delay in msecs when the LCD may need to be read by an operator.
-#define DELAY_BUTTON_WAIT     20    // Delay when waiting for button state to change - debounce.
-#define DELAY_BUTTON_DELAY   250    // Delay before auto-repeating button.
-#define DELAY_BUTTON_REPEAT  100    // Auto-repeat button when held continuously.
+#define SERIAL_SPEED   19200    // Speed of the serial port.
 
-#define STEP_SCAN             50    // Steps in msecs between scans of the input switches.
-#define STEP_HEARTBEAT       200    // Steps in msecs between changes of the heartbeat indicator.
+#define DELAY_START             2000    // Pause during start-up to avoid swamping Serial IO.
+#define DELAY_BLINK              250    // Blink interval when showing version number.
+#define DELAY_BLINK_LONG         750    // Blink to show zero, or gap between sections.
+
+#define DELAY_READ              2000    // Delay in msecs when the LCD may need to be read by an operator.
+#define DELAY_BUTTON_WAIT         20    // Delay when waiting for button state to change - debounce.
+#define DELAY_BUTTON_DELAY       250    // Delay before auto-repeating button.
+#define DELAY_BUTTON_REPEAT      100    // Auto-repeat button when held continuously.
+
+#define DELAY_MULTIPLIER        1000L   // Multiply delay values by this amount (convert to seconds).
 
 
+#define STEP_SCAN                 50    // Steps in msecs between scans of the input switches.
+#define STEP_HEARTBEAT           200    // Steps in msecs between changes of the heartbeat indicator.
 #define STEP_SERVO                 25   // Delay (msecs) between steps of a Servo.
 #define STEP_LED                    5   // Delay (msecs) between steps of a LED.
 #define STEP_FLASH                 10   // Delay (msecs) between steps of flashes of a FLASH or BLINK.
+
 #define MAX_PACE                  124   // Maximum pace value.
 #define PACE_STEPS                128   // Pace adjustment when converting to steps.
 
@@ -44,7 +52,6 @@
 #define ANALOG_PIN_CUTOFF       0x200   // When usinging analog pin for digital purposes, cutoff at this value (half of full range 0-3ff).     
 
 
-#define DELAY_MULTIPLIER        1000L   // Multiply delay values by this amount (convert to seconds).
 
 
 #if !MASTER
