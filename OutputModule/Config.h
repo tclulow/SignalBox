@@ -26,7 +26,6 @@
 
 #define DELAY_MULTIPLIER        1000L   // Multiply delay values by this amount (convert to seconds).
 
-
 #define STEP_SCAN                 50    // Steps in msecs between scans of the input switches.
 #define STEP_HEARTBEAT           200    // Steps in msecs between changes of the heartbeat indicator.
 #define STEP_SERVO                 25   // Delay (msecs) between steps of a Servo.
@@ -50,8 +49,6 @@
 #define OUTPUT_BASE_PIN             4   // Outputs attached to this pin and the next 7 more.
 #define ANALOG_PIN_FIRST           A0   // First analog pin. 
 #define ANALOG_PIN_CUTOFF       0x200   // When usinging analog pin for digital purposes, cutoff at this value (half of full range 0-3ff).     
-
-
 
 
 #if !MASTER
