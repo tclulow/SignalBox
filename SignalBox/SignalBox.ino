@@ -113,7 +113,7 @@ void scanHardware()
         }
     }
     delay(DELAY_READ);
-    waitForButtonRelease();     // Allow more time ro read display
+    waitForButtonRelease();     // Allow more time to read display
 
     // Report absence of hardware.
     if (   (inputNodes  == 0)
@@ -682,8 +682,9 @@ void setup()
     flashVersion();
     
     // Initialise subsystems.
-    Wire.begin(systemData.i2cControllerID);   // I2C network
-    pinMode(PIN_CALIBRATE, INPUT_PULLUP);     // Calibration input pin (11).
+    Wire.begin(systemData.i2cControllerID);     // I2C network
+    // Wire.setTimeout(25000L);                 // Doesn't seem to have any effect.
+    pinMode(PIN_CALIBRATE, INPUT_PULLUP);       // Calibration input pin (11).
 
     // Deal with first run (software has never been run before).
     if (!loadSystemData())
