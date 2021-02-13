@@ -76,6 +76,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,   M_SERVO, M_SIGNAL, M_LED, M_L
     const char M_DOWN[]             PROGMEM = "Down";
     const char M_UP[]               PROGMEM = "Up";
     const char M_RIGHT[]            PROGMEM = "Right";
+    const char M_SEQUENCE[]         PROGMEM = "Out of sequence";
     
     // Start-up and first-run messages.
     const char M_SETUP[]            PROGMEM = "Setup";

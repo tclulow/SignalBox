@@ -16,7 +16,7 @@
  */
 void calibrateButtons()
 {
-    int previous = 1024;
+    int previous = BUTTON_THRESHHOLD;
     int value    = 0;
 
     // Announce calibration
@@ -36,13 +36,11 @@ void calibrateButtons()
         lcd.clearRow(LCD_COL_CALIBRATE, LCD_ROW_BOT);
         lcd.printAt(LCD_COL_CALIBRATE, LCD_ROW_BOT, M_BUTTONS[button + 1], LCD_LEN_OPTION);
 
-        // Record average between this button and the previous.
+        // Wait for a button to be pressed
         while ((value = analogRead(A0)) > BUTTON_THRESHHOLD);
         delay(DELAY_BUTTON_WAIT);
-        systemData.buttons[button] = (previous + value) / 2;
-        previous = value;
 
-        if (isDebug(DEBUG_DETAIL))
+        if (isDebug(DEBUG_ERRORS))
         {
             Serial.print(millis());
             Serial.print(CHAR_TAB);
@@ -50,13 +48,36 @@ void calibrateButtons()
             Serial.print(PGMT(M_DEBUG_VALUE));
             Serial.print(value, HEX);
             Serial.print(PGMT(M_DEBUG_TARGET));
-            Serial.print(systemData.buttons[button], HEX);
+            Serial.print(previous, HEX);
             Serial.println();
         }
+
+        // Report the button's value
+        lcd.setCursor(LCD_COLS - 4, LCD_ROW_BOT);
+        lcd.printDec(value, 4, CHAR_SPACE);
 
         // Wait for button to be released.
         while (analogRead(A0) < BUTTON_THRESHHOLD);
         delay(DELAY_BUTTON_WAIT);
+
+        // Check for buttons out-of-sequence
+        if (previous < value)
+        {
+            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SEQUENCE, LCD_COLS);
+            delay(DELAY_READ);
+
+            // Force start again.
+            button = -1;
+            previous = BUTTON_THRESHHOLD;
+            lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_PRESS, LCD_COLS);
+        }
+        else
+        {
+            // Record button barrier (half way between this button and the previous one).
+            systemData.buttons[button] = (previous + value) / 2;
+            previous = value;
+        }
     }
 
     lcd.clear();
