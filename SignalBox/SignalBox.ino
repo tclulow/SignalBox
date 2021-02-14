@@ -747,17 +747,17 @@ void loop()
     }
 
     // Process any inputs
-    if (now - tickScan > STEP_SCAN)
+    if (now > tickScan)
     {
-        tickScan = now;
+        tickScan = now + STEP_SCAN;
         // scanOutputs();
         scanInputs();
     }
     
     // Show heartbeat.
-    if (now - tickHeartBeat > STEP_HEARTBEAT)
+    if (now > tickHeartBeat)
     {
-        tickHeartBeat = now;
+        tickHeartBeat = now + STEP_HEARTBEAT;
         
         // If display timeout has expired, clear it.
         if (   (displayTimeout > 0)

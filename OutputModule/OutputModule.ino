@@ -1339,24 +1339,24 @@ void loop()
 //    }
 
     // Every STEP_SERVO msecs, step the servos if necessary
-    if ((now - tickServo) > STEP_SERVO)
+    if ((now > tickServo))
     {
-        tickServo = now;
+        tickServo = now + STEP_SERVO;
         digitalWrite(LED_BUILTIN, LOW);       // Assume no work in progress.
         stepServos();
     }
 
     // Every STEP_LED msecs, step the LEDs if necessary
-    if ((now - tickLed) > STEP_LED)
+    if ((now > tickLed))
     {
-        tickLed = now;
+        tickLed = now + STEP_LED;
         stepLeds();
     }
     
     // Every STEP_FLASH msecs, step the FLASH/BLINKs if necessary
-    if ((now - tickFlash) > STEP_FLASH)
+    if ((now > tickFlash))
     {
-        tickFlash = now;
+        tickFlash = now + STEP_FLASH;
         stepFlashes();
     }
 
