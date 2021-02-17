@@ -1,8 +1,7 @@
 #System	Version	Detail	Control	Input	Output	Report
-System	v2.6	i2cID	10	20	50	Long
+System	v3.0.4	i2cID	10	20	50	Long
 
 #Input	Node	Pin	Type	OutputA	OutputB	OutputC	OutputD	OutputE	OutputF
-
 Input	1	0	On/Off	6 2	0 2	. .	. .	. .	. .
 Input	1	1	On/Off	0 3	. .	. .	. .	. .	. .
 Input	1	2	On/Off	. .	. .	. .	. .	. .	. .
@@ -13,14 +12,14 @@ Input	1	6	On/Off	. .	. .	. .	. .	. .	. .
 Input	1	7	On/Off	. .	. .	. .	. .	. .	. .
 Input	1	8	Toggle	0 4	. .	. .	. .	. .	. .
 Input	1	9	On/Off	. .	. .	. .	. .	. .	. .
-Input	1	a	On/Off	. .	. .	. .	. .	. .	. .
-Input	1	b	On/Off	. .	. .	. .	. .	. .	. .
-Input	1	c	On/Off	. .	. .	. .	. .	. .	. .
-Input	1	d	On/Off	. .	. .	. .	. .	. .	. .
-Input	1	e	On/Off	. .	. .	. .	. .	. .	. .
-Input	1	f	On/Off	. .	. .	. .	. .	. .	. .
+Input	1	A	On/Off	. .	. .	. .	. .	. .	. .
+Input	1	B	On/Off	. .	. .	. .	. .	. .	. .
+Input	1	C	On/Off	. .	. .	. .	. .	. .	. .
+Input	1	D	On/Off	. .	. .	. .	. .	. .	. .
+Input	1	E	On/Off	. .	. .	. .	. .	. .	. .
+Input	1	F	On/Off	. .	. .	. .	. .	. .	. .
 
-Input	4	0	On/Off	8 3	8 0	. 1	8 1	0 0	0 1
+Input	4	0	On/Off	8 0	8 3	. 1	8 1	0 0	0 1
 Input	4	1	On/Off	8 3	0 1	. 1	8 1	. .	. .
 Input	4	2	On	6 1	. .	. .	. .	. .	. .
 Input	4	3	Off	. .	6 1	. .	. .	. .	. .
@@ -30,40 +29,40 @@ Input	4	6	On/Off	. .	. .	. .	. .	. .	. .
 Input	4	7	On/Off	. .	. .	. .	. .	. .	. .
 Input	4	8	On/Off	. .	. .	. .	. .	. .	. .
 Input	4	9	On/Off	. .	. .	. .	. .	. .	. .
-Input	4	a	On/Off	. .	. .	. .	. .	. .	. .
-Input	4	b	On/Off	. .	. .	. .	. .	. .	. .
-Input	4	c	On/Off	. .	. .	. .	. .	. .	. .
-Input	4	d	On/Off	. .	. .	. .	. .	. .	. .
-Input	4	e	On/Off	. .	. .	. .	. .	. .	. .
-Input	4	f	On/Off	. .	. .	. .	. .	. .	. .
+Input	4	A	On/Off	. .	. .	. .	. .	. .	. .
+Input	4	B	On/Off	. .	. .	. .	. .	. .	. .
+Input	4	C	On/Off	. .	. .	. .	. .	. .	. .
+Input	4	D	On/Off	. .	. .	. .	. .	. .	. .
+Input	4	E	On/Off	. .	. .	. .	. .	. .	. .
+Input	4	F	On/Off	. .	. .	. .	. .	. .	. .
 
 #Output	Node	Pin	Type	Lo	Hi	Spd	Reset
-Output	0	0	Flash	5a	40	0d	03
-Output	0	1	Flash	5a	40	0d	02
-Output	0	2	LED	64	32	0d	00
-Output	0	3	Blink	5a	5a	0c	06
-Output	0	4	LED	64	32	0d	00
-Output	0	5	None	5a	5a	0c	00
-Output	0	6	None	5a	5a	0c	00
-Output	0	7	None	5a	5a	0c	00
+Output	0	0	Flash	5A	40	0D	03
+Output	0	1	Flash	5A	40	0D	02
+Output	0	2	LED	64	32	0D	00
+Output	0	3	Blink	5A	5A	0C	06
+Output	0	4	LED	64	32	0D	00
+Output	0	5	None	5A	5A	0C	00
+Output	0	6	None	5A	5A	0C	00
+Output	0	7	None	5A	5A	0C	00
 
-Output	6	0	LED	30	3c	0d	00
-Output	6	1	LED_4	7f	ff	0d	00
-Output	6	2	LED	40	40	0c	00
-Output	6	3	None	5a	5a	0c	00
-Output	6	4	None	5a	5a	0c	00
-Output	6	5	None	5a	5a	0c	00
-Output	6	6	None	5a	5a	0c	00
-Output	6	7	None	5a	5a	0c	00
+Output	6	0	LED	30	3C	0D	00
+Output	6	1	LED_4	7F	FF	0D	00
+Output	6	2	LED	40	40	0C	00
+Output	6	3	None	5A	5A	0C	00
+Output	6	4	None	5A	5A	0C	00
+Output	6	5	None	5A	5A	0C	00
+Output	6	6	None	5A	5A	0C	00
+Output	6	7	None	5A	5A	0C	00
 
-Output	8	0	Signal	00	b4	0d	00
-Output	8	1	Servo	92	2c	0b	00
-Output	8	2	None	5a	5a	0c	00
-Output	8	3	LED	20	20	0d	00
-Output	8	4	None	5a	5a	0c	00
-Output	8	5	None	5a	5a	0c	00
-Output	8	6	None	5a	5a	0c	00
-Output	8	7	None	5a	5a	0c	00
+Output	8	0	Signal	00	B4	0D	00
+Output	8	1	Servo	92	2C	0B	00
+Output	8	2	None	5A	5A	0C	00
+Output	8	3	LED	20	20	0D	00
+Output	8	4	None	5A	5A	0C	00
+Output	8	5	None	5A	5A	0C	00
+Output	8	6	None	5A	5A	0C	00
+Output	8	7	None	5A	5A	0C	00
 
 #Lock	Node	Pin	LockLoA	LockLoB	LockLoC	LockLoD	LockHiA	LockHiB	LockHiC	LockHiD
 Lock	0	0	.	.	.	.	.	.	.	.
@@ -75,17 +74,17 @@ Lock	0	5	.	.	.	.	.	.	.	.
 Lock	0	6	.	.	.	.	.	.	.	.
 Lock	0	7	.	.	.	.	.	.	.	.
 
-Lock	6	0	Lo 8 1	.	.	.	.	.	.	.
-Lock	6	1	Lo 8 1	Hi 8 0	.	.	.	.	.	.
-Lock	6	2	.	.	.	.	.	.	.	.
+Lock	6	0	.	.	.	.	.	.	.	.
+Lock	6	1	.	.	.	.	.	.	.	.
+Lock	6	2	Hi 8 0	Lo 8 1	.	.	.	.	.	.
 Lock	6	3	.	.	.	.	.	.	.	.
 Lock	6	4	.	.	.	.	.	.	.	.
 Lock	6	5	.	.	.	.	.	.	.	.
 Lock	6	6	.	.	.	.	.	.	.	.
 Lock	6	7	.	.	.	.	.	.	.	.
 
-Lock	8	0	Lo 6 0	Hi 6 1	.	.	.	.	.	.
-Lock	8	1	Lo 6 0	Hi 6 1	.	.	.	.	.	.
+Lock	8	0	.	.	.	.	Lo 6 2	.	.	.
+Lock	8	1	Lo 6 2	.	.	.	.	.	.	.
 Lock	8	2	.	.	.	.	.	.	.	.
 Lock	8	3	.	.	.	.	.	.	.	.
 Lock	8	4	.	.	.	.	.	.	.	.
