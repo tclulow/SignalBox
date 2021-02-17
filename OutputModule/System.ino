@@ -174,7 +174,7 @@ void systemFail(PGM_P aMessage, int aValue, int aDelay)
 
     if (aDelay > 0)
     {
-        delay(aDelay);
+        setDisplayTimeout(aDelay);
     }
     else
     {

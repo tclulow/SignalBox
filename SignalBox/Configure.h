@@ -1062,7 +1062,7 @@ class Configure
                 Serial.println();    
             }
 
-            systemFail(M_I2C_ERROR, response, DELAY_READ);
+            systemFail(M_I2C_ERROR, response, 0);
             response = aOldNode;
         }
 
