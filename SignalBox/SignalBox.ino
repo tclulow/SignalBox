@@ -737,8 +737,6 @@ void setup()
  */
 void loop()
 {
-    now = millis();
-
     // Press any button to configure.
     if (readButton())
     {
@@ -746,10 +744,12 @@ void loop()
         announce();
     }
 
+    now = millis();
+
     // Process any inputs
     if (now > tickScan)
     {
-        tickScan = now + STEP_SCAN;
+        tickScan = now + STEP_INPUT_SCAN;
         // scanOutputs();
         scanInputs();
     }
