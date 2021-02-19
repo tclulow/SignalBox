@@ -127,7 +127,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,   M_SERVO, M_SIGNAL, M_LED, M_L
     
     // Configuration - Input.
     const char M_TOGGLE[]           PROGMEM = "Toggle";
-    const char M_ON_OFF[]           PROGMEM = "On/Off";
+    const char M_ON_OFF[]           PROGMEM = "On_Off";
     const char M_ON[]               PROGMEM = "On";
     const char M_OFF[]              PROGMEM = "Off";
     
