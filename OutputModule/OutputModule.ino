@@ -977,10 +977,10 @@ void stepServo(uint8_t aPin)
         // Handle SIGNAL triggers (if set).
         if (outputs[aPin].altValue)
         {
-            if (outputs[aPin].altValue > outputs[aPin].step)            // Ascending to trigger step.
+            if (outputs[aPin].step < outputs[aPin].altValue)            // Ascending to trigger step.
             {
                 outputs[aPin].step += 1;
-                if (outputs[aPin].altValue == outputs[aPin].step)       // Reached the trigger step.
+                if (outputs[aPin].step >= outputs[aPin].altValue)       // Reached the trigger step.
                 {
                     // Set new trigger back down a bit (up to 1/3).
                     outputs[aPin].altValue -= 1 + random(outputs[aPin].step)
@@ -997,7 +997,7 @@ void stepServo(uint8_t aPin)
             else
             {
                 outputs[aPin].step -= 1;
-                if (outputs[aPin].altValue >= outputs[aPin].step)       // Have descended to trigger step.
+                if (outputs[aPin].step <= outputs[aPin].altValue)       // Have descended to trigger step.
                 {
                     outputs[aPin].altValue = 0;                         // Remove the trigger step.
                     if (outputDefs[aPin].getState())
