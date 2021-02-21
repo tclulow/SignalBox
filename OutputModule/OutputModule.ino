@@ -1372,5 +1372,23 @@ void loop()
             digitalWrite(ioPins[pin],              outputs[pin].altValue >  0 
                                                 && outputs[pin].altValue >= (~nowMicros & 0xff));
         }
+//        // Example how to use PORTS to toggle pins directly.
+//        // See OUTPUT_BASE_PIN and ioPins for output => pin mapping.
+//        // PORTD - Arduino digital pins 0 -  7
+//        // PORTB - Arduino digital pins 8 - 13
+//        // PORTC - Arduino analog  pins 0 -  7.
+//        // Servo pin 3 is Arduino pin 7 which is PORTD mask 0x80
+//        if (pin == 3)
+//        {
+//            if (   outputs[pin].value    >  0 
+//                && outputs[pin].value    >= ( nowMicros & 0xff))
+//            {
+//                PORTD |= 0x80;
+//            }
+//            else
+//            {
+//                PORTD &= 0x7f;
+//            }
+//        }
     }
 }
