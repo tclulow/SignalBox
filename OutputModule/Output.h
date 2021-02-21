@@ -583,10 +583,13 @@ void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState)
 {
     uint8_t mask = 1 << aPin;
     
-    outputStates[aNode] &= ~mask;
     if (aState)
     {
         outputStates[aNode] |= mask;
+    }
+    else
+    {
+        outputStates[aNode] &= ~mask;
     }
 }
 
