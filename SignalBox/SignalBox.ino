@@ -770,9 +770,9 @@ void loop()
         // Show heartbeat if no display timeout is pending.
         if (displayTimeout == 0)
         {
-            int hours = (tickHeartBeat)                                                       / MILLIS_PER_HOUR;
-            int mins  = (tickHeartBeat - MILLIS_PER_HOUR * hours)                             / MILLIS_PER_MINUTE;
-            int secs  = (tickHeartBeat - MILLIS_PER_HOUR * hours  - MILLIS_PER_MINUTE * mins) / MILLIS_PER_SECOND;
+            int hours = (now)                                                       / MILLIS_PER_HOUR;
+            int mins  = (now - MILLIS_PER_HOUR * hours)                             / MILLIS_PER_MINUTE;
+            int secs  = (now - MILLIS_PER_HOUR * hours  - MILLIS_PER_MINUTE * mins) / MILLIS_PER_SECOND;
             
             lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
             if (hours > 0)
