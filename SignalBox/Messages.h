@@ -90,7 +90,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,   M_SERVO, M_SIGNAL, M_LED, M_L
     const char M_NO_OUTPUTS[]       PROGMEM = "No output nodes";
     const char M_INIT_INPUTS[]      PROGMEM = "Init inputs";
     const char M_TEST[]             PROGMEM = "Test";
-    const char M_INTERRUPTED[]      PROGMEM = "Interrupted";
+    const char M_INTERRUPT[]        PROGMEM = "Interrupt";
     
     // Import/export actions.
     const char M_EXPORTING[]        PROGMEM = "Exporting";

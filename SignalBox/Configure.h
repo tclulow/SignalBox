@@ -1404,6 +1404,8 @@ class Configure
     void testOutputs()
     {
         boolean interrupted = false;
+        long    delayTo     = 0L;
+        
         waitForButtonRelease();
         lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
 
@@ -1421,10 +1423,21 @@ class Configure
                         lcd.printAt(LCD_COL_PIN,   LCD_ROW_BOT, HEX_CHARS[pin]);
 
                         outputDef.setState(!outputDef.getState());
+                        delayTo = millis() + DELAY_READ;
                         writeOutput();
-                        delay(DELAY_READ);
+                        while (   (readButton() == BUTTON_NONE)
+                               && (millis() < delayTo))
+                        {
+                            delay(DELAY_BUTTON_WAIT);
+                        }
+
+                        delayTo = millis() + DELAY_READ;
                         resetOutput();
-                        delay(DELAY_READ);
+                        while (   (readButton() == BUTTON_NONE)
+                               && (millis() < delayTo))
+                        {
+                            delay(DELAY_BUTTON_WAIT);
+                        }
                     }
                     if (readButton())
                     {
@@ -1440,10 +1453,18 @@ class Configure
                             case BUTTON_SELECT:
                             case BUTTON_LEFT:
                             case BUTTON_RIGHT:  interrupted = true;
-                                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INTERRUPTED, LCD_COLS);
                                                 break;
                         }
+
+                        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INTERRUPT, LCD_COLS);
+
+                        if (!interrupted)
+                        {
+                            lcd.printAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[node]);
+                        }
+                        
                         waitForButtonRelease();
+                        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
                     }
                 }
             }
