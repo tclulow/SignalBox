@@ -23,6 +23,8 @@ then
     exit
 fi
 
+# Set port speed.
+stty -F ${PORT} sane 19200
 
 echo "Press RETURN when Arduino is in import waiting mode."
 
