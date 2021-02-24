@@ -569,8 +569,7 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
         if (reportEnabled(REPORT_PAUSE))
         {
             readOutput(inputDef.getOutput(aIndex));
-            lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-            lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
+            lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_COLS);
             lcd.printAt(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, HEX_CHARS[outNode]);
             lcd.print(HEX_CHARS[outPin]);
             lcd.print(CHAR_SPACE);

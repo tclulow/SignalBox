@@ -25,8 +25,9 @@
 #define SYS_REPORT   0
 #define SYS_I2C      1
 #define SYS_NODES    2
-#define SYS_DEBUG    3
-#define SYS_MAX      4
+#define SYS_TEST     3
+#define SYS_DEBUG    4
+#define SYS_MAX      5
 
 
 /** Configure the system.
@@ -163,6 +164,8 @@ class Configure
                              break;
             case SYS_NODES:  displaySystemNodesParams();
                              break;
+            case SYS_TEST:   displaySystemTestParams();
+                             break;
             case SYS_DEBUG:  displaySystemDebugParams();
                              break;
             default:         systemFail(M_PARAMS, sysMenu, 0);
@@ -199,6 +202,14 @@ class Configure
     /** Display System's report parameter.
      */
     void displaySystemNodesParams()
+    {
+        lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
+    }
+
+
+    /** Display System's report parameter.
+     */
+    void displaySystemTestParams()
     {
         lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
     }
@@ -574,6 +585,9 @@ class Configure
                                                          break;
                                         case SYS_NODES:  scanHardware();
                                                          displayAll();
+                                                         break;
+                                        case SYS_TEST:   testOutputs();
+                                                         displayDetailSystem();
                                                          break;
                                         case SYS_DEBUG:  changed |= menuSystemDebug();
                                                          break;
@@ -1382,6 +1396,58 @@ class Configure
         processInputOutput(aIndex, !currentState, 0);
         waitForButtonRelease();
         processInputOutput(aIndex,  currentState, 0);
+    }
+
+
+    /** Test all the configured outputs in turn.
+     */
+    void testOutputs()
+    {
+        boolean interrupted = false;
+        waitForButtonRelease();
+        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+
+        for (uint8_t node = 0; (node < OUTPUT_NODE_MAX) && !interrupted; node++)
+        {
+            if (isOutputNode(node))
+            {
+                for (int pin = 0; pin < OUTPUT_PIN_MAX && !interrupted; pin++)
+                {
+                    readOutput(node, pin);
+                    if (outputDef.getType() != OUTPUT_TYPE_NONE)
+                    {
+                        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
+                        lcd.printAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[node]);
+                        lcd.printAt(LCD_COL_PIN,   LCD_ROW_BOT, HEX_CHARS[pin]);
+
+                        outputDef.setState(!outputDef.getState());
+                        writeOutput();
+                        delay(DELAY_READ);
+                        resetOutput();
+                        delay(DELAY_READ);
+                    }
+                    if (readButton())
+                    {
+                        switch (readButton())
+                        {
+                            case BUTTON_NONE:   break;
+                            case BUTTON_UP:     node = nextNode(node + 1,  1, false, true);
+                                                pin = -1;
+                                                break;
+                            case BUTTON_DOWN:   node = nextNode(node - 1, -1, false, true);
+                                                pin = -1;
+                                                break;
+                            case BUTTON_SELECT:
+                            case BUTTON_LEFT:
+                            case BUTTON_RIGHT:  interrupted = true;
+                                                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INTERRUPTED, LCD_COLS);
+                                                break;
+                        }
+                        waitForButtonRelease();
+                    }
+                }
+            }
+        }
     }
 
 
