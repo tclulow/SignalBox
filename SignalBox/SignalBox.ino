@@ -70,6 +70,8 @@ void setDisplayTimeout(long aTimeout)
  */
 void scanHardware()
 {
+    waitForButtonRelease();
+
     // Scan for Input nodes.
     lcd.clear();
     lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_NODES);
@@ -88,8 +90,8 @@ void scanHardware()
             setInputNodePresent(node);
         }
     }
-    delay(DELAY_READ);
-    waitForButtonRelease();     // Allow more time ro read display
+    waitForButton(DELAY_READ);
+    waitForButtonRelease();
     
     // Scan for Output nodes.
     lcd.clear();
@@ -112,8 +114,8 @@ void scanHardware()
             lcd.print(state); 
         }
     }
-    delay(DELAY_READ);
-    waitForButtonRelease();     // Allow more time to read display
+    waitForButton(DELAY_READ);
+    waitForButtonRelease();
 
     // Report absence of hardware.
     if (   (inputNodes  == 0)
@@ -189,8 +191,11 @@ void initInputs()
             lcd.print(CHAR_DOT);
             currentSwitchState[node] = 0xffff;
         }
-    }   
-    delay(DELAY_READ);
+    }
+
+    // Wait for button, or DELAY_READ msecs.
+    waitForButton(DELAY_READ);
+    waitForButtonRelease();
 }
 
 
