@@ -163,15 +163,28 @@ void waitForButtonRelease()
  */
 uint8_t waitForButton()
 {
-    uint8_t button;
-    
     waitForButtonRelease();
+    
+    return waitForButton(0);
+}
+
+
+/** Wait for a button to be pressed.
+ *  Return the button pressed.
+ *  Abandon wait after aMaxWait msecs (unless aMaxWait is 0).
+ */
+uint8_t waitForButton(int aMaxWait)
+{
+    long delayTo = millis() + aMaxWait;
+    uint8_t button;
     
     do
     {
         delay(DELAY_BUTTON_WAIT);
     }
-    while ((button = readButton()) == BUTTON_NONE);
+    while (   ((button = readButton()) == BUTTON_NONE)
+           && (   (aMaxWait == 0)
+               || (millis() < delayTo)));
     
     delay(DELAY_BUTTON_WAIT);
 

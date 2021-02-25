@@ -1404,7 +1404,7 @@ class Configure
     void testOutputs()
     {
         boolean interrupted = false;
-        long    delayTo     = 0L;
+        uint8_t button      = BUTTON_NONE;
         
         waitForButtonRelease();
         lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
@@ -1423,48 +1423,42 @@ class Configure
                         lcd.printAt(LCD_COL_PIN,   LCD_ROW_BOT, HEX_CHARS[pin]);
 
                         outputDef.setState(!outputDef.getState());
-                        delayTo = millis() + DELAY_READ;
                         writeOutput();
-                        while (   (readButton() == BUTTON_NONE)
-                               && (millis() < delayTo))
-                        {
-                            delay(DELAY_BUTTON_WAIT);
-                        }
-
-                        delayTo = millis() + DELAY_READ;
+                        button = waitForButton(DELAY_READ);
                         resetOutput();
-                        while (   (readButton() == BUTTON_NONE)
-                               && (millis() < delayTo))
+                        if (button == BUTTON_NONE)
                         {
-                            delay(DELAY_BUTTON_WAIT);
-                        }
-                    }
-                    if (readButton())
-                    {
-                        switch (readButton())
-                        {
-                            case BUTTON_NONE:   break;
-                            case BUTTON_UP:     node = nextNode(node + 1,  1, false, true);
-                                                pin = -1;
-                                                break;
-                            case BUTTON_DOWN:   node = nextNode(node - 1, -1, false, true);
-                                                pin = -1;
-                                                break;
-                            case BUTTON_SELECT:
-                            case BUTTON_LEFT:
-                            case BUTTON_RIGHT:  interrupted = true;
-                                                break;
+                            button = waitForButton(DELAY_READ);
                         }
 
-                        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INTERRUPT, LCD_COLS);
-
-                        if (!interrupted)
+                        // If button pressed, handle the interuption.
+                        if (button != BUTTON_NONE)
                         {
-                            lcd.printAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[node]);
+                            switch (button)
+                            {
+                                case BUTTON_NONE:   break;
+                                case BUTTON_UP:     node = nextNode(node + 1,  1, false, true);
+                                                    pin = -1;
+                                                    break;
+                                case BUTTON_DOWN:   node = nextNode(node - 1, -1, false, true);
+                                                    pin = -1;
+                                                    break;
+                                case BUTTON_SELECT:
+                                case BUTTON_LEFT:
+                                case BUTTON_RIGHT:  interrupted = true;
+                                                    break;
+                            }
+    
+                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INTERRUPT, LCD_COLS);
+    
+                            if (!interrupted)
+                            {
+                                lcd.printAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[node]);
+                            }
+                            
+                            waitForButtonRelease();
+                            lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
                         }
-                        
-                        waitForButtonRelease();
-                        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
                     }
                 }
             }

@@ -59,10 +59,19 @@ uint8_t readButton();
  */
 void waitForButtonRelease();
 
+
 /** Wait for a button to be pressed.
  *  Return that button after waiting for the release.
  */
 uint8_t waitForButton();
+
+
+/** Wait for a button to be pressed.
+ *  First wait for all buttons to be released.
+ *  Return the button pressed.
+ *  Abandon wait after aMaxWait msecs (unless aMaxWait is 0).
+ */
+uint8_t waitForButton(int aMaxWait);
 
 
 #endif
