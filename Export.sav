@@ -2,8 +2,8 @@
 System	v3.0.4	i2cID	10	20	50	Long
 
 #Input	Node	Pin	Type	OutputA	OutputB	OutputC	OutputD	OutputE	OutputF
-Input	4	0	On_Off	8 0	8 3	. 1	8 1	0 0	0 1
-Input	4	1	On_Off	8 3	0 1	. 1	8 1	. .	. .
+Input	4	0	On_Off	8 0	8 3	. 1	8 1	C 0	C 1
+Input	4	1	On_Off	8 3	C 1	. 1	8 1	. .	. .
 Input	4	2	On	6 1	. .	. .	. .	. .	. .
 Input	4	3	Off	. .	6 1	. .	. .	. .	. .
 Input	4	4	On_Off	. .	. .	. .	. .	. .	. .
@@ -19,9 +19,9 @@ Input	4	D	On_Off	. .	. .	. .	. .	. .	. .
 Input	4	E	On_Off	. .	. .	. .	. .	. .	. .
 Input	4	F	On_Off	. .	. .	. .	. .	. .	. .
 
-Input	5	0	On_Off	6 2	0 2	. .	. .	. .	. .
-Input	5	1	On_Off	0 3	. .	. .	. .	. .	. .
-Input	5	2	Toggle	0 4	. .	. .	. .	. .	. .
+Input	5	0	On_Off	6 2	C 2	. .	. .	. .	. .
+Input	5	1	On_Off	C 3	. .	. .	. .	. .	. .
+Input	5	2	Toggle	C 4	. .	. .	. .	. .	. .
 Input	5	3	On_Off	. .	. .	. .	. .	. .	. .
 Input	5	4	On_Off	. .	. .	. .	. .	. .	. .
 Input	5	5	On_Off	. .	. .	. .	. .	. .	. .
@@ -37,14 +37,14 @@ Input	5	E	On_Off	. .	. .	. .	. .	. .	. .
 Input	5	F	On_Off	. .	. .	. .	. .	. .	. .
 
 #Output	Node	Pin	Type	Lo	Hi	Spd	Reset
-Output	0	0	Flash	5A	40	0D	03
-Output	0	1	Flash	5A	40	0D	02
-Output	0	2	LED	64	32	0D	00
-Output	0	3	Blink	5A	5A	0C	06
-Output	0	4	LED	64	32	0D	00
-Output	0	5	None	5A	5A	0C	00
-Output	0	6	None	5A	5A	0C	00
-Output	0	7	None	5A	5A	0C	00
+Output	C	0	Flash	5A	40	0D	03
+Output	C	1	Flash	5A	40	0D	02
+Output	C	2	LED	64	32	0D	00
+Output	C	3	Blink	5A	5A	0C	06
+Output	C	4	LED	64	32	0D	00
+Output	C	5	None	5A	5A	0C	00
+Output	C	6	None	5A	5A	0C	00
+Output	C	7	None	5A	5A	0C	00
 
 Output	6	0	LED	30	3C	0D	00
 Output	6	1	LED_4	7F	FF	0D	00
@@ -65,14 +65,14 @@ Output	8	6	None	5A	5A	0C	00
 Output	8	7	None	5A	5A	0C	00
 
 #Lock	Node	Pin	LockLoA	LockLoB	LockLoC	LockLoD	LockHiA	LockHiB	LockHiC	LockHiD
-Lock	0	0	.	.	.	.	.	.	.	.
-Lock	0	1	.	.	.	.	.	.	.	.
-Lock	0	2	.	.	.	.	.	.	.	.
-Lock	0	3	.	.	.	.	.	.	.	.
-Lock	0	4	.	.	.	.	.	.	.	.
-Lock	0	5	.	.	.	.	.	.	.	.
-Lock	0	6	.	.	.	.	.	.	.	.
-Lock	0	7	.	.	.	.	.	.	.	.
+Lock	C	0	.	.	.	.	.	.	.	.
+Lock	C	1	.	.	.	.	.	.	.	.
+Lock	C	2	.	.	.	.	.	.	.	.
+Lock	C	3	.	.	.	.	.	.	.	.
+Lock	C	4	.	.	.	.	.	.	.	.
+Lock	C	5	.	.	.	.	.	.	.	.
+Lock	C	6	.	.	.	.	.	.	.	.
+Lock	C	7	.	.	.	.	.	.	.	.
 
 Lock	6	0	.	.	.	.	.	.	.	.
 Lock	6	1	.	.	.	.	.	.	.	.
