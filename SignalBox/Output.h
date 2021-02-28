@@ -492,7 +492,7 @@ boolean isServo(uint8_t aType)
 }
 
 
-#else   // Methods for loading/saving outputs to/from EEPROM in the OutputModule.
+#else   // Methods for reading/writing outputs to/from the OutputModules.
 
 
 /** Variables for working with an Output.
