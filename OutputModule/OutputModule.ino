@@ -282,9 +282,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
 
         // Handle double-LEDs as special case (if previous output is a LED).
         // See table at top of source for states and colour sequences.
-        if (   (outputDefs[aPin].isDoubleLed())   
-            && (aPin > 0)
-            && (outputDefs[aPin - 1].getType() == OUTPUT_TYPE_LED)
+        if (   (isDoubleLed(aPin))   
             && (persisting))
         {
             if  (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
@@ -784,11 +782,9 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         outputs[aPin].start     = outputs[aPin].value;
         outputs[aPin].altStart  = outputs[aPin].altValue;
         
-        // Handle LED_4 as special case (if preceding output is a LED).
-        if (   (outputDefs[aPin].isDoubleLed())
-            && (persisting)
-            && (aPin > 0)
-            && (outputDefs[aPin - 1].getType() == OUTPUT_TYPE_LED))
+        // Handle LED_4/ROAD as special case (if preceding output is a LED).
+        if (   (isDoubleLed(aPin))
+            && (persisting))
         {
             boolean ledState = false;
             uint8_t ledPin   = aPin - 1;
@@ -811,7 +807,7 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
                 newPhase = ROAD_NEXT_PHASE[oldPhase];
             }
 
-            // Set states accoeding to new phase.
+            // Set states according to new phase.
             // See table at top of source for states and colour sequences.
             ledState = newPhase & 1;
             newState = newPhase & 2;
@@ -1130,27 +1126,31 @@ void stepLed(uint8_t aPin)
             if (   (persisting)
                 && (outputDefs[aPin].getReset() > 0))
             {
-                if (outputDefs[aPin].isDoubleLed())
+                if (isDoubleLed(aPin))
                 {
-                    if (   (aPin > 0)
-                        && (outputDefs[aPin - 1].getType() == OUTPUT_TYPE_LED))      // LED_4 coupled with LED
-//                        && (   (outputDefs[aPin    ].getState())                    // Not currently green
-//                            || (outputDefs[aPin - 1].getState())))                  // if either output is Hi.
+                    uint8_t reset = outputDefs[aPin].getReset();
+                    if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_ROAD)             // ROAD.
+                        && (outputDefs[aPin].getState())                                // at Red & Amber or Amber.
+                        && (outputDefs[aPin - 1].getReset() > 0))                       // and has an alternate reset specified
                     {
-                        actionState(aPin, false, outputDefs[aPin].getReset());      // Move down 1 state.
+                        reset = outputDefs[aPin - 1].getReset();                        // Use that (normally shorter) reset instead.
                     }
+                    actionState(aPin, false, reset);                                    // Move to next state after correct interval.
                 }
-                else if (outputDefs[aPin].getType() == OUTPUT_TYPE_RANDOM)          // Random.
+                else if (outputDefs[aPin].getType() == OUTPUT_TYPE_RANDOM)              // Random.
                 {
-                    if (outputDefs[aPin].getState())                                // If Hi, set Hi again (which may or may not illuminate LEDs).
+                    if (outputDefs[aPin].getState())                                    // If Hi, set Hi again (which may or may not illuminate LEDs).
                     {
-                        actionState(aPin, true,   outputDefs[aPin].getReset() / 2   // Delay for reset +/- 1/2 reset.
+                        actionState(aPin, true,   outputDefs[aPin].getReset() / 2       // Delay for reset +/- 1/2 reset.
                                                 + random(outputDefs[aPin].getReset()));
                     }
                 }
-                else if (outputDefs[aPin].getState())                               // Ordinary LED, currently Hi.
+                else if (outputDefs[aPin].getState())                                   // Ordinary LED, currently Hi.
                 {
-                    actionState(aPin, false, outputDefs[aPin].getReset());          // Move to Lo.
+                    if (!isDoubleLed(aPin + 1))
+                    {
+                        actionState(aPin, false, outputDefs[aPin].getReset());              // Move to Lo.
+                    }
                 }
             }
         }

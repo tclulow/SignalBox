@@ -97,13 +97,6 @@ class OutputDef
     }
 
 
-    boolean isDoubleLed()
-    {
-        return    getType() == OUTPUT_TYPE_LED_4
-               || getType() == OUTPUT_TYPE_ROAD;
-    }
-
-
     /** Is the Output one of the flashing types?
      */
     boolean isFlasher()
@@ -492,7 +485,20 @@ boolean isServo(uint8_t aType)
 }
 
 
-#else   // Methods for reading/writing outputs to/from the OutputModules.
+/** Is the specified pin a double-led?
+ *  The identified pin is legal, a double-led type, and the previous pin is a LED.
+ */
+boolean isDoubleLed(uint8_t aPin)
+{
+    return    (aPin > 0)
+           && (aPin < OUTPUT_PIN_MAX)
+           && (outputDefs[aPin - 1].getType() == OUTPUT_TYPE_LED)
+           && (   (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
+               || (outputDefs[aPin].getType() == OUTPUT_TYPE_ROAD));
+}
+
+
+#else   // Methods for loading/saving outputs to/from EEPROM in the OutputModule.
 
 
 /** Variables for working with an Output.
