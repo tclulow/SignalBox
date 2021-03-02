@@ -69,7 +69,7 @@ uint8_t requestOption  = 0;
 uint8_t requestNode    = 0;
 
 
-// An Array of Output control structures.
+// An Array of Output control structures.i
 struct 
 {
     Servo   servo;          // The Servo (if there is one).
@@ -299,20 +299,24 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
             }
             else
             {
-                if (outputDefs[aPin - 1].getState())    // If LED red is on.
-                {
-                    outputs[aPin].altValue = 0;         // 2 cases where ROAD green isn't required.
-                }
-                else
-                {
-                    outputs[aPin - 1].altValue = 0;     // 2 cases where LED amber isn't required.
-                }
+                // ROADs always start at red.
+                outputDefs[aPin - 1].setState(true);
+                outputDefs[aPin    ].setState(false);
+                outputs[aPin - 1].value    = outputDefs[aPin - 1].getHi();
+                outputs[aPin - 1].altValue = 0;
+                outputs[aPin    ].value    = 0;
+                outputs[aPin    ].altValue = 0;
             }
 
-            // Make sure auto-reset is actioned.
-            if (outputDefs[aPin].getReset())
+            // Make sure auto-reset is actioned (unless pair of ROADs adjacent to each other).
+            if (outputDefs[aPin].getReset() > 0)
             {
-                actionState(aPin, false, 0);
+                if (   (!isDoubleLed(aPin - 2))
+                    || (outputDefs[aPin    ].getType() != OUTPUT_TYPE_ROAD)
+                    || (outputDefs[aPin - 2].getType() != OUTPUT_TYPE_ROAD))
+                {
+                    actionState(aPin, false, 0);
+                }
             }
         }
     }
