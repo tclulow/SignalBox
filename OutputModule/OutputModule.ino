@@ -1148,14 +1148,50 @@ void stepLed(uint8_t aPin)
             {
                 if (isDoubleLed(aPin))
                 {
-                    uint8_t reset = outputDefs[aPin].getReset();
-                    if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_ROAD)             // ROAD.
-                        && (outputDefs[aPin].getState())                                // at Red & Amber or Amber.
-                        && (outputDefs[aPin - 1].getReset() > 0))                       // and has an alternate reset specified
+                    int     pin   = aPin;                                   // Pin (signed) to fire next (normally the same pin).
+                    uint8_t reset = outputDefs[aPin].getReset();            // Interval before next firing.
+                    
+                    if (outputDefs[aPin].getType() == OUTPUT_TYPE_ROAD)     // ROAD outputs are a special case.
                     {
-                        reset = outputDefs[aPin - 1].getReset();                        // Use that (normally shorter) reset instead.
+                        if (   (outputDefs[aPin    ].getState())            // at Red & Amber or Amber.
+                            && (outputDefs[aPin - 1].getReset() > 0))       // and has an alternate reset specified
+                        {
+                            reset = outputDefs[aPin - 1].getReset();        // Use that (normally shorter) reset instead.
+                        }
+                        else if (   ( outputDefs[aPin - 1].getState())      // Red is Hi and Lo
+                                 && (!outputDefs[aPin    ].getState()))
+                        {
+                            // See if next pair of pins are also a ROAD, or if previous pins are ROADs.
+                            pin = aPin + 2;
+                            if (   (!isDoubleLed(pin))
+                                || (outputDefs[pin].getType() != OUTPUT_TYPE_ROAD))
+                            {
+                                // Next output isn't a ROAD, look for "first" one.
+                                for (pin = aPin - 2; pin > 0; pin -= 2)
+                                {
+                                    if (outputDefs[pin].getType() != OUTPUT_TYPE_ROAD)
+                                    {
+                                        break;
+                                    }
+                                }
+                                pin += 2;
+                            }
+
+                            // If we found an adjacent ROAD output.
+                            if (pin != aPin)
+                            {
+                                // Fire that output next using its own reset interval(s).
+                                reset = outputDefs[pin - 1].getReset();
+                                if (reset == 0)
+                                {
+                                    reset = outputDefs[pin].getReset();
+                                }
+                            }
+                        }
                     }
-                    actionState(aPin, false, reset);                                    // Move to next state after correct interval.
+                    
+                    // Move desired pin to next state after correct interval.
+                    actionState(pin, false, reset);
                 }
                 else if (outputDefs[aPin].getType() == OUTPUT_TYPE_RANDOM)              // Random.
                 {
@@ -1169,7 +1205,7 @@ void stepLed(uint8_t aPin)
                 {
                     if (!isDoubleLed(aPin + 1))
                     {
-                        actionState(aPin, false, outputDefs[aPin].getReset());              // Move to Lo.
+                        actionState(aPin, false, outputDefs[aPin].getReset());          // Move to Lo.
                     }
                 }
             }
