@@ -762,190 +762,209 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         Serial.println();
     }
 
-    // Set common parameters
-    outputs[aPin].delayTo = millis() + DELAY_MULTIPLIER * aDelay;
-    outputs[aPin].steps   = outputDefs[aPin].getPaceAsSteps() + 1;
-    outputs[aPin].step    = 0;
-
-    // Output type-specific parameters.
-    if (outputDefs[aPin].isServo())
+    // If there's an action pending, just make it happen now.
+    if (millis() < outputs[aPin].delayTo)
     {
-        outputs[aPin].value    = outputs[aPin].servo.read();
-        outputs[aPin].start    = outputs[aPin].value;
-        outputs[aPin].target   = aState ? outputDefs[aPin].getHi() : outputDefs[aPin].getLo();
-        outputs[aPin].altValue = 0;
-
-        // Adjust steps in proportion to the range to be moved.
-        outputs[aPin].steps = ((long)outputs[aPin].steps - 1)
-                            * (abs(((long)outputs[aPin].target) - ((long)outputs[aPin].start)))
-                            / ((long)OUTPUT_SERVO_MAX)
-                            + 1;
-
-        // Add trigger point for SIGNALS, but only if they're ascending the whole range.
-        if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
-            && (aState)
-            && (persisting)
-            && (outputs[aPin].start == outputDefs[aPin].getLo()))
+        Serial.print(millis());
+        Serial.print("\tpin=");
+        Serial.print(aPin);
+        Serial.print(", clear delay=");
+        Serial.print(outputs[aPin].delayTo);
+        Serial.println();
+        outputs[aPin].delayTo = 0;
+        if (isDoubleLed(aPin))
         {
-            outputs[aPin].altValue = (outputs[aPin].steps + random(outputs[aPin].steps)) / 3;
-        }
-    }
-    else if (outputDefs[aPin].isLed())
-    {
-        outputs[aPin].start     = outputs[aPin].value;
-        outputs[aPin].altStart  = outputs[aPin].altValue;
-        
-        // Handle LED_4/ROAD as special case (if preceding output is a LED).
-        if (   (isDoubleLed(aPin))
-            && (persisting))
-        {
-            boolean ledState = false;
-            uint8_t ledPin   = aPin - 1;
-            uint8_t offFlag  = (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4) ? LED_4_OFF : ROAD_OFF;
-            uint8_t oldPhase = (outputDefs[ledPin].getState()     )     // Convert state of both outputs to a phase.
-                             | (outputDefs[aPin]  .getState() << 1);
-            uint8_t newPhase = oldPhase;
-
-            // Set to phase=1 if Hi, otherwise next state in sequence
-            if (aState)
-            {
-                newPhase = 1;
-            }
-            else if (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
-            {
-                newPhase = LED_4_NEXT_PHASE[oldPhase];
-            }
-            else
-            {
-                newPhase = ROAD_NEXT_PHASE[oldPhase];
-            }
-
-            // Set states according to new phase.
-            // See table at top of source for states and colour sequences.
-            ledState = newPhase & 1;
-            newState = newPhase & 2;
-            outputDefs[ledPin].setState(ledState);
-
-            if (newPhase == oldPhase)
-            {
-                outputs[aPin].steps = 0;                                    // Nothing to do.
-            }
-            else
-            {
-                // Set common parameters for both outputs.
-                outputs[ledPin].step     = outputs[aPin].step;              // Both outputs move with the same steps.
-                outputs[ledPin].steps    = outputs[aPin].steps;
-                outputs[ledPin].delayTo  = outputs[aPin].delayTo;           // and at the same time.
-    
-                outputs[ledPin].start    = outputs[ledPin].value;           // LED movement common values.
-                outputs[ledPin].altStart = outputs[ledPin].altValue;
-                     
-                // Set targets according to new states.
-                outputs[aPin].target      = newState ? outputDefs[aPin].getHi() : 0;
-                outputs[aPin].altTarget   = newState ? 0 : outputDefs[aPin].getLo();
-                outputs[ledPin].target    = ledState ? outputDefs[ledPin].getHi() : 0;
-                outputs[ledPin].altTarget = ledState ? 0 : outputDefs[ledPin].getLo();
-    
-                // Force off if states demand it.
-                if (offFlag & (0x10 << newPhase))
-                {
-                    outputs[ledPin].target    = 0;
-                    outputs[ledPin].altTarget = 0;
-                }
-                if (offFlag & (0x01 << newPhase))
-                {
-                    outputs[aPin].target    = 0;
-                    outputs[aPin].altTarget = 0;
-                }
-                
-                // Save the new state if persisting is enabled.
-                if (persisting)
-                {
-                    saveOutput(ledPin);
-                }
-            }
-        }
-        else if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_RANDOM)
-                 && (persisting))
-        {
-            if (aState)
-            {
-                // Set outputs on randomly.
-                outputs[aPin].target    = (random(100) < RANDOM_HI_CHANCE) ? outputDefs[aPin].getHi() : 0;
-                outputs[aPin].altTarget = (random(100) < RANDOM_LO_CHANCE) ? outputDefs[aPin].getLo() : 0;
-            }
-            else
-            {
-                outputs[aPin].target    = 0;
-                outputs[aPin].altTarget = 0;
-            }
-        }
-        else
-        {
-            // Ordinary LED
-            outputs[aPin].target    = aState ? outputDefs[aPin].getHi() : 0;
-            outputs[aPin].altTarget = aState ? 0 : outputDefs[aPin].getLo();
-        }
-    }
-    else if (outputDefs[aPin].isFlasher())
-    {
-        // For a BLINK that's not running, force state on.
-        if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
-            && (outputs[aPin].value    == 0)
-            && (outputs[aPin].altValue == 0))
-        {
-            newState = true;
-        }
-
-        // Turn Flashers off immediately if state = Lo and an indefinite time (delay = 0).
-        if (   (!aState)
-            && (outputDefs[aPin].getReset() == 0))
-        {
-            newState = false;
-            outputs[aPin].steps = 0;
-            outputs[aPin].value = 0;
-            if (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
-            {
-                outputs[aPin].altValue = 0;
-            }
-            else
-            {
-                outputs[aPin].altValue = outputDefs[aPin].getLo();
-            }
-        }
-        else
-        {
-            // Flash as required.
-            outputs[aPin].delayTo = outputDefs[aPin].getReset() == 0 ? 0 : millis() + DELAY_MULTIPLIER * outputDefs[aPin].getReset();
-            outputs[aPin].step    = outputs[aPin].steps;
+            outputs[aPin - 1].delayTo = 0;
         }
     }
     else
     {
-        if (isDebug(DEBUG_ERRORS))
-        {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
-            Serial.print(PGMT(M_DEBUG_UNKNOWN));
-            Serial.print(aPin);
-            Serial.print(PGMT(M_DEBUG_TYPE));
-            Serial.print(PGMT(M_OUTPUT_TYPES[outputDefs[aPin].getType() & OUTPUT_TYPE_MASK]));
-            Serial.println();
-        }
-    }
-
-    // Set the Output to the new state.
-    outputDefs[aPin].setState(newState);
+        // Set common parameters
+        outputs[aPin].delayTo = millis() + DELAY_MULTIPLIER * aDelay;
+        outputs[aPin].steps   = outputDefs[aPin].getPaceAsSteps() + 1;
+        outputs[aPin].step    = 0;
     
-    // Save the new state if persisting is enabled.
-    if (persisting)
-    {
-        saveOutput(aPin);
-    }
-
-    if (isDebug(DEBUG_DETAIL))
-    {
-        reportOutput(M_DEBUG_MOVE, aPin);
+        // Output type-specific parameters.
+        if (outputDefs[aPin].isServo())
+        {
+            outputs[aPin].value    = outputs[aPin].servo.read();
+            outputs[aPin].start    = outputs[aPin].value;
+            outputs[aPin].target   = aState ? outputDefs[aPin].getHi() : outputDefs[aPin].getLo();
+            outputs[aPin].altValue = 0;
+    
+            // Adjust steps in proportion to the range to be moved.
+            outputs[aPin].steps = ((long)outputs[aPin].steps - 1)
+                                * (abs(((long)outputs[aPin].target) - ((long)outputs[aPin].start)))
+                                / ((long)OUTPUT_SERVO_MAX)
+                                + 1;
+    
+            // Add trigger point for SIGNALS, but only if they're ascending the whole range.
+            if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
+                && (aState)
+                && (persisting)
+                && (outputs[aPin].start == outputDefs[aPin].getLo()))
+            {
+                outputs[aPin].altValue = (outputs[aPin].steps + random(outputs[aPin].steps)) / 3;
+            }
+        }
+        else if (outputDefs[aPin].isLed())
+        {
+            outputs[aPin].start     = outputs[aPin].value;
+            outputs[aPin].altStart  = outputs[aPin].altValue;
+            
+            // Handle LED_4/ROAD as special case (if preceding output is a LED).
+            if (   (isDoubleLed(aPin))
+                && (persisting))
+            {
+                boolean ledState = false;
+                uint8_t ledPin   = aPin - 1;
+                uint8_t offFlag  = (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4) ? LED_4_OFF : ROAD_OFF;
+                uint8_t oldPhase = (outputDefs[ledPin].getState()     )     // Convert state of both outputs to a phase.
+                                 | (outputDefs[aPin]  .getState() << 1);
+                uint8_t newPhase = oldPhase;
+    
+                // Set to phase=1 if Hi, otherwise next state in sequence
+                if (aState)
+                {
+                    newPhase = 1;
+                }
+                else if (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
+                {
+                    newPhase = LED_4_NEXT_PHASE[oldPhase];
+                }
+                else
+                {
+                    newPhase = ROAD_NEXT_PHASE[oldPhase];
+                }
+    
+                // Set states according to new phase.
+                // See table at top of source for states and colour sequences.
+                ledState = newPhase & 1;
+                newState = newPhase & 2;
+                outputDefs[ledPin].setState(ledState);
+    
+                if (newPhase == oldPhase)
+                {
+                    outputs[aPin].steps   = 0;                                    // Nothing to do.
+                    outputs[aPin].delayTo = 0;
+                }
+                else
+                {
+                    // Set common parameters for both outputs.
+                    outputs[ledPin].step     = outputs[aPin].step;              // Both outputs move with the same steps.
+                    outputs[ledPin].steps    = outputs[aPin].steps;
+                    outputs[ledPin].delayTo  = outputs[aPin].delayTo;           // and at the same time.
+        
+                    outputs[ledPin].start    = outputs[ledPin].value;           // LED movement common values.
+                    outputs[ledPin].altStart = outputs[ledPin].altValue;
+                         
+                    // Set targets according to new states.
+                    outputs[aPin].target      = newState ? outputDefs[aPin].getHi() : 0;
+                    outputs[aPin].altTarget   = newState ? 0 : outputDefs[aPin].getLo();
+                    outputs[ledPin].target    = ledState ? outputDefs[ledPin].getHi() : 0;
+                    outputs[ledPin].altTarget = ledState ? 0 : outputDefs[ledPin].getLo();
+        
+                    // Force off if states demand it.
+                    if (offFlag & (0x10 << newPhase))
+                    {
+                        outputs[ledPin].target    = 0;
+                        outputs[ledPin].altTarget = 0;
+                    }
+                    if (offFlag & (0x01 << newPhase))
+                    {
+                        outputs[aPin].target    = 0;
+                        outputs[aPin].altTarget = 0;
+                    }
+                    
+                    // Save the new state if persisting is enabled.
+                    if (persisting)
+                    {
+                        saveOutput(ledPin);
+                    }
+                }
+            }
+            else if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_RANDOM)
+                     && (persisting))
+            {
+                if (aState)
+                {
+                    // Set outputs on randomly.
+                    outputs[aPin].target    = (random(100) < RANDOM_HI_CHANCE) ? outputDefs[aPin].getHi() : 0;
+                    outputs[aPin].altTarget = (random(100) < RANDOM_LO_CHANCE) ? outputDefs[aPin].getLo() : 0;
+                }
+                else
+                {
+                    outputs[aPin].target    = 0;
+                    outputs[aPin].altTarget = 0;
+                }
+            }
+            else
+            {
+                // Ordinary LED
+                outputs[aPin].target    = aState ? outputDefs[aPin].getHi() : 0;
+                outputs[aPin].altTarget = aState ? 0 : outputDefs[aPin].getLo();
+            }
+        }
+        else if (outputDefs[aPin].isFlasher())
+        {
+            // For a BLINK that's not running, force state on.
+            if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
+                && (outputs[aPin].value    == 0)
+                && (outputs[aPin].altValue == 0))
+            {
+                newState = true;
+            }
+    
+            // Turn Flashers off immediately if state = Lo and an indefinite time (delay = 0).
+            if (   (!aState)
+                && (outputDefs[aPin].getReset() == 0))
+            {
+                newState = false;
+                outputs[aPin].steps = 0;
+                outputs[aPin].value = 0;
+                if (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
+                {
+                    outputs[aPin].altValue = 0;
+                }
+                else
+                {
+                    outputs[aPin].altValue = outputDefs[aPin].getLo();
+                }
+            }
+            else
+            {
+                // Flash as required.
+                outputs[aPin].delayTo = outputDefs[aPin].getReset() == 0 ? 0 : millis() + DELAY_MULTIPLIER * outputDefs[aPin].getReset();
+                outputs[aPin].step    = outputs[aPin].steps;
+            }
+        }
+        else
+        {
+            if (isDebug(DEBUG_ERRORS))
+            {
+                Serial.print(millis());
+                Serial.print(CHAR_TAB);
+                Serial.print(PGMT(M_DEBUG_UNKNOWN));
+                Serial.print(aPin);
+                Serial.print(PGMT(M_DEBUG_TYPE));
+                Serial.print(PGMT(M_OUTPUT_TYPES[outputDefs[aPin].getType() & OUTPUT_TYPE_MASK]));
+                Serial.println();
+            }
+        }
+    
+        // Set the Output to the new state.
+        outputDefs[aPin].setState(newState);
+        
+        // Save the new state if persisting is enabled.
+        if (persisting)
+        {
+            saveOutput(aPin);
+        }
+    
+        if (isDebug(DEBUG_DETAIL))
+        {
+            reportOutput(M_DEBUG_MOVE, aPin);
+        }
     }
 }
 
