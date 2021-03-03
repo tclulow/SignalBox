@@ -267,43 +267,49 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
         // No flashing.
         outputs[aPin].steps = 0;
 
-        // Handle double-LEDs as special case (if previous output is a LED).
-        // See table at top of source for states and colour sequences.
-        if (   (isDoubleLed(aPin))   
-            && (persisting))
+        if (persisting)
         {
-            if  (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
+            // Handle double-LEDs as special case (if previous output is a LED).
+            // See table at top of source for states and colour sequences.
+            if (isDoubleLed(aPin))   
             {
-                if (outputDefs[aPin].getState() == outputDefs[aPin - 1].getState())
+                if  (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
                 {
-                    outputs[aPin - 1].value = 0;        // LED red isn't required.
-                    outputs[aPin - 1].altValue = 0;     // LED amber isn't required.
+                    if (outputDefs[aPin].getState() == outputDefs[aPin - 1].getState())
+                    {
+                        outputs[aPin - 1].value = 0;        // LED red isn't required.
+                        outputs[aPin - 1].altValue = 0;     // LED amber isn't required.
+                    }
+                    else if (!outputDefs[aPin].getState())
+                    {
+                        outputs[aPin].altValue = 0;         // 1 case where LED_4 green isn't required.
+                    }
                 }
-                else if (!outputDefs[aPin].getState())
+                else
                 {
-                    outputs[aPin].altValue = 0;         // 1 case where LED_4 green isn't required.
+                    // ROADs always start at red.
+                    outputDefs[aPin - 1].setState(true);
+                    outputDefs[aPin    ].setState(false);
+                    outputs[aPin - 1].value    = outputDefs[aPin - 1].getHi();
+                    outputs[aPin - 1].altValue = 0;
+                    outputs[aPin    ].value    = 0;
+                    outputs[aPin    ].altValue = 0;
+                }
+    
+                // Make sure auto-reset is actioned (unless pair of ROADs adjacent to each other).
+                if (outputDefs[aPin].getReset() > 0)
+                {
+                    if (   (!isDoubleLed(aPin - 2))
+                        || (outputDefs[aPin    ].getType() != OUTPUT_TYPE_ROAD)
+                        || (outputDefs[aPin - 2].getType() != OUTPUT_TYPE_ROAD))
+                    {
+                        actionState(aPin, false, 0);
+                    }
                 }
             }
-            else
+            else if (isDoubleLed(aPin + 1))
             {
-                // ROADs always start at red.
-                outputDefs[aPin - 1].setState(true);
-                outputDefs[aPin    ].setState(false);
-                outputs[aPin - 1].value    = outputDefs[aPin - 1].getHi();
-                outputs[aPin - 1].altValue = 0;
-                outputs[aPin    ].value    = 0;
-                outputs[aPin    ].altValue = 0;
-            }
-
-            // Make sure auto-reset is actioned (unless pair of ROADs adjacent to each other).
-            if (outputDefs[aPin].getReset() > 0)
-            {
-                if (   (!isDoubleLed(aPin - 2))
-                    || (outputDefs[aPin    ].getType() != OUTPUT_TYPE_ROAD)
-                    || (outputDefs[aPin - 2].getType() != OUTPUT_TYPE_ROAD))
-                {
-                    actionState(aPin, false, 0);
-                }
+                initOutput(aPin + 1, outputDefs[aPin + 1].getType());
             }
         }
     }
@@ -320,11 +326,11 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
  */
 void initFlasher(uint8_t aPin)
 {
-    // Indefinite flashers that are high must be started.
     if (   (outputDefs[aPin].isFlasher())
         && (outputDefs[aPin].getState())
         && (outputDefs[aPin].getReset() == 0))
     {
+        // Indefinite flashers that are high must be started.
         actionState(aPin, outputDefs[aPin].getState(), 0);
     }
     else if (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
