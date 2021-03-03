@@ -775,13 +775,6 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
         outputs[aPin].target   = aState ? outputDefs[aPin].getHi() : outputDefs[aPin].getLo();
         outputs[aPin].altValue = 0;
 
-//        uint32_t steps = abs(outputs[aPin].target - outputs[aPin].start);
-//        if (steps > OUTPUT_SERVO_MAX)
-//        {
-//            steps = OUTPUT_SERVO_MAX;
-//        }
-//        steps = steps * outputDefs[aPin].getPaceAsSteps()
-//                      / OUTPUT_SERVO_MAX;
         // Adjust steps in proportion to the range to be moved.
         outputs[aPin].steps = ((long)outputs[aPin].steps - 1)
                             * (abs(((long)outputs[aPin].target) - ((long)outputs[aPin].start)))
@@ -1379,7 +1372,7 @@ void loop()
 //    count = 0;
 //    start = now;
 //  }
-
+//
 //    // DEBUG tests.
 //    if (   (now > 5000)
 //        && (testRun == 0))
