@@ -118,20 +118,7 @@ void setup()
         {
             loadOutput(pin);
             initOutput(pin, OUTPUT_TYPE_NONE);
-
-            // Indefinite flashers that are high must be started.
-            if (   (outputDefs[pin].isFlasher())
-                && (outputDefs[pin].getState())
-                && (outputDefs[pin].getReset() == 0))
-            {
-                actionState(pin, outputDefs[pin].getState(), 0);
-            }
-            else if (outputDefs[pin].getType() == OUTPUT_TYPE_BLINK)
-            {
-                // BLINKs must be completely off.
-                outputs[pin].value    = 0;
-                outputs[pin].altValue = 0;
-            }
+            initFlasher(pin);
         }
     }
 
@@ -325,6 +312,26 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
         // All other outputs, turn pins off. 
         digitalWrite(OUTPUT_BASE_PIN + aPin, LOW);
         digitalWrite(ioPins[aPin], LOW);
+    }
+}
+
+
+/** Initialise a flasher.
+ */
+void initFlasher(uint8_t aPin)
+{
+    // Indefinite flashers that are high must be started.
+    if (   (outputDefs[aPin].isFlasher())
+        && (outputDefs[aPin].getState())
+        && (outputDefs[aPin].getReset() == 0))
+    {
+        actionState(aPin, outputDefs[aPin].getState(), 0);
+    }
+    else if (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
+    {
+        // BLINKs must be completely off.
+        outputs[aPin].value    = 0;
+        outputs[aPin].altValue = 0;
     }
 }
 
@@ -689,7 +696,8 @@ void processWrite(uint8_t aPin)
     }
     else
     {
-        persisting = false;                             // Stop saveing state to EEPROM.
+        // Stop saving state to EEPROM.
+        persisting = false;
 
         // Read the Output definition and save it.
         outputDefs[aPin].read();
@@ -712,6 +720,7 @@ void processSave(uint8_t aPin)
     persisting = true;          // Resume saving output to EEPROM.
     saveOutput(aPin);           // And save the output.
     initOutput(aPin, oldType);  // Ensure output is initialised to new state.
+    initFlasher(aPin);          // Ensure flasher is operating (or not).
 }
 
 
@@ -724,6 +733,7 @@ void processReset(uint8_t aPin)
     persisting = true;          // Resume saving output to EEPROM.
     loadOutput(aPin);           // And recover the output's definition.
     initOutput(aPin, oldType);  // Ensure output is initialised to new state.
+    initFlasher(aPin);          // Ensure flasher is operating (or not).
 }
 
 
