@@ -762,8 +762,8 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay)
         Serial.println();
     }
 
-    // If there's an action pending, just make it happen now.
-    if (   (!outputDefs[aPin].isFlasher())
+    // If there's an action pending for a Led, just make it happen now.
+    if (   (outputDefs[aPin].isLed())
         && (millis() < outputs[aPin].delayTo)
         && (!aState))
     {
