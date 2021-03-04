@@ -56,11 +56,11 @@ boolean persisting = true;
 
 
 // Ticking
-long now       = 0;
-long nowMicros = 0;
-long tickServo = 0;
-long tickLed   = 0;
-long tickFlash = 0;
+long    now       = 0;  // To keep the current time (since boot).
+long    tickServo = 0;  // Ticking for Servos.
+long    tickLed   = 0;  // Ticking for Leds.
+long    tickFlash = 0;  // Ticking for Flashers.
+uint8_t tickPwm   = 0;  // Ticking for PWM output of LEDs.
 
 
 // i2c request command parameters
@@ -745,7 +745,7 @@ void processReset(uint8_t aPin)
 
 /** Action the state change against the specified pin.
  */
-void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
+void actionState(uint8_t aPin, boolean aState, uint8_t aDelay)
 {
     boolean newState = aState;      // Might want to change the state (some LED_4 and FLASHERS).
     
@@ -763,7 +763,9 @@ void actionState(uint8_t aPin, uint8_t aState, uint8_t aDelay)
     }
 
     // If there's an action pending, just make it happen now.
-    if (millis() < outputs[aPin].delayTo)
+    if (   (!outputDefs[aPin].isFlasher())
+        && (millis() < outputs[aPin].delayTo)
+        && (!aState))
     {
         outputs[aPin].delayTo = 0;
         if (isDoubleLed(aPin))
@@ -1420,8 +1422,8 @@ void stepFlash(uint8_t aPin)
 void loop()
 {
     // Record the time now
-    now       = millis();
-    nowMicros = micros();
+    now      = millis();
+    tickPwm += 1;
     
 //  // Metrics
 //  count += 1;
@@ -1480,10 +1482,10 @@ void loop()
             || (outputDefs[pin].isFlasher()))
         {
             // Use compliment of nowMicros for alt pin to remove the chance of both being on at once.
-            digitalWrite(OUTPUT_BASE_PIN + pin,    outputs[pin].value    >  0 
-                                                && outputs[pin].value    >= ( nowMicros & 0xff));
-            digitalWrite(ioPins[pin],              outputs[pin].altValue >  0 
-                                                && outputs[pin].altValue >= (~nowMicros & 0xff));
+            digitalWrite(OUTPUT_BASE_PIN + pin,    (outputs[pin].value    >  0)
+                                                && (outputs[pin].value    >= ( tickPwm & 0xff)));
+            digitalWrite(ioPins[pin],              (outputs[pin].altValue >  0)
+                                                && (outputs[pin].altValue >= (~tickPwm & 0xff)));
         }
 //        // Example how to use PORTS to toggle pins directly.
 //        // See OUTPUT_BASE_PIN and ioPins for output => pin mapping.
