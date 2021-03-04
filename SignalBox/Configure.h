@@ -25,7 +25,7 @@
 #define SYS_REPORT   0
 #define SYS_I2C      1
 #define SYS_NODES    2
-#define SYS_TEST     3
+#define SYS_IDENT    3
 #define SYS_DEBUG    4
 #define SYS_MAX      5
 
@@ -164,7 +164,7 @@ class Configure
                              break;
             case SYS_NODES:  displaySystemNodesParams();
                              break;
-            case SYS_TEST:   displaySystemTestParams();
+            case SYS_IDENT:  displaySystemIdentParams();
                              break;
             case SYS_DEBUG:  displaySystemDebugParams();
                              break;
@@ -209,7 +209,7 @@ class Configure
 
     /** Display System's report parameter.
      */
-    void displaySystemTestParams()
+    void displaySystemIdentParams()
     {
         lcd.clearRow(LCD_COL_MARK, LCD_ROW_BOT);
     }
@@ -586,7 +586,7 @@ class Configure
                                         case SYS_NODES:  scanHardware();
                                                          displayAll();
                                                          break;
-                                        case SYS_TEST:   testOutputs();
+                                        case SYS_IDENT:  identOutputs();
                                                          displayDetailSystem();
                                                          break;
                                         case SYS_DEBUG:  changed |= menuSystemDebug();
@@ -1399,9 +1399,9 @@ class Configure
     }
 
 
-    /** Test all the configured outputs in turn.
+    /** Identify all the configured outputs in turn.
      */
-    void testOutputs()
+    void identOutputs()
     {
         boolean interrupted = false;
         uint8_t button      = BUTTON_NONE;
