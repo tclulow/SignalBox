@@ -1005,6 +1005,8 @@ boolean actionFlasher(uint8_t aPin, boolean aState)
         outputs[aPin].delayTo = outputDefs[aPin].getReset() == 0 ? 0 : millis() + DELAY_MULTIPLIER * outputDefs[aPin].getReset();
         outputs[aPin].step    = outputs[aPin].steps;
     }
+
+    return newState;
 }
 
 
