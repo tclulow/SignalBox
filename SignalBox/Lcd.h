@@ -26,7 +26,6 @@
 
 #define LCD_COL_START         0   // Cols for LCD state messages.
 #define LCD_COL_MARK          6   // Marker column when changing top-level option.
-#define LCD_COL_VERSION       8   // Where to put version number/date.
 #define LCD_COL_CALIBRATE     6   // Button to press.
 #define LCD_COL_STATE         7   // State of an output.
 #define LCD_COL_NODE         11   // Node number.

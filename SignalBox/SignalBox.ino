@@ -21,21 +21,15 @@
 #include "System.h"
 #include "Comms.h"
 #include "EzyBus.h"
-#include "SignalBox.h"
-#include "Lcd.h"
 #include "Output.h"
 #include "Input.h"
+#include "SignalBox.h"
+#include "Lcd.h"
 #include "Buttons.h"
 #include "Report.h"
 #include "ImportExport.h"
 #include "Configure.h"
 
-
-// Timeout for the display when important messages are showing.
-long displayTimeout = 1L;   // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
-
-// Record state of input switches.
-uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
 
 // Ticking
 long now           = 0;     // The current time in millisecs.
@@ -373,7 +367,7 @@ void scanInputs()
                     }
                 }
             
-                // Record new state.
+                // Record new input states.
                 currentSwitchState[node] = pins;
             }
         }
@@ -386,23 +380,23 @@ void scanInputs()
  *  Return current state if there's a communication error, 
  *  this will prevent any actions being performed.
  */
-uint16_t readInputNode(uint8_t node)
+uint16_t readInputNode(uint8_t aNode)
 {
     int      error = 0;
     uint16_t value = 0;
 
-    Wire.beginTransmission(systemData.i2cInputBaseID + node);    
+    Wire.beginTransmission(systemData.i2cInputBaseID + aNode);    
     Wire.write(MCP_GPIOA);
     error = Wire.endTransmission();
     if (error)
     {
         systemFail(M_I2C_ERROR, error, DELAY_READ);
-        value = currentSwitchState[node];  // Pretend no change if comms error.
+        value = currentSwitchState[aNode];  // Pretend no change if comms error.
     }
-    else if ((value = Wire.requestFrom(systemData.i2cInputBaseID + node, 2)) != 2)
+    else if ((value = Wire.requestFrom(systemData.i2cInputBaseID + aNode, 2)) != 2)
     {
         systemFail(M_I2C_COMMS, error, DELAY_READ);
-        value = currentSwitchState[node];  // Pretend no change if comms error.
+        value = currentSwitchState[aNode];  // Pretend no change if comms error.
     }
     else
     {

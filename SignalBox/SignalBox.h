@@ -17,9 +17,24 @@
 #define PIN_CALIBRATE    11
 
 
+// Timeout for the display when important messages are showing.
+long displayTimeout = 1L;   // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
+
+// Record state of input switches.
+uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
+
+
 /** Scan for attached hardware (Input and Output nodes).
  */
 void scanHardware();
+
+
+/** Read the pins of a InputNode.
+ *  Return the state of the pins, 16 bits, both ports.
+ *  Return current state if there's a communication error, 
+ *  this will prevent any actions being performed.
+ */
+uint16_t readInputNode(uint8_t aNode);
 
 
 /** Process all the Input's Outputs.

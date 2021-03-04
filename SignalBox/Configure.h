@@ -810,12 +810,16 @@ class Configure
                                     lcd.printAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[aIsInput ? inpNode : outNode]);
                                     displayDetail();
                                     break;
-                case BUTTON_SELECT: if (!aIsInput)
+                case BUTTON_SELECT: markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
+                                    if (aIsInput)
                                     {
-                                        markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
-                                        menuNewNode();
-                                        markField(LCD_COL_NODE, LCD_ROW_TOP, 1, true);
+                                        menuScanInputs();
                                     }
+                                    else
+                                    {
+                                        menuNewNode();
+                                    }
+                                    markField(LCD_COL_NODE, LCD_ROW_TOP, 1, true);
                                     break;
                 case BUTTON_LEFT:   finished = true;
                                     markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
@@ -866,6 +870,73 @@ class Configure
         return next;
     }
 
+
+    /** Scan inputs waiting for one to be actioned.
+     */
+    void menuScanInputs()
+    {
+        uint8_t button   = BUTTON_NONE;     // The button that was pressed.
+        uint8_t curNode  = inpNode;         // The current input node and pin.
+        uint8_t curPin   = inpPin;
+        uint8_t selNode  = inpNode;         // The most recently selected node and pin.
+        uint8_t selPin   = inpPin;
+        int     mask     = 0;               // Mask for checking input pin states.
+
+        // Announce we're scanning
+        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SCANNING, LCD_COLS);
+        waitForButtonRelease();
+        
+        // Scan all the input nodes until a button is pressed.
+        while ((button = readButton()) == BUTTON_NONE)
+        {
+            for (inpNode = 0; inpNode < INPUT_NODE_MAX; inpNode++)
+            {
+                if (isInputNode(inpNode))                                        
+                {
+                    // Read current state of pins and if there's been a change
+                    uint16_t pins = readInputNode(inpNode);
+                    if (pins != currentSwitchState[inpNode])
+                    {
+                        // Process all the changed pins.
+                        for (inpPin = 0, mask = 1; inpPin < INPUT_PIN_MAX; inpPin++, mask <<= 1)
+                        {
+                            uint16_t state = pins & mask;
+                            if (state != (currentSwitchState[inpNode] & mask))
+                            {
+                                // An input was actioned, record it and show it.
+                                selNode = inpNode;
+                                selPin  = inpPin;
+                                loadInput(inpNode, inpPin);
+                                displayInputNode();
+                                displayDetail();
+                            }
+                        }
+                    
+                        // Record new input states.
+                        currentSwitchState[inpNode] = pins;
+                    }
+                }
+            }
+        }
+
+        // Recover current node/pin unless a different one was selected.
+        if (button == BUTTON_SELECT)
+        {
+            inpNode = selNode;
+            inpPin  = selPin;
+        }
+        else
+        {
+            inpNode = curNode;
+            inpPin  = curPin;
+        }
+
+        // Re-load current button and display attributes.
+        loadInput(inpNode, inpPin);
+        displayInputNode();
+        displayDetail();
+    }
+    
 
     /** Move a node to a new number.
      */
@@ -1409,6 +1480,7 @@ class Configure
         long    finishAt    = 0L;           // Time to finish output's test.
         
         waitForButtonRelease();
+        lcd.printAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_IDENT, LCD_LEN_OPTION);
         lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
 
         // Test all the nodes in turn.
@@ -1492,6 +1564,8 @@ class Configure
                 }
             }
         }
+
+        displayAll();
     }
 
 
