@@ -1542,10 +1542,13 @@ class Configure
                                                 break;
                             case BUTTON_SELECT: interrupted = true;
                                                 break;
-                            case BUTTON_LEFT:   pin -= 1;
-                                                if (pin > OUTPUT_PIN_MAX)
+                            case BUTTON_LEFT:   for (pin -= 1; pin > 0; pin--)
                                                 {
-                                                    pin = 0;
+                                                    readOutput(node, pin);
+                                                    if (outputDef.getType() != OUTPUT_TYPE_NONE)
+                                                    {
+                                                        break;
+                                                    }
                                                 }
                                                 break;
                             case BUTTON_RIGHT:  pin += 1;
