@@ -47,6 +47,7 @@
 #define JUMPER_PINS                 4   // Four jumpers.
 #define IO_PINS                     8   // Eight IO pins.
 #define OUTPUT_BASE_PIN             4   // Outputs attached to this pin and the next 7 more.
+#define OUTPUT_BUILTIN_PIN          6   // IO Output 6 is pin 13, the LED_BUILTIN.
 #define ANALOG_PIN_FIRST           A0   // First analog pin. 
 #define ANALOG_PIN_CUTOFF       0x200   // When usinging analog pin for digital purposes, cutoff at this value (half of full range 0-3ff).     
 

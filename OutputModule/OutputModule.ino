@@ -127,8 +127,12 @@ void setup()
     Wire.onReceive(processReceipt);
     Wire.onRequest(processRequest);
 
-    // Flash out version number on the built-in LED
-    flashVersion();
+    // Flash out version number on the built-in LED,
+    // unless that's a Servo - don't want to mess with it's attached base pin.
+    if (!outputDefs[OUTPUT_BUILTIN_PIN].isServo())
+    {
+        flashVersion();
+    }
 
     // Show system data (depending on debug level).
     debugSystemData();
@@ -1148,7 +1152,7 @@ void stepServo(uint8_t aPin)
 
         // Move Servo to new state.
         outputs[aPin].servo.write(outputs[aPin].value);
-        digitalWrite(LED_BUILTIN, HIGH);                    // Indicate work in progress;
+        // digitalWrite(LED_BUILTIN, HIGH);                    // Indicate work in progress;
 
         // Report activity if debug level high enough.
         if (   (isDebug(DEBUG_FULL))
@@ -1459,7 +1463,7 @@ void loop()
     if (now > tickServo)
     {
         tickServo = now + STEP_SERVO;
-        digitalWrite(LED_BUILTIN, LOW);       // Assume no work in progress.
+        // digitalWrite(LED_BUILTIN, LOW);       // Assume no work in progress.
         stepServos();
     }
 
