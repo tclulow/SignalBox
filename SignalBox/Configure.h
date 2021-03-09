@@ -1693,11 +1693,11 @@ class Configure
                                             outputDef.setLo(0);
                                         }
                                         lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputDef.getLo(), OUTPUT_HI_LO_SIZE);
+                                        writeOutput();
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    writeOutput();
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   do
@@ -1708,11 +1708,11 @@ class Configure
                                             outputDef.setLo(aLimit);
                                         }
                                         lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputDef.getLo(), OUTPUT_HI_LO_SIZE);
+                                        writeOutput();
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    writeOutput();
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: testOutput();
@@ -1761,11 +1761,11 @@ class Configure
                                             outputDef.setHi(0);
                                         }
                                         lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getHi(), OUTPUT_HI_LO_SIZE);
+                                        writeOutput();
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    writeOutput();
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   do
@@ -1776,11 +1776,11 @@ class Configure
                                             outputDef.setHi(aLimit);
                                         }
                                         lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getHi(), OUTPUT_HI_LO_SIZE);
+                                        writeOutput();
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (readButton() != 0);
-                                    writeOutput();
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: testOutput();
