@@ -1487,7 +1487,7 @@ void loop()
         if (   (outputDefs[pin].isLed())
             || (outputDefs[pin].isFlasher()))
         {
-            // Use compliment of nowMicros for alt pin to remove the chance of both being on at once.
+            // Use compliment of tickPwm for alt pin to remove the chance of both being on at once.
             digitalWrite(OUTPUT_BASE_PIN + pin,    (outputs[pin].value    >  0)
                                                 && (outputs[pin].value    >= ( tickPwm & 0xff)));
             digitalWrite(ioPins[pin],              (outputs[pin].altValue >  0)
