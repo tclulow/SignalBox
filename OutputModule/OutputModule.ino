@@ -7,22 +7,15 @@
  *      Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
  *      http://creativecommons.org/licenses/by-nc-sa/4.0/
  *
- *   For commercial use, please contact the original copyright holder(s) to agree licensing terms
+ *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
 
 
 #define MASTER false        // The is not the master, it's a nano output module.
 
 
-#include <EEPROM.h>
 #include <Servo.h>
-#include <Wire.h>
-
-#include "Config.h"
-#include "Messages.h"
-#include "System.h"
-#include "Comms.h"
-#include "Output.h"
+#include "All.h"
 
 
 // Definitions for paired LEDS

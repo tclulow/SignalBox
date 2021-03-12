@@ -7,7 +7,7 @@
  *      Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
  *      http://creativecommons.org/licenses/by-nc-sa/4.0/
  *
- *   For commercial use, please contact the original copyright holder(s) to agree licensing terms
+ *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
 #ifndef _Buttons_h
 #define _Buttons_h

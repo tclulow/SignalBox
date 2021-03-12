@@ -7,28 +7,13 @@
  *      Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
  *      http://creativecommons.org/licenses/by-nc-sa/4.0/
  *
- *   For commercial use, please contact the original copyright holder(s) to agree licensing terms
+ *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
 
 #define MASTER true         // The master (Uno) device.
 
 
-#include <EEPROM.h>
-#include <Wire.h>
-
-#include "Config.h"
-#include "Messages.h"
-#include "System.h"
-#include "Comms.h"
-#include "EzyBus.h"
-#include "Output.h"
-#include "Input.h"
-#include "SignalBox.h"
-#include "Lcd.h"
-#include "Buttons.h"
-#include "Report.h"
-#include "ImportExport.h"
-#include "Configure.h"
+#include "All.h"
 
 
 #define COMMAND_BUFFER_LEN   8                  // Serial command buffer length

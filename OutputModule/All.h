@@ -1,4 +1,4 @@
-/** Reporting.
+/** All includes
  *
  *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
@@ -9,23 +9,25 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _Report_h
-#define _Report_h
 
+#include <EEPROM.h>
+#include <Wire.h>
 
-/** Is reporting enabled (at a particular level)?
- */
-boolean reportEnabled(uint8_t aLevel);
+#include "Config.h"
+#include "Messages.h"
+#include "System.h"
+#include "Comms.h"
+#include "Output.h"
 
+#if MASTER
 
-/** Length of time to wait for depending on the reporting level.
- */
-int reportDelay();
-
-
-/** Pause for user-input if so configured.
- */
-void reportPause();
-
+#include "EzyBus.h"
+#include "Input.h"
+#include "SignalBox.h"
+#include "Lcd.h"
+#include "Buttons.h"
+#include "Report.h"
+#include "ImportExport.h"
+#include "Configure.h"
 
 #endif
