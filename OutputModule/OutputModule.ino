@@ -102,8 +102,8 @@ void setup()
     // Configure the IO pins for output.
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
-        pinMode(OUTPUT_BASE_PIN + pin, OUTPUT);
-        pinMode(ioPins[pin], OUTPUT);
+        pinMode(sigPins[pin], OUTPUT);
+        pinMode(ioPins[pin],  OUTPUT);
     }
 
     // Load SystemData from EEPROM and check it's valid.
@@ -252,7 +252,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
                 outputs[aPin].servo.write(outputDefs[aPin].getLo());
             }
             digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
-            outputs[aPin].servo.attach(OUTPUT_BASE_PIN + aPin);
+            outputs[aPin].servo.attach(sigPins[aPin]);
         }
     }
     else if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_RANDOM)
@@ -320,8 +320,8 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
     else
     {
         // All other outputs, turn pins off. 
-        digitalWrite(OUTPUT_BASE_PIN + aPin, LOW);
-        digitalWrite(ioPins[aPin], LOW);
+        digitalWrite(sigPins[aPin], LOW);
+        digitalWrite(ioPins[aPin],  LOW);
     }
 }
 
@@ -1488,10 +1488,10 @@ void loop()
             || (outputDefs[pin].isFlasher()))
         {
             // Use compliment of tickPwm for alt pin to remove the chance of both being on at once.
-            digitalWrite(OUTPUT_BASE_PIN + pin,    (outputs[pin].value    >  0)
-                                                && (outputs[pin].value    >= ( tickPwm & 0xff)));
-            digitalWrite(ioPins[pin],              (outputs[pin].altValue >  0)
-                                                && (outputs[pin].altValue >= (~tickPwm & 0xff)));
+            digitalWrite(sigPins[pin],    (outputs[pin].value    >  0)
+                                       && (outputs[pin].value    >= ( tickPwm & 0xff)));
+            digitalWrite(ioPins[pin],     (outputs[pin].altValue >  0)
+                                       && (outputs[pin].altValue >= (~tickPwm & 0xff)));
         }
 //        // Example how to use PORTS to toggle pins directly.
 //        // See OUTPUT_BASE_PIN and ioPins for output => pin mapping.
