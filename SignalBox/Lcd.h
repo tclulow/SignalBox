@@ -14,6 +14,7 @@
 
 // include the LCD library code:
 #include <LiquidCrystal.h>
+// #include <LiquidCrystal_I2C.h>
 
 
 #define LCD_COLS             16   // LCD is 16 columns
@@ -188,7 +189,7 @@ class Lcd: public LiquidCrystal
                 leadingBlanks = false;
             }
             else if (   (digits > 0)            // Don't pad the last digit
-                     && (leadingBlanks))        // DOn't pad after we've had some non-zero digits.
+                     && (leadingBlanks))        // Don't pad after we've had some non-zero digits.
             {
                 print(aPad);
             }
@@ -231,6 +232,8 @@ class Lcd: public LiquidCrystal
  *  LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
  */
 Lcd lcd(8, 9, 4, 5, 6, 7);
+
+// LiquidCrystal_I2C* lcd2 = new LiquidCrystal_I2C(0x27, 16, 2);
 
 
 #endif
