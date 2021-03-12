@@ -11,6 +11,9 @@
  */
 
 
+ #include "All.h"
+
+
 /** Load an Input's data from EEPROM.
  */
 void loadInput(uint8_t aInput)

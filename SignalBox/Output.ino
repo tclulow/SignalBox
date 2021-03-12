@@ -11,6 +11,9 @@
  */
 
 
+ #include "All.h"
+
+
 /** Read an Output's data from an OutputModule.
  */
 void readOutput(uint8_t aNode, uint8_t aPin)
