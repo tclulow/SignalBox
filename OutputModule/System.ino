@@ -260,6 +260,32 @@ uint8_t getModuleId(boolean aIncludeBase)
 #endif
 
 
+/** Convert a character to hex value.
+ *  Special-case: letters G-V represent 0x10 to 0x1f.
+ *  If any other characters are present, return a negative number -HEX_MAX
+ */
+int charToHex(char ch)
+{
+    if (ch >= CHAR_LOWER_A)
+    {
+        return (int)(10 + ch - CHAR_LOWER_A);
+    }
+    else if (ch >= CHAR_UPPER_A)
+    {
+        return (int)(10 + ch - CHAR_UPPER_A);
+    }
+    else if (ch >= CHAR_ZERO)
+    {
+        return (int)(ch - CHAR_ZERO);
+    }
+    else
+    {
+        // Fail if anything else (including CHAR_DOT).
+        return -HEX_MAX;
+    }
+}
+
+
 /** Print a number as a string of hex digits.
  *  Padded with leading zeros to length aDigits.
  */

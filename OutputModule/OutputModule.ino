@@ -803,7 +803,7 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay)
             {
                 Serial.print(millis());
                 Serial.print(CHAR_TAB);
-                Serial.print(PGMT(M_DEBUG_UNKNOWN));
+                Serial.print(PGMT(M_UNKNOWN));
                 Serial.print(aPin);
                 Serial.print(PGMT(M_DEBUG_TYPE));
                 Serial.print(PGMT(M_OUTPUT_TYPES[outputDefs[aPin].getType() & OUTPUT_TYPE_MASK]));

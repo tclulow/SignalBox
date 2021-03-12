@@ -27,6 +27,7 @@ const char M_VERSION[]          PROGMEM = "v3.1.1";        // See also system.VE
 const char M_VERSION_DATE[]     PROGMEM = "Feb 21";
 const char M_STARTUP[]          PROGMEM = "Startup";
 const char M_UPDATE[]           PROGMEM = "Update ";
+const char M_UNKNOWN[]          PROGMEM = "Unknown";
 
 
 // General messages (shared)
@@ -69,7 +70,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,   M_SERVO, M_SIGNAL, M_LED, M_L
     const char M_INTERRUPT[]        PROGMEM = "Interrupt"; 
     const char M_SCANNING[]         PROGMEM = "Scanning inputs";
     // const char M_TODO[]          PROGMEM = "TODO";
-    
+
     // Calibrate LCD buttons.
     const char M_CALIBRATE[]        PROGMEM = "Calibrate button";
     const char M_PRESS[]            PROGMEM = "Press";
@@ -179,6 +180,7 @@ const char M_DEBUG_STATES[]     PROGMEM = "States";
 const char M_DEBUG_SYSTEM[]     PROGMEM = "System";
 const char M_DEBUG_WRITE[]      PROGMEM = "Write";
 
+const char M_DEBUG_COMMAND[]    PROGMEM = ", cmd=";
 const char M_DEBUG_DELAY_TO[]   PROGMEM = ", delayTo=";
 const char M_DEBUG_HI[]         PROGMEM = ", hi=";
 const char M_DEBUG_LO[]         PROGMEM = ", lo=";
@@ -217,10 +219,8 @@ const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG, M_DEBU
     const char M_DEBUG_REQUEST[]    PROGMEM = "Request";
     const char M_DEBUG_TRIGGER[]    PROGMEM = "Trigger";
     const char M_DEBUG_UNEXPECTED[] PROGMEM = "Unexpected";
-    const char M_DEBUG_UNKNOWN[]    PROGMEM = "Unknown";
 
     const char M_DEBUG_ALT[]        PROGMEM = ", alt=";
-    const char M_DEBUG_COMMAND[]    PROGMEM = ", cmd=";
     const char M_DEBUG_LEN[]        PROGMEM = ", len=";
     const char M_DEBUG_OPTION[]     PROGMEM = ", opt=";
     const char M_DEBUG_START[]      PROGMEM = ", start=";

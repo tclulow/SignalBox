@@ -267,7 +267,7 @@ class ImportExport
      */
     int readData()
     {
-        char ch;
+        int  hex   = 0;
         int  value = 0;
         int  len   = readWord();
 
@@ -279,26 +279,16 @@ class ImportExport
         {
             for (uint8_t index = 0; index < len; index++)
             {
-                ch = wordBuffer[index];
-                value <<= 4;
-
-                if (ch >= CHAR_LOWER_A)
+                hex = charToHex(wordBuffer[index]);
+                if (hex < 0)
                 {
-                    value += (int)(10 + ch - CHAR_LOWER_A);
-                }
-                else if (ch >= CHAR_UPPER_A)
-                {
-                    value += (int)(10 + ch - CHAR_UPPER_A);
-                }
-                else if (ch >= CHAR_ZERO)
-                {
-                    value += (int)(ch - CHAR_ZERO);
+                    value = -HEX_MAX;
+                    break;
                 }
                 else
                 {
-                    // Fail if anything else (including CHAR_DOT).
-                    value = -HEX_MAX;
-                    break;
+                    value <<= 4;
+                    value += hex;
                 }
             }
         }

@@ -31,11 +31,15 @@
 #include "Configure.h"
 
 
+#define COMMAND_BUFFER_LEN   8                  // Serial command buffer length
+char    commandBuffer[COMMAND_BUFFER_LEN + 1];  // Buffer to read characters with null terminator on the end.
+uint8_t commandLen = 0;                         // Length of command.
+
+
 // Ticking
 long now           = 0;     // The current time in millisecs.
 long tickScan      = 0;     // The time of the last scan of input switches.
 long tickHeartBeat = 0;     // Time of last heartbeat.
-
 
 /** Announce ourselves.
  */
@@ -614,6 +618,58 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
 }
 
 
+/** Process a received command.
+ */
+void processCommand()
+{
+    boolean executed = false;
+    uint8_t node     = 0;
+    uint8_t pin      = 0;
+    uint8_t state    = 0;
+    
+    if (isDebug(DEBUG_BRIEF))
+    {
+      Serial.print(millis());
+      Serial.print(CHAR_TAB);
+      Serial.print(PGMT(M_INPUT));
+      Serial.print(PGMT(M_DEBUG_COMMAND));
+      Serial.println(commandBuffer);
+    }
+
+    // Expect three characters, command, nodeId, pinId
+    if (strlen(commandBuffer) == 3)
+    {
+        switch (commandBuffer[0])
+        {
+            case 'i':
+            case 'I': node = charToHex(commandBuffer[1]) & INPUT_NODE_MASK;
+                      pin  = charToHex(commandBuffer[2]) & INPUT_PIN_MASK;
+                      if (   (node >= 0)
+                          && (pin  >= 0))
+                      {
+                          loadInput(node, pin);
+                          processInput(state);
+                          executed = true;
+                      }
+                      break;
+            default:  break;
+        }
+    }
+
+    // Report error if not executed.
+    if (   (!executed)
+        && (reportEnabled(REPORT_SHORT)))
+    {
+        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+        lcd.print(PGMT(M_UNKNOWN));
+        lcd.print(CHAR_SPACE);
+        lcd.print(commandBuffer);
+        setDisplayTimeout(DELAY_READ);
+    }
+}
+
+
 //uint8_t * heapPtr, * stackPtr;
 //
 //void checkMem(const char* aMessage)
@@ -741,6 +797,23 @@ void loop()
         configure.run();
         announce();
     }
+
+    // Look for command characters    
+    while (Serial.available() > 0)
+    {
+        char ch = Serial.read();
+        if (ch == '\n')
+        {
+            // Process the received command
+            commandBuffer[commandLen] = CHAR_NULL;
+            processCommand();
+            commandLen = 0;
+        }
+        else if (commandLen <= COMMAND_BUFFER_LEN)
+        {
+            commandBuffer[commandLen++] = ch;
+        }
+    }    
 
     now = millis();
 
