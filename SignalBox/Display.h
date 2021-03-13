@@ -52,7 +52,7 @@
 
 #define LCD_COL_OUTPUT_PARAM  7   // Output's parameters(3) start at this col.
 #define LCD_COL_OUTPUT_STEP   3   // Three columns per parameter.
-#define LCD_COL_OUTPUT_LO     8   // Output's lo parameter at this col.
+#define LCD_COL_OUTPUT_LO     7   // Output's lo parameter at this col.
 #define LCD_COL_OUTPUT_HI    12   // Output's hi parameter at this col.
 #define LCD_COL_OUTPUT_PACE   8   // Output's pace parameter at this col.
 #define LCD_COL_OUTPUT_RESET 12   // Output's reset parameter at this col.
@@ -347,12 +347,28 @@ class Display
 
     /** Clear a row from the given column to the end.
      */
-    void clearRow(uint8_t aCol, uint8_t aRow)
+    void clearRow(int aCol, uint8_t aRow)
     {
+        uint8_t len = LCD_COLS - aCol;
+        if (aCol < 0)
+        {
+            len = -aCol;
+        }
+        
         setCursor(aCol, aRow);
-        for (uint8_t spaces = 0; spaces < LCD2_COLS - aCol; spaces++)
+        for (uint8_t spaces = 0; spaces < len; spaces++)
         {
             printCh(CHAR_SPACE);
+        }
+
+        // Add extra spaces for lcd2 if necessary.
+        if (   (lcd2)
+            && (aCol >= 0))
+        {
+            for (uint8_t spaces = LCD_COLS; spaces < LCD2_COLS; spaces++)
+            {
+                lcd2->print(CHAR_SPACE);
+            }
         }
     }
 
