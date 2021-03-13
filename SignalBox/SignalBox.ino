@@ -70,7 +70,7 @@ void scanHardware()
         }
         else
         {  
-            lcd.printCh(HEX_CHARS[node]);
+            lcd.printHexCh(node);
             setInputNodePresent(node);
         }
     }
@@ -91,7 +91,7 @@ void scanHardware()
 
         if (state == 0)
         {
-            lcd.printCh(HEX_CHARS[node]);
+            lcd.printHexCh(node);
         }
         else
         {
@@ -133,7 +133,7 @@ void initInputs()
     {
         if (isInputNode(node))
         {
-            lcd.printCh(HEX_CHARS[node]);
+            lcd.printHexCh(node);
             
             // Configure for input
             Wire.beginTransmission(systemData.i2cInputBaseID + node); 
@@ -237,7 +237,7 @@ void defaultInputs(uint8_t aInputType)
     
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
-        lcd.printCh(HEX_CHARS[node]);
+        lcd.printHexCh(node);
 
         for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
         {
@@ -271,7 +271,7 @@ void convertEzyBus()
 
     for (outputNode = 0; outputNode < EZY_NODE_MAX; outputNode++)
     {
-        lcd.printCh(HEX_CHARS[outputNode]);
+        lcd.printHexCh(outputNode);
 
         for (outputPin = 0; outputPin < OUTPUT_PIN_MAX; outputPin++)
         {
@@ -435,8 +435,8 @@ void processInput(uint16_t aState)
             lcd.clear();
             lcd.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
             lcd.printProgStrAt(LCD_COL_STATE, LCD_ROW_TOP, (newState ? M_HI : M_LO));
-            lcd.printChAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
-            lcd.printChAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
+            lcd.printHexChAt(LCD_COL_NODE,  LCD_ROW_TOP, (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK);
+            lcd.printHexChAt(LCD_COL_PIN,   LCD_ROW_TOP, (inputNumber                    ) & INPUT_PIN_MASK);
             lcd.setCursor(LCD_COL_START + 1, LCD_ROW_BOT);
             setDisplayTimeout(reportDelay());
 
@@ -486,12 +486,12 @@ boolean isLocked(boolean aNewState)
                         {
                             lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_LOCK, LCD_LEN_OPTION);
                             lcd.printCh(aNewState ? CHAR_HI : CHAR_LO);
-                            lcd.printCh(HEX_CHARS[outputNode]);
-                            lcd.printCh(HEX_CHARS[outputPin]);
+                            lcd.printHexCh(outputNode);
+                            lcd.printHexCh(outputPin);
                             lcd.printProgStr(M_VS);
                             lcd.printCh(state ? CHAR_HI : CHAR_LO);
-                            lcd.printCh(HEX_CHARS[outputDef.getLockNode(aNewState, outIndex)]);
-                            lcd.printCh(HEX_CHARS[outputDef.getLockPin (aNewState, outIndex)]);
+                            lcd.printHexCh(outputDef.getLockNode(aNewState, outIndex));
+                            lcd.printHexCh(outputDef.getLockPin (aNewState, outIndex));
                             setDisplayTimeout(reportDelay());
                         }
 
@@ -559,21 +559,21 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
         {
             readOutput(inputDef.getOutput(aIndex));
             lcd.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_COLS);
-            lcd.printChAt(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, HEX_CHARS[outNode]);
-            lcd.printCh(HEX_CHARS[outPin]);
+            lcd.printHexChAt(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, outNode);
+            lcd.printHexCh(outPin);
             lcd.printCh(CHAR_SPACE);
             lcd.printCh(CHAR_SPACE);
-            lcd.printCh(HEX_CHARS[outputDef.getPace()]);
+            lcd.printHexCh(outputDef.getPace());
             lcd.printCh(CHAR_SPACE);
             lcd.printCh(CHAR_SPACE);
-            lcd.printCh(HEX_CHARS[aDelay]);
+            lcd.printHexCh(aDelay);
             reportPause();
         }
         else if (reportEnabled(REPORT_SHORT))
         {
             lcd.printCh(CHAR_SPACE);
-            lcd.printCh(HEX_CHARS[outNode]);
-            lcd.printCh(HEX_CHARS[outPin]);
+            lcd.printHexCh(outNode);
+            lcd.printHexCh(outPin);
             setDisplayTimeout(reportDelay());
         }
 

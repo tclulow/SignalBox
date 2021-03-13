@@ -93,8 +93,8 @@ class Configure
         lcd.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
         if (isOutputNode(outNode))
         {
-            lcd.printChAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[outNode]);
-            lcd.printChAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[outPin]);
+            lcd.printHexChAt(LCD_COL_NODE, LCD_ROW_TOP, outNode);
+            lcd.printHexChAt(LCD_COL_PIN,  LCD_ROW_TOP, outPin);
         }
     }
 
@@ -103,9 +103,9 @@ class Configure
      */
     void displayInputNode()
     {
-        lcd.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
-        lcd.printChAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[inpNode]);
-        lcd.printChAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[inpPin]);
+        lcd.clearRow    (LCD_COL_MARK, LCD_ROW_TOP);
+        lcd.printHexChAt(LCD_COL_NODE, LCD_ROW_TOP, inpNode);
+        lcd.printHexChAt(LCD_COL_PIN,  LCD_ROW_TOP, inpPin);
     }
 
 
@@ -113,9 +113,9 @@ class Configure
      */
     void displayNewNode(uint8_t aNode)
     {
-        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        lcd.clearRow      (LCD_COL_START, LCD_ROW_BOT);
         lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_NEW_NODE_NO);
-        lcd.printChAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[aNode]);
+        lcd.printHexChAt  (LCD_COL_NODE,  LCD_ROW_BOT, aNode);
     }
 
     
@@ -276,13 +276,13 @@ class Configure
                 }
                 else
                 {
-                    lcd.printCh(HEX_CHARS[inputDef.getOutputPin(index)]);
+                    lcd.printHexCh(inputDef.getOutputPin(index));
                 }
             }
             else
             {
-                lcd.printCh(HEX_CHARS[inputDef.getOutputNode(index)]);
-                lcd.printCh(HEX_CHARS[inputDef.getOutputPin(index)]);
+                lcd.printHexCh(inputDef.getOutputNode(index));
+                lcd.printHexCh(inputDef.getOutputPin(index));
             }
             lcd.printCh(CHAR_SPACE);
         }
@@ -302,13 +302,13 @@ class Configure
             }
             else
             {
-                lcd.printChAt(LCD_COL_PIN,  LCD_ROW_BOT, HEX_CHARS[inputDef.getOutputPin(aIndex)]);
+                lcd.printHexChAt(LCD_COL_PIN,  LCD_ROW_BOT, inputDef.getOutputPin(aIndex));
             }
         }
         else
         {
-            lcd.printChAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[inputDef.getOutputNode(aIndex)]);
-            lcd.printChAt(LCD_COL_PIN,  LCD_ROW_BOT, HEX_CHARS[inputDef.getOutputPin(aIndex)]);
+            lcd.printHexChAt(LCD_COL_NODE, LCD_ROW_BOT, inputDef.getOutputNode(aIndex));
+            lcd.printHexChAt(LCD_COL_PIN,  LCD_ROW_BOT, inputDef.getOutputPin(aIndex));
         }
     }
 
@@ -344,13 +344,13 @@ class Configure
                 lcd.printCh(CHAR_SPACE);
                 lcd.printHexByte(outputDef.getHi());
                 lcd.printCh(CHAR_SPACE);
-                lcd.printCh(HEX_CHARS[outputDef.getPace()]);
+                lcd.printHexCh(outputDef.getPace());
                 lcd.printCh(CHAR_SPACE);
                 if (outputDef.getReset() > 0)
                 {
                     if (outputDef.getReset() < 0x10)
                     {
-                        lcd.printCh(HEX_CHARS[outputDef.getReset()]);
+                        lcd.printHexCh(outputDef.getReset());
                     }
                     else
                     {
@@ -362,11 +362,11 @@ class Configure
             {
                 lcd.printProgStr(M_LO);
                 lcd.printCh(CHAR_SPACE);
-                lcd.printCh(HEX_CHARS[outputDef.getLockCount(false)]);
+                lcd.printHexCh(outputDef.getLockCount(false));
                 lcd.printCh(CHAR_SPACE);
                 lcd.printProgStr(M_HI);
                 lcd.printCh(CHAR_SPACE);
-                lcd.printCh(HEX_CHARS[outputDef.getLockCount(true)]);
+                lcd.printHexCh(outputDef.getLockCount(true));
             }
             else
             {
@@ -398,9 +398,9 @@ class Configure
         lcd.printProgStrAt(LCD_COL_OUTPUT_PACE  - 1, LCD_ROW_TOP, M_PACE);
         lcd.printProgStrAt(LCD_COL_OUTPUT_RESET - 1, LCD_ROW_TOP, M_RESET);        
 
-        lcd.clearRow(LCD_COL_OUTPUT_PARAM,   LCD_ROW_BOT);
-        lcd.printChAt(LCD_COL_OUTPUT_PACE,     LCD_ROW_BOT, HEX_CHARS[outputDef.getPace()]);
-        lcd.printAtDec(LCD_COL_OUTPUT_RESET, LCD_ROW_BOT, outputDef.getReset(), OUTPUT_HI_LO_SIZE);
+        lcd.clearRow(LCD_COL_OUTPUT_PARAM,    LCD_ROW_BOT);
+        lcd.printHexChAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, outputDef.getPace());
+        lcd.printAtDec(LCD_COL_OUTPUT_RESET,  LCD_ROW_BOT, outputDef.getReset(), OUTPUT_HI_LO_SIZE);
     }
 
 
@@ -422,8 +422,8 @@ class Configure
         if (outputDef.isLock(aHi, aIndex))
         {
             lcd.printProgStrAt(LCD_COL_LOCK_STATE,  LCD_ROW_BOT, (outputDef.getLockState(aHi, aIndex) ? M_HI : M_LO));
-            lcd.printChAt(LCD_COL_NODE,        LCD_ROW_BOT, HEX_CHARS[outputDef.getLockNode(aHi, aIndex)]);
-            lcd.printChAt(LCD_COL_PIN,         LCD_ROW_BOT, HEX_CHARS[outputDef.getLockPin(aHi, aIndex)]);
+            lcd.printHexChAt(LCD_COL_NODE,        LCD_ROW_BOT, outputDef.getLockNode(aHi, aIndex));
+            lcd.printHexChAt(LCD_COL_PIN,         LCD_ROW_BOT, outputDef.getLockPin(aHi, aIndex));
         }
         else
         {
@@ -807,7 +807,7 @@ class Configure
                                         }
                                     }
                                     
-                                    lcd.printChAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[aIsInput ? inpNode : outNode]);
+                                    lcd.printHexChAt(LCD_COL_NODE, LCD_ROW_TOP, aIsInput ? inpNode : outNode);
                                     displayDetail();
                                     break;
                 case BUTTON_SELECT: markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
@@ -963,7 +963,7 @@ class Configure
                                     {
                                         newNode = nextNode(newNode,  1, false, false);
                                     }
-                                    lcd.printChAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[newNode]);
+                                    lcd.printHexChAt(LCD_COL_NODE, LCD_ROW_BOT, newNode);
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   if (jumpers)
@@ -974,7 +974,7 @@ class Configure
                                     {
                                         newNode = nextNode(newNode, -1, false, false);
                                     }
-                                    lcd.printChAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[newNode]);
+                                    lcd.printHexChAt(LCD_COL_NODE, LCD_ROW_BOT, newNode);
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: if (   (jumpers)
@@ -985,13 +985,13 @@ class Configure
                                             outNode = renumberNode(outNode, (jumpers ? I2C_MODULE_ID_JUMPERS : newNode));
                                             readOutput(outNode, outPin);
                                             displayTop();
-                                            // lcd.printChAt(LCD_COL_NODE, LCD_ROW_TOP, HEX_CHARS[outNode]);
+                                            // lcd.printChAt(LCD_COL_NODE, LCD_ROW_TOP, outNode]);
                                             finished = true;
                                         }
                                         else
                                         {
                                             displayNewNode(newNode);
-                                            lcd.printChAt(LCD_COL_NODE, LCD_ROW_BOT, (jumpers ? CHAR_DOT : HEX_CHARS[newNode]));
+                                            lcd.printHexChAt(LCD_COL_NODE, LCD_ROW_BOT, (jumpers ? CHAR_DOT : newNode));
                                             markField(LCD_COL_NODE, LCD_ROW_BOT, 1, true);
                                         }
                                     }
@@ -1012,7 +1012,7 @@ class Configure
                                     }
                                     break;
                 case BUTTON_RIGHT:  jumpers = !jumpers;
-                                    lcd.printChAt(LCD_COL_NODE, LCD_ROW_BOT, (jumpers ? CHAR_DOT : HEX_CHARS[newNode]));
+                                    lcd.printHexChAt(LCD_COL_NODE, LCD_ROW_BOT, (jumpers ? CHAR_DOT : newNode));
                                     break;
             }
         }
@@ -1068,7 +1068,14 @@ class Configure
                 // Renumber all the effected inputs' Output nodes.
                 for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
                 {
-                    lcd.printCh(isInputNode(node) ? HEX_CHARS[node] : CHAR_DOT);
+                    if (isInputNode(node))
+                    {
+                        lcd.printHexCh(node);
+                    }
+                    else
+                    {
+                        lcd.printCh(CHAR_DOT);
+                    }
                         
                     for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
                     {
@@ -1105,7 +1112,7 @@ class Configure
                     }
                     if (isOutputNode(node))
                     {
-                        lcd.printCh(HEX_CHARS[node]);
+                        lcd.printHexCh(node);
                     
                         if (isDebug(DEBUG_BRIEF))
                         {
@@ -1179,7 +1186,7 @@ class Configure
                                         outPin = (outPin + 1) & OUTPUT_PIN_MASK;
                                         readOutput(outNode, outPin);
                                     }
-                                    lcd.printChAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[aIsInput ? inpPin : outPin]);
+                                    lcd.printHexChAt(LCD_COL_PIN, LCD_ROW_TOP, aIsInput ? inpPin : outPin);
                                     displayDetail();
                                     break;
                 case BUTTON_DOWN:   if (aIsInput)
@@ -1192,7 +1199,7 @@ class Configure
                                         outPin = (outPin - 1) & OUTPUT_PIN_MASK;
                                         readOutput(outNode, outPin);
                                     }
-                                    lcd.printChAt(LCD_COL_PIN, LCD_ROW_TOP, HEX_CHARS[aIsInput ? inpPin : outPin]);
+                                    lcd.printHexChAt(LCD_COL_PIN, LCD_ROW_TOP, aIsInput ? inpPin : outPin);
                                     displayDetail();
                                     break;
                 case BUTTON_SELECT: if (aIsInput)
@@ -1497,8 +1504,8 @@ class Configure
                     if (outputDef.getType() != OUTPUT_TYPE_NONE)
                     {
                         lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
-                        lcd.printChAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[node]);
-                        lcd.printChAt(LCD_COL_PIN,   LCD_ROW_BOT, HEX_CHARS[pin]);
+                        lcd.printHexChAt(LCD_COL_NODE,  LCD_ROW_BOT, node);
+                        lcd.printHexChAt(LCD_COL_PIN,   LCD_ROW_BOT, pin);
 
                         // Set parameters for test.
                         finishAt = millis() + DELAY_READ * 2;       // Time to see 2 states.
@@ -1822,13 +1829,13 @@ class Configure
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     value = (value + 1) & OUTPUT_PACE_MASK;
                                     outputDef.setPace(value);
-                                    lcd.printChAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, HEX_CHARS[value]);
+                                    lcd.printHexChAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, value);
                                     writeOutput();
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   value = (value - 1) & OUTPUT_PACE_MASK;
                                     outputDef.setPace(value);
-                                    lcd.printChAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, HEX_CHARS[value]);
+                                    lcd.printHexChAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, value);
                                     writeOutput();
                                     changed = true;
                                     break;
@@ -2085,11 +2092,11 @@ class Configure
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     outputDef.setLockNode(aHi, aIndex, nextNode(outputDef.getLockNode(aHi, aIndex),  1, false, true));
-                                    lcd.printChAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[outputDef.getLockNode(aHi, aIndex)]);
+                                    lcd.printHexChAt(LCD_COL_NODE, LCD_ROW_BOT, outputDef.getLockNode(aHi, aIndex));
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   outputDef.setLockNode(aHi, aIndex, nextNode(outputDef.getLockNode(aHi, aIndex), -1, false, true));
-                                    lcd.printChAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[outputDef.getLockNode(aHi, aIndex)]);
+                                    lcd.printHexChAt(LCD_COL_NODE, LCD_ROW_BOT, outputDef.getLockNode(aHi, aIndex));
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: testOutput(outputDef.getLockNode(aHi, aIndex), outputDef.getLockPin(aHi, aIndex));
@@ -2124,11 +2131,11 @@ class Configure
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     outputDef.setLockPin(aHi, aIndex, (outputDef.getLockPin(aHi, aIndex) + 1) & OUTPUT_PIN_MASK);
-                                    lcd.printChAt(LCD_COL_PIN, LCD_ROW_BOT, HEX_CHARS[outputDef.getLockPin(aHi, aIndex)]);
+                                    lcd.printHexChAt(LCD_COL_PIN, LCD_ROW_BOT, outputDef.getLockPin(aHi, aIndex));
                                     changed = true;
                                     break;
                 case BUTTON_DOWN:   outputDef.setLockPin(aHi, aIndex, (outputDef.getLockPin(aHi, aIndex) - 1) & OUTPUT_PIN_MASK);
-                                    lcd.printChAt(LCD_COL_PIN, LCD_ROW_BOT, HEX_CHARS[outputDef.getLockPin(aHi, aIndex)]);
+                                    lcd.printHexChAt(LCD_COL_PIN, LCD_ROW_BOT, outputDef.getLockPin(aHi, aIndex));
                                     changed = true;
                                     break;
                 case BUTTON_SELECT: testOutput(outputDef.getLockNode(aHi, aIndex), outputDef.getLockPin(aHi, aIndex));

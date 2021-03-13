@@ -120,8 +120,8 @@ class ImportExport
 
             lcd.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_INPUT, LCD_LEN_OPTION);
             lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT_TYPES[inputType], LCD_LEN_OPTION);
-            lcd.printChAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[node]);
-            lcd.printChAt(LCD_COL_PIN , LCD_ROW_BOT, HEX_CHARS[pin]);
+            lcd.printHexChAt(LCD_COL_NODE, LCD_ROW_BOT, node);
+            lcd.printHexChAt(LCD_COL_PIN , LCD_ROW_BOT, pin);
             saveInput();
         }
     }
@@ -177,8 +177,8 @@ class ImportExport
 
             lcd.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_OUTPUT, LCD_LEN_OPTION);
             lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[type], LCD_LEN_OPTION);
-            lcd.printChAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[outputNode]);
-            lcd.printChAt(LCD_COL_PIN ,  LCD_ROW_BOT, HEX_CHARS[outputPin]);
+            lcd.printHexChAt(LCD_COL_NODE,  LCD_ROW_BOT, outputNode);
+            lcd.printHexChAt(LCD_COL_PIN ,  LCD_ROW_BOT, outputPin);
             
             writeOutput();
             writeSaveOutput();
@@ -226,8 +226,8 @@ class ImportExport
         
             lcd.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_LOCK, LCD_LEN_OPTION);
             lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
-            lcd.printChAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[outputNode]);
-            lcd.printChAt(LCD_COL_PIN ,  LCD_ROW_BOT, HEX_CHARS[outputPin]);
+            lcd.printHexChAt(LCD_COL_NODE,  LCD_ROW_BOT, outputNode);
+            lcd.printHexChAt(LCD_COL_PIN ,  LCD_ROW_BOT, outputPin);
             
             writeOutput();
             writeSaveOutput();

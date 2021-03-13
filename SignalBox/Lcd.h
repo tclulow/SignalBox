@@ -190,6 +190,15 @@ class Lcd
     }
 
 
+    /** Print a number as 2 hex digits.
+     */
+    void printHexByte(uint8_t aValue)
+    {
+        printHexCh(aValue >> 4);
+        printHexCh(aValue);
+    }
+
+
     /** Print a number as a string of hex digits at the specified location.
      *  Padded with leading zeros to length aDigits.
      */
@@ -200,20 +209,20 @@ class Lcd
     }
 
 
-    /** Print a number as 2 hex digits.
-     */
-    void printHexByte(uint8_t aValue)
-    {
-        printHexCh(aValue >> 4);
-        printHexCh(aValue);
-    }
-
-
     /** Print a HEX character.
      */
     void printHexCh(uint8_t aHexValue)
     {
         printCh(HEX_CHARS[aHexValue & 0x0f]);
+    }
+
+
+    /** Print a HEX character.
+     */
+    void printHexChAt(uint8_t col, uint8_t row, uint8_t aHexValue)
+    {
+        setCursor(col, row);
+        printHexCh(aHexValue);
     }
 
 
