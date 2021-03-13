@@ -208,12 +208,12 @@ void firstRun()
     {
         disp.clear();
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_FOUND);
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_EZY_UPDATE);
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_EZY_UPDATE);
 
         ezyBusClear();
         if (waitForButton() == BUTTON_SELECT)
         {
-            convertEzyBus();
+            ezyBusConvert();
             defaultInputs(INPUT_TYPE_TOGGLE);
         }
         else
@@ -238,8 +238,9 @@ void firstRun()
  */
 void defaultInputs(uint8_t aInputType)
 {
-    disp.clear();
-    disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_INITIALISING);
+    disp.clearRow(LCD_COL_START, LCD_ROW_EDT);
+    disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INITIALISING);
     disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
     inputNumber = 0;
@@ -270,13 +271,15 @@ void defaultInputs(uint8_t aInputType)
 /** Convert EzyBus configuration.
  *  One-one mapping with EzyBus modules, and their inputs.
  */
-void convertEzyBus()
+void ezyBusConvert()
 {
     int     ezyBus = 0;
     uint8_t value  = 0;
     
-    disp.clear();
-    disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_UPDATING);
+    disp.clearRow(LCD_COL_START, LCD_ROW_DET);
+    disp.clearRow(LCD_COL_START, LCD_ROW_EDT);
+    disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_EZY_UPDATING);
     disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
     for (outputNode = 0; outputNode < EZY_NODE_MAX; outputNode++)
@@ -428,12 +431,13 @@ void processInput(uint16_t aState)
         // Report state change if reporting enabled.
         if (reportEnabled(REPORT_SHORT))
         {
-            disp.clear();
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
-            disp.printProgStrAt(LCD_COL_STATE, LCD_ROW_TOP, (newState ? M_HI : M_LO));
-            disp.printHexChAt(LCD_COL_NODE,  LCD_ROW_TOP, (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK);
-            disp.printHexChAt(LCD_COL_PIN,   LCD_ROW_TOP, (inputNumber                    ) & INPUT_PIN_MASK);
-            disp.setCursor(LCD_COL_START + 1, LCD_ROW_BOT);
+            disp.clearRow(LCD_COL_START, LCD_ROW_EDT);
+            disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
+            disp.printProgStrAt(LCD_COL_STATE, LCD_ROW_EDT, (newState ? M_HI : M_LO));
+            disp.printHexChAt(LCD_COL_NODE,    LCD_ROW_EDT, (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK);
+            disp.printHexChAt(LCD_COL_PIN,     LCD_ROW_EDT, (inputNumber                    ) & INPUT_PIN_MASK);
+            disp.setCursor(LCD_COL_START + 1,  LCD_ROW_BOT);
             setDisplayTimeout(reportDelay());
 
             if (isDebug(DEBUG_BRIEF))
