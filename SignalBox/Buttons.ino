@@ -24,20 +24,20 @@ void calibrateButtons()
 
     // Announce calibration
     lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_CALIBRATE);
+    lcd.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_CALIBRATE);
 
     // Wait for no button being pressed
     while (analogRead(A0) < BUTTON_THRESHHOLD);
 
     // Now start calibration
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_PRESS);   // Announce we're ready to start
-    systemData.buttons[BUTTON_LIMIT] = 0;               // Marker for last button.
+    lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_PRESS);    // Announce we're ready to start
+    systemData.buttons[BUTTON_LIMIT] = 0;                       // Marker for last button.
     
     // Request values for all buttons in turn.
     for (int button = 0; button < BUTTON_LIMIT; button++)
     {
         lcd.clearRow(LCD_COL_CALIBRATE, LCD_ROW_BOT);
-        lcd.printAt(LCD_COL_CALIBRATE, LCD_ROW_BOT, M_BUTTONS[button + 1], LCD_LEN_OPTION);
+        lcd.printProgStrAt(LCD_COL_CALIBRATE, LCD_ROW_BOT, M_BUTTONS[button + 1], LCD_LEN_OPTION);
 
         // Wait for a button to be pressed
         while ((value = analogRead(A0)) > BUTTON_THRESHHOLD);
@@ -66,14 +66,14 @@ void calibrateButtons()
         // Check for buttons out-of-sequence
         if (previous < value)
         {
-            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SEQUENCE, LCD_COLS);
+            lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_SEQUENCE, LCD_COLS);
             delay(DELAY_READ);
 
             // Force start again.
             button = -1;
             previous = BUTTON_THRESHHOLD;
             lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_PRESS, LCD_COLS);
+            lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_PRESS, LCD_COLS);
         }
         else
         {

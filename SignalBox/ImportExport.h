@@ -67,7 +67,7 @@ class ImportExport
      */
     void importSystem()
     {
-        lcd.printAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_SYSTEM, LCD_LEN_OPTION);
+        lcd.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_SYSTEM, LCD_LEN_OPTION);
     }
 
 
@@ -118,10 +118,10 @@ class ImportExport
                 }
             }
 
-            lcd.printAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_INPUT, LCD_LEN_OPTION);
-            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT_TYPES[inputType], LCD_LEN_OPTION);
-            lcd.printAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[node]);
-            lcd.printAt(LCD_COL_PIN , LCD_ROW_BOT, HEX_CHARS[pin]);
+            lcd.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_INPUT, LCD_LEN_OPTION);
+            lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT_TYPES[inputType], LCD_LEN_OPTION);
+            lcd.printChAt(LCD_COL_NODE, LCD_ROW_BOT, HEX_CHARS[node]);
+            lcd.printChAt(LCD_COL_PIN , LCD_ROW_BOT, HEX_CHARS[pin]);
             saveInput();
         }
     }
@@ -175,10 +175,10 @@ class ImportExport
                 outputDef.setReset(OUTPUT_DEFAULT_RESET);
             }
 
-            lcd.printAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_OUTPUT, LCD_LEN_OPTION);
-            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[type], LCD_LEN_OPTION);
-            lcd.printAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[outputNode]);
-            lcd.printAt(LCD_COL_PIN ,  LCD_ROW_BOT, HEX_CHARS[outputPin]);
+            lcd.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_OUTPUT, LCD_LEN_OPTION);
+            lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[type], LCD_LEN_OPTION);
+            lcd.printChAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[outputNode]);
+            lcd.printChAt(LCD_COL_PIN ,  LCD_ROW_BOT, HEX_CHARS[outputPin]);
             
             writeOutput();
             writeSaveOutput();
@@ -224,10 +224,10 @@ class ImportExport
                 }
             }
         
-            lcd.printAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_LOCK, LCD_LEN_OPTION);
-            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
-            lcd.printAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[outputNode]);
-            lcd.printAt(LCD_COL_PIN ,  LCD_ROW_BOT, HEX_CHARS[outputPin]);
+            lcd.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_LOCK, LCD_LEN_OPTION);
+            lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
+            lcd.printChAt(LCD_COL_NODE,  LCD_ROW_BOT, HEX_CHARS[outputNode]);
+            lcd.printChAt(LCD_COL_PIN ,  LCD_ROW_BOT, HEX_CHARS[outputPin]);
             
             writeOutput();
             writeSaveOutput();
@@ -253,7 +253,7 @@ class ImportExport
                 messageTick = 0;
                 lcd.clearRow(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP);
                 lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-                lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
+                lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
             }
         }
 
@@ -373,14 +373,14 @@ class ImportExport
         // Report unrecognised import line.
         lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
         lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
-        lcd.print(wordBuffer);
-        lcd.print(CHAR_QUERY);
+        lcd.printStr(wordBuffer);
+        lcd.printCh(CHAR_QUERY);
 
         // Wait for user-input. BUTTON_RIGHT will continue, others will abort import.
         if (waitForButton() == BUTTON_RIGHT)
         {
             lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-            lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_WAITING);
+            lcd.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_WAITING);
             waitForButtonRelease();
         }
         else
@@ -629,7 +629,7 @@ class ImportExport
     {
         uint8_t debugLevel = getDebug();
 
-        lcd.printAt(LCD_COL_EXP_STATUS, LCD_ROW_BOT, M_EXPORTING);
+        lcd.printProgStrAt(LCD_COL_EXP_STATUS, LCD_ROW_BOT, M_EXPORTING);
         setDebug(DEBUG_NONE);
         
         switch(aExport)

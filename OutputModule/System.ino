@@ -171,9 +171,9 @@ void systemFail(PGM_P aMessage, int aValue, int aDelay)
     Serial.println();
     
     lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_FAILURE);
-    lcd.printAt(LCD_COL_START, LCD_ROW_BOT, aMessage);
-    lcd.printAtHex(LCD_COLS - 2,  LCD_ROW_BOT, aValue, 2);
+    lcd.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_FAILURE);
+    lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, aMessage);
+    lcd.printHexByteAt(LCD_COLS - 2,  LCD_ROW_BOT, aValue);
 
     if (aDelay > 0)
     {

@@ -60,83 +60,160 @@
 
 /** An LCD class that can print PROGMEM messages.
  */
-class Lcd: public LiquidCrystal
+class Lcd
 {
-    public:
-    Lcd(uint8_t rs,  uint8_t enable, 
-            uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3):
-            LiquidCrystal(rs, enable, d0, d1, d2, d3)
-    {
-    }
+      
+    private:
 
-    Lcd(uint8_t rs, uint8_t rw, uint8_t enable,
-            uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3):
-            LiquidCrystal(rs, rw, enable, d0, d1, d2, d3)
-    {
-    }
+    /** An LCD attached as a shield.
+     *  Typical options:
+     *  
+     *  LiquidCrystal(rs,     enable,                 d4, d5, d6, d7)
+     *  LiquidCrystal(rs, rw, enable,                 d4, d5, d6, d7)
+     *  LiquidCrystal(rs,     enable, d0, d1, d2, d3, d4, d5, d6, d7)
+     *  LiquidCrystal(rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7) 
+     *  
+     *  LiquidCrystal lcdShield(8, 9, 4, 5, 6, 7);
+     *  LiquidCrystal lcdShield(12, 11, 5, 4, 3, 2);
+     */ 
+    LiquidCrystal lcdShield = LiquidCrystal(8, 9, 4, 5, 6, 7);
 
     
-    /** Print a PROGMEM message to the LCD.
-     *  Pad with spaces to aSize.
+    public:
+    
+    /** Constructor.
      */
-    void print_P(PGM_P messagePtr, uint8_t aSize)
+    Lcd()
     {
-        print(PGMT(messagePtr));
-        int8_t padding = aSize - strlen_P(messagePtr);
-        while (padding-- > 0)
+        lcdShield.begin(LCD_COLS, LCD_ROWS);
+        
+        // Custom character to indicate "Lo".
+        lcdShield.createChar(CHAR_LO, BYTES_LO);      
+        for (uint8_t index = 0; index < CHAR_LO; index++)
         {
-            print(CHAR_SPACE);
+            lcdShield.createChar(index, LOGO[index]);
         }
+        Serial.println("Constructor()");
     }
 
 
-    /** Print a message at a particular location.
-     *  Pad with spaces to aSize.
+    /** Clears the display.
+     *  Delegate to library class.
      */
-    void printAt(uint8_t col, uint8_t row, PGM_P messagePtr, uint8_t aSize)
+    void clear()
     {
-        setCursor(col, row);
-        print_P(messagePtr, aSize);
+        lcdShield.clear();
     }
 
 
-    /** Print a message at a particular location.
-     *  No padding.
+    /** Sets the cursor location.
+     *  Delegate to library class.
      */
-    void printAt(uint8_t col, uint8_t row, PGM_P messagePtr)
+    void setCursor(int aCol, int aRow)
     {
-        printAt(col, row, messagePtr, 0);
+        lcdShield.setCursor(aCol, aRow);
+    }
+    
+
+    /** Prints a character on the LCD.
+     *  Delegate to library class.
+     */
+    void printCh(char aChar)
+    {
+        lcdShield.print(aChar);
     }
 
 
     /** Print a character at a particular location.
      */
-    void printAt(uint8_t col, uint8_t row, char aChar)
+    void printChAt(uint8_t col, uint8_t row, char aChar)
     {
         setCursor(col, row);
-        print(aChar);
+        printCh(aChar);
+    }
+
+
+    /** Prints a char string on the LCD.
+     *  Delegate to library class.
+     */
+    void printStr(char* aString)
+    {
+//        Serial.print("print(\"");
+//        Serial.print(aString);
+//        Serial.println("\")");
+        lcdShield.print(aString);
+    }
+
+
+    /** Prints a Flash string on the LCD.
+     *  Delegate to library class.
+     */
+    void printProgStr(PGM_P aMessagePtr)
+    {
+//        Serial.print("printProgStr(\"");
+//        Serial.print(PGMT(aMessagePtr));
+//        Serial.println("\")");
+        lcdShield.print(PGMT(aMessagePtr));
+    }
+
+
+    /** Print a PROGMEM message to the LCD.
+     *  Pad with spaces to aSize.
+     */
+    void printProgStr(PGM_P aMessagePtr, uint8_t aSize)
+    {
+        int8_t padding = aSize - strlen_P(aMessagePtr);
+        printProgStr(aMessagePtr);
+        while (padding-- > 0)
+        {
+            printCh(CHAR_SPACE);
+        }
+    }
+
+
+    /** Print a PROGMEM message at a particular location.
+     *  Pad with spaces to aSize.
+     */
+    void printProgStrAt(uint8_t col, uint8_t row, PGM_P aMessagePtr, uint8_t aSize)
+    {
+        setCursor(col, row);
+        printProgStr(aMessagePtr, aSize);
+    }
+
+
+    /** Print a PROGMEM message at a particular location.
+     *  No padding.
+     */
+    void printProgStrAt(uint8_t col, uint8_t row, PGM_P aMessagePtr)
+    {
+        printProgStrAt(col, row, aMessagePtr, 0);
     }
 
 
     /** Print a number as a string of hex digits at the specified location.
      *  Padded with leading zeros to length aDigits.
      */
-    void printAtHex(uint8_t col, uint8_t row, int aValue, uint8_t aDigits)
+    void printHexByteAt(uint8_t col, uint8_t row, uint8_t aValue)
     {
         setCursor(col, row);
-        printHex(aValue, aDigits);
+        printHexByte(aValue);
     }
 
 
-    /** Print a number as a string of hex digits.
-     *  Padded with leading zeros to length aDigits.
+    /** Print a number as 2 hex digits.
      */
-    void printHex(int aValue, uint8_t aDigits)
+    void printHexByte(uint8_t aValue)
     {
-        for (int8_t digit = aDigits - 1; digit >= 0; digit--)
-        {
-            print(HEX_CHARS[(aValue >> (4 * digit)) & 0xf]);
-        }
+        printHexCh(aValue >> 4);
+        printHexCh(aValue);
+    }
+
+
+    /** Print a HEX character.
+     */
+    void printHexCh(uint8_t aHexValue)
+    {
+        printCh(HEX_CHARS[aHexValue & 0x0f]);
     }
 
 
@@ -185,17 +262,17 @@ class Lcd: public LiquidCrystal
         {
             if (value / divisor > 0)
             {
-                print((char) (CHAR_ZERO + (value / divisor)));
+                printCh((char) (CHAR_ZERO + (value / divisor)));
                 leadingBlanks = false;
             }
             else if (   (digits > 0)            // Don't pad the last digit
                      && (leadingBlanks))        // Don't pad after we've had some non-zero digits.
             {
-                print(aPad);
+                printCh(aPad);
             }
             else
             {
-                print(CHAR_ZERO);
+                printCh(CHAR_ZERO);
             }
 
             // Next digit.
@@ -212,7 +289,7 @@ class Lcd: public LiquidCrystal
         setCursor(aCol, aRow);
         for (uint8_t spaces = 0; spaces < LCD_COLS - aCol; spaces++)
         {
-            print(CHAR_SPACE);
+            printCh(CHAR_SPACE);
         }
     }
 
@@ -220,18 +297,8 @@ class Lcd: public LiquidCrystal
 
 
 /** A singleton instance of the class.
- *  Initialize the LCD library with the numbers of the interface pins
- *  
- *  LiquidCrystal(rs,     enable,                 d4, d5, d6, d7)
- *  LiquidCrystal(rs, rw, enable,                 d4, d5, d6, d7)
- *  LiquidCrystal(rs,     enable, d0, d1, d2, d3, d4, d5, d6, d7)
- *  LiquidCrystal(rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7) 
- *  
- *  Typical options:
- *  LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
- *  LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
  */
-Lcd lcd(8, 9, 4, 5, 6, 7);
+Lcd lcd; 
 
 // LiquidCrystal_I2C* lcd2 = new LiquidCrystal_I2C(0x27, 16, 2);
 
