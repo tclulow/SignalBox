@@ -1505,8 +1505,8 @@ class Configure
                     if (outputDef.getType() != OUTPUT_TYPE_NONE)
                     {
                         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
-                        disp.printHexChAt(LCD_COL_NODE,  LCD_ROW_DET, node);
-                        disp.printHexChAt(LCD_COL_PIN,   LCD_ROW_DET, pin);
+                        disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, node);
+                        disp.printHexChAt(LCD_COL_PIN,  LCD_ROW_DET, pin);
 
                         // Set parameters for test.
                         finishAt = millis() + DELAY_READ * 2;       // Time to see 2 states.
@@ -2201,15 +2201,16 @@ class Configure
      */
     boolean confirm()
     {
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_CONFIRM);
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_CONFIRM);
         boolean saved = waitForButton() == BUTTON_SELECT;
 
         if (saved)
         {
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_CONFIRMED);
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_CONFIRMED);
         }
 
         waitForButtonRelease();
+        disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
         return saved;
     }
 
@@ -2218,14 +2219,15 @@ class Configure
      */
     boolean cancel()
     {
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_CANCEL);
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_CANCEL);
         boolean cancelled = waitForButton() == BUTTON_SELECT;
 
         if (cancelled)
         {
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_CANCELLED);
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
         }
 
+        disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
         waitForButtonRelease();
         return cancelled;
     }
