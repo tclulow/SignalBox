@@ -238,8 +238,7 @@ void firstRun()
  */
 void defaultInputs(uint8_t aInputType)
 {
-    disp.clearRow(LCD_COL_START, LCD_ROW_EDT);
-    disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+    disp.clearBottomRows();
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INITIALISING);
     disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
@@ -277,8 +276,7 @@ void ezyBusConvert()
     uint8_t value  = 0;
     
     disp.clearRow(LCD_COL_START, LCD_ROW_DET);
-    disp.clearRow(LCD_COL_START, LCD_ROW_EDT);
-    disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+    disp.clearBottomRows();
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_EZY_UPDATING);
     disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
@@ -431,8 +429,7 @@ void processInput(uint16_t aState)
         // Report state change if reporting enabled.
         if (reportEnabled(REPORT_SHORT))
         {
-            disp.clearRow(LCD_COL_START, LCD_ROW_EDT);
-            disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+            disp.clearBottomRows();
             disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
             disp.printProgStrAt(LCD_COL_STATE, LCD_ROW_EDT, (newState ? M_HI : M_LO));
             disp.printHexChAt(LCD_COL_NODE,    LCD_ROW_EDT, (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK);

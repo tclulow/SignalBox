@@ -356,6 +356,15 @@ class Display
         }
     }
 
+
+    /** Clear bottom two rows.
+     *  On 2-row screen, that's also the top 2 rows.
+     */
+    void clearBottomRows()
+    {
+        clearRow(LCD_COL_START, LCD_ROW_EDT);
+        clearRow(LCD_COL_START, LCD_ROW_BOT);
+    }
 };
 
 
