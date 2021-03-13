@@ -38,7 +38,7 @@ class ImportExport
      */
     void importLine()
     {
-        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
         if (!strcmp_P(wordBuffer, M_SYSTEM))
         {
             importSystem();
@@ -67,7 +67,7 @@ class ImportExport
      */
     void importSystem()
     {
-        lcd.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_SYSTEM, LCD_LEN_OPTION);
+        disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_SYSTEM, LCD_LEN_OPTION);
     }
 
 
@@ -118,10 +118,10 @@ class ImportExport
                 }
             }
 
-            lcd.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_INPUT, LCD_LEN_OPTION);
-            lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT_TYPES[inputType], LCD_LEN_OPTION);
-            lcd.printHexChAt(LCD_COL_NODE, LCD_ROW_BOT, node);
-            lcd.printHexChAt(LCD_COL_PIN , LCD_ROW_BOT, pin);
+            disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_INPUT, LCD_LEN_OPTION);
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_INPUT_TYPES[inputType], LCD_LEN_OPTION);
+            disp.printHexChAt(LCD_COL_NODE, LCD_ROW_BOT, node);
+            disp.printHexChAt(LCD_COL_PIN , LCD_ROW_BOT, pin);
             saveInput();
         }
     }
@@ -175,10 +175,10 @@ class ImportExport
                 outputDef.setReset(OUTPUT_DEFAULT_RESET);
             }
 
-            lcd.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_OUTPUT, LCD_LEN_OPTION);
-            lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[type], LCD_LEN_OPTION);
-            lcd.printHexChAt(LCD_COL_NODE,  LCD_ROW_BOT, outputNode);
-            lcd.printHexChAt(LCD_COL_PIN ,  LCD_ROW_BOT, outputPin);
+            disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_OUTPUT, LCD_LEN_OPTION);
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[type], LCD_LEN_OPTION);
+            disp.printHexChAt(LCD_COL_NODE,  LCD_ROW_BOT, outputNode);
+            disp.printHexChAt(LCD_COL_PIN ,  LCD_ROW_BOT, outputPin);
             
             writeOutput();
             writeSaveOutput();
@@ -224,10 +224,10 @@ class ImportExport
                 }
             }
         
-            lcd.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_LOCK, LCD_LEN_OPTION);
-            lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
-            lcd.printHexChAt(LCD_COL_NODE,  LCD_ROW_BOT, outputNode);
-            lcd.printHexChAt(LCD_COL_PIN ,  LCD_ROW_BOT, outputPin);
+            disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_LOCK, LCD_LEN_OPTION);
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
+            disp.printHexChAt(LCD_COL_NODE,  LCD_ROW_BOT, outputNode);
+            disp.printHexChAt(LCD_COL_PIN ,  LCD_ROW_BOT, outputPin);
             
             writeOutput();
             writeSaveOutput();
@@ -251,9 +251,9 @@ class ImportExport
                 && (messageTick < millis()))
             {
                 messageTick = 0;
-                lcd.clearRow(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP);
-                lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-                lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
+                disp.clearRow(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP);
+                disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+                disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_WAITING);
             }
         }
 
@@ -371,21 +371,21 @@ class ImportExport
     void importError()
     {
         // Report unrecognised import line.
-        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-        lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
-        lcd.printStr(wordBuffer);
-        lcd.printCh(CHAR_QUERY);
+        disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
+        disp.printStr(wordBuffer);
+        disp.printCh(CHAR_QUERY);
 
         // Wait for user-input. BUTTON_RIGHT will continue, others will abort import.
         if (waitForButton() == BUTTON_RIGHT)
         {
-            lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-            lcd.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_WAITING);
+            disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+            disp.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_WAITING);
             waitForButtonRelease();
         }
         else
         {
-            lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+            disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
         }
     }
 
@@ -629,7 +629,7 @@ class ImportExport
     {
         uint8_t debugLevel = getDebug();
 
-        lcd.printProgStrAt(LCD_COL_EXP_STATUS, LCD_ROW_BOT, M_EXPORTING);
+        disp.printProgStrAt(LCD_COL_EXP_STATUS, LCD_ROW_BOT, M_EXPORTING);
         setDebug(DEBUG_NONE);
         
         switch(aExport)
@@ -650,7 +650,7 @@ class ImportExport
             default:          systemFail(M_EXPORT, aExport, 0);
         }
     
-        lcd.clearRow(LCD_COL_EXP_STATUS, LCD_ROW_BOT);
+        disp.clearRow(LCD_COL_EXP_STATUS, LCD_ROW_BOT);
         setDebug(debugLevel);
     }
 };

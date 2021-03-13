@@ -55,11 +55,11 @@ void reportPause()
         }
 
         // Show (new) report level.
-        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-        lcd.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_REPORT);
-        lcd.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemData.reportLevel], LCD_LEN_OPTION);
+        disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        disp.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_REPORT);
+        disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemData.reportLevel], LCD_LEN_OPTION);
 
         waitForButtonRelease();
-        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
     }
 }

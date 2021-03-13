@@ -170,10 +170,10 @@ void systemFail(PGM_P aMessage, int aValue, int aDelay)
     Serial.print(aValue, HEX);
     Serial.println();
     
-    lcd.clear();
-    lcd.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_FAILURE);
-    lcd.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, aMessage);
-    lcd.printHexByteAt(LCD_COLS - 2,  LCD_ROW_BOT, aValue);
+    disp.clear();
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_FAILURE);
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, aMessage);
+    disp.printHexByteAt(LCD_COLS - 2,  LCD_ROW_BOT, aValue);
 
     if (aDelay > 0)
     {
@@ -182,7 +182,7 @@ void systemFail(PGM_P aMessage, int aValue, int aDelay)
     else
     {
         waitForButton();
-        lcd.clear();
+        disp.clear();
         waitForButtonRelease();
     }
 }

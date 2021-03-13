@@ -1,4 +1,4 @@
-/** LCD extension of LiquidCrystal
+/** Display extension of LiquidCrystal
  *
  *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
@@ -9,23 +9,22 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _LCD_h
-#define _LCD_h
+#ifndef _Display_h
+#define _Display_h
 
-// include the LCD library code:
 #include <LiquidCrystal.h>
 // #include <LiquidCrystal_I2C.h>
 
 
-#define LCD_COLS             16   // LCD is 16 columns
+#define LCD_COLS             16   // Display is 16 columns
 #define LCD_ROWS              2   // by 2 rows.
 
-#define LCD_ROW_TOP           0   // Rows for LCD state messages.
+#define LCD_ROW_TOP           0   // Rows for Display state messages.
 #define LCD_ROW_BOT           1
 
 #define LCD_LEN_OPTION        6   // Command menu options are (padded to) this length.
 
-#define LCD_COL_START         0   // Cols for LCD state messages.
+#define LCD_COL_START         0   // Cols for Display state messages.
 #define LCD_COL_MARK          6   // Marker column when changing top-level option.
 #define LCD_COL_CALIBRATE     6   // Button to press.
 #define LCD_COL_STATE         7   // State of an output.
@@ -58,9 +57,9 @@
 
 
 
-/** An LCD class that can print PROGMEM messages.
+/** A Display class that can print PROGMEM messages.
  */
-class Lcd
+class Display
 {
       
     private:
@@ -77,13 +76,15 @@ class Lcd
      *  LiquidCrystal lcdShield(12, 11, 5, 4, 3, 2);
      */ 
     LiquidCrystal lcdShield = LiquidCrystal(8, 9, 4, 5, 6, 7);
+//    LiquidCrystal_I2C* lcd2 = new LiquidCrystal_I2C(0x27, 16, 2);
+
 
     
     public:
     
     /** Constructor.
      */
-    Lcd()
+    Display()
     {
         lcdShield.begin(LCD_COLS, LCD_ROWS);
         
@@ -307,9 +308,7 @@ class Lcd
 
 /** A singleton instance of the class.
  */
-Lcd lcd; 
-
-// LiquidCrystal_I2C* lcd2 = new LiquidCrystal_I2C(0x27, 16, 2);
+Display disp; 
 
 
 #endif
