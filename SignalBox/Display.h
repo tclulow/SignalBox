@@ -76,8 +76,10 @@ class Display
      *  LiquidCrystal lcdShield(12, 11, 5, 4, 3, 2);
      */ 
     LiquidCrystal lcdShield = LiquidCrystal(8, 9, 4, 5, 6, 7);
-//    LiquidCrystal_I2C* lcd2 = new LiquidCrystal_I2C(0x27, 16, 2);
 
+//    /** An LCD attached using i2c.
+//     */
+//    LiquidCrystal_I2C* lcd2 = new LiquidCrystal_I2C(0x27, 16, 2);
 
     
     public:
@@ -139,9 +141,6 @@ class Display
      */
     void printStr(char* aString)
     {
-//        Serial.print("print(\"");
-//        Serial.print(aString);
-//        Serial.println("\")");
         lcdShield.print(aString);
     }
 
@@ -151,9 +150,6 @@ class Display
      */
     void printProgStr(PGM_P aMessagePtr)
     {
-//        Serial.print("printProgStr(\"");
-//        Serial.print(PGMT(aMessagePtr));
-//        Serial.println("\")");
         lcdShield.print(PGMT(aMessagePtr));
     }
 
