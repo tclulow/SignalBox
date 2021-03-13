@@ -385,8 +385,8 @@ class Configure
         lcd.printProgStrAt(LCD_COL_OUTPUT_HI + OUTPUT_HI_LO_SIZE - sizeof(M_HI) + 1, LCD_ROW_TOP, M_HI);
 
         lcd.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT);
-        lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputDef.getLo(), OUTPUT_HI_LO_SIZE);
-        lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getHi(), OUTPUT_HI_LO_SIZE);
+        lcd.printDecAt(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputDef.getLo(), OUTPUT_HI_LO_SIZE);
+        lcd.printDecAt(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getHi(), OUTPUT_HI_LO_SIZE);
     }
 
 
@@ -400,7 +400,7 @@ class Configure
 
         lcd.clearRow(LCD_COL_OUTPUT_PARAM,    LCD_ROW_BOT);
         lcd.printHexChAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, outputDef.getPace());
-        lcd.printAtDec(LCD_COL_OUTPUT_RESET,  LCD_ROW_BOT, outputDef.getReset(), OUTPUT_HI_LO_SIZE);
+        lcd.printDecAt(LCD_COL_OUTPUT_RESET,  LCD_ROW_BOT, outputDef.getReset(), OUTPUT_HI_LO_SIZE);
     }
 
 
@@ -1699,7 +1699,7 @@ class Configure
                                         {
                                             outputDef.setLo(0);
                                         }
-                                        lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputDef.getLo(), OUTPUT_HI_LO_SIZE);
+                                        lcd.printDecAt(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputDef.getLo(), OUTPUT_HI_LO_SIZE);
                                         writeOutput();
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
@@ -1714,7 +1714,7 @@ class Configure
                                         {
                                             outputDef.setLo(aLimit);
                                         }
-                                        lcd.printAtDec(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputDef.getLo(), OUTPUT_HI_LO_SIZE);
+                                        lcd.printDecAt(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputDef.getLo(), OUTPUT_HI_LO_SIZE);
                                         writeOutput();
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
@@ -1767,7 +1767,7 @@ class Configure
                                         {
                                             outputDef.setHi(0);
                                         }
-                                        lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getHi(), OUTPUT_HI_LO_SIZE);
+                                        lcd.printDecAt(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getHi(), OUTPUT_HI_LO_SIZE);
                                         writeOutput();
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
@@ -1782,7 +1782,7 @@ class Configure
                                         {
                                             outputDef.setHi(aLimit);
                                         }
-                                        lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getHi(), OUTPUT_HI_LO_SIZE);
+                                        lcd.printDecAt(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getHi(), OUTPUT_HI_LO_SIZE);
                                         writeOutput();
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
@@ -1874,7 +1874,7 @@ class Configure
                 case BUTTON_UP:     do
                                     {
                                         outputDef.setReset(outputDef.getReset() + 1);
-                                        lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getReset(), OUTPUT_HI_LO_SIZE);
+                                        lcd.printDecAt(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getReset(), OUTPUT_HI_LO_SIZE);
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
@@ -1885,7 +1885,7 @@ class Configure
                 case BUTTON_DOWN:   do
                                     {
                                         outputDef.setReset(outputDef.getReset() - 1);
-                                        lcd.printAtDec(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getReset(), OUTPUT_HI_LO_SIZE);
+                                        lcd.printDecAt(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getReset(), OUTPUT_HI_LO_SIZE);
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }

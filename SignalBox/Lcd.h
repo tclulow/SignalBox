@@ -229,7 +229,7 @@ class Lcd
     /** Print a number as a string of dec digits at the specified location.
      *  Padded with leading spaces to length aDigits.
      */
-    void printAtDec(uint8_t col, uint8_t row, int aValue, uint8_t aDigits)
+    void printDecAt(uint8_t col, uint8_t row, int aValue, uint8_t aDigits)
     {
         setCursor(col, row);
         printDec(aValue, aDigits, CHAR_SPACE);
