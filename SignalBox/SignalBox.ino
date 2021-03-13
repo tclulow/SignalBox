@@ -37,8 +37,8 @@ void announce()
 //    {
 //        disp.print((char)index);
 //    }
-    disp.printProgStrAt(LCD_COLS - strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
-    disp.printProgStrAt(LCD_COLS - strlen_P(M_VERSION_DATE), LCD_ROW_BOT, M_VERSION_DATE);
+    disp.printProgStrAt(-strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
+    disp.printProgStrAt(-strlen_P(M_VERSION_DATE), LCD_ROW_DET, M_VERSION_DATE);
 }
 
 
@@ -54,38 +54,48 @@ void setDisplayTimeout(long aTimeout)
  */
 void scanHardware()
 {
+    uint8_t id = 0;
     waitForButtonRelease();
 
     // Scan for Input nodes.
     disp.clear();
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_NODES);
-    disp.setCursor(LCD_COLS - INPUT_NODE_MAX, 0);
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT, LCD_LEN_OPTION);
+    disp.setCursor(-INPUT_NODE_MAX, 0);
     
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
-        Wire.beginTransmission(systemData.i2cInputBaseID + node);
-        if (Wire.endTransmission())   
+        if (disp.getLcdId() == (systemData.i2cInputBaseID + node))
         {
-            disp.printCh(CHAR_DOT); 
+            disp.printCh(CHAR_HASH);   
         }
         else
-        {  
-            disp.printHexCh(node);
-            setInputNodePresent(node);
+        {
+            Wire.beginTransmission(systemData.i2cInputBaseID + node);
+            if (Wire.endTransmission())
+            {
+                disp.printCh(CHAR_DOT); 
+            }
+            else
+            {  
+                disp.printHexCh(node);
+                setInputNodePresent(node);
+            }
         }
     }
     waitForButton(DELAY_READ);
     waitForButtonRelease();
     
     // Scan for Output nodes.
-    disp.clear();
-    disp.setCursor(LCD_COL_START, LCD_ROW_TOP);
+    // disp.clear();
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT, LCD_LEN_OPTION);
+    disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_EDT);
 
     for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
     {
-        if (node == LCD_COLS)
+        if (node == OUTPUT_NODE_HALF)
         {
-            disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
+            disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_BOT);
         }
         char state = readOutputStates(node);
 
@@ -126,7 +136,7 @@ void initInputs()
 { 
     disp.clear();
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_INIT_INPUTS);
-    disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
+    disp.setCursor(LCD_COL_START, LCD_ROW_DET);
 
     // Initialise every Input node
     for(uint8_t node = 0; node < INPUT_NODE_MAX; node++)
@@ -316,20 +326,6 @@ void sendDebugLevel()
         }
     }
 }
-
-
-///** Scan all (know) outputs for their current state.
-// */
-//void scanOutputs()
-//{
-//    for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
-//    {
-//        if (isOutputNode(node))
-//        {
-//            readOutputStates(node);
-//        }
-//    }
-//}
 
 
 /** Scan all the inputs.
@@ -676,17 +672,29 @@ void processCommand()
  */
 void setup()
 {
+    // Scan for i2c LCD.
+    for (uint8_t id = 0x3f; id >= 0x27; id--)
+    {
+        Wire.beginTransmission(id);
+        if (Wire.endTransmission() == 0)   
+        {
+            disp.setLcd(id);
+            announce();
+            break;
+        }
+    }
+
     // Initial announcement/splash message.
     announce();
 
     // Add suitable startup/setup message
     if (loadSystemData())
     {
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_STARTUP);
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_STARTUP);
     }
     else
     {
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_SETUP);
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_SETUP);
     }
     
     delay(DELAY_START);                 // Wait to avoid programmer conflicts.
@@ -760,9 +768,9 @@ void setup()
         saveSystemData();
     }
 
-    // Discover and initialise attached hardware.
-    scanHardware();                           // Scan for attached hardware.
-    initInputs();                             // Initialise all inputs.
+    // Scan for input nodes.
+    scanHardware();
+    initInputs();
 }
 
 
@@ -824,7 +832,7 @@ void loop()
             int mins  = (now - MILLIS_PER_HOUR * hours)                             / MILLIS_PER_MINUTE;
             int secs  = (now - MILLIS_PER_HOUR * hours  - MILLIS_PER_MINUTE * mins) / MILLIS_PER_SECOND;
             
-            disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
+            disp.setCursor(LCD_COL_START, LCD_ROW_DET);
             if (hours > 0)
             {
                 disp.printDec(hours, 1, CHAR_ZERO);

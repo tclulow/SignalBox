@@ -13,14 +13,20 @@
 #define _Display_h
 
 #include <LiquidCrystal.h>
-// #include <LiquidCrystal_I2C.h>
+#include <LiquidCrystal_I2C.h>
 
 
 #define LCD_COLS             16   // Display is 16 columns
 #define LCD_ROWS              2   // by 2 rows.
+#define LCD2_COLS            20   // I2C Display is 20 columns
+#define LCD2_ROWS             4   // by 4 rows.
+
 
 #define LCD_ROW_TOP           0   // Rows for Display state messages.
-#define LCD_ROW_BOT           1
+#define LCD_ROW_DET           1   // Detail goes on second row.  
+#define LCD_ROW_EDT           2   // Edit on row 2 (if available).
+#define LCD_ROW_BOT           3   // Bottom row.
+#define LCD_ROW_MASK          1   // Row mask for shield LCD (1 = 2 row, 3 = 4 rows)
 
 #define LCD_LEN_OPTION        6   // Command menu options are (padded to) this length.
 
@@ -77,9 +83,10 @@ class Display
      */ 
     LiquidCrystal lcdShield = LiquidCrystal(8, 9, 4, 5, 6, 7);
 
-//    /** An LCD attached using i2c.
-//     */
-//    LiquidCrystal_I2C* lcd2 = new LiquidCrystal_I2C(0x27, 16, 2);
+    /** An LCD attached using i2c.
+     */
+    LiquidCrystal_I2C* lcd2;
+    uint8_t            lcdId = 0;
 
     
     public:
@@ -92,13 +99,32 @@ class Display
         
         // Custom character to indicate "Lo".
         lcdShield.createChar(CHAR_LO, BYTES_LO);      
-        for (uint8_t index = 0; index < CHAR_LO; index++)
-        {
-            lcdShield.createChar(index, LOGO[index]);
-        }
-        Serial.println("Constructor()");
+//        for (uint8_t index = 0; index < CHAR_LO; index++)
+//        {
+//            lcdShield.createChar(index, LOGO[index]);
+//        }
     }
 
+
+    /** Sets the i2c LCD display.
+     */
+    void setLcd(uint8_t aLcdId)
+    {
+        lcdId = aLcdId;
+        lcd2 = new LiquidCrystal_I2C(lcdId, LCD2_COLS, LCD2_COLS);
+        lcd2->begin(LCD2_COLS, LCD2_COLS);
+        lcd2->backlight();
+        lcd2->createChar(CHAR_LO, BYTES_LO);      
+    }
+
+
+    /** Gets the i2c LCD's ID.
+     */
+    uint8_t getLcdId()
+    {
+        return lcdId;
+    }
+    
 
     /** Clears the display.
      *  Delegate to library class.
@@ -106,6 +132,10 @@ class Display
     void clear()
     {
         lcdShield.clear();
+        if (lcd2)
+        {
+            lcd2->clear();
+        }
     }
 
 
@@ -114,7 +144,22 @@ class Display
      */
     void setCursor(int aCol, int aRow)
     {
-        lcdShield.setCursor(aCol, aRow);
+        if (aCol < 0)
+        {
+            lcdShield.setCursor(aCol + LCD_COLS, aRow & LCD_ROW_MASK);
+            if (lcd2)
+            {
+                lcd2->setCursor(aCol + LCD2_COLS, aRow);
+            }
+        }
+        else
+        {
+            lcdShield.setCursor(aCol, aRow & LCD_ROW_MASK);
+            if (lcd2)
+            {
+                lcd2->setCursor(aCol, aRow);
+            }
+        }
     }
     
 
@@ -124,12 +169,16 @@ class Display
     void printCh(char aChar)
     {
         lcdShield.print(aChar);
+        if (lcd2)
+        {
+            lcd2->print(aChar);
+        }
     }
 
 
     /** Print a character at a particular location.
      */
-    void printChAt(uint8_t col, uint8_t row, char aChar)
+    void printChAt(int col, uint8_t row, char aChar)
     {
         setCursor(col, row);
         printCh(aChar);
@@ -142,6 +191,10 @@ class Display
     void printStr(char* aString)
     {
         lcdShield.print(aString);
+        if (lcd2)
+        {
+            lcd2->print(aString);
+        }
     }
 
 
@@ -151,6 +204,10 @@ class Display
     void printProgStr(PGM_P aMessagePtr)
     {
         lcdShield.print(PGMT(aMessagePtr));
+        if (lcd2)
+        {
+            lcd2->print(PGMT(aMessagePtr));
+        }
     }
 
 
@@ -171,7 +228,7 @@ class Display
     /** Print a PROGMEM message at a particular location.
      *  Pad with spaces to aSize.
      */
-    void printProgStrAt(uint8_t col, uint8_t row, PGM_P aMessagePtr, uint8_t aSize)
+    void printProgStrAt(int col, uint8_t row, PGM_P aMessagePtr, uint8_t aSize)
     {
         setCursor(col, row);
         printProgStr(aMessagePtr, aSize);
@@ -181,7 +238,7 @@ class Display
     /** Print a PROGMEM message at a particular location.
      *  No padding.
      */
-    void printProgStrAt(uint8_t col, uint8_t row, PGM_P aMessagePtr)
+    void printProgStrAt(int col, uint8_t row, PGM_P aMessagePtr)
     {
         printProgStrAt(col, row, aMessagePtr, 0);
     }
@@ -199,7 +256,7 @@ class Display
     /** Print a number as a string of hex digits at the specified location.
      *  Padded with leading zeros to length aDigits.
      */
-    void printHexByteAt(uint8_t col, uint8_t row, uint8_t aValue)
+    void printHexByteAt(int col, uint8_t row, uint8_t aValue)
     {
         setCursor(col, row);
         printHexByte(aValue);
@@ -216,7 +273,7 @@ class Display
 
     /** Print a HEX character.
      */
-    void printHexChAt(uint8_t col, uint8_t row, uint8_t aHexValue)
+    void printHexChAt(int col, uint8_t row, uint8_t aHexValue)
     {
         setCursor(col, row);
         printHexCh(aHexValue);
@@ -226,7 +283,7 @@ class Display
     /** Print a number as a string of dec digits at the specified location.
      *  Padded with leading spaces to length aDigits.
      */
-    void printDecAt(uint8_t col, uint8_t row, int aValue, uint8_t aDigits)
+    void printDecAt(int col, uint8_t row, int aValue, uint8_t aDigits)
     {
         setCursor(col, row);
         printDec(aValue, aDigits, CHAR_SPACE);
@@ -293,7 +350,7 @@ class Display
     void clearRow(uint8_t aCol, uint8_t aRow)
     {
         setCursor(aCol, aRow);
-        for (uint8_t spaces = 0; spaces < LCD_COLS - aCol; spaces++)
+        for (uint8_t spaces = 0; spaces < LCD2_COLS - aCol; spaces++)
         {
             printCh(CHAR_SPACE);
         }

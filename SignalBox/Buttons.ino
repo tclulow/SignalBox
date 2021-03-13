@@ -30,14 +30,14 @@ void calibrateButtons()
     while (analogRead(A0) < BUTTON_THRESHHOLD);
 
     // Now start calibration
-    disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_PRESS);    // Announce we're ready to start
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_PRESS);   // Announce we're ready to start
     systemData.buttons[BUTTON_LIMIT] = 0;                       // Marker for last button.
     
     // Request values for all buttons in turn.
     for (int button = 0; button < BUTTON_LIMIT; button++)
     {
-        disp.clearRow(LCD_COL_CALIBRATE, LCD_ROW_BOT);
-        disp.printProgStrAt(LCD_COL_CALIBRATE, LCD_ROW_BOT, M_BUTTONS[button + 1], LCD_LEN_OPTION);
+        disp.clearRow(LCD_COL_CALIBRATE, LCD_ROW_DET);
+        disp.printProgStrAt(LCD_COL_CALIBRATE, LCD_ROW_DET, M_BUTTONS[button + 1], LCD_LEN_OPTION);
 
         // Wait for a button to be pressed
         while ((value = analogRead(A0)) > BUTTON_THRESHHOLD);
@@ -55,8 +55,8 @@ void calibrateButtons()
             Serial.println();
         }
 
-        // Report the button's value
-        disp.setCursor(LCD_COLS - 4, LCD_ROW_BOT);
+        // Report the button's value (4 digits)
+        disp.setCursor(LCD_COLS - 4, LCD_ROW_DET);
         disp.printDec(value, 4, CHAR_SPACE);
 
         // Wait for button to be released.
@@ -66,14 +66,14 @@ void calibrateButtons()
         // Check for buttons out-of-sequence
         if (previous < value)
         {
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_SEQUENCE, LCD_COLS);
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_SEQUENCE, LCD_COLS);
             delay(DELAY_READ);
 
             // Force start again.
             button = -1;
             previous = BUTTON_THRESHHOLD;
-            disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_PRESS, LCD_COLS);
+            disp.clearRow(LCD_COL_START, LCD_ROW_DET);
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_PRESS, LCD_COLS);
         }
         else
         {

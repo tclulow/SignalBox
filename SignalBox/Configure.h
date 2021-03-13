@@ -82,7 +82,7 @@ class Configure
     void displaySystem()
     {
         disp.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
-        disp.printProgStrAt(LCD_COLS - strlen_P(M_VERSION), LCD_ROW_TOP, M_VERSION);
+        disp.printProgStrAt(-strlen_P(M_VERSION), LCD_ROW_TOP, M_VERSION);
     }
 
 
@@ -1487,7 +1487,7 @@ class Configure
         long    finishAt    = 0L;           // Time to finish output's test.
         
         waitForButtonRelease();
-        disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_IDENT, LCD_LEN_OPTION);
+        disp.printProgStrAt(-LCD_LEN_OPTION, LCD_ROW_TOP, M_IDENT, LCD_LEN_OPTION);
         disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
 
         // Test all the nodes in turn.
