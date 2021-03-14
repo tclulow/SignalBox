@@ -2251,8 +2251,6 @@ class Configure
         waitForButtonRelease();
 
         menuTop();
-        
-        disp.clear();
     }
 };
 
