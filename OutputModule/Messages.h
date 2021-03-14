@@ -68,6 +68,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,   M_SERVO, M_SIGNAL, M_LED, M_L
     const char M_CANCELLED[]        PROGMEM = "Change cancelled";
     const char M_FAILURE[]          PROGMEM = "System error";
     const char M_INTERRUPT[]        PROGMEM = "Interrupt"; 
+    const char M_RENUMBER[]         PROGMEM = "Renumber";
     const char M_SCANNING[]         PROGMEM = "Scanning inputs";
     // const char M_TODO[]          PROGMEM = "TODO";
 
@@ -202,7 +203,6 @@ const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG, M_DEBU
 
     // Master-only debug messages.
     const char M_DEBUG_BUTTON[]     PROGMEM = "Button";
-    const char M_DEBUG_RENUMBER[]   PROGMEM = "Renumber";
 
     const char M_DEBUG_INPUTS[]     PROGMEM = ", inputs=";
     const char M_DEBUG_OUTPUTS[]    PROGMEM = ", outputs=";

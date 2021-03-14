@@ -984,7 +984,7 @@ class Configure
                                         {
                                             outNode = renumberNode(outNode, (jumpers ? I2C_MODULE_ID_JUMPERS : newNode));
                                             readOutput(outNode, outPin);
-                                            displayTop();
+                                            displayAll();
                                             // disp.printChAt(LCD_COL_NODE, LCD_ROW_TOP, outNode]);
                                             finished = true;
                                         }
@@ -1041,7 +1041,7 @@ class Configure
             {
                 Serial.print(millis());
                 Serial.print(CHAR_TAB);
-                Serial.print(PGMT(M_DEBUG_RENUMBER));
+                Serial.print(PGMT(M_RENUMBER));
                 Serial.print(PGMT(M_DEBUG_NODE));
                 Serial.print(aOldNode, HEX);
                 Serial.print(PGMT(M_DEBUG_TO));
@@ -1062,8 +1062,9 @@ class Configure
 
                 // Show work as Inputs are updated.
                 disp.clearRow(LCD_COL_START, LCD_ROW_DET);
-                disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT);
-                disp.setCursor(LCD_COLS - INPUT_NODE_MAX, LCD_ROW_DET);
+                disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_RENUMBER);
+                disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT, LCD_LEN_OPTION);
+                disp.setCursor(-INPUT_NODE_MAX, LCD_ROW_DET);
                 
                 // Renumber all the effected inputs' Output nodes.
                 for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
@@ -1076,12 +1077,13 @@ class Configure
                     {
                         disp.printCh(CHAR_DOT);
                     }
-                        
+
+                    // For all the Input's pins.
                     for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
                     {
                         loadInput(node, pin);
 
-                        // Adjust all the Input's Outputs if they reference either the old or new node number.
+                        // Adjust all the Input's Outputs if they referencethe old node number.
                         for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
                         {
                             if (inputDef.getOutputNode(index) == aOldNode)
@@ -1089,26 +1091,23 @@ class Configure
                                 inputDef.setOutputNode(index, response);
                                 saveInput();
                             }
-//                            // Don't do this so new modules can be renumbered on top of an old module they're replacing.                            
-//                            else if (inputDef.getOutputNode(index) == response)
-//                            {
-//                                inputDef.setOutputNode(index, aOldNode);
-//                                saveInput();
-//                            }
                         }
                     }
                 }
                 delay(DELAY_READ);
+                waitForButtonRelease();
 
                 // Show work as Output locks are updated.
-                disp.clear();
+                disp.clearBottomRows();
+                disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT, LCD_LEN_OPTION);
+                disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_EDT);
 
                 // Renumber all the Outputs' locks as necessary.
                 for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
                 {
-                    if (node == LCD_COLS)
+                    if (node == OUTPUT_NODE_HALF)
                     {
-                        disp.setCursor(LCD_COL_START, LCD_ROW_DET);
+                        disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_BOT);
                     }
                     if (isOutputNode(node))
                     {
@@ -1144,7 +1143,7 @@ class Configure
             {
                 Serial.print(millis());
                 Serial.print(CHAR_TAB);
-                Serial.print(PGMT(M_DEBUG_RENUMBER));
+                Serial.print(PGMT(M_RENUMBER));
                 Serial.print(CHAR_SPACE);
                 Serial.print(aOldNode, HEX);
                 Serial.print(PGMT(M_DEBUG_NODE));
@@ -1159,6 +1158,7 @@ class Configure
         }
 
         delay(DELAY_READ);
+        waitForButtonRelease();
         return response;
     }
     
