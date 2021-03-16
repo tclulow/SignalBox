@@ -471,6 +471,7 @@ void processReceipt(int aLen)
         uint8_t command = Wire.read();
         uint8_t option  = command & COMMS_OPTION_MASK;
         uint8_t pin     = option  & OUTPUT_PIN_MASK;
+        uint8_t delay   = 0;
     
         command &= COMMS_COMMAND_MASK;
 
@@ -499,14 +500,9 @@ void processReceipt(int aLen)
             case COMMS_CMD_SET_LO:  
             case COMMS_CMD_SET_HI: if (Wire.available())
                                    {
-                                       // Use delay sent with request.
-                                       actionState(pin, command == COMMS_CMD_SET_HI, Wire.read());
+                                       delay = Wire.read();
                                    }
-                                   else
-                                   {
-                                       // Use zero delay.
-                                       actionState(pin, command == COMMS_CMD_SET_HI, 0);
-                                   }
+                                   actionState(pin, command == COMMS_CMD_SET_HI, delay);
                                    break;
             case COMMS_CMD_READ:   requestCommand = command;        // Record the command.
                                    requestOption  = option;         // and the pin the master wants to read.
@@ -825,16 +821,23 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay)
  */
 boolean actionServo(uint8_t aPin, boolean aState)
 {
+    long range = abs(outputDefs[aPin].getHi() - outputDefs[aPin].getLo());
+    
     outputs[aPin].value    = outputs[aPin].servo.read();
-    outputs[aPin].start    = outputs[aPin].value;
+    outputs[aPin].start    = aState ? outputDefs[aPin].getLo() : outputDefs[aPin].getHi();
     outputs[aPin].target   = aState ? outputDefs[aPin].getHi() : outputDefs[aPin].getLo();
     outputs[aPin].altValue = 0;
 
-    // Adjust steps in proportion to the range to be moved.
+    // Adjust steps in proportion to the Servo's normal range.
     outputs[aPin].steps = ((long)outputs[aPin].steps - 1)
-                        * (abs(((long)outputs[aPin].target) - ((long)outputs[aPin].start)))
+                        * (range)
                         / ((long)OUTPUT_SERVO_MAX)
                         + 1;
+                        
+    // Adjust start step for Servos that are already in mid-travel.
+    outputs[aPin].step = ((long)outputs[aPin].steps)
+                       * (abs(((long)outputs[aPin].value) - ((long)outputs[aPin].start)))
+                       / (range);
 
     // Add trigger point for SIGNALS, but only if they're ascending the whole range.
     if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
