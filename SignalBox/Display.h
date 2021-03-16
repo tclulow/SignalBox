@@ -178,9 +178,9 @@ class Display
 
     /** Print a character at a particular location.
      */
-    void printChAt(int col, uint8_t row, char aChar)
+    void printChAt(int aCol, uint8_t aRow, char aChar)
     {
-        setCursor(col, row);
+        setCursor(aCol, aRow);
         printCh(aChar);
     }
 
@@ -228,9 +228,9 @@ class Display
     /** Print a PROGMEM message at a particular location.
      *  Pad with spaces to aSize.
      */
-    void printProgStrAt(int col, uint8_t row, PGM_P aMessagePtr, uint8_t aSize)
+    void printProgStrAt(int aCol, uint8_t aRow, PGM_P aMessagePtr, uint8_t aSize)
     {
-        setCursor(col, row);
+        setCursor(aCol, aRow);
         printProgStr(aMessagePtr, aSize);
     }
 
@@ -238,9 +238,9 @@ class Display
     /** Print a PROGMEM message at a particular location.
      *  No padding.
      */
-    void printProgStrAt(int col, uint8_t row, PGM_P aMessagePtr)
+    void printProgStrAt(int aCol, uint8_t aRow, PGM_P aMessagePtr)
     {
-        printProgStrAt(col, row, aMessagePtr, 0);
+        printProgStrAt(aCol, aRow, aMessagePtr, 0);
     }
 
 
@@ -256,9 +256,9 @@ class Display
     /** Print a number as a string of hex digits at the specified location.
      *  Padded with leading zeros to length aDigits.
      */
-    void printHexByteAt(int col, uint8_t row, uint8_t aValue)
+    void printHexByteAt(int aCol, uint8_t aRow, uint8_t aValue)
     {
-        setCursor(col, row);
+        setCursor(aCol, aRow);
         printHexByte(aValue);
     }
 
@@ -273,9 +273,9 @@ class Display
 
     /** Print a HEX character.
      */
-    void printHexChAt(int col, uint8_t row, uint8_t aHexValue)
+    void printHexChAt(int aCol, uint8_t aRow, uint8_t aHexValue)
     {
-        setCursor(col, row);
+        setCursor(aCol, aRow);
         printHexCh(aHexValue);
     }
 
@@ -283,9 +283,9 @@ class Display
     /** Print a number as a string of dec digits at the specified location.
      *  Padded with leading spaces to length aDigits.
      */
-    void printDecAt(int col, uint8_t row, int aValue, uint8_t aDigits)
+    void printDecAt(int aCol, uint8_t aRow, int aValue, uint8_t aDigits)
     {
-        setCursor(col, row);
+        setCursor(aCol, aRow);
         printDec(aValue, aDigits, CHAR_SPACE);
     }
 
