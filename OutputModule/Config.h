@@ -35,6 +35,7 @@
 #define MAX_PACE                  124   // Maximum pace value.
 #define PACE_STEPS                128   // Pace adjustment when converting to steps.
 
+#define SIGNAL_PAUSE_CHANCE        80   // Percentage chance a signal may pause when being raised.
 #define SIGNAL_PAUSE_DELAY        250   // Max msec delay when raising a signal.
 #define SIGNAL_PAUSE_RESTART      500   // Max msec delay when restarting to raise a signal.
 #define SIGNAL_PAUSE_PERCENTAGE    33   // Percentage of travel a Signal may fall.

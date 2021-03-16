@@ -843,7 +843,8 @@ boolean actionServo(uint8_t aPin, boolean aState)
     if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
         && (aState)
         && (persisting)
-        && (outputs[aPin].start == outputDefs[aPin].getLo()))
+        && (outputs[aPin].start == outputDefs[aPin].getLo())
+        && (random(100) < SIGNAL_PAUSE_CHANCE))
     {
         outputs[aPin].altValue = (outputs[aPin].steps + random(outputs[aPin].steps)) / 3;
     }
