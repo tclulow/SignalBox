@@ -28,7 +28,7 @@ long tickHeartBeat = 0;     // Time of last heartbeat.
 
 
 /** Announce ourselves.
- */
+ */ 
 void announce()
 {
     disp.clear();
@@ -61,7 +61,7 @@ void scanHardware()
     disp.clear();
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_NODES);
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT, LCD_LEN_OPTION);
-    disp.setCursor(-INPUT_NODE_MAX, 0);
+    disp.setCursor(-INPUT_NODE_MAX, LCD_ROW_TOP);
     
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
