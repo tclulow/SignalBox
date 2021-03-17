@@ -231,7 +231,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
         if (isServo(aOldType))
         {
             // Already attached, move (at correct pace) to new position (immediately).
-            actionState(aPin, outputDefs[aPin].getState(), 0);
+            actionState(aPin, outputDefs[aPin].getState(), 0, true);
         }
         else
         {
@@ -252,7 +252,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
              && (persisting))
     {
         // Ensure random LEDs are initialised correctly.
-        actionState(aPin, outputDefs[aPin].getState(), 0);
+        actionState(aPin, outputDefs[aPin].getState(), 0, false);
     }
     else if (   (outputDefs[aPin].isLed())
              || (outputDefs[aPin].isFlasher()))
@@ -300,7 +300,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
                         || (outputDefs[aPin    ].getType() != OUTPUT_TYPE_ROAD)
                         || (outputDefs[aPin - 2].getType() != OUTPUT_TYPE_ROAD))
                     {
-                        actionState(aPin, false, 0);
+                        actionState(aPin, false, 0, false);
                     }
                 }
             }
@@ -328,7 +328,7 @@ void initFlasher(uint8_t aPin)
         && (outputDefs[aPin].getReset() == 0))
     {
         // Indefinite flashers that are high must be started.
-        actionState(aPin, outputDefs[aPin].getState(), 0);
+        actionState(aPin, outputDefs[aPin].getState(), 0, false);
     }
     else if (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
     {
@@ -502,7 +502,7 @@ void processReceipt(int aLen)
                                    {
                                        delay = Wire.read();
                                    }
-                                   actionState(pin, command == COMMS_CMD_SET_HI, delay);
+                                   actionState(pin, command == COMMS_CMD_SET_HI, delay, false);
                                    break;
             case COMMS_CMD_READ:   requestCommand = command;        // Record the command.
                                    requestOption  = option;         // and the pin the master wants to read.
@@ -737,8 +737,10 @@ void processReset(uint8_t aPin)
 
 
 /** Action the state change against the specified pin.
+ *  Delay for aDelay seconds.
+ *  If a Servo and aUseValue is set, use it's current position rather than Lo-Hi when calculating range of movement.
  */
-void actionState(uint8_t aPin, boolean aState, uint8_t aDelay)
+void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue)
 {
     boolean newState = aState;      // Might want to change the state (some LED_4 and FLASHERS).
     
@@ -776,7 +778,7 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay)
         // Output type-specific parameters.
         if (outputDefs[aPin].isServo())
         {
-            newState = actionServo(aPin, aState);
+            newState = actionServo(aPin, aState, aUseValue);
         }
         else if (outputDefs[aPin].isLed())
         {
@@ -818,17 +820,20 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay)
 
 
 /** Action a Servo state change.
+ *  If aUseValue is set, use Servo's current position rather than Lo-Hi when calculating range of movement.
  */
-boolean actionServo(uint8_t aPin, boolean aState)
+boolean actionServo(uint8_t aPin, boolean aState, boolean aUseValue)
 {
-    long range = abs(outputDefs[aPin].getHi() - outputDefs[aPin].getLo());
-    
     outputs[aPin].value    = outputs[aPin].servo.read();
-    outputs[aPin].start    = aState ? outputDefs[aPin].getLo() : outputDefs[aPin].getHi();
+    outputs[aPin].start    = (aUseValue ? outputs[aPin].value 
+                                        : (aState ? outputDefs[aPin].getLo() 
+                                                  : outputDefs[aPin].getHi()));
     outputs[aPin].target   = aState ? outputDefs[aPin].getHi() : outputDefs[aPin].getLo();
     outputs[aPin].altValue = 0;
 
-    // Adjust steps in proportion to the Servo's normal range.
+    long range = abs(outputs[aPin].target - outputs[aPin].start);
+    
+    // Adjust steps in proportion to the Servo's range.
     outputs[aPin].steps = ((long)outputs[aPin].steps - 1)
                         * (range)
                         / ((long)OUTPUT_SERVO_MAX)
@@ -839,20 +844,6 @@ boolean actionServo(uint8_t aPin, boolean aState)
                        * (abs(((long)outputs[aPin].value) - ((long)outputs[aPin].start)))
                        / (range + 1);
 
-    Serial.print("range=");
-    Serial.print(range);
-    Serial.print(", start=");
-    Serial.print(outputs[aPin].start);
-    Serial.print(", value=");
-    Serial.print(outputs[aPin].value);
-    Serial.print(", target=");
-    Serial.print(outputs[aPin].target);
-    Serial.print(", step=");
-    Serial.print(outputs[aPin].step);
-    Serial.print(", steps=");
-    Serial.print(outputs[aPin].steps);
-    Serial.println();
-    
     // Add trigger point for SIGNALS, but only if they're ascending the whole range.
     if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
         && (aState)
@@ -1133,7 +1124,7 @@ void stepServo(uint8_t aPin)
                 && (outputDefs[aPin].getState())
                 && (outputDefs[aPin].getReset() > 0))
             {
-                actionState(aPin, false, outputDefs[aPin].getReset());
+                actionState(aPin, false, outputDefs[aPin].getReset(), false);
             }
         }
     }
@@ -1220,14 +1211,15 @@ void stepLed(uint8_t aPin)
                     if (outputDefs[aPin].getState())                                    // If Hi, set Hi again (which may or may not illuminate LEDs).
                     {
                         actionState(aPin, true,   outputDefs[aPin].getReset() / 2       // Delay for reset +/- 1/2 reset.
-                                                + random(outputDefs[aPin].getReset()));
+                                                + random(outputDefs[aPin].getReset()),
+                                                false);
                     }
                 }
                 else if (outputDefs[aPin].getState())                                   // Ordinary LED, currently Hi.
                 {
                     if (!isDoubleLed(aPin + 1))                                         // And not part of a doubleLed.
                     {
-                        actionState(aPin, false, outputDefs[aPin].getReset());          // Move to Lo.
+                        actionState(aPin, false, outputDefs[aPin].getReset(), false);   // Move to Lo.
                     }
                 }
             }
@@ -1305,7 +1297,7 @@ void stepDoubleLed(uint8_t aPin)
     }
     
     // Move desired pin to next state after correct interval.
-    actionState(pin, false, reset);
+    actionState(pin, false, reset, false);
 }
 
 
