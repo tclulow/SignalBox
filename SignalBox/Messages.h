@@ -23,7 +23,7 @@
 #else
     const char M_SOFTWARE[]     PROGMEM = "Output module";
 #endif
-const char M_VERSION[]          PROGMEM = "v3.1.3";        // See also system.VERSION.
+const char M_VERSION[]          PROGMEM = "v3.1.4";        // See also system.VERSION.
 const char M_VERSION_DATE[]     PROGMEM = "Mar 21";
 const char M_STARTUP[]          PROGMEM = "Startup";
 const char M_UPDATE[]           PROGMEM = "Update ";
