@@ -1096,7 +1096,9 @@ void stepServo(uint8_t aPin)
     {
         // Last step, make sure to hit the target bang-on.
         outputs[aPin].value = outputs[aPin].target;
-        digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
+        
+        // No need to set pin, actioned later in the function.
+        // digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
 
         // Signals might "bounce" if descending
         if (   (persisting)
