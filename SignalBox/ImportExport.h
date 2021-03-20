@@ -194,7 +194,7 @@ class ImportExport
         
         outputNode = readData() & OUTPUT_NODE_MASK;
         outputPin  = readData() & OUTPUT_PIN_MASK;
-        if (isOutputNode(outputNode))
+        if (isOutputNodePresent(outputNode))
         {
             readOutput(outputNode, outputPin);
             for (uint8_t hi = 0; hi < 2; hi++)
@@ -491,7 +491,7 @@ class ImportExport
         
         for (int node = 0; node < OUTPUT_NODE_MAX; node++)
         {
-            if (isOutputNode(node))
+            if (isOutputNodePresent(node))
             {
                 for (int pin = 0; pin < OUTPUT_PIN_MAX; pin++)
                 {
@@ -538,7 +538,7 @@ class ImportExport
         
         for (int node = 0; node < OUTPUT_NODE_MAX; node++)
         {
-            if (isOutputNode(node))
+            if (isOutputNodePresent(node))
             {
                 for (int pin = 0; pin < OUTPUT_PIN_MAX; pin++)
                 {

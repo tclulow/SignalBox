@@ -92,7 +92,7 @@ class Configure
     void displayOutputNode()
     {
         disp.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
-        if (isOutputNode(outNode))
+        if (isOutputNodePresent(outNode))
         {
             disp.printHexChAt(LCD_COL_NODE, LCD_ROW_TOP, outNode);
             disp.printHexChAt(LCD_COL_PIN,  LCD_ROW_TOP, outPin);
@@ -318,7 +318,7 @@ class Configure
      */
     void displayDetailOutput()
     {
-        if (isOutputNode(outNode))
+        if (isOutputNodePresent(outNode))
         {
             disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION + 1);
             displayOutputParams(outputDef.getType());
@@ -447,13 +447,13 @@ class Configure
         {
             inpNode = nextNode(inpNode, 1, true, true);
         }
-        if (!isOutputNode(outNode))
+        if (!isOutputNodePresent(outNode))
         {
             outNode = nextNode(outNode, 1, false, true);
         }
         
         loadInput(inpNode, inpPin);
-        if (isOutputNode(outNode))
+        if (isOutputNodePresent(outNode))
         {
             readOutput(outNode, outPin);
         }
@@ -483,14 +483,14 @@ class Configure
                                         case TOP_SYSTEM: menuSystem();
                                                          break;
                                         case TOP_INPUT:  menuNode(true);
-                                                         if (isOutputNode(outNode))
+                                                         if (isOutputNodePresent(outNode))
                                                          {
                                                             // The output node may have been corrupted by input node processing.
                                                             readOutput(outNode, outPin);
                                                          }
                                                          break;
                                         case TOP_OUTPUT:
-                                        case TOP_LOCKS:  if (isOutputNode(outNode))     // Maybe there are no outputs connected.
+                                        case TOP_LOCKS:  if (isOutputNodePresent(outNode))     // Maybe there are no outputs connected.
                                                          {
                                                             menuNode(false);
                                                          }
@@ -801,7 +801,7 @@ class Configure
                                     else
                                     {
                                         outNode = nextNode(outNode, adjust, aIsInput, true);
-                                        if (isOutputNode(outNode))
+                                        if (isOutputNodePresent(outNode))
                                         {
                                             readOutput(outNode, outPin);
                                         }
@@ -853,7 +853,7 @@ class Configure
                 break;
             }
             else if (   (!aIsInput)
-                     && (aInUse == isOutputNode(next)))
+                     && (aInUse == isOutputNodePresent(next)))
             {
                 break;
             }
@@ -1109,7 +1109,7 @@ class Configure
                     {
                         disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_BOT);
                     }
-                    if (isOutputNode(node))
+                    if (isOutputNodePresent(node))
                     {
                         disp.printHexCh(node);
                     
@@ -1494,7 +1494,7 @@ class Configure
         // Test all the nodes in turn.
         for (uint8_t node = 0; (node < OUTPUT_NODE_MAX) && !interrupted; node++)
         {
-            if (isOutputNode(node))
+            if (isOutputNodePresent(node))
             {
                 // Test all the pins in turn.
                 for (int pin = 0; pin < OUTPUT_PIN_MAX && !interrupted; ) // pin++)

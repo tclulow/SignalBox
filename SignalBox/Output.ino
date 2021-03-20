@@ -18,7 +18,7 @@
  */
 void readOutput(uint8_t aNode, uint8_t aPin)
 {
-    if (!isOutputNode(aNode))
+    if (!isOutputNodePresent(aNode))
     {
         outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
     }

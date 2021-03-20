@@ -307,7 +307,7 @@ void sendDebugLevel()
 {
     for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
     {
-        if (isOutputNode(node))
+        if (isOutputNodePresent(node))
         {
             Wire.beginTransmission(systemData.i2cOutputBaseID + node);
             Wire.write(COMMS_CMD_DEBUG | (getDebug() & COMMS_OPTION_MASK));

@@ -554,7 +554,7 @@ char readOutputStates(uint8_t aNode);
  */
 void setOutputNodePresent(uint8_t aNode)
 {
-    outputNodes |= (1 << aNode); 
+    outputNodes |= ((long)1 << aNode); 
 }
 
 
@@ -562,7 +562,7 @@ void setOutputNodePresent(uint8_t aNode)
  */
 void setOutputNodeAbsent(uint8_t aNode)
 {
-    outputNodes &= ~(1 << aNode); 
+    outputNodes &= ~((long)1 << aNode); 
 }
 
 
@@ -571,6 +571,15 @@ void setOutputNodeAbsent(uint8_t aNode)
 boolean getOutputState(uint8_t aNode, uint8_t aPin)
 {
     return (outputStates[aNode] & (1 << aPin)) != 0;
+}
+
+
+/** Is an Output node present?
+ *  Look for Output's node in outputNodes.
+ */
+boolean isOutputNodePresent(uint8_t aNode)
+{
+    return (aNode < OUTPUT_NODE_MAX) && (outputNodes & ((long)1 << aNode));
 }
 
 
@@ -598,15 +607,6 @@ void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState)
     {
         outputStates[aNode] &= ~mask;
     }
-}
-
-
-/** Is an Output node present?
- *  Look for Output's node in outputNodes.
- */
-boolean isOutputNode(uint8_t aNode)
-{
-    return (aNode < OUTPUT_NODE_MAX) && (outputNodes & (1 << aNode));
 }
 
 

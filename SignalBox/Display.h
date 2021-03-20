@@ -248,8 +248,8 @@ class Display
      */
     void printHexByte(uint8_t aValue)
     {
-        printHexCh(aValue >> 4);
-        printHexCh(aValue);
+        printHexCh((aValue >> 4) & 0x0f);
+        printHexCh(aValue & 0x0f);
     }
 
 
@@ -267,7 +267,7 @@ class Display
      */
     void printHexCh(uint8_t aHexValue)
     {
-        printCh(HEX_CHARS[aHexValue & 0x0f]);
+        printCh(HEX_CHARS[aHexValue & 0x1f]);
     }
 
 
