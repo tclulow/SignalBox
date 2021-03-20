@@ -21,6 +21,7 @@
 
 // Mask for Input options
 #define INPUT_OUTPUT_MAX          6     // Number of outputs each input can control. See also EEPROM in System.h
+#define INPUT_OUTPUT_DISP         3     // Number of outputs each input can display.
 // #define INPUT_DELAY_MASK             // Use the OUTPUT_PIN_MASK which is re-purposed for delay entries.
 
 // Input types

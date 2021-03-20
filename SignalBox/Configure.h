@@ -266,7 +266,7 @@ class Configure
         disp.clearRow(LCD_COL_MARK, LCD_ROW_DET);
         disp.setCursor(LCD_COL_INPUT_OUTPUT, LCD_ROW_DET);
         
-        for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
+        for (uint8_t index = 0; index < INPUT_OUTPUT_DISP; index++)
         {
             if (inputDef.isDelay(index))
             {
