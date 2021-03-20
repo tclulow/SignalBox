@@ -549,9 +549,9 @@ class ImportExport
                     {
                         Serial.print(PGMT(M_LOCK));
                         Serial.print(CHAR_TAB);
-                        printHex(node, 1);
+                        Serial.print(HEX_CHARS[node]);
                         Serial.print(CHAR_TAB);
-                        printHex(pin, 1);
+                        Serial.print(HEX_CHARS[pin]);
     
                         // Output locks, Lo and Hi
                         for (uint8_t hi = 0; hi < 2; hi++)
