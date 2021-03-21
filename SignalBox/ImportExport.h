@@ -38,7 +38,6 @@ class ImportExport
      */
     void importLine()
     {
-        disp.clearRow(LCD_COL_START, LCD_ROW_DET);
         if (!strcmp_P(wordBuffer, M_SYSTEM))
         {
             importSystem();
@@ -119,7 +118,7 @@ class ImportExport
             }
 
             disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_INPUT, LCD_LEN_OPTION);
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT_TYPES[inputType], LCD_LEN_OPTION);
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT_TYPES[inputType], LCD_LEN_WAITING);
             disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, node);
             disp.printHexChAt(LCD_COL_PIN , LCD_ROW_DET, pin);
             saveInput();
@@ -176,7 +175,7 @@ class ImportExport
             }
 
             disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_OUTPUT, LCD_LEN_OPTION);
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[type], LCD_LEN_OPTION);
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[type], LCD_LEN_WAITING);
             disp.printHexChAt(LCD_COL_NODE,  LCD_ROW_DET, outputNode);
             disp.printHexChAt(LCD_COL_PIN ,  LCD_ROW_DET, outputPin);
             
@@ -225,7 +224,7 @@ class ImportExport
             }
         
             disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_LOCK, LCD_LEN_OPTION);
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_WAITING);
             disp.printHexChAt(LCD_COL_NODE,  LCD_ROW_DET, outputNode);
             disp.printHexChAt(LCD_COL_PIN ,  LCD_ROW_DET, outputPin);
             

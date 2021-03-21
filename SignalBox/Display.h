@@ -29,6 +29,7 @@
 #define LCD_ROW_MASK          1   // Row mask for shield LCD (1 = 2 row, 3 = 4 rows)
 
 #define LCD_LEN_OPTION        6   // Command menu options are (padded to) this length.
+#define LCD_LEN_WAITING       7   // Import waiting message length. 
 
 #define LCD_COL_START         0   // Cols for Display state messages.
 #define LCD_COL_MARK          6   // Marker column when changing top-level option.
@@ -46,7 +47,7 @@
 #define LCD_COL_DEBUG_PARAM   8   // Debug parameter.
 #define LCD_COL_DEBUG_LENGTH  6   // Debug parameter length.
 
-#define LCD_COL_EXP_STATUS    7   // Export status.
+// #define LCD_COL_EXP_STATUS    7   // Export status.
 
 #define LCD_COL_INPUT_OUTPUT  8   // Input's outputs start at this col.
 
