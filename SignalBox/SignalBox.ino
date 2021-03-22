@@ -26,18 +26,19 @@ long now           = 0;     // The current time in millisecs.
 long tickScan      = 0;     // The time of the last scan of input switches.
 long tickHeartBeat = 0;     // Time of last heartbeat.
 
+
 /** Announce ourselves.
- */
+ */ 
 void announce()
 {
-    lcd.clear();
-    lcd.printAt(LCD_COL_START,                       LCD_ROW_TOP, M_SOFTWARE);
+    disp.clear();
+    disp.printProgStrAt(LCD_COL_START,                       LCD_ROW_TOP, M_SOFTWARE);
 //    for (uint8_t index = 0; index < LOGO_LEN; index++)
 //    {
-//        lcd.print((char)index);
+//        disp.print((char)index);
 //    }
-    lcd.printAt(LCD_COLS - strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
-    lcd.printAt(LCD_COLS - strlen_P(M_VERSION_DATE), LCD_ROW_BOT, M_VERSION_DATE);
+    disp.printProgStrAt(-strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
+    disp.printProgStrAt(-strlen_P(M_VERSION_DATE), LCD_ROW_DET, M_VERSION_DATE);
 }
 
 
@@ -53,48 +54,58 @@ void setDisplayTimeout(long aTimeout)
  */
 void scanHardware()
 {
+    uint8_t id = 0;
     waitForButtonRelease();
 
     // Scan for Input nodes.
-    lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_NODES);
-    lcd.setCursor(LCD_COLS - INPUT_NODE_MAX, 0);
+    disp.clear();
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_NODES);
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT, LCD_LEN_OPTION);
+    disp.setCursor(-INPUT_NODE_MAX, LCD_ROW_TOP);
     
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
-        Wire.beginTransmission(systemData.i2cInputBaseID + node);
-        if (Wire.endTransmission())   
+        if (disp.getLcdId() == (systemData.i2cInputBaseID + node))
         {
-            lcd.print(CHAR_DOT); 
+            disp.printCh(CHAR_HASH);   
         }
         else
-        {  
-            lcd.print(HEX_CHARS[node]);
-            setInputNodePresent(node);
+        {
+            Wire.beginTransmission(systemData.i2cInputBaseID + node);
+            if (Wire.endTransmission())
+            {
+                disp.printCh(CHAR_DOT); 
+            }
+            else
+            {  
+                disp.printHexCh(node);
+                setInputNodePresent(node);
+            }
         }
     }
     waitForButton(DELAY_READ);
     waitForButtonRelease();
     
     // Scan for Output nodes.
-    lcd.clear();
-    lcd.setCursor(LCD_COL_START, LCD_ROW_TOP);
+    // disp.clear();
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT, LCD_LEN_OPTION);
+    disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_EDT);
 
     for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
     {
-        if (node == LCD_COLS)
+        if (node == OUTPUT_NODE_HALF)
         {
-            lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+            disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_BOT);
         }
         char state = readOutputStates(node);
 
         if (state == 0)
         {
-            lcd.print(HEX_CHARS[node]);
+            disp.printHexCh(node);
         }
         else
         {
-            lcd.print(state); 
+            disp.printCh(state); 
         }
     }
     waitForButton(DELAY_READ);
@@ -105,14 +116,14 @@ void scanHardware()
         || (outputNodes == 0))
     {
         uint8_t row = LCD_ROW_TOP;
-        lcd.clear();
+        disp.clear();
         if (inputNodes == 0)
         {
-            lcd.printAt(LCD_COL_START, row++, M_NO_INPUTS);
+            disp.printProgStrAt(LCD_COL_START, row++, M_NO_INPUTS);
         }
         if (outputNodes == 0)
         {
-            lcd.printAt(LCD_COL_START, row++, M_NO_OUTPUTS);
+            disp.printProgStrAt(LCD_COL_START, row++, M_NO_OUTPUTS);
         }
         delay(DELAY_READ);
     }
@@ -123,16 +134,16 @@ void scanHardware()
  */
 void initInputs()
 { 
-    lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INIT_INPUTS);
-    lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+    disp.clear();
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_INIT_INPUTS);
+    disp.setCursor(LCD_COL_START, LCD_ROW_DET);
 
     // Initialise every Input node
     for(uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
         if (isInputNode(node))
         {
-            lcd.print(HEX_CHARS[node]);
+            disp.printHexCh(node);
             
             // Configure for input
             Wire.beginTransmission(systemData.i2cInputBaseID + node); 
@@ -171,7 +182,7 @@ void initInputs()
         else
         {
             // Absent input node.
-            lcd.print(CHAR_DOT);
+            disp.printCh(CHAR_DOT);
             currentSwitchState[node] = 0xffff;
         }
     }
@@ -195,14 +206,14 @@ void firstRun()
     // Decide if EzyBus conversion required.
     if (ezyBusDetected())
     {
-        lcd.clear();
-        lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_FOUND);
-        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_EZY_UPDATE);
+        disp.clear();
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_FOUND);
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_EZY_UPDATE);
 
         ezyBusClear();
         if (waitForButton() == BUTTON_SELECT)
         {
-            convertEzyBus();
+            ezyBusConvert();
             defaultInputs(INPUT_TYPE_TOGGLE);
         }
         else
@@ -227,16 +238,16 @@ void firstRun()
  */
 void defaultInputs(uint8_t aInputType)
 {
-    lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INITIALISING);
-    lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+    disp.clearBottomRows();
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INITIALISING);
+    disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
     inputNumber = 0;
     inputType   = aInputType;
     
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
-        lcd.print(HEX_CHARS[node]);
+        disp.printHexCh(node);
 
         for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
         {
@@ -259,18 +270,19 @@ void defaultInputs(uint8_t aInputType)
 /** Convert EzyBus configuration.
  *  One-one mapping with EzyBus modules, and their inputs.
  */
-void convertEzyBus()
+void ezyBusConvert()
 {
     int     ezyBus = 0;
     uint8_t value  = 0;
     
-    lcd.clear();
-    lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_EZY_UPDATING);
-    lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+    disp.clearRow(LCD_COL_START, LCD_ROW_DET);
+    disp.clearBottomRows();
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_EZY_UPDATING);
+    disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
     for (outputNode = 0; outputNode < EZY_NODE_MAX; outputNode++)
     {
-        lcd.print(HEX_CHARS[outputNode]);
+        disp.printHexCh(outputNode);
 
         for (outputPin = 0; outputPin < OUTPUT_PIN_MAX; outputPin++)
         {
@@ -295,7 +307,7 @@ void sendDebugLevel()
 {
     for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
     {
-        if (isOutputNode(node))
+        if (isOutputNodePresent(node))
         {
             Wire.beginTransmission(systemData.i2cOutputBaseID + node);
             Wire.write(COMMS_CMD_DEBUG | (getDebug() & COMMS_OPTION_MASK));
@@ -315,20 +327,6 @@ void sendDebugLevel()
         }
     }
 }
-
-
-///** Scan all (know) outputs for their current state.
-// */
-//void scanOutputs()
-//{
-//    for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
-//    {
-//        if (isOutputNode(node))
-//        {
-//            readOutputStates(node);
-//        }
-//    }
-//}
 
 
 /** Scan all the inputs.
@@ -431,12 +429,12 @@ void processInput(uint16_t aState)
         // Report state change if reporting enabled.
         if (reportEnabled(REPORT_SHORT))
         {
-            lcd.clear();
-            lcd.printAt(LCD_COL_START, LCD_ROW_TOP, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
-            lcd.printAt(LCD_COL_STATE, LCD_ROW_TOP, (newState ? M_HI : M_LO));
-            lcd.printAt(LCD_COL_NODE,  LCD_ROW_TOP, HEX_CHARS[(inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK]);
-            lcd.printAt(LCD_COL_PIN,   LCD_ROW_TOP, HEX_CHARS[(inputNumber                    ) & INPUT_PIN_MASK]);
-            lcd.setCursor(LCD_COL_START + 1, LCD_ROW_BOT);
+            disp.clearBottomRows();
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
+            disp.printProgStrAt(LCD_COL_STATE, LCD_ROW_EDT, (newState ? M_HI : M_LO));
+            disp.printHexChAt(LCD_COL_NODE,    LCD_ROW_EDT, (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK);
+            disp.printHexChAt(LCD_COL_PIN,     LCD_ROW_EDT, (inputNumber                    ) & INPUT_PIN_MASK);
+            disp.setCursor(LCD_COL_START + 1,  LCD_ROW_BOT);
             setDisplayTimeout(reportDelay());
 
             if (isDebug(DEBUG_BRIEF))
@@ -483,14 +481,14 @@ boolean isLocked(boolean aNewState)
                     {
                         if (reportEnabled(REPORT_SHORT))
                         {
-                            lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_LOCK, LCD_LEN_OPTION);
-                            lcd.print(aNewState ? CHAR_HI : CHAR_LO);
-                            lcd.print(HEX_CHARS[outputNode]);
-                            lcd.print(HEX_CHARS[outputPin]);
-                            lcd.print(PGMT(M_VS));
-                            lcd.print(state ? CHAR_HI : CHAR_LO);
-                            lcd.print(HEX_CHARS[outputDef.getLockNode(aNewState, outIndex)]);
-                            lcd.print(HEX_CHARS[outputDef.getLockPin (aNewState, outIndex)]);
+                            disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_LOCK, LCD_LEN_OPTION);
+                            disp.printCh(aNewState ? CHAR_HI : CHAR_LO);
+                            disp.printHexCh(outputNode);
+                            disp.printHexCh(outputPin);
+                            disp.printProgStr(M_VS);
+                            disp.printCh(state ? CHAR_HI : CHAR_LO);
+                            disp.printHexCh(outputDef.getLockNode(aNewState, outIndex));
+                            disp.printHexCh(outputDef.getLockPin (aNewState, outIndex));
                             setDisplayTimeout(reportDelay());
                         }
 
@@ -557,22 +555,22 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
         if (reportEnabled(REPORT_PAUSE))
         {
             readOutput(inputDef.getOutput(aIndex));
-            lcd.printAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_COLS);
-            lcd.printAt(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, HEX_CHARS[outNode]);
-            lcd.print(HEX_CHARS[outPin]);
-            lcd.print(CHAR_SPACE);
-            lcd.print(CHAR_SPACE);
-            lcd.print(HEX_CHARS[outputDef.getPace()]);
-            lcd.print(CHAR_SPACE);
-            lcd.print(CHAR_SPACE);
-            lcd.print(HEX_CHARS[aDelay]);
+            disp.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_COLS);
+            disp.printHexChAt(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, outNode);
+            disp.printHexCh(outPin);
+            disp.printCh(CHAR_SPACE);
+            disp.printCh(CHAR_SPACE);
+            disp.printHexCh(outputDef.getPace());
+            disp.printCh(CHAR_SPACE);
+            disp.printCh(CHAR_SPACE);
+            disp.printHexCh(aDelay);
             reportPause();
         }
         else if (reportEnabled(REPORT_SHORT))
         {
-            lcd.print(CHAR_SPACE);
-            lcd.print(HEX_CHARS[outNode]);
-            lcd.print(HEX_CHARS[outPin]);
+            disp.printCh(CHAR_SPACE);
+            disp.printHexCh(outNode);
+            disp.printHexCh(outPin);
             setDisplayTimeout(reportDelay());
         }
 
@@ -645,11 +643,11 @@ void processCommand()
     if (   (!executed)
         && (reportEnabled(REPORT_SHORT)))
     {
-        lcd.clearRow(LCD_COL_START, LCD_ROW_BOT);
-        lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
-        lcd.print(PGMT(M_UNKNOWN));
-        lcd.print(CHAR_SPACE);
-        lcd.print(commandBuffer);
+        disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
+        disp.printProgStr(M_UNKNOWN);
+        disp.printCh(CHAR_SPACE);
+        disp.printStr(commandBuffer);
         setDisplayTimeout(DELAY_READ);
     }
 }
@@ -675,11 +673,16 @@ void processCommand()
  */
 void setup()
 {
-    lcd.begin(LCD_COLS, LCD_ROWS);          // LCD panel.
-    lcd.createChar(CHAR_LO, BYTES_LO);      // Custom character to indicate "Lo".
-    for (uint8_t index = 0; index < CHAR_LO; index++)
+    // Scan for i2c LCD.
+    for (uint8_t id = 0x3f; id >= 0x27; id--)
     {
-        lcd.createChar(index, LOGO[index]);
+        Wire.beginTransmission(id);
+        if (Wire.endTransmission() == 0)   
+        {
+            disp.setLcd(id);
+            announce();
+            break;
+        }
     }
 
     // Initial announcement/splash message.
@@ -688,11 +691,11 @@ void setup()
     // Add suitable startup/setup message
     if (loadSystemData())
     {
-        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_STARTUP);
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_STARTUP);
     }
     else
     {
-        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_SETUP);
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_SETUP);
     }
     
     delay(DELAY_START);                 // Wait to avoid programmer conflicts.
@@ -757,7 +760,7 @@ void setup()
             Serial.println();
         }
 
-        lcd.printAt(LCD_COL_START, LCD_ROW_BOT, M_UPDATE);
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_UPDATE);
 
         // Do the update here.
         delay(DELAY_READ);          // Nothing to do, just show it's happening.
@@ -766,9 +769,9 @@ void setup()
         saveSystemData();
     }
 
-    // Discover and initialise attached hardware.
-    scanHardware();                           // Scan for attached hardware.
-    initInputs();                             // Initialise all inputs.
+    // Scan for input nodes.
+    scanHardware();
+    initInputs();
 }
 
 
@@ -830,15 +833,15 @@ void loop()
             int mins  = (now - MILLIS_PER_HOUR * hours)                             / MILLIS_PER_MINUTE;
             int secs  = (now - MILLIS_PER_HOUR * hours  - MILLIS_PER_MINUTE * mins) / MILLIS_PER_SECOND;
             
-            lcd.setCursor(LCD_COL_START, LCD_ROW_BOT);
+            disp.setCursor(LCD_COL_START, LCD_ROW_DET);
             if (hours > 0)
             {
-                lcd.printDec(hours, 1, CHAR_ZERO);
-                lcd.print(CHAR_COLON);
+                disp.printDec(hours, 1, CHAR_ZERO);
+                disp.printCh(CHAR_COLON);
             }
-            lcd.printDec(mins, 2, CHAR_ZERO);
-            lcd.print(CHAR_COLON);
-            lcd.printDec(secs, 2, CHAR_ZERO);
+            disp.printDec(mins, 2, CHAR_ZERO);
+            disp.printCh(CHAR_COLON);
+            disp.printDec(secs, 2, CHAR_ZERO);
         }
     }
 }

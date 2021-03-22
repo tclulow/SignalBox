@@ -24,7 +24,7 @@
 #include "EzyBus.h"
 #include "Input.h"
 #include "SignalBox.h"
-#include "Lcd.h"
+#include "Display.h"
 #include "Buttons.h"
 #include "Report.h"
 #include "ImportExport.h"

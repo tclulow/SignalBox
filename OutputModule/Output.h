@@ -16,6 +16,7 @@
 #define OUTPUT_PIN_MAX              8   // 8 outputs to each node.
 #define OUTPUT_PIN_MASK             7   // 3 bits for 8 pins withing an output node.
 #define OUTPUT_NODE_MAX            32   // Maximum nodes.
+#define OUTPUT_NODE_HALF           16   // Half the maximum nodes.
 #define OUTPUT_NODE_MASK         0x1f   // 5 bits for 32 nodes.
 #define OUTPUT_NODE_SHIFT           3   // Shift output number this amount to get a node number.
 
@@ -553,7 +554,7 @@ char readOutputStates(uint8_t aNode);
  */
 void setOutputNodePresent(uint8_t aNode)
 {
-    outputNodes |= (1 << aNode); 
+    outputNodes |= ((long)1 << aNode); 
 }
 
 
@@ -561,7 +562,7 @@ void setOutputNodePresent(uint8_t aNode)
  */
 void setOutputNodeAbsent(uint8_t aNode)
 {
-    outputNodes &= ~(1 << aNode); 
+    outputNodes &= ~((long)1 << aNode); 
 }
 
 
@@ -570,6 +571,15 @@ void setOutputNodeAbsent(uint8_t aNode)
 boolean getOutputState(uint8_t aNode, uint8_t aPin)
 {
     return (outputStates[aNode] & (1 << aPin)) != 0;
+}
+
+
+/** Is an Output node present?
+ *  Look for Output's node in outputNodes.
+ */
+boolean isOutputNodePresent(uint8_t aNode)
+{
+    return (aNode < OUTPUT_NODE_MAX) && (outputNodes & ((long)1 << aNode));
 }
 
 
@@ -597,15 +607,6 @@ void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState)
     {
         outputStates[aNode] &= ~mask;
     }
-}
-
-
-/** Is an Output node present?
- *  Look for Output's node in outputNodes.
- */
-boolean isOutputNode(uint8_t aNode)
-{
-    return (aNode < OUTPUT_NODE_MAX) && (outputNodes & (1 << aNode));
 }
 
 

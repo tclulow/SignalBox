@@ -30,10 +30,10 @@ echo "Press RETURN when Arduino is in import waiting mode."
 
 (
     read LINE
-    while read LINE		# Read a line from the archive file
+    while read LINE       # Read a line from the archive file
     do
-        echo "$LINE"		# Send a line to the arduino
-        sleep 1			# Don't overpower the arduino with too much data
+        echo "$LINE"      # Send a line to the arduino
+        sleep 0.3         # Don't overpower the arduino with too much data
     done < ${FILE}
 ) > ${PORT}
 

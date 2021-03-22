@@ -231,7 +231,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
         if (isServo(aOldType))
         {
             // Already attached, move (at correct pace) to new position (immediately).
-            actionState(aPin, outputDefs[aPin].getState(), 0);
+            actionState(aPin, outputDefs[aPin].getState(), 0, true);
         }
         else
         {
@@ -252,7 +252,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
              && (persisting))
     {
         // Ensure random LEDs are initialised correctly.
-        actionState(aPin, outputDefs[aPin].getState(), 0);
+        actionState(aPin, outputDefs[aPin].getState(), 0, false);
     }
     else if (   (outputDefs[aPin].isLed())
              || (outputDefs[aPin].isFlasher()))
@@ -300,7 +300,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
                         || (outputDefs[aPin    ].getType() != OUTPUT_TYPE_ROAD)
                         || (outputDefs[aPin - 2].getType() != OUTPUT_TYPE_ROAD))
                     {
-                        actionState(aPin, false, 0);
+                        actionState(aPin, false, 0, false);
                     }
                 }
             }
@@ -328,7 +328,7 @@ void initFlasher(uint8_t aPin)
         && (outputDefs[aPin].getReset() == 0))
     {
         // Indefinite flashers that are high must be started.
-        actionState(aPin, outputDefs[aPin].getState(), 0);
+        actionState(aPin, outputDefs[aPin].getState(), 0, false);
     }
     else if (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
     {
@@ -471,6 +471,7 @@ void processReceipt(int aLen)
         uint8_t command = Wire.read();
         uint8_t option  = command & COMMS_OPTION_MASK;
         uint8_t pin     = option  & OUTPUT_PIN_MASK;
+        uint8_t delay   = 0;
     
         command &= COMMS_COMMAND_MASK;
 
@@ -499,14 +500,9 @@ void processReceipt(int aLen)
             case COMMS_CMD_SET_LO:  
             case COMMS_CMD_SET_HI: if (Wire.available())
                                    {
-                                       // Use delay sent with request.
-                                       actionState(pin, command == COMMS_CMD_SET_HI, Wire.read());
+                                       delay = Wire.read();
                                    }
-                                   else
-                                   {
-                                       // Use zero delay.
-                                       actionState(pin, command == COMMS_CMD_SET_HI, 0);
-                                   }
+                                   actionState(pin, command == COMMS_CMD_SET_HI, delay, false);
                                    break;
             case COMMS_CMD_READ:   requestCommand = command;        // Record the command.
                                    requestOption  = option;         // and the pin the master wants to read.
@@ -741,8 +737,10 @@ void processReset(uint8_t aPin)
 
 
 /** Action the state change against the specified pin.
+ *  Delay for aDelay seconds.
+ *  If a Servo and aUseValue is set, use it's current position rather than Lo-Hi when calculating range of movement.
  */
-void actionState(uint8_t aPin, boolean aState, uint8_t aDelay)
+void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue)
 {
     boolean newState = aState;      // Might want to change the state (some LED_4 and FLASHERS).
     
@@ -780,7 +778,7 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay)
         // Output type-specific parameters.
         if (outputDefs[aPin].isServo())
         {
-            newState = actionServo(aPin, aState);
+            newState = actionServo(aPin, aState, aUseValue);
         }
         else if (outputDefs[aPin].isLed())
         {
@@ -822,25 +820,36 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay)
 
 
 /** Action a Servo state change.
+ *  If aUseValue is set, use Servo's current position rather than Lo-Hi when calculating range of movement.
  */
-boolean actionServo(uint8_t aPin, boolean aState)
+boolean actionServo(uint8_t aPin, boolean aState, boolean aUseValue)
 {
     outputs[aPin].value    = outputs[aPin].servo.read();
-    outputs[aPin].start    = outputs[aPin].value;
+    outputs[aPin].start    = (aUseValue ? outputs[aPin].value 
+                                        : (aState ? outputDefs[aPin].getLo() 
+                                                  : outputDefs[aPin].getHi()));
     outputs[aPin].target   = aState ? outputDefs[aPin].getHi() : outputDefs[aPin].getLo();
     outputs[aPin].altValue = 0;
 
-    // Adjust steps in proportion to the range to be moved.
+    long range = abs(outputs[aPin].target - outputs[aPin].start);
+    
+    // Adjust steps in proportion to the Servo's range.
     outputs[aPin].steps = ((long)outputs[aPin].steps - 1)
-                        * (abs(((long)outputs[aPin].target) - ((long)outputs[aPin].start)))
+                        * (range)
                         / ((long)OUTPUT_SERVO_MAX)
                         + 1;
+                        
+    // Adjust start step for Servos that are already in mid-travel.
+    outputs[aPin].step = ((long)outputs[aPin].steps)
+                       * (abs(((long)outputs[aPin].value) - ((long)outputs[aPin].start)))
+                       / (range + 1);
 
     // Add trigger point for SIGNALS, but only if they're ascending the whole range.
     if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
         && (aState)
         && (persisting)
-        && (outputs[aPin].start == outputDefs[aPin].getLo()))
+        && (outputs[aPin].start == outputDefs[aPin].getLo())
+        && (random(100) < SIGNAL_PAUSE_CHANCE))
     {
         outputs[aPin].altValue = (outputs[aPin].steps + random(outputs[aPin].steps)) / 3;
     }
@@ -1031,130 +1040,129 @@ void stepServos()
  */
 void stepServo(uint8_t aPin)
 {
-    if (outputs[aPin].step <= outputs[aPin].steps)
+//    // Report initial position if debug level high enough.
+//    if (   (isDebug(DEBUG_FULL))
+//        && (outputs[aPin].step == 0))
+//    {
+//        reportOutput(M_DEBUG_MOVE, aPin);
+//    }
+
+    // Handle SIGNAL triggers (if set).
+    if (outputs[aPin].altValue)
     {
-//        // Report initial position if debug level high enough.
-//        if (   (isDebug(DEBUG_FULL))
-//            && (outputs[aPin].step == 0))
-//        {
-//            reportOutput(M_DEBUG_MOVE, aPin);
-//        }
-
-        // Handle SIGNAL triggers (if set).
-        if (outputs[aPin].altValue)
+        if (outputs[aPin].step < outputs[aPin].altValue)            // Ascending to trigger step.
         {
-            if (outputs[aPin].step < outputs[aPin].altValue)            // Ascending to trigger step.
-            {
-                outputs[aPin].step += 1;
-                if (outputs[aPin].step >= outputs[aPin].altValue)       // Reached the trigger step.
-                {
-                    // Set new trigger back down a bit (up to 1/3).
-                    outputs[aPin].altValue -= 1 + random(outputs[aPin].step)
-                                                  * SIGNAL_PAUSE_PERCENTAGE
-                                                  / 100;
-                    outputs[aPin].delayTo = millis() + random(SIGNAL_PAUSE_DELAY);
-                    
-                    if (isDebug(DEBUG_DETAIL))
-                    {
-                        reportOutput(M_DEBUG_TRIGGER, aPin);
-                    }
-                }
-            }
-            else
-            {
-                outputs[aPin].step -= 1;
-                if (outputs[aPin].step <= outputs[aPin].altValue)       // Have descended to trigger step.
-                {
-                    outputs[aPin].altValue = 0;                         // Remove the trigger step.
-                    if (outputDefs[aPin].getState())
-                    {
-                        outputs[aPin].delayTo = millis() + random(SIGNAL_PAUSE_RESTART);
-                    }
-                    
-                    if (isDebug(DEBUG_DETAIL))
-                    {
-                        reportOutput(M_DEBUG_TRIGGER, aPin);
-                    }
-                }
-            }
-        }
-        else
-        {
-            // Normal non-triggered movement.
             outputs[aPin].step += 1;
-        }
-
-        // Calculate Servo's new position.
-        if (outputs[aPin].step >= outputs[aPin].steps)
-        {
-            // Last step, make sure to hit the target bang-on.
-            outputs[aPin].value = outputs[aPin].target;
-            digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
-
-            // Signals might "bounce" if descending
-            if (   (persisting)
-                && (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
-                && (!outputDefs[aPin].getState())
-                && (outputs[aPin].steps > 1)
-                && (random(100) < SIGNAL_BOUNCE_CHANCE))
+            if (outputs[aPin].step >= outputs[aPin].altValue)       // Reached the trigger step.
             {
-                // Go back a little.
-                outputs[aPin].altValue = outputs[aPin].steps - random(outputs[aPin].steps)
-                                                               * SIGNAL_BOUNCE_PERCENTAGE
-                                                               / 100;
+                // Set new trigger back down a bit (up to 1/3).
+                outputs[aPin].altValue -= 1 + random(outputs[aPin].step)
+                                              * SIGNAL_PAUSE_PERCENTAGE
+                                              / 100;
+                outputs[aPin].delayTo = millis() + random(SIGNAL_PAUSE_DELAY);
+                
                 if (isDebug(DEBUG_DETAIL))
                 {
                     reportOutput(M_DEBUG_TRIGGER, aPin);
                 }
             }
-            else
+        }
+        else
+        {
+            outputs[aPin].step -= 1;
+            if (outputs[aPin].step <= outputs[aPin].altValue)       // Have descended to trigger step.
             {
-                // Stop further movement.
-                // outputs[aPin].steps = 0;
-                
-                // If there's a reset, reset the servo after the specified delay.
-                if (   (persisting)
-                    && (outputDefs[aPin].getState())
-                    && (outputDefs[aPin].getReset() > 0))
+                outputs[aPin].altValue = 0;                         // Remove the trigger step.
+                if (outputDefs[aPin].getState())
                 {
-                    actionState(aPin, false, outputDefs[aPin].getReset());
+                    outputs[aPin].delayTo = millis() + random(SIGNAL_PAUSE_RESTART);
                 }
+                
+                if (isDebug(DEBUG_DETAIL))
+                {
+                    reportOutput(M_DEBUG_TRIGGER, aPin);
+                }
+            }
+        }
+    }
+    else
+    {
+        // Normal non-triggered movement.
+        outputs[aPin].step += 1;
+    }
+
+    // Calculate Servo's new position.
+    if (outputs[aPin].step >= outputs[aPin].steps)
+    {
+        // Last step, make sure to hit the target bang-on.
+        outputs[aPin].value = outputs[aPin].target;
+        
+        // No need to set pin, actioned later in the function.
+        // digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
+
+        // Signals might "bounce" if descending
+        if (   (persisting)
+            && (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
+            && (!outputDefs[aPin].getState())
+            && (outputs[aPin].steps > 1)
+            && (random(100) < SIGNAL_BOUNCE_CHANCE))
+        {
+            // Go back a little.
+            outputs[aPin].altValue = outputs[aPin].steps - random(outputs[aPin].steps)
+                                                           * SIGNAL_BOUNCE_PERCENTAGE
+                                                           / 100;
+            if (isDebug(DEBUG_DETAIL))
+            {
+                reportOutput(M_DEBUG_TRIGGER, aPin);
             }
         }
         else
         {
-            // Intermediate step, move proportionately (step/steps) along the range (start to target).
-            // Use long arithmetic to avoid overflow problems.
-            outputs[aPin].value = ((long)outputs[aPin].start) 
-                                +   (((long)outputs[aPin].target) - ((long)outputs[aPin].start))
-                                  * ((long)outputs[aPin].step)
-                                  / ((long)outputs[aPin].steps);
+            // Stop further movement.
+            outputs[aPin].steps = 0;
+            
+            // If there's a reset, reset the servo after the specified delay.
+            if (   (persisting)
+                && (outputDefs[aPin].getState())
+                && (outputDefs[aPin].getReset() > 0))
+            {
+                actionState(aPin, false, outputDefs[aPin].getReset(), false);
+            }
         }
+    }
+    else
+    {
+        // Intermediate step, move proportionately (step/steps) along the range (start to target).
+        // Use long arithmetic to avoid overflow problems.
+        outputs[aPin].value = ((long)outputs[aPin].start) 
+                            +   (((long)outputs[aPin].target) - ((long)outputs[aPin].start))
+                              * ((long)outputs[aPin].step)
+                              / ((long)outputs[aPin].steps);
+    }
 
-        // Set (or unset) Servo's digital pad when we're over halfway
-        if (outputDefs[aPin].getState())
-        {
-            // Only set pad when > half-way AND trigger has been handled.
-            digitalWrite(ioPins[aPin],    (outputs[aPin].step >  (outputs[aPin].steps >> 1))
-                                       && (outputs[aPin].altValue == 0));
-        }
-        else
-        {
-            digitalWrite(ioPins[aPin], outputs[aPin].step <= (outputs[aPin].steps >> 1));
-        }
+    // Set (or unset) Servo's digital pad when we're over halfway
+    if (outputDefs[aPin].getState())
+    {
+        // Only set pad when > half-way AND trigger has been handled.
+        digitalWrite(ioPins[aPin],    (outputs[aPin].step >  (outputs[aPin].steps >> 1))
+                                   && (outputs[aPin].altValue == 0));
+    }
+    else
+    {
+        digitalWrite(ioPins[aPin], outputs[aPin].step <= (outputs[aPin].steps >> 1));
+    }
 
-        // Move Servo to new state.
-        outputs[aPin].servo.write(outputs[aPin].value);
-        // digitalWrite(LED_BUILTIN, HIGH);                    // Indicate work in progress;
+    // Move Servo to new state.
+    outputs[aPin].servo.write(outputs[aPin].value);
+    // digitalWrite(LED_BUILTIN, HIGH);                    // Indicate work in progress;
 
-        // Report activity if debug level high enough.
-        if (   (isDebug(DEBUG_FULL))
-            || (   (isDebug(DEBUG_DETAIL))
-                && (   (outputs[aPin].step == 1)
-                    || (outputs[aPin].step == outputs[aPin].steps))))
-        {
-            reportOutput(M_DEBUG_MOVE, aPin);
-        }
+    // Report activity if debug level high enough.
+    if (   (isDebug(DEBUG_FULL))
+        || (   (isDebug(DEBUG_DETAIL))
+            && (   (outputs[aPin].step == 1)
+                || (outputs[aPin].step == outputs[aPin].steps))))
+    {
+        reportOutput(M_DEBUG_MOVE, aPin);
     }
 }
 
@@ -1205,14 +1213,15 @@ void stepLed(uint8_t aPin)
                     if (outputDefs[aPin].getState())                                    // If Hi, set Hi again (which may or may not illuminate LEDs).
                     {
                         actionState(aPin, true,   outputDefs[aPin].getReset() / 2       // Delay for reset +/- 1/2 reset.
-                                                + random(outputDefs[aPin].getReset()));
+                                                + random(outputDefs[aPin].getReset()),
+                                                false);
                     }
                 }
                 else if (outputDefs[aPin].getState())                                   // Ordinary LED, currently Hi.
                 {
                     if (!isDoubleLed(aPin + 1))                                         // And not part of a doubleLed.
                     {
-                        actionState(aPin, false, outputDefs[aPin].getReset());          // Move to Lo.
+                        actionState(aPin, false, outputDefs[aPin].getReset(), false);   // Move to Lo.
                     }
                 }
             }
@@ -1290,7 +1299,7 @@ void stepDoubleLed(uint8_t aPin)
     }
     
     // Move desired pin to next state after correct interval.
-    actionState(pin, false, reset);
+    actionState(pin, false, reset, false);
 }
 
 
