@@ -1430,8 +1430,7 @@ void stepFlash(uint8_t aPin)
 void loop()
 {
     // Record the time now
-    now      = millis();
-    tickPwm += 1;
+    now = millis();
     
 //  // Metrics
 //  count += 1;
@@ -1483,9 +1482,11 @@ void loop()
         stepFlashes();
     }
 
-    // Set LED Outputs based on their intensity value/alt, using the clock to generate a PWM signal.
+    // Set LED Outputs based on their intensity value/alt, using the ticker to generate a PWM signal.
+    tickPwm += PWM_TICK;
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
+        tickPwm += PWM_INC;
         if (   (outputDefs[pin].isLed())
             || (outputDefs[pin].isFlasher()))
         {
