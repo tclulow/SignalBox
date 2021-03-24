@@ -1542,10 +1542,10 @@ class Configure
                         switch (button)
                         {
                             case BUTTON_NONE:   break;
-                            case BUTTON_UP:     node = nextNode(node + 1,  1, false, true);
+                            case BUTTON_UP:     node = nextNode(node,  1, false, true);
                                                 pin = 0;
                                                 break;
-                            case BUTTON_DOWN:   node = nextNode(node - 1, -1, false, true);
+                            case BUTTON_DOWN:   node = nextNode(node, -1, false, true);
                                                 pin = 0;
                                                 break;
                             case BUTTON_SELECT: interrupted = true;
