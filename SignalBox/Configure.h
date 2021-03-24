@@ -112,11 +112,18 @@ class Configure
 
     /** Display move node ID.
      */
-    void displayNewNode(uint8_t aNode)
+    void displayNewNode(boolean aJumpers, uint8_t aNode)
     {
         disp.clearRow      (LCD_COL_START, LCD_ROW_DET);
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_NEW_NODE_NO);
-        disp.printHexChAt  (LCD_COL_NODE,  LCD_ROW_DET, aNode);
+        if (aJumpers)
+        {
+            disp.printChAt(LCD_COL_NODE, LCD_ROW_DET, CHAR_DOT);
+        }
+        else
+        {
+            disp.printHexChAt  (LCD_COL_NODE,  LCD_ROW_DET, aNode);
+        }
     }
 
     
@@ -947,32 +954,25 @@ class Configure
         boolean jumpers  = false;
         uint8_t newNode  = outNode;
         
-        displayNewNode(newNode);
+        displayNewNode(jumpers, newNode);
         markField(LCD_COL_NODE, LCD_ROW_DET, 1, true);
         
         while (!finished)
         {
+            int adjust = 0;
+            
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     if (jumpers)
+                case BUTTON_UP:     adjust += 2;        // Use +1 to compensate for the -1 that the code below will do.
+                case BUTTON_DOWN:   adjust -= 1;
+                                    if (jumpers)
                                     {
                                         jumpers = false;
                                     }
                                     else
                                     {
-                                        newNode = nextNode(newNode,  1, false, false);
-                                    }
-                                    disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, newNode);
-                                    changed = true;
-                                    break;
-                case BUTTON_DOWN:   if (jumpers)
-                                    {
-                                        jumpers = false;
-                                    }
-                                    else
-                                    {
-                                        newNode = nextNode(newNode, -1, false, false);
+                                        newNode = nextNode(newNode, adjust, false, false);
                                     }
                                     disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, newNode);
                                     changed = true;
@@ -985,13 +985,11 @@ class Configure
                                             outNode = renumberNode(outNode, (jumpers ? I2C_MODULE_ID_JUMPERS : newNode));
                                             readOutput(outNode, outPin);
                                             displayAll();
-                                            // disp.printChAt(LCD_COL_NODE, LCD_ROW_TOP, outNode]);
                                             finished = true;
                                         }
                                         else
                                         {
-                                            displayNewNode(newNode);
-                                            disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, (jumpers ? CHAR_DOT : newNode));
+                                            displayNewNode(jumpers, newNode);
                                             markField(LCD_COL_NODE, LCD_ROW_DET, 1, true);
                                         }
                                     }
@@ -1007,12 +1005,21 @@ class Configure
                                     }
                                     else
                                     {
-                                        displayNewNode(newNode);
+                                        displayNewNode(jumpers, newNode);
                                         markField(LCD_COL_NODE, LCD_ROW_DET, 1, true);
                                     }
                                     break;
                 case BUTTON_RIGHT:  jumpers = !jumpers;
-                                    disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, (jumpers ? CHAR_DOT : newNode));
+                                    changed = true;
+                                    disp.setCursor(LCD_COL_NODE, LCD_ROW_DET);
+                                    if (jumpers)
+                                    {
+                                        disp.printCh(CHAR_DOT);
+                                    }
+                                    else
+                                    {
+                                        disp.printHexCh(newNode);
+                                    }
                                     break;
             }
         }
@@ -1364,30 +1371,21 @@ class Configure
 
         while (!finished)
         {
+            int adjust = 0;
+            
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     if (inputDef.isDelay(aIndex))
+                case BUTTON_UP:     adjust += 2;        // Use +1 to compensate for the -1 that the code below will do.
+                case BUTTON_DOWN:   adjust -= 1;
+                                    if (inputDef.isDelay(aIndex))
                                     {
                                         inputDef.setDelay(aIndex, false);
                                     }
                                     else
                                     {
-                                        // Increment the node number (to the next available) within the Input's output at this index.
-                                        inputDef.setOutputNode(aIndex, nextNode(inputDef.getOutputNode(aIndex), 1, false, true));
-                                    }
-                                    
-                                    displayInputEdit(aIndex);
-                                    changed = true;
-                                    break;
-                case BUTTON_DOWN:   if (inputDef.isDelay(aIndex))
-                                    {
-                                        inputDef.setDelay(aIndex, false);
-                                    }
-                                    else
-                                    {
-                                        // Decrement the node number (to the next available) within the Input's output at this index.
-                                        inputDef.setOutputNode(aIndex, nextNode(inputDef.getOutputNode(aIndex), -1, false, true));
+                                        // Increment/Decrement the node number (to the next available) within the Input's output at this index.
+                                        inputDef.setOutputNode(aIndex, nextNode(inputDef.getOutputNode(aIndex), adjust, false, true));
                                     }
                                     displayInputEdit(aIndex);
                                     changed = true;
@@ -1539,13 +1537,14 @@ class Configure
                     // If button pressed, handle the interuption.
                     if (button != BUTTON_NONE)
                     {
+                        int adjust = 0;
+                        
                         switch (button)
                         {
                             case BUTTON_NONE:   break;
-                            case BUTTON_UP:     node = nextNode(node,  1, false, true);
-                                                pin = 0;
-                                                break;
-                            case BUTTON_DOWN:   node = nextNode(node, -1, false, true);
+                            case BUTTON_UP:     adjust += 2;    // Use +1 to compensate for the -1 that the code below will do.
+                            case BUTTON_DOWN:   adjust -= 1;
+                                                node = nextNode(node, adjust, false, true);
                                                 pin = 0;
                                                 break;
                             case BUTTON_SELECT: interrupted = true;
@@ -2088,14 +2087,14 @@ class Configure
 
         while (!finished)
         {
+            int adjust = 0;
+            
             switch (waitForButton())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     outputDef.setLockNode(aHi, aIndex, nextNode(outputDef.getLockNode(aHi, aIndex),  1, false, true));
-                                    disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, outputDef.getLockNode(aHi, aIndex));
-                                    changed = true;
-                                    break;
-                case BUTTON_DOWN:   outputDef.setLockNode(aHi, aIndex, nextNode(outputDef.getLockNode(aHi, aIndex), -1, false, true));
+                case BUTTON_UP:     adjust += 2;    // Use +1 to compensate for the -1 that the code below will do.
+                case BUTTON_DOWN:   adjust -= 1;
+                                    outputDef.setLockNode(aHi, aIndex, nextNode(outputDef.getLockNode(aHi, aIndex), adjust, false, true));
                                     disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, outputDef.getLockNode(aHi, aIndex));
                                     changed = true;
                                     break;
