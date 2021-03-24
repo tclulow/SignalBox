@@ -32,11 +32,7 @@ long tickHeartBeat = 0;     // Time of last heartbeat.
 void announce()
 {
     disp.clear();
-    disp.printProgStrAt(LCD_COL_START,                       LCD_ROW_TOP, M_SOFTWARE);
-//    for (uint8_t index = 0; index < LOGO_LEN; index++)
-//    {
-//        disp.print((char)index);
-//    }
+    disp.printProgStrAt(LCD_COL_START,             LCD_ROW_TOP, M_SOFTWARE);
     disp.printProgStrAt(-strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
     disp.printProgStrAt(-strlen_P(M_VERSION_DATE), LCD_ROW_DET, M_VERSION_DATE);
 }
