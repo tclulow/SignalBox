@@ -13,7 +13,7 @@
 #define _Config_h
 
 
-#define SERIAL_SPEED   19200    // Speed of the serial port.
+#define SERIAL_SPEED            19200   // Speed of the serial port.
 
 #define DELAY_START              2000   // Pause during start-up to avoid swamping Serial IO.
 #define DELAY_BLINK               250   // Blink interval when showing version number.

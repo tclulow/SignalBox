@@ -13,9 +13,9 @@
 #define _Comms_h
 
 
-#define COMMS_COMMAND_MASK  0xf0    // Top 4 bits.
-#define COMMS_OPTION_MASK   0x0f    // Bottom 4 bits.
-#define COMMS_COMMAND_SHIFT    4    // If command required as (4 bit) integer.
+#define COMMS_COMMAND_MASK      0xf0    // Top 4 bits.
+#define COMMS_OPTION_MASK       0x0f    // Bottom 4 bits.
+#define COMMS_COMMAND_SHIFT        4    // If command required as (4 bit) integer.
 
 
 #define COMMS_CMD_SYSTEM        0x00    // System commands.
