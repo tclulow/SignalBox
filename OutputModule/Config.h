@@ -55,7 +55,11 @@
 #define ANALOG_PIN_CUTOFF       0x200   // When usinging analog pin for digital purposes, cutoff at this value (half of full range 0-3ff).     
 
 
-#if !MASTER
+#if MASTER
+// Alternate pins that can be used to control the menus.
+const uint8_t BUTTON_PINS[] = { 0, A1, A2, A3, 2, 3 };
+
+#else
 
 // The module jumper pins
 const uint8_t jumperPins[JUMPER_PINS] = { 1, 0, A7, A6 };
@@ -65,7 +69,6 @@ const uint8_t sigPins[IO_PINS]        = { 4, 5, 6, 7, 8, 9, 10, 11 };
 
 // The digital IO pins.
 const uint8_t ioPins[IO_PINS]         = { 3, 2, A3, A2, A1, A0, 13, 12 };
-
 
 #endif
 

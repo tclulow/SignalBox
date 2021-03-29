@@ -28,9 +28,6 @@
 
 #define BUTTON_THRESHHOLD   1000    // Analog limit above which no button is considered to be pressed.
 
-// Alternate pins that can be used to control the menus.
-const uint8_t BUTTON_PINS[] = { 0, A1, A2, 2, 3, A3 };
-
 
 /** Initialise the alternate button pins.
  */
