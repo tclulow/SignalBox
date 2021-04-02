@@ -12,6 +12,7 @@
 #ifndef _Config_h
 #define _Config_h
 
+#define LCD_I2C                  true   // Include code for LCD connected by I2C.
 
 #define SERIAL_SPEED            19200   // Speed of the serial port.
 

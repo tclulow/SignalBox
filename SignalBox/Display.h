@@ -13,7 +13,9 @@
 #define _Display_h
 
 #include <LiquidCrystal.h>
+#if LCD_I2C
 #include <LiquidCrystal_I2C.h>
+#endif
 
 
 #define LCD_COLS             16   // Display is 16 columns
@@ -84,9 +86,11 @@ class Display
      */ 
     LiquidCrystal lcdShield = LiquidCrystal(8, 9, 4, 5, 6, 7);
 
-    /** An LCD attached using i2c.
-     */
-    LiquidCrystal_I2C* lcd2;
+#if LCD_I2C
+    LiquidCrystal_I2C* lcd2;        // An LCD attached using i2c.
+#else
+    LiquidCrystal*     lcd2;        // Dummy variable, never set.
+#endif
     uint8_t            lcdId = 0;
 
     
@@ -107,6 +111,7 @@ class Display
     }
 
 
+#if LCD_I2C
     /** Sets the i2c LCD display.
      */
     void setLcd(uint8_t aLcdId)
@@ -125,6 +130,7 @@ class Display
     {
         return lcdId;
     }
+#endif
     
 
     /** Clears the display.

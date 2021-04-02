@@ -61,11 +61,13 @@ void scanHardware()
     
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
+#if LCD_I2C
         if (disp.getLcdId() == (systemData.i2cInputBaseID + node))
         {
             disp.printCh(CHAR_HASH);   
         }
         else
+#endif
         {
             Wire.beginTransmission(systemData.i2cInputBaseID + node);
             if (Wire.endTransmission())
@@ -669,6 +671,7 @@ void processCommand()
  */
 void setup()
 {
+#if LCD_I2C
     // Scan for i2c LCD.
     for (uint8_t id = 0x3f; id >= 0x27; id--)
     {
@@ -680,6 +683,7 @@ void setup()
             break;
         }
     }
+#endif
 
     // Initial announcement/splash message.
     announce();
