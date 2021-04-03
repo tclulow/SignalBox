@@ -36,19 +36,19 @@
 // Amber     Lo    Hi    ROADUK  LED      2      1
 //
 // Colour   LED   ROADRW On      Off    Phase   Next
-// Red       Hi    Lo    LED     ROAD     1      3
-// Amber     Hi    Hi    ROADRW  LED      3      0
+// Red       Hi    Lo    LED     ROAD     1      0
+//           Hi    Hi    ROADRW  LED      3      1          // Not used
 // Green     Lo    Lo    ROADRW  LED      0      2
 // Amber     Lo    Hi    ROADRW  LED      2      1
 
-static const uint8_t LED_4_NEXT_PHASE[] = { 0, 3, 0, 2 };   // Representation of table above for LED_4.
-static const uint8_t ROAD_NEXT_PHASE[]  = { 2, 3, 1, 0 };   // Representation of table above for both ROADUK and ROADRW.
+static const uint8_t LED_4_NEXT_PHASE[]   = { 0, 3, 0, 2 }; // Representation of table above for LED_4.
+static const uint8_t ROAD_UK_NEXT_PHASE[] = { 2, 3, 1, 0 }; // Representation of table above for ROADUK.
+static const uint8_t ROAD_RW_NEXT_PHASE[] = { 2, 0, 1, 1 }; // Representation of table above for ROADRW.
 
 //                                                                   Other     This
 // States where the pin is forced off (both outputs low)    // State 3 2 1 0   3 2 1 0
-static const uint8_t LED_4_OFF   = 0x92;                    //       1 0 0 1   0 0 1 0 = 0x92.
-static const uint8_t ROAD_UK_OFF = 0x52;                    //       0 1 0 1   0 0 1 0 = 0x52.
-static const uint8_t ROAD_RW_OFF = 0xD2;                    //       1 1 0 1   0 0 1 0 = 0xD2.
+static const uint8_t LED_4_OFF = 0x92;                      //       1 0 0 1   0 0 1 0 = 0x92.
+static const uint8_t ROAD_OFF  = 0x52;                      //       0 1 0 1   0 0 1 0 = 0x52.
 
 
 // Should changes be persisted?
@@ -913,7 +913,7 @@ boolean actionDoubleLed(uint8_t aPin, boolean aState)
     boolean newState = aState;      // Might want to change the state.
     boolean ledState = false;
     uint8_t ledPin   = aPin - 1;
-    uint8_t offFlag  = (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4) ? LED_4_OFF : (outputDefs[aPin].getType() == OUTPUT_TYPE_ROAD_UK ? ROAD_UK_OFF : ROAD_RW_OFF);
+    uint8_t offFlag  = (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4) ? LED_4_OFF : ROAD_OFF;
     uint8_t oldPhase = (outputDefs[ledPin].getState()     )     // Convert state of both outputs to a phase.
                      | (outputDefs[aPin]  .getState() << 1);
     uint8_t newPhase = oldPhase;
@@ -927,9 +927,13 @@ boolean actionDoubleLed(uint8_t aPin, boolean aState)
     {
         newPhase = LED_4_NEXT_PHASE[oldPhase];
     }
+    else if (outputDefs[aPin].getType() == OUTPUT_TYPE_ROAD_UK)
+    {
+        newPhase = ROAD_UK_NEXT_PHASE[oldPhase];
+    }
     else
     {
-        newPhase = ROAD_NEXT_PHASE[oldPhase];
+        newPhase = ROAD_RW_NEXT_PHASE[oldPhase];
     }
 
     // Set states according to new phase.
