@@ -1646,18 +1646,19 @@ class Configure
                 case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, false);
                                     switch (outputType)
                                     {
-                                        case OUTPUT_TYPE_NONE:   break;
+                                        case OUTPUT_TYPE_NONE:    break;
                                         case OUTPUT_TYPE_SERVO:
-                                        case OUTPUT_TYPE_SIGNAL: changed |= menuOutputLo(OUTPUT_SERVO_MAX);
-                                                                 break;
+                                        case OUTPUT_TYPE_SIGNAL:  changed |= menuOutputLo(OUTPUT_SERVO_MAX);
+                                                                  break;
                                         case OUTPUT_TYPE_LED:
                                         case OUTPUT_TYPE_LED_4:
-                                        case OUTPUT_TYPE_ROAD:
+                                        case OUTPUT_TYPE_ROAD_UK:
+                                        case OUTPUT_TYPE_ROAD_RW:
                                         case OUTPUT_TYPE_FLASH:
                                         case OUTPUT_TYPE_BLINK:
-                                        case OUTPUT_TYPE_RANDOM: changed |= menuOutputLo(OUTPUT_LED_MAX);
-                                                                 break;
-                                        default:                 systemFail(M_OUTPUT, outputType, 0);
+                                        case OUTPUT_TYPE_RANDOM:  changed |= menuOutputLo(OUTPUT_LED_MAX);
+                                                                  break;
+                                        default:                  systemFail(M_OUTPUT, outputType, 0);
                                     }
 
                                     displayAll();

@@ -29,19 +29,26 @@
 // Amber*2   Lo    Hi    Both    None     2      0
 // Green     Lo    Lo    LED_4   LED      0      0
 //
-// Colour   LED   ROAD   On      Off    Phase   Next
+// Colour   LED   ROADUK On      Off    Phase   Next
 // Red       Hi    Lo    LED     ROAD     1      3
 // Red&Amber Hi    Hi    Both    None     3      0
-// Green     Lo    Lo    ROAD    LED      0      2
-// Amber     Lo    Hi    ROAD    LED      2      1
+// Green     Lo    Lo    ROADUK  LED      0      2
+// Amber     Lo    Hi    ROADUK  LED      2      1
+//
+// Colour   LED   ROADRW On      Off    Phase   Next
+// Red       Hi    Lo    LED     ROAD     1      3
+// Amber     Hi    Hi    ROADRW  LED      3      0
+// Green     Lo    Lo    ROADRW  LED      0      2
+// Amber     Lo    Hi    ROADRW  LED      2      1
 
 static const uint8_t LED_4_NEXT_PHASE[] = { 0, 3, 0, 2 };   // Representation of table above for LED_4.
-static const uint8_t ROAD_NEXT_PHASE[]  = { 2, 3, 1, 0 };   // Representation of table above for ROAD.
+static const uint8_t ROAD_NEXT_PHASE[]  = { 2, 3, 1, 0 };   // Representation of table above for both ROADUK and ROADRW.
 
 //                                                                   Other     This
 // States where the pin is forced off (both outputs low)    // State 3 2 1 0   3 2 1 0
-static const uint8_t LED_4_OFF = 0x92;                      //       1 0 0 1   0 0 1 0 = 0x92.
-static const uint8_t ROAD_OFF  = 0x52;                      //       0 1 0 1   0 0 1 0 = 0x52.
+static const uint8_t LED_4_OFF   = 0x92;                    //       1 0 0 1   0 0 1 0 = 0x92.
+static const uint8_t ROAD_UK_OFF = 0x52;                    //       0 1 0 1   0 0 1 0 = 0x52.
+static const uint8_t ROAD_RW_OFF = 0xD2;                    //       1 1 0 1   0 0 1 0 = 0xD2.
 
 
 // Should changes be persisted?
@@ -297,8 +304,8 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
                 if (outputDefs[aPin].getReset() > 0)
                 {
                     if (   (!isDoubleLed(aPin - 2))
-                        || (outputDefs[aPin    ].getType() != OUTPUT_TYPE_ROAD)
-                        || (outputDefs[aPin - 2].getType() != OUTPUT_TYPE_ROAD))
+                        || (outputDefs[aPin    ].getType() != OUTPUT_TYPE_ROAD_UK)
+                        || (outputDefs[aPin - 2].getType() != OUTPUT_TYPE_ROAD_UK))
                     {
                         actionState(aPin, false, 0, false);
                     }
@@ -906,7 +913,7 @@ boolean actionDoubleLed(uint8_t aPin, boolean aState)
     boolean newState = aState;      // Might want to change the state.
     boolean ledState = false;
     uint8_t ledPin   = aPin - 1;
-    uint8_t offFlag  = (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4) ? LED_4_OFF : ROAD_OFF;
+    uint8_t offFlag  = (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4) ? LED_4_OFF : (outputDefs[aPin].getType() == OUTPUT_TYPE_ROAD_UK ? ROAD_UK_OFF : ROAD_RW_OFF);
     uint8_t oldPhase = (outputDefs[ledPin].getState()     )     // Convert state of both outputs to a phase.
                      | (outputDefs[aPin]  .getState() << 1);
     uint8_t newPhase = oldPhase;
@@ -1256,28 +1263,30 @@ void stepLed(uint8_t aPin)
  */
 void stepDoubleLed(uint8_t aPin)
 {
-    int     pin   = aPin;                                   // Pin (signed) to fire next (normally the same pin).
-    uint8_t reset = outputDefs[aPin].getReset();            // Interval before next firing.
+    int     pin   = aPin;                                       // Pin (signed) to fire next (normally the same pin).
+    uint8_t reset = outputDefs[aPin].getReset();                // Interval before next firing.
+    uint8_t type  = outputDefs[aPin].getType();                 // Type of this pin.
     
-    if (outputDefs[aPin].getType() == OUTPUT_TYPE_ROAD)     // ROAD outputs are a special case.
+    if (   (type == OUTPUT_TYPE_ROAD_UK)                        // ROAD outputs are a special case.
+        || (type == OUTPUT_TYPE_ROAD_RW))
     {
-        if (   (outputDefs[aPin    ].getState())            // at Red & Amber or Amber.
-            && (outputDefs[aPin - 1].getReset() > 0))       // and has an alternate reset specified
+        if (   (outputDefs[aPin    ].getState())                // at Red & Amber or Amber.
+            && (outputDefs[aPin - 1].getReset() > 0))           // and has an alternate reset specified
         {
-            reset = outputDefs[aPin - 1].getReset();        // Use that (normally shorter) reset instead.
+            reset = outputDefs[aPin - 1].getReset();            // Use that (normally shorter) reset instead.
         }
-        else if (   ( outputDefs[aPin - 1].getState())      // Red is Hi and Lo
+        else if (   ( outputDefs[aPin - 1].getState())          // Red is Hi and Lo
                  && (!outputDefs[aPin    ].getState()))
         {
             // See if next pair of pins are also a ROAD, or if previous pins are ROADs.
             pin = aPin + 2;
             if (   (!isDoubleLed(pin))
-                || (outputDefs[pin].getType() != OUTPUT_TYPE_ROAD))
+                || (outputDefs[pin].getType() != type))
             {
                 // Next output isn't a ROAD, look for "first" one.
                 for (pin = aPin - 2; pin > 0; pin -= 2)
                 {
-                    if (outputDefs[pin].getType() != OUTPUT_TYPE_ROAD)
+                    if (outputDefs[pin].getType() != type)
                     {
                         break;
                     }
