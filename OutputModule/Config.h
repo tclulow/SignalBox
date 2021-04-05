@@ -13,6 +13,8 @@
 #define _Config_h
 
 #define LCD_I2C                  true   // Include code for LCD connected by I2C.
+#define LCD_I2C_LO               0x27   // Range of IDs to scan for LCD I2C device.
+#define LCD_I2C_HI               0x3F
 
 #define SERIAL_SPEED            19200   // Speed of the serial port.
 
