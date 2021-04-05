@@ -210,7 +210,7 @@ void ezyBusClear()
 #else // Not master - Slave output module.
 
 /** Gets the output module ID.
- *  Either by hardware jumperss of from EEPROM.
+ *  Either by hardware jumpers or from EEPROM.
  */
 uint8_t getModuleId(boolean aIncludeBase)
 {
@@ -265,7 +265,7 @@ uint8_t getModuleId(boolean aIncludeBase)
 
 /** Convert a character to hex value.
  *  Special-case: letters G-V represent 0x10 to 0x1f.
- *  If any other characters are present, return a negative number -HEX_MAX
+ *  If any other characters, return a negative number -HEX_MAX
  */
 int charToHex(char ch)
 {
