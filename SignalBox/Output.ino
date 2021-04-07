@@ -18,14 +18,8 @@
  */
 void readOutput(uint8_t aNode, uint8_t aPin)
 {
-    if (!isOutputNodePresent(aNode))
+    if (isOutputNodePresent(aNode))
     {
-        outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
-    }
-    else
-    {
-        int error = 0;
-
         outputNode = aNode;
         outputPin  = aPin;
 
@@ -41,24 +35,9 @@ void readOutput(uint8_t aNode, uint8_t aPin)
     
         Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
         Wire.write(COMMS_CMD_READ | outputPin);
-        error = Wire.endTransmission();
-    
-        if (error)
-        {
-            systemFail(M_OUTPUT, aNode, DELAY_READ);
-            outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
-        }
-        else if ((error = Wire.requestFrom(systemData.i2cOutputBaseID + outputNode, sizeof(outputDef))) != sizeof(outputDef))
-        {
-            systemFail(M_OUTPUT, aNode, DELAY_READ);
-            outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
-        }
-        else if (Wire.available() != sizeof(outputDef))
-        {
-            systemFail(M_DEBUG_READ, Wire.available(), DELAY_READ);
-            outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
-        }
-        else
+        if (   (Wire.endTransmission() == 0)
+            && (Wire.requestFrom(systemData.i2cOutputBaseID + outputNode, sizeof(outputDef)) == sizeof(outputDef))
+            && (Wire.available() == sizeof(outputDef)))
         {
             // Read the outputDef from the OutputModule.
             outputDef.read();
@@ -68,12 +47,22 @@ void readOutput(uint8_t aNode, uint8_t aPin)
                 outputDef.printDef(M_DEBUG_READ, outputPin);
             }
         }
+        else
+        {
+            outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
+            systemFail(M_OUTPUT, aNode, DELAY_READ);
+            setOutputNodePresent(aNode, false);
+        }
 
         // Ignore any data that's left
         while (Wire.available())
         {
             Wire.read();
         }
+    }
+    else
+    {
+        outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
     }
 }
 

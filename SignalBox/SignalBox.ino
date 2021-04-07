@@ -859,6 +859,7 @@ void loop()
     {
         tickHardwareScan = now + STEP_HARDWARE_SCAN;
         scanInputHardware();
+        scanOutputHardware();
     }
     
     // Process any inputs
