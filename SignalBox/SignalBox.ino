@@ -389,9 +389,9 @@ void scanInputs()
 
 /** Record a node input error.
  */
-void recordInputError(uint8_t aNode, PGM_P aMessagePtr, int aError)
+void recordInputError(uint8_t aNode)
 {
-    systemFail(aMessagePtr, aError, DELAY_READ);
+    systemFail(M_INPUT, aNode, DELAY_READ);
     setInputNodePresent(aNode, false);
 }
 
@@ -403,20 +403,14 @@ void recordInputError(uint8_t aNode, PGM_P aMessagePtr, int aError)
  */
 uint16_t readInputNode(uint8_t aNode)
 {
-    int      error = 0;
     uint16_t value = 0;
 
     Wire.beginTransmission(systemData.i2cInputBaseID + aNode);    
     Wire.write(MCP_GPIOA);
-    error = Wire.endTransmission();
-    if (error)
+    if (   (Wire.endTransmission())
+        || (Wire.requestFrom(systemData.i2cInputBaseID + aNode, 2) != 2))
     {
-        recordInputError(aNode, M_I2C_ERROR, error);
-        value = currentSwitchState[aNode];  // Pretend no change if comms error.
-    }
-    else if ((error = Wire.requestFrom(systemData.i2cInputBaseID + aNode, 2)) != 2)
-    {
-        recordInputError(aNode, M_I2C_COMMS, error);
+        recordInputError(aNode);
         value = currentSwitchState[aNode];  // Pretend no change if comms error.
     }
     else

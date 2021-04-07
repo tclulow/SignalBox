@@ -45,12 +45,12 @@ void readOutput(uint8_t aNode, uint8_t aPin)
     
         if (error)
         {
-            systemFail(M_I2C_ERROR, error, DELAY_READ);
+            systemFail(M_OUTPUT, aNode, DELAY_READ);
             outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
         }
         else if ((error = Wire.requestFrom(systemData.i2cOutputBaseID + outputNode, sizeof(outputDef))) != sizeof(outputDef))
         {
-            systemFail(M_I2C_COMMS, error, DELAY_READ);
+            systemFail(M_OUTPUT, aNode, DELAY_READ);
             outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
         }
         else if (Wire.available() != sizeof(outputDef))

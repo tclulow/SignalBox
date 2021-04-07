@@ -130,16 +130,12 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char M_ID_OUTPUT[]        PROGMEM = "Out";
 
     const char M_VS[]               PROGMEM = " vs ";
-    
+
     // Configuration - Input.
     const char M_TOGGLE[]           PROGMEM = "Toggle";
     const char M_ON_OFF[]           PROGMEM = "On_Off";
     const char M_ON[]               PROGMEM = "On";
     const char M_OFF[]              PROGMEM = "Off";
-    
-    // MCP interface.
-    const char M_I2C_ERROR[]        PROGMEM = "I2C error";
-    const char M_I2C_COMMS[]        PROGMEM = "I2C comms len"; 
     
     
     // Headers for the exports
