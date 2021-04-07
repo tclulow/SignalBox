@@ -378,7 +378,7 @@ class Configure
             }
             else
             {
-                systemFail(M_DETAIL, topMenu, DELAY_READ);
+                systemFail(M_DETAIL, topMenu, 0);
             }
         }
     }
@@ -1059,8 +1059,8 @@ class Configure
             if (aOldNode != response)       // Change actually happened.
             {
                 // Mark the old node absent and the new one present.
-                setOutputNodeAbsent(aOldNode);
-                setOutputNodePresent(response);
+                setOutputNodePresent(aOldNode, false);
+                setOutputNodePresent(response, true);
 
                 // Swap the state flags of the two nodes.
                 uint8_t oldStates = getOutputStates(aOldNode);

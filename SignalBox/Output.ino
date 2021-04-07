@@ -197,25 +197,19 @@ void resetOutput()
 
 /** Read the states of the given node's Outputs.
  *  Save in OutputStates.
- *  If fails, return a character indicating the error.
  */
-char readOutputStates(uint8_t aNode)
+void readOutputStates(uint8_t aNode)
 {
-    char error = 0;
+    int states;
     
     Wire.beginTransmission(systemData.i2cOutputBaseID + aNode);
     Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_STATES);
-    if (Wire.endTransmission())
+    if (   (Wire.endTransmission() == 0)
+        && (Wire.requestFrom(systemData.i2cOutputBaseID + aNode, OUTPUT_STATE_LEN) == OUTPUT_STATE_LEN)
+        && ((states = Wire.read()) >= 0))
     {
-        error = CHAR_DOT;       // No such node on the bus.
-    }
-    else if (Wire.requestFrom(systemData.i2cOutputBaseID + aNode, OUTPUT_STATE_LEN) != OUTPUT_STATE_LEN)
-    {
-        error = CHAR_HASH;
-    }
-    else
-    {
-        int states = Wire.read();
+        setOutputNodePresent(aNode, true);
+        setOutputStates(aNode, states);
 
         if (isDebug(DEBUG_DETAIL))
         {
@@ -227,17 +221,9 @@ char readOutputStates(uint8_t aNode)
             Serial.print(states, HEX);
             Serial.println();
         }
-        
-        if (states < 0)
-        {
-            error = CHAR_STAR;
-        }
-        else
-        {
-            setOutputNodePresent(aNode);
-            setOutputStates(aNode, states);
-        }
     }
-
-    return error;
+    else
+    {
+        setOutputNodePresent(aNode, false);
+    }
 }

@@ -47,7 +47,7 @@ void setDisplayTimeout(long aTimeout)
 }
 
 
-/** Scan for attached input hardware.
+/** Scan for attached Input hardware.
  */
 void scanInputHardware()
 {
@@ -64,7 +64,7 @@ void scanInputHardware()
 }
 
 
-/** Display the input nodes present.
+/** Display the Input nodes present.
  */
 void dispInputHardware()
 {
@@ -93,6 +93,49 @@ void dispInputHardware()
             }
         }
     }
+    
+    waitForButton(DELAY_READ);
+    waitForButtonRelease();
+}
+
+
+/** Scan for attached Output hardware.
+ */
+void scanOutputHardware()
+{
+    for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
+    {
+        readOutputStates(node);
+    }
+}
+
+
+/** Display the Output nodes present.
+ */
+void dispOutputHardware()
+{
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT, LCD_LEN_OPTION);
+    disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_EDT);
+
+    for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
+    {
+        if (node == OUTPUT_NODE_HALF)
+        {
+            disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_BOT);
+        }
+        
+        if (isOutputNodePresent(node))
+        {
+            disp.printHexCh(node);
+        }
+        else
+        {
+            disp.printCh(CHAR_DOT); 
+        }
+    }
+    
+    waitForButton(DELAY_READ);
+    waitForButtonRelease();
 }
 
 
@@ -107,33 +150,9 @@ void scanHardware()
     scanInputHardware();
     dispInputHardware();
     
-    waitForButton(DELAY_READ);
-    waitForButtonRelease();
-    
     // Scan for Output nodes.
-    // disp.clear();
-    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT, LCD_LEN_OPTION);
-    disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_EDT);
-
-    for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
-    {
-        if (node == OUTPUT_NODE_HALF)
-        {
-            disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_BOT);
-        }
-        char state = readOutputStates(node);
-
-        if (state == 0)
-        {
-            disp.printHexCh(node);
-        }
-        else
-        {
-            disp.printCh(state); 
-        }
-    }
-    waitForButton(DELAY_READ);
-    waitForButtonRelease();
+    scanOutputHardware();
+    dispOutputHardware();
 
     // Report absence of hardware.
     if (   (inputNodes  == 0)
