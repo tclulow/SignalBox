@@ -140,9 +140,16 @@ void saveInput()
 
 /** Record the presence of an InputNode in the map.
  */
-void setInputNodePresent(uint8_t aNode)
+void setInputNodePresent(uint8_t aNode, boolean aState)
 {
-    inputNodes |= (1 << aNode); 
+    if (aState)
+    {
+        inputNodes |= (1 << aNode);
+    }
+    else
+    {
+        inputNodes &= ~(1 << aNode);
+    }
 }
 
 

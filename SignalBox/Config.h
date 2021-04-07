@@ -29,11 +29,12 @@
 
 #define DELAY_MULTIPLIER        1000L   // Multiply delay values by this amount (convert to seconds).
 
-#define STEP_INPUT_SCAN            50   // Steps in msecs between scans of the input switches.
-#define STEP_HEARTBEAT            200   // Steps in msecs between changes of the heartbeat indicator.
-#define STEP_SERVO                 25   // Delay (msecs) between steps of a Servo.
-#define STEP_LED                    5   // Delay (msecs) between steps of a LED.
-#define STEP_FLASH                 10   // Delay (msecs) between steps of flashes of a FLASH or BLINK.
+#define STEP_HARDWARE_SCAN     10000L   // Re-scan for new hardware every 10 seconds.
+#define STEP_INPUT_SCAN           50L   // Steps in msecs between scans of the input switches.
+#define STEP_HEARTBEAT           200L   // Steps in msecs between changes of the heartbeat indicator.
+#define STEP_SERVO                25L   // Delay (msecs) between steps of a Servo.
+#define STEP_LED                   5L   // Delay (msecs) between steps of a LED.
+#define STEP_FLASH                10L   // Delay (msecs) between steps of flashes of a FLASH or BLINK.
 
 #define MAX_PACE                  124   // Maximum pace value.
 #define PACE_STEPS                128   // Pace adjustment when converting to steps.

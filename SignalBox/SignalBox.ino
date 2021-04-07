@@ -22,9 +22,10 @@ uint8_t commandLen = 0;                         // Length of command.
 
 
 // Ticking
-long now           = 0;     // The current time in millisecs.
-long tickScan      = 0;     // The time of the last scan of input switches.
-long tickHeartBeat = 0;     // Time of last heartbeat.
+long now              = 0;      // The current time in millisecs.
+long tickHardwareScan = 0;      // The time of the last scan for hardware.
+long tickInputScan    = 0;      // The time of the last scan of input switches.
+long tickHeartBeat    = 0;      // Time of last heartbeat.
 
 
 /** Announce ourselves.
@@ -46,19 +47,32 @@ void setDisplayTimeout(long aTimeout)
 }
 
 
-/** Map the Input and Output nodes.
+/** Scan for attached input hardware.
  */
-void scanHardware()
+void scanInputHardware()
 {
-    uint8_t id = 0;
-    waitForButtonRelease();
+    for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
+    {
+#if LCD_I2C
+        if (disp.getLcdId() != (systemData.i2cInputBaseID + node))
+#endif
+        {
+            Wire.beginTransmission(systemData.i2cInputBaseID + node);
+            setInputNodePresent(node, Wire.endTransmission() == 0);
+        }
+    }
+}
 
-    // Scan for Input nodes.
+
+/** Display the input nodes present.
+ */
+void dispInputHardware()
+{
     disp.clear();
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_NODES);
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT, LCD_LEN_OPTION);
     disp.setCursor(-INPUT_NODE_MAX, LCD_ROW_TOP);
-    
+
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
 #if LCD_I2C
@@ -69,18 +83,30 @@ void scanHardware()
         else
 #endif
         {
-            Wire.beginTransmission(systemData.i2cInputBaseID + node);
-            if (Wire.endTransmission())
+            if (isInputNode(node))
+            {  
+                disp.printHexCh(node);
+            }
+            else
             {
                 disp.printCh(CHAR_DOT); 
             }
-            else
-            {  
-                disp.printHexCh(node);
-                setInputNodePresent(node);
-            }
         }
     }
+}
+
+
+/** Map the Input and Output nodes.
+ */
+void scanHardware()
+{
+    uint8_t id = 0;
+    waitForButtonRelease();
+
+    // Scan for Input nodes.
+    scanInputHardware();
+    dispInputHardware();
+    
     waitForButton(DELAY_READ);
     waitForButtonRelease();
     
@@ -123,7 +149,8 @@ void scanHardware()
         {
             disp.printProgStrAt(LCD_COL_START, row++, M_NO_OUTPUTS);
         }
-        delay(DELAY_READ);
+        waitForButton(DELAY_READ);
+        waitForButtonRelease();
     }
 }
 
@@ -360,6 +387,15 @@ void scanInputs()
 }
 
 
+/** Record a node input error.
+ */
+void recordInputError(uint8_t aNode, PGM_P aMessagePtr, int aError)
+{
+    systemFail(aMessagePtr, aError, DELAY_READ);
+    setInputNodePresent(aNode, false);
+}
+
+
 /** Read the pins of a InputNode.
  *  Return the state of the pins, 16 bits, both ports.
  *  Return current state if there's a communication error, 
@@ -375,12 +411,12 @@ uint16_t readInputNode(uint8_t aNode)
     error = Wire.endTransmission();
     if (error)
     {
-        systemFail(M_I2C_ERROR, error, DELAY_READ);
+        recordInputError(aNode, M_I2C_ERROR, error);
         value = currentSwitchState[aNode];  // Pretend no change if comms error.
     }
-    else if ((value = Wire.requestFrom(systemData.i2cInputBaseID + aNode, 2)) != 2)
+    else if ((error = Wire.requestFrom(systemData.i2cInputBaseID + aNode, 2)) != 2)
     {
-        systemFail(M_I2C_COMMS, error, DELAY_READ);
+        recordInputError(aNode, M_I2C_COMMS, error);
         value = currentSwitchState[aNode];  // Pretend no change if comms error.
     }
     else
@@ -805,10 +841,17 @@ void loop()
 
     now = millis();
 
-    // Process any inputs
-    if (now > tickScan)
+    // Rescan for new hardware
+    if (now > tickHardwareScan)
     {
-        tickScan = now + STEP_INPUT_SCAN;
+        tickHardwareScan = now + STEP_HARDWARE_SCAN;
+        scanInputHardware();
+    }
+    
+    // Process any inputs
+    if (now > tickInputScan)
+    {
+        tickInputScan = now + STEP_INPUT_SCAN;
         // scanOutputs();
         scanInputs();
     }
