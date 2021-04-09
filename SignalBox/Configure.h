@@ -45,6 +45,15 @@ class Configure
     uint8_t inpPin  = 0;    // The input pin we last configured.
     
 
+    /** Report a failure during configuration
+     */
+    void configFail(PGM_P aMessage, int aValue)
+    {
+        systemFail(aMessage, aValue);
+        waitForButton(DELAY_FAIL);
+    }
+
+    
     /** Display all current data.
      */
     void displayAll()
@@ -72,7 +81,7 @@ class Configure
             case TOP_EXPORT: 
             case TOP_IMPORT: displaySystem();
                              break;
-            default:         systemFail(M_ALL, topMenu, 0);
+            default:         configFail(M_ALL, topMenu);
                              break;
         }
     }
@@ -145,7 +154,7 @@ class Configure
                              break;
             case TOP_IMPORT: displayDetailImport();
                              break;
-            default:         systemFail(M_DETAIL, topMenu, 0);
+            default:         configFail(M_DETAIL, topMenu);
                              break;
         }
     }
@@ -176,7 +185,7 @@ class Configure
                              break;
             case SYS_DEBUG:  displaySystemDebugParams();
                              break;
-            default:         systemFail(M_PARAMS, sysMenu, 0);
+            default:         configFail(M_PARAMS, sysMenu);
                              break;
         }
     }
@@ -378,7 +387,7 @@ class Configure
             }
             else
             {
-                systemFail(M_DETAIL, topMenu, 0);
+                configFail(M_DETAIL, topMenu);
             }
         }
     }
@@ -506,7 +515,7 @@ class Configure
                                                          break;
                                         case TOP_IMPORT: menuImport();
                                                          break;
-                                        default:         systemFail(M_CONFIG, topMenu, 0);
+                                        default:         configFail(M_CONFIG, topMenu);
                                     }
 
                                     markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
@@ -598,7 +607,7 @@ class Configure
                                                          break;
                                         case SYS_DEBUG:  changed |= menuSystemDebug();
                                                          break;
-                                        default:         systemFail(M_SYSTEM, sysMenu, 0);
+                                        default:         configFail(M_SYSTEM, sysMenu);
                                     }
                                     
                                     displayAll();
@@ -1160,7 +1169,7 @@ class Configure
                 Serial.println();    
             }
 
-            systemFail(M_OUTPUT, response, 0);
+            configFail(M_OUTPUT, response);
             response = aOldNode;
         }
 
@@ -1658,7 +1667,7 @@ class Configure
                                         case OUTPUT_TYPE_BLINK:
                                         case OUTPUT_TYPE_RANDOM:  changed |= menuOutputLo(OUTPUT_LED_MAX);
                                                                   break;
-                                        default:                  systemFail(M_OUTPUT, outputType, 0);
+                                        default:                  configFail(M_OUTPUT, outputType);
                                     }
 
                                     displayAll();

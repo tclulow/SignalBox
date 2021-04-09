@@ -50,7 +50,7 @@ void readOutput(uint8_t aNode, uint8_t aPin)
         else
         {
             outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
-            systemFail(M_OUTPUT, aNode, DELAY_READ);
+            systemFail(M_OUTPUT, aNode);
             setOutputNodePresent(aNode, false);
         }
 

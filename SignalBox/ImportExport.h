@@ -646,7 +646,7 @@ class ImportExport
                               break;
             case EXP_LOCKS:   exportLocks(false);
                               break;
-            default:          systemFail(M_EXPORT, aExport, 0);
+            default:          systemFail(M_EXPORT, aExport);
         }
     
         disp.clearRow(-strlen_P(M_EXPORTING), LCD_ROW_DET);

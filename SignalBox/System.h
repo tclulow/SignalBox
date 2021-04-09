@@ -193,7 +193,7 @@ void flashVersion();
 
 /** Report a system failure.
  */
-void systemFail(PGM_P aMessage, int aValue, int aDelay);
+void systemFail(PGM_P aMessage, int aValue);
 
 
 /** Is an EzyBus setup detected?

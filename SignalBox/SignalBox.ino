@@ -410,7 +410,7 @@ void scanInputs()
  */
 void recordInputError(uint8_t aNode)
 {
-    systemFail(M_INPUT, aNode, DELAY_READ);
+    systemFail(M_INPUT, aNode);
     setInputNodePresent(aNode, false);
 }
 
