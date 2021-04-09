@@ -94,7 +94,7 @@ void dispInputHardware()
         }
     }
     
-    waitForButtonClick(DELAY_READ);
+    waitForButtonClick();
 }
 
 
@@ -133,7 +133,7 @@ void dispOutputHardware()
         }
     }
     
-    waitForButtonClick(DELAY_READ);
+    waitForButtonClick();
 }
 
 
@@ -166,7 +166,7 @@ void scanHardware()
         {
             disp.printProgStrAt(LCD_COL_START, row++, M_NO_OUTPUTS);
         }
-        waitForButtonClick(DELAY_READ);
+        waitForButtonClick();
     }
 }
 
@@ -229,7 +229,7 @@ void initInputs()
     }
 
     // Wait while display is read.
-    waitForButtonClick(DELAY_READ);
+    waitForButtonClick();
 }
 
 
@@ -269,7 +269,7 @@ void firstRun()
     // Save all data to EEPROM.
     saveSystemData();
     
-    waitForButtonClick(DELAY_READ);
+    waitForButtonClick();
 }
 
 
@@ -808,7 +808,7 @@ void setup()
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_UPDATE);
 
         // Do the update here.
-        waitForButtonClick(DELAY_READ);     // Nothing to do, just show it's happening.
+        waitForButtonClick();           // Nothing to do, just show it's happening.
         
         systemData.version = VERSION;
         saveSystemData();

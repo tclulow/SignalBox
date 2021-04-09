@@ -180,12 +180,12 @@ uint8_t waitForButtonPress()
 
 /** Wait for a button to be pressed.
  *  Wait for it to be released.
- *  Abandon wait after aMaxWait msecs (unless aMaxWait is 0).
+ *  Abandon wait after DELAY_READ msecs.
  *  Return the button clicked.
  */
-uint8_t waitForButtonClick(int aMaxWait)
+uint8_t waitForButtonClick()
 {
-    long delayTo = millis() + aMaxWait;
+    long delayTo = millis() + DELAY_READ;
     uint8_t button = BUTTON_NONE;
     
     waitForButtonRelease();

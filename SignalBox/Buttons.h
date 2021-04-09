@@ -66,10 +66,10 @@ uint8_t waitForButtonPress();
 
 /** Wait for a button to be pressed.
  *  Wait for it to be released.
- *  Abandon wait after aMaxWait msecs (unless aMaxWait is 0).
+ *  Abandon wait after DELAY_READ msecs.
  *  Return the button clicked.
  */
-uint8_t waitForButtonClick(int aMaxWait);
+uint8_t waitForButtonClick();
 
 
 #endif

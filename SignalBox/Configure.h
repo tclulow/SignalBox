@@ -50,7 +50,7 @@ class Configure
     void configFail(PGM_P aMessage, int aValue)
     {
         systemFail(aMessage, aValue);
-        waitForButtonClick(DELAY_FAIL);
+        waitForButtonClick();
     }
 
     
@@ -1110,7 +1110,7 @@ class Configure
                         }
                     }
                 }
-                waitForButtonClick(DELAY_READ);
+                waitForButtonClick();
 
                 // Show work as Output locks are updated.
                 disp.clearBottomRows();
@@ -1172,7 +1172,7 @@ class Configure
             response = aOldNode;
         }
         
-        waitForButtonClick(DELAY_READ);
+        waitForButtonClick();
         return response;
     }
     
