@@ -1591,7 +1591,7 @@ class Configure
      *  or until a button is pressed.
      *  Return the button pressed (if any).
      */
-    uint8_t delayFor(uint8_t aInterval)
+    uint8_t delayFor(long aInterval)
     {
         uint8_t button = BUTTON_NONE;
         long    endAt  = millis() + aInterval;
