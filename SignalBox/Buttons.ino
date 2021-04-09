@@ -154,42 +154,49 @@ void waitForButtonRelease()
     {
         delay(DELAY_BUTTON_WAIT);
     }
-    while (readButton());
+    while (readButton() != BUTTON_NONE);
 
     delay(DELAY_BUTTON_WAIT);
 }
 
 
 /** Wait for a button to be pressed.
- *  First wait for all buttons to be released.
+ *  Don't wait for it to be released.
  *  Return the button pressed.
  */
-uint8_t waitForButton()
+uint8_t waitForButtonPress()
 {
+    uint8_t button = BUTTON_NONE;
+    
     waitForButtonRelease();
-    
-    return waitForButton(0);
-}
-
-
-/** Wait for a button to be pressed.
- *  Return the button pressed.
- *  Abandon wait after aMaxWait msecs (unless aMaxWait is 0).
- */
-uint8_t waitForButton(int aMaxWait)
-{
-    long delayTo = millis() + aMaxWait;
-    uint8_t button;
-    
-    do
+    while ((button = readButton()) == BUTTON_NONE)
     {
         delay(DELAY_BUTTON_WAIT);
     }
-    while (   ((button = readButton()) == BUTTON_NONE)
-           && (   (aMaxWait == 0)
-               || (millis() < delayTo)));
     
-    delay(DELAY_BUTTON_WAIT);
+    return button;
+}
+
+
+/** Wait for a button to be pressed.
+ *  Wait for it to be released.
+ *  Abandon wait after aMaxWait msecs (unless aMaxWait is 0).
+ *  Return the button clicked.
+ */
+uint8_t waitForButtonClick(int aMaxWait)
+{
+    long delayTo = millis() + aMaxWait;
+    uint8_t button = BUTTON_NONE;
+    
+    waitForButtonRelease();
+    
+    while (   ((button = readButton()) == BUTTON_NONE)
+           && (millis() < delayTo))
+    {
+        delay(DELAY_BUTTON_WAIT);
+    }
+    
+    waitForButtonRelease();
 
     return button;
 }

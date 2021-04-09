@@ -376,10 +376,9 @@ class ImportExport
         disp.printCh(CHAR_QUERY);
 
         // Wait for user-input. BUTTON_RIGHT will continue, others will abort import.
-        if (waitForButton() == BUTTON_RIGHT)
+        if (waitForButtonPress() == BUTTON_RIGHT)
         {
-            disp.clearRow(LCD_COL_START, LCD_ROW_DET);
-            disp.printProgStrAt(LCD_COL_START,  LCD_ROW_DET, M_WAITING);
+            disp.printProgStrAt(LCD_COL_START,  LCD_ROW_DET, M_WAITING, LCD_COLS);
             waitForButtonRelease();
         }
         else

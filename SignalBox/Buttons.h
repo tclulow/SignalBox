@@ -58,17 +58,18 @@ void waitForButtonRelease();
 
 
 /** Wait for a button to be pressed.
- *  Return that button after waiting for the release.
+ *  Don't wait for it to be released.
+ *  Return the button pressed.
  */
-uint8_t waitForButton();
+uint8_t waitForButtonPress();
 
 
 /** Wait for a button to be pressed.
- *  First wait for all buttons to be released.
- *  Return the button pressed.
+ *  Wait for it to be released.
  *  Abandon wait after aMaxWait msecs (unless aMaxWait is 0).
+ *  Return the button clicked.
  */
-uint8_t waitForButton(int aMaxWait);
+uint8_t waitForButtonClick(int aMaxWait);
 
 
 #endif

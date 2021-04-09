@@ -26,6 +26,7 @@
 #define DELAY_BUTTON_WAIT          50   // Delay when waiting for button state to change - debounce.
 #define DELAY_BUTTON_DELAY        250   // Delay before auto-repeating button.
 #define DELAY_BUTTON_REPEAT       100   // Auto-repeat button when held continuously.
+#define DELAY_FAIL               5000   // Delay for failure messages.
 
 #define DELAY_MULTIPLIER        1000L   // Multiply delay values by this amount (convert to seconds).
 

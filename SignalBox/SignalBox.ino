@@ -94,8 +94,7 @@ void dispInputHardware()
         }
     }
     
-    waitForButton(DELAY_READ);
-    waitForButtonRelease();
+    waitForButtonClick(DELAY_READ);
 }
 
 
@@ -134,8 +133,7 @@ void dispOutputHardware()
         }
     }
     
-    waitForButton(DELAY_READ);
-    waitForButtonRelease();
+    waitForButtonClick(DELAY_READ);
 }
 
 
@@ -168,8 +166,7 @@ void scanHardware()
         {
             disp.printProgStrAt(LCD_COL_START, row++, M_NO_OUTPUTS);
         }
-        waitForButton(DELAY_READ);
-        waitForButtonRelease();
+        waitForButtonClick(DELAY_READ);
     }
 }
 
@@ -231,9 +228,8 @@ void initInputs()
         }
     }
 
-    // Wait for button, or DELAY_READ msecs.
-    waitForButton(DELAY_READ);
-    waitForButtonRelease();
+    // Wait while display is read.
+    waitForButtonClick(DELAY_READ);
 }
 
 
@@ -255,7 +251,7 @@ void firstRun()
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_EZY_UPDATE);
 
         ezyBusClear();
-        if (waitForButton() == BUTTON_SELECT)
+        if (waitForButtonPress() == BUTTON_SELECT)
         {
             ezyBusConvert();
             defaultInputs(INPUT_TYPE_TOGGLE);
@@ -273,7 +269,7 @@ void firstRun()
     // Save all data to EEPROM.
     saveSystemData();
     
-    delay(DELAY_READ);
+    waitForButtonClick(DELAY_READ);
 }
 
 
@@ -812,7 +808,7 @@ void setup()
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_UPDATE);
 
         // Do the update here.
-        delay(DELAY_READ);          // Nothing to do, just show it's happening.
+        waitForButtonClick(DELAY_READ);     // Nothing to do, just show it's happening.
         
         systemData.version = VERSION;
         saveSystemData();

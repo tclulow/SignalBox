@@ -50,7 +50,7 @@ class Configure
     void configFail(PGM_P aMessage, int aValue)
     {
         systemFail(aMessage, aValue);
-        waitForButton(DELAY_FAIL);
+        waitForButtonClick(DELAY_FAIL);
     }
 
     
@@ -480,7 +480,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     topMenu += 2;           // Use +1 to compensate for the -1 that the code below will do.
@@ -540,7 +540,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     sysMenu += 2;     // Use +1 to compensate for the -1 that the code below will do.
@@ -632,7 +632,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     systemData.reportLevel += 2;              // Allow for decrement in BUTTON_DOWN code below.
@@ -669,7 +669,7 @@ class Configure
 
         while (index >= 0)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     params[index] += 1;
@@ -724,7 +724,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     systemData.debugLevel += 2;             // Allow for decrement in BUTTON_DOWN code below.
@@ -757,7 +757,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     expMenu += 2;           // Use +1 to compensate for the -1 that the code below will do.
@@ -804,7 +804,7 @@ class Configure
         {
             int adjust = 0;
             
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     adjust += 2;     // Use +1 to compensate for the -1 that the code below will do.
@@ -970,7 +970,7 @@ class Configure
         {
             int adjust = 0;
             
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     adjust += 2;        // Use +1 to compensate for the -1 that the code below will do.
@@ -1110,8 +1110,7 @@ class Configure
                         }
                     }
                 }
-                delay(DELAY_READ);
-                waitForButtonRelease();
+                waitForButtonClick(DELAY_READ);
 
                 // Show work as Output locks are updated.
                 disp.clearBottomRows();
@@ -1172,9 +1171,8 @@ class Configure
             configFail(M_OUTPUT, response);
             response = aOldNode;
         }
-
-        delay(DELAY_READ);
-        waitForButtonRelease();
+        
+        waitForButtonClick(DELAY_READ);
         return response;
     }
     
@@ -1189,7 +1187,7 @@ class Configure
         
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     if (aIsInput)
@@ -1265,7 +1263,7 @@ class Configure
         
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     inputType += 2;                 // Use +1 to compensate for the -1 that the code below will do.
@@ -1342,7 +1340,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     index += 2;                     // Use +1 to compensate for the -1 that the code below will do.
@@ -1382,7 +1380,7 @@ class Configure
         {
             int adjust = 0;
             
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     adjust += 2;        // Use +1 to compensate for the -1 that the code below will do.
@@ -1428,7 +1426,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     // Increment the pin number within the Input's output at this index.
@@ -1532,12 +1530,12 @@ class Configure
                         {
                             outputDef.setState(!outputDef.getState());
                             writeOutput();
-                            button = waitForButton(interval);
+                            button = waitForButtonClick(interval);
                             outputDef.setState(!outputDef.getState());
                             writeOutput();
                             if (button == BUTTON_NONE)
                             {
-                                button = waitForButton(interval);
+                                button = waitForButtonClick(interval);
                             }
                         }
                         resetOutput();
@@ -1566,8 +1564,12 @@ class Configure
                                                         break;
                                                     }
                                                 }
+                                                Serial.print("Left to ");
+                                                Serial.println(pin);
                                                 break;
                             case BUTTON_RIGHT:  pin += 1;
+                                                Serial.print("Right to ");
+                                                Serial.println(pin);
                                                 break;
                         }
 
@@ -1601,7 +1603,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     outputType += 2;                    // Use +1 to compensate for the -1 that the code below will do.
@@ -1698,7 +1700,7 @@ class Configure
         while (!finished)
         {
             int autoRepeat = DELAY_BUTTON_DELAY;
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     do
@@ -1766,7 +1768,7 @@ class Configure
         while (!finished)
         {
             int autoRepeat = DELAY_BUTTON_DELAY;
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     do
@@ -1833,7 +1835,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     value = (value + 1) & OUTPUT_PACE_MASK;
@@ -1877,7 +1879,7 @@ class Configure
         while (!finished)
         {
             int autoRepeat = DELAY_BUTTON_DELAY;
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     do
@@ -1929,7 +1931,7 @@ class Configure
         
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:
@@ -2003,7 +2005,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     index += 2;                     // Use +1 to compensate for the -1 that the code below will do.
@@ -2045,7 +2047,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:
@@ -2099,7 +2101,7 @@ class Configure
         {
             int adjust = 0;
             
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     adjust += 2;    // Use +1 to compensate for the -1 that the code below will do.
@@ -2136,7 +2138,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButton())
+            switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:     outputDef.setLockPin(aHi, aIndex, (outputDef.getLockPin(aHi, aIndex) + 1) & OUTPUT_PIN_MASK);
@@ -2211,16 +2213,7 @@ class Configure
     boolean confirm()
     {
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_CONFIRM);
-        boolean saved = waitForButton() == BUTTON_SELECT;
-
-        if (saved)
-        {
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_CONFIRMED);
-        }
-
-        waitForButtonRelease();
-        disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
-        return saved;
+        return waitForConfirm(M_CONFIRMED);
     }
 
     
@@ -2229,18 +2222,31 @@ class Configure
     boolean cancel()
     {
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_CANCEL);
-        boolean cancelled = waitForButton() == BUTTON_SELECT;
-
-        if (cancelled)
-        {
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_CANCELLED);
-        }
-
-        disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
-        waitForButtonRelease();
-        return cancelled;
+        return waitForConfirm(M_CANCELLED);
     }
 
+
+    /** Wait for confirmation of confirm/cancel.
+     *  Return true if confirmed.
+     */
+    boolean waitForConfirm(PGM_P aMessagePtr)
+    {
+        uint8_t button = waitForButtonPress();
+
+        if (button == BUTTON_SELECT)
+        {
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, aMessagePtr, LCD_COLS);
+        }
+        else
+        {
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_ABANDONED, LCD_COLS);
+        }
+
+        waitForButtonRelease();
+        disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        
+        return button == BUTTON_SELECT;
+    }
 
     public:
     

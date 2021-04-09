@@ -161,7 +161,7 @@ void flashVersion()
 
 /** Report a system failure.
  */
-void systemFail(PGM_P aMessage, int aValue, int aDelay)
+void systemFail(PGM_P aMessage, int aValue)
 {
     Serial.print(PGMT(M_FAILURE));
     Serial.print(CHAR_TAB);
@@ -175,16 +175,7 @@ void systemFail(PGM_P aMessage, int aValue, int aDelay)
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, aMessage);
     disp.printHexByteAt(-2, LCD_ROW_BOT, aValue);
 
-    if (aDelay > 0)
-    {
-        setDisplayTimeout(aDelay);
-    }
-    else
-    {
-        waitForButton();
-        disp.clear();
-        waitForButtonRelease();
-    }
+    setDisplayTimeout(DELAY_FAIL);
 }
 
 
