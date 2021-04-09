@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _Buttons_h
-#define _Buttons_h
+#ifndef Buttons_h
+#define Buttons_h
 
 
 // The analog button

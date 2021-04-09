@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _System_h
-#define _System_h
+#ifndef System_h
+#define System_h
 
 
 #if MASTER

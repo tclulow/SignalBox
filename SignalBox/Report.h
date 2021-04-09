@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _Report_h
-#define _Report_h
+#ifndef Report_h
+#define Report_h
 
 
 /** Is reporting enabled (at a particular level)?

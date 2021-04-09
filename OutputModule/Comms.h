@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _Comms_h
-#define _Comms_h
+#ifndef Comms_h
+#define Comms_h
 
 
 #define COMMS_COMMAND_MASK      0xf0    // Top 4 bits.

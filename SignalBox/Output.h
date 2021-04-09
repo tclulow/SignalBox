@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _Output_h
-#define _Output_h
+#ifndef Output_h
+#define Output_h
 
 // Output nodes.
 #define OUTPUT_PIN_MAX              8   // 8 outputs to each node.

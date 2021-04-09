@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _Configure_h
-#define _Configure_h
+#ifndef Configure_h
+#define Configure_h
 
 // Top-level menu states.
 #define TOP_SYSTEM   0

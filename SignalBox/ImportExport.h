@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _ImportExport_h
-#define _ImportExport_h
+#ifndef ImportExport_h
+#define ImportExport_h
 
 // Import word buffer.
 #define WORD_BUFFER_LENGTH  32

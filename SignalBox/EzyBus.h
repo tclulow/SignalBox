@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _EzyBus_h
-#define _EzyBus_h
+#ifndef EzyBus_h
+#define EzyBus_h
 
 #define EZY_BASE          0   // EEPROM address of output module definitions.
 #define EZY_OUTPUT_SIZE   4   // Four bytes for an EzyBus output definition.

@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _Messages_h
-#define _Messages_h
+#ifndef Messages_h
+#define Messages_h
 
 
 // Incantation to convert a PROGMEM string to something usable by other functions.

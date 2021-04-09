@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _Input_h
-#define _Input_h
+#ifndef Input_h
+#define Input_h
 
 // Input nodes.
 #define INPUT_NODE_MAX            8     // Maximum nodes.

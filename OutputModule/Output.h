@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _Output_h
-#define _Output_h
+#ifndef Output_h
+#define Output_h
 
 // Output nodes.
 #define OUTPUT_PIN_MAX              8   // 8 outputs to each node.
@@ -548,24 +548,22 @@ void resetOutput();
 
 /** Read the states of the given node's Outputs.
  *  Save in OutputStates.
- *  If fails, return a character indicating the error.
  */
-char readOutputStates(uint8_t aNode);
+void readOutputStates(uint8_t aNode);
 
 
 /** Record the presence of an OutputNode in the map.
  */
-void setOutputNodePresent(uint8_t aNode)
+void setOutputNodePresent(uint8_t aNode, boolean aState)
 {
-    outputNodes |= ((long)1 << aNode); 
-}
-
-
-/** Record the absence of an OutputNode in the map.
- */
-void setOutputNodeAbsent(uint8_t aNode)
-{
-    outputNodes &= ~((long)1 << aNode); 
+    if (aState)
+    {
+        outputNodes |= ((long)1 << aNode);
+    }
+    else
+    {
+        outputNodes &= ~((long)1 << aNode); 
+    }
 }
 
 

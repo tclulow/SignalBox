@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _SignalBox_h
-#define _SignalBox_h
+#ifndef SignalBox_h
+#define SignalBox_h
 
 
 // A pin that will force calibration at start-up

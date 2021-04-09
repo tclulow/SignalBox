@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _Display_h
-#define _Display_h
+#ifndef Display_h
+#define Display_h
 
 #include <LiquidCrystal.h>
 #if LCD_I2C

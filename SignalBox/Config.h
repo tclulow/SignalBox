@@ -9,8 +9,8 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
-#ifndef _Config_h
-#define _Config_h
+#ifndef Config_h
+#define Config_h
 
 #define LCD_I2C                  true   // Include code for LCD connected by I2C.
 #define LCD_I2C_LO               0x27   // Range of IDs to scan for LCD I2C device.
