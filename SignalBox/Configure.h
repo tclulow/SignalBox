@@ -1564,12 +1564,8 @@ class Configure
                                                         break;
                                                     }
                                                 }
-                                                Serial.print("Left to ");
-                                                Serial.println(pin);
                                                 break;
                             case BUTTON_RIGHT:  pin += 1;
-                                                Serial.print("Right to ");
-                                                Serial.println(pin);
                                                 break;
                         }
 
