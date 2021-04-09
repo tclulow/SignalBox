@@ -21,12 +21,12 @@
 #define DELAY_START              2000   // Pause during start-up to avoid swamping Serial IO.
 #define DELAY_BLINK               250   // Blink interval when showing version number.
 #define DELAY_BLINK_LONG          750   // Blink to show zero, or gap between sections.
-
 #define DELAY_READ               2000   // Delay in msecs when the LCD may need to be read by an operator.
+#define DELAY_FAIL               5000   // Delay for failure messages.
+
 #define DELAY_BUTTON_WAIT          50   // Delay when waiting for button state to change - debounce.
 #define DELAY_BUTTON_DELAY        250   // Delay before auto-repeating button.
 #define DELAY_BUTTON_REPEAT       100   // Auto-repeat button when held continuously.
-#define DELAY_FAIL               5000   // Delay for failure messages.
 
 #define DELAY_MULTIPLIER        1000L   // Multiply delay values by this amount (convert to seconds).
 
