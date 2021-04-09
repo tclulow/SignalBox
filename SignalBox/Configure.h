@@ -1489,7 +1489,7 @@ class Configure
         boolean interrupted = false;
         uint8_t button      = BUTTON_NONE;
         long    interval    = 0L;           // Interval between changes of output.
-        long    finishAt    = 0L;           // Time to finish output's test.
+        long    finishAt    = 0L;           // Time to finish output's ident.
         
         waitForButtonRelease();
         disp.clearRow(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP);
@@ -1530,12 +1530,13 @@ class Configure
                         {
                             outputDef.setState(!outputDef.getState());
                             writeOutput();
-                            button = waitForButtonClick(interval);
+                            button = delayFor(interval);
+                            
                             outputDef.setState(!outputDef.getState());
                             writeOutput();
                             if (button == BUTTON_NONE)
                             {
-                                button = waitForButtonClick(interval);
+                                button = delayFor(interval);
                             }
                         }
                         resetOutput();
@@ -1583,6 +1584,25 @@ class Configure
         }
 
         displayAll();
+    }
+
+
+    /** Delay for an interval,
+     *  or until a button is pressed.
+     *  Return the button pressed (if any).
+     */
+    uint8_t delayFor(uint8_t aInterval)
+    {
+        uint8_t button = BUTTON_NONE;
+        long    endAt  = millis() + aInterval;
+
+        while (   ((button = readButton()) == BUTTON_NONE)
+               && (millis() < endAt))
+        {
+            delay(DELAY_BUTTON_WAIT);
+        }
+
+        return button;
     }
 
 
