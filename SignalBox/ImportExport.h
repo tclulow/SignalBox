@@ -543,37 +543,33 @@ class ImportExport
                 {
                     readOutput(node, pin);
 
-                    if (   (aAll)
-                        || ((outputDef.getLockCount(false) + outputDef.getLockCount(true)) > 0))
+                    Serial.print(PGMT(M_LOCK));
+                    Serial.print(CHAR_TAB);
+                    Serial.print(HEX_CHARS[node]);
+                    Serial.print(CHAR_TAB);
+                    Serial.print(HEX_CHARS[pin]);
+
+                    // Output locks, Lo and Hi
+                    for (uint8_t hi = 0; hi < 2; hi++)
                     {
-                        Serial.print(PGMT(M_LOCK));
-                        Serial.print(CHAR_TAB);
-                        Serial.print(HEX_CHARS[node]);
-                        Serial.print(CHAR_TAB);
-                        Serial.print(HEX_CHARS[pin]);
-    
-                        // Output locks, Lo and Hi
-                        for (uint8_t hi = 0; hi < 2; hi++)
+                        for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
                         {
-                            for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
+                            Serial.print(CHAR_TAB);
+                            if (outputDef.isLock(hi, index))
                             {
-                                Serial.print(CHAR_TAB);
-                                if (outputDef.isLock(hi, index))
-                                {
-                                    Serial.print(PGMT(outputDef.getLockState(hi, index) ? M_HI : M_LO));
-                                    Serial.print(CHAR_SPACE);
-                                    Serial.print(HEX_CHARS[outputDef.getLockNode(hi, index)]);
-                                    Serial.print(CHAR_SPACE);
-                                    Serial.print(HEX_CHARS[outputDef.getLockPin (hi, index)]);
-                                }
-                                else
-                                {
-                                    Serial.print(CHAR_DOT);
-                                }
+                                Serial.print(PGMT(outputDef.getLockState(hi, index) ? M_HI : M_LO));
+                                Serial.print(CHAR_SPACE);
+                                Serial.print(HEX_CHARS[outputDef.getLockNode(hi, index)]);
+                                Serial.print(CHAR_SPACE);
+                                Serial.print(HEX_CHARS[outputDef.getLockPin (hi, index)]);
+                            }
+                            else
+                            {
+                                Serial.print(CHAR_DOT);
                             }
                         }
-                        Serial.println();
                     }
+                    Serial.println();
                 }
                 Serial.println();
             }
