@@ -67,6 +67,7 @@ class ImportExport
     void importSystem()
     {
         disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_SYSTEM, LCD_LEN_OPTION);
+        disp.clearRow(LCD_COL_START, LCD_ROW_DET);
     }
 
 
