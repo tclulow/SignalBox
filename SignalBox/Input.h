@@ -63,6 +63,10 @@
 #define MCP_OLATA     0x14    // Output latches (connected to GPIO pins).
 #define MCP_OLATB     0x15
 
+// Commands required to initialise MCPs.
+#define INPUT_COMMANDS_LEN 4
+uint8_t INPUT_COMMANDS[] = { MCP_IODIRA, MCP_IODIRB, MCP_GPPUA, MCP_GPPUB };
+
 
 /** Definition of an Input..
  */

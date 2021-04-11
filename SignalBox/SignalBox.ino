@@ -53,12 +53,34 @@ void scanInputHardware()
 {
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
-#if LCD_I2C
-        if (disp.getLcdId() != (systemData.i2cInputBaseID + node))
-#endif
+        if (!isInputNodePresent(node))
         {
-            Wire.beginTransmission(systemData.i2cInputBaseID + node);
-            setInputNodePresent(node, Wire.endTransmission() == 0);
+#if LCD_I2C
+            if (disp.getLcdId() != (systemData.i2cInputBaseID + node))
+#endif
+            {
+                Wire.beginTransmission(systemData.i2cInputBaseID + node);
+                if (Wire.endTransmission() == 0)
+                {
+                    setInputNodePresent(node, true);
+
+                    // Configure for input
+                    for (uint8_t command = 0; command < INPUT_COMMANDS_LEN; command++)
+                    {
+                        Wire.beginTransmission(systemData.i2cInputBaseID + node); 
+                        Wire.write(INPUT_COMMANDS[command]);
+                        Wire.write(MCP_ALL_HIGH);
+                        Wire.endTransmission();
+                    }
+        
+                    // Record current switch state
+                    currentSwitchState[node] = readInputNode(node);
+                }
+                else
+                {
+                    currentSwitchState[node] = 0xffff;
+                }
+            }
         }
     }
 }
@@ -168,68 +190,6 @@ void scanHardware()
         }
         waitForButtonClick();
     }
-}
-
-
-/** Configure all inputs.
- */
-void initInputs()
-{ 
-    disp.clear();
-    disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_INIT_INPUTS);
-    disp.setCursor(LCD_COL_START, LCD_ROW_DET);
-
-    // Initialise every Input node
-    for(uint8_t node = 0; node < INPUT_NODE_MAX; node++)
-    {
-        if (isInputNodePresent(node))
-        {
-            disp.printHexCh(node);
-            
-            // Configure for input
-            Wire.beginTransmission(systemData.i2cInputBaseID + node); 
-            Wire.write(MCP_IODIRA);
-            Wire.write(MCP_ALL_HIGH);
-            Wire.endTransmission();
-
-            Wire.beginTransmission(systemData.i2cInputBaseID + node);  
-            Wire.write(MCP_IODIRB);
-            Wire.write(MCP_ALL_HIGH);
-            Wire.endTransmission();
-
-            Wire.beginTransmission(systemData.i2cInputBaseID + node);
-            Wire.write (MCP_GPPUA);
-            Wire.write(MCP_ALL_HIGH);
-            Wire.endTransmission();  
-             
-            Wire.beginTransmission(systemData.i2cInputBaseID + node);
-            Wire.write(MCP_GPPUB);
-            Wire.write(MCP_ALL_HIGH);
-            Wire.endTransmission();
-
-            // Record current switch state
-            currentSwitchState[node] = readInputNode(node);
-
-//            // Ensure toggle switches are in current state.
-//            for (uint16_t pin = 0, mask = 1; pin < INPUT_PIN_MAX; pin++, mask <<= 1)
-//            {
-//                loadInput(node, pin);
-//                if (inputType == INPUT_TYPE_TOGGLE)
-//                {
-//                    processInput(currentSwitchState[node] & mask);
-//                }
-//            }
-        }
-        else
-        {
-            // Absent input node.
-            disp.printCh(CHAR_DOT);
-            currentSwitchState[node] = 0xffff;
-        }
-    }
-
-    // Wait while display is read.
-    waitForButtonClick();
 }
 
 
@@ -830,7 +790,6 @@ void setup()
 
     // Scan for input nodes.
     scanHardware();
-    initInputs();
 }
 
 
