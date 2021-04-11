@@ -13,10 +13,6 @@
 #define SignalBox_h
 
 
-// A pin that will force calibration at start-up
-#define PIN_CALIBRATE    11
-
-
 // Timeout for the display when important messages are showing.
 long displayTimeout = 1L;   // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
 
