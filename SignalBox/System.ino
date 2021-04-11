@@ -260,23 +260,32 @@ uint8_t getModuleId(boolean aIncludeBase)
  */
 int charToHex(char ch)
 {
+    int value = (int)(10 + ch);         // Assume alphabetic.
+    
     if (ch >= CHAR_LOWER_A)
     {
-        return (int)(10 + ch - CHAR_LOWER_A);
+        value -= CHAR_LOWER_A;          // Adjust for lower-case range.
     }
     else if (ch >= CHAR_UPPER_A)
     {
-        return (int)(10 + ch - CHAR_UPPER_A);
+        value -= CHAR_UPPER_A;          // Adjust for upper-case range.
     }
-    else if (ch >= CHAR_ZERO)
+    else if (   (ch >= CHAR_ZERO)
+             && (ch <= CHAR_NINE))
     {
-        return (int)(ch - CHAR_ZERO);
+        value = (int)(ch - CHAR_ZERO);  // A Decimal digit.
     }
     else
     {
-        // Fail if anything else (including CHAR_DOT).
-        return -HEX_MAX;
+        value = -HEX_MAX;
     }
+    
+    if (value > 0x1f)
+    {
+        value = -HEX_MAX;
+    }
+
+    return value;
 }
 
 
