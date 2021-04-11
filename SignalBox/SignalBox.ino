@@ -390,7 +390,7 @@ void scanInputs()
                     if (state != (currentSwitchState[node] & mask))
                     {
                         loadInput(node, pin);
-                        processInput(state);
+                        processInput(state != 0);
                     }
                 }
             
@@ -440,18 +440,18 @@ uint16_t readInputNode(uint8_t aNode)
 
 /** Process the changed input.
  */
-void processInput(uint16_t aState)
+void processInput(boolean aState)
 {
-    boolean newState = false;
+    boolean newState = aState;
     
     // Process all input state changes for Toggles, only state going low for other Input types.
-    if (   (aState == 0)
+    if (   (!aState)
         || (inputType == INPUT_TYPE_TOGGLE))
     {
         // Set desired new state based on Input's type/state and Output's state.
         switch (inputType)
         {
-            case INPUT_TYPE_TOGGLE: newState = aState != 0;     // Set state to that of the Toggle.
+            case INPUT_TYPE_TOGGLE: // newState = aState;      // Set state to that of the Toggle.
                                     break;
             case INPUT_TYPE_ON_OFF: // Find first real output (not a delay) to determine new state.
                                     for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
@@ -645,13 +645,17 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
 
 
 /** Process a received command.
+ *  iNP - Action input for node N, pin P.
+ *  lNP - Action output Lo for node N, pin P.
+ *  hNP - Action output Hi for node N, pin P.
+ *  oNP - Action output Hi/Lo (based on current state) for node N, pin P.
  */
 void processCommand()
 {
     boolean executed = false;
     uint8_t node     = 0;
     uint8_t pin      = 0;
-    uint8_t state    = 0;
+    boolean state    = true;
     
     if (isDebug(DEBUG_BRIEF))
     {
@@ -665,19 +669,32 @@ void processCommand()
     // Expect three characters, command, nodeId, pinId
     if (strlen(commandBuffer) == 3)
     {
+        node = charToHex(commandBuffer[1]);
+        pin  = charToHex(commandBuffer[2]);
+                      
         switch (commandBuffer[0])
         {
-            case 'i':
-            case 'I': node = charToHex(commandBuffer[1]);
-                      pin  = charToHex(commandBuffer[2]);
-                      if (   (node < INPUT_NODE_MAX)
+            case 'I':
+            case 'i': if (   (node < INPUT_NODE_MAX)
                           && (pin  < INPUT_PIN_MAX))
                       {
                           loadInput(node, pin);
-                          processInput(state);
+                          processInput(false);
                           executed = true;
                       }
                       break;
+            case 'O':
+            case 'o': state = getOutputState(node, pin);
+            case 'L':
+            case 'l': state = !state;
+            case 'H':
+            case 'h': if (   (node < OUTPUT_NODE_MAX)
+                          && (pin  < OUTPUT_PIN_MAX))
+                      {
+                          writeOutputState(node, pin, state, 0);
+                          readOutputStates(node);                   // Recover states in case LED_4 has moved one.
+                          executed = true;
+                      }
             default:  break;
         }
     }
