@@ -1228,6 +1228,10 @@ class Configure
                                     else
                                     {
                                         testOutput();
+                                        
+                                        // A short delay to prevent over-loading output module, then ensure output is reset.
+                                        delay(DELAY_BUTTON_DELAY);
+                                        resetOutput();
                                     }
                                     break;
                 case BUTTON_LEFT:   finished = true;
