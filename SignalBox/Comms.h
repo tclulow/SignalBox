@@ -13,11 +13,13 @@
 #define Comms_h
 
 
+// Command byte.
 #define COMMS_COMMAND_MASK      0xf0    // Top 4 bits.
 #define COMMS_OPTION_MASK       0x0f    // Bottom 4 bits.
 #define COMMS_COMMAND_SHIFT        4    // If command required as (4 bit) integer.
 
 
+// Commands (in top nibble).
 #define COMMS_CMD_SYSTEM        0x00    // System commands.
 #define COMMS_CMD_DEBUG         0x10    // Set debug level.
 #define COMMS_CMD_SET_LO        0x20    // Go Lo
@@ -31,6 +33,7 @@
 #define COMMS_CMD_NONE          0xff    // Null command.
 
 
+// System sub-commands (in bottom nibble)
 #define COMMS_SYS_STATES        0x00    // System states sub-command.
 #define COMMS_SYS_RENUMBER      0x01    // System renumber node sub-command.
 #define COMMS_SYS_MOVE_LOCKS    0x02    // System renumber lock node numbers.
