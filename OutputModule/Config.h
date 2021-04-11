@@ -61,6 +61,9 @@
 
 
 #if MASTER
+// A pin that will force calibration at start-up
+#define PIN_CALIBRATE    11
+
 // Alternate pins that can be used to control the menus.
 const uint8_t BUTTON_PINS[] = { 0, A1, A2, A3, 2, 3 };
 

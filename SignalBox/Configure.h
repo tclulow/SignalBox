@@ -341,7 +341,7 @@ class Configure
         }
         else
         {
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_NO_OUTPUTS, LCD_COLS);
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_NO_OUTPUT, LCD_COLS);
         }
     }
 
@@ -817,12 +817,17 @@ class Configure
                                     else
                                     {
                                         outNode = nextNode(outNode, adjust, aIsInput, true);
-                                        if (isOutputNodePresent(outNode))
+                                        readOutput(outNode, outPin);
+                                        
+                                        // Handle (rare) case where output node has failed (and this is first time we noticed).
+                                        if (!isOutputNodePresent(outNode))
                                         {
-                                            readOutput(outNode, outPin);
+                                            delay(DELAY_READ);      // Time to read error message.
+                                            displayAll();           // Recover display.
+                                            finished = true;        // Abort.
                                         }
                                     }
-                                    
+
                                     disp.printHexChAt(LCD_COL_NODE, LCD_ROW_TOP, aIsInput ? inpNode : outNode);
                                     displayDetail();
                                     break;

@@ -92,8 +92,8 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char M_EZY_UPDATING[]     PROGMEM = "EzyBus  updating";
     
     const char M_NODES[]            PROGMEM = "Nodes";
-    const char M_NO_INPUTS[]        PROGMEM = "No input nodes";
-    const char M_NO_OUTPUTS[]       PROGMEM = "No output nodes";
+    const char M_NO_INPUT[]         PROGMEM = "No input node";
+    const char M_NO_OUTPUT[]        PROGMEM = "No output node";
     const char M_INIT_INPUTS[]      PROGMEM = "Init inputs";
     
     // Import/export actions.

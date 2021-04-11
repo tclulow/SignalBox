@@ -64,7 +64,7 @@ void scanInputHardware()
                 {
                     setInputNodePresent(node, true);
 
-                    // Configure for input
+                    // Configure MCP for input.
                     for (uint8_t command = 0; command < INPUT_COMMANDS_LEN; command++)
                     {
                         Wire.beginTransmission(systemData.i2cInputBaseID + node); 
@@ -126,7 +126,10 @@ void scanOutputHardware()
 {
     for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
     {
-        readOutputStates(node);
+        if (!isOutputNodePresent(node))
+        {
+            readOutputStates(node);
+        }
     }
 }
 
@@ -182,11 +185,11 @@ void scanHardware()
         disp.clear();
         if (inputNodes == 0)
         {
-            disp.printProgStrAt(LCD_COL_START, row++, M_NO_INPUTS);
+            disp.printProgStrAt(LCD_COL_START, row++, M_NO_INPUT);
         }
         if (outputNodes == 0)
         {
-            disp.printProgStrAt(LCD_COL_START, row++, M_NO_OUTPUTS);
+            disp.printProgStrAt(LCD_COL_START, row++, M_NO_OUTPUT);
         }
         waitForButtonClick();
     }
