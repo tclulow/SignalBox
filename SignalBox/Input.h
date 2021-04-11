@@ -182,7 +182,7 @@ void setInputNodePresent(uint8_t aNode, boolean aState);
 
 /** Is an Input node present?
  */
-boolean isInputNode(uint8_t aNode);
+boolean isInputNodePresent(uint8_t aNode);
 
 
 #endif

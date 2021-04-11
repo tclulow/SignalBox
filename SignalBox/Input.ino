@@ -155,7 +155,7 @@ void setInputNodePresent(uint8_t aNode, boolean aState)
 
 /** Is an Input node present?
  */
-boolean isInputNode(uint8_t aNode)
+boolean isInputNodePresent(uint8_t aNode)
 {
     // Look for input's node in inputNodes flags.
     return (aNode < INPUT_NODE_MAX) && (inputNodes & (1 << aNode));

@@ -459,7 +459,7 @@ class Configure
         boolean finished = false;
 
         // Initialise state.
-        if (!isInputNode(inpNode))
+        if (!isInputNodePresent(inpNode))
         {
             inpNode = nextNode(inpNode, 1, true, true);
         }
@@ -864,7 +864,7 @@ class Configure
             next = (next + aAdjust) & (aIsInput ? INPUT_NODE_MASK : OUTPUT_NODE_MASK);
             
             if (   (aIsInput)
-                && (aInUse == isInputNode(next)))
+                && (aInUse == isInputNodePresent(next)))
             {
                 break;
             }
@@ -877,8 +877,8 @@ class Configure
 
         // If there are no inputs, move to next one anyway
         if (   (aIsInput)
-            && (next == aStart)                 // Didn't find a suitable input.
-            && (aInUse != isInputNode(next)))   // And this node isn't correct either.
+            && (next   == aStart)                       // Didn't find a suitable input.
+            && (aInUse != isInputNodePresent(next)))    // And this node isn't correct either.
         {
             next = (next + aAdjust) & INPUT_NODE_MASK;
         }
@@ -907,7 +907,7 @@ class Configure
         {
             for (inpNode = 0; inpNode < INPUT_NODE_MAX; inpNode++)
             {
-                if (isInputNode(inpNode))                                        
+                if (isInputNodePresent(inpNode))                                        
                 {
                     // Read current state of pins and if there's been a change
                     uint16_t pins = readInputNode(inpNode);
@@ -1085,7 +1085,7 @@ class Configure
                 // Renumber all the effected inputs' Output nodes.
                 for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
                 {
-                    if (isInputNode(node))
+                    if (isInputNodePresent(node))
                     {
                         disp.printHexCh(node);
                     }

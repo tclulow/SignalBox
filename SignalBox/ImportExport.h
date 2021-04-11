@@ -436,7 +436,7 @@ class ImportExport
         for (int node = 0; node < INPUT_NODE_MAX; node++)
         {
             if (   (aAll)
-                || (isInputNode(node)))
+                || (isInputNodePresent(node)))
             {
                 for (int pin = 0; pin < INPUT_PIN_MAX; pin++)
                 {
