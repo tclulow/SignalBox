@@ -83,7 +83,7 @@ void dispInputHardware()
         else
 #endif
         {
-            if (isInputNode(node))
+            if (isInputNodePresent(node))
             {  
                 disp.printHexCh(node);
             }
@@ -182,7 +182,7 @@ void initInputs()
     // Initialise every Input node
     for(uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
-        if (isInputNode(node))
+        if (isInputNodePresent(node))
         {
             disp.printHexCh(node);
             
@@ -377,7 +377,7 @@ void scanInputs()
     // Scan all the nodes. 
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
-        if (isInputNode(node))                                        
+        if (isInputNodePresent(node))                                        
         {
             // Read current state of pins and if there's been a change
             uint16_t pins = readInputNode(node);
@@ -668,10 +668,10 @@ void processCommand()
         switch (commandBuffer[0])
         {
             case 'i':
-            case 'I': node = charToHex(commandBuffer[1]) & INPUT_NODE_MASK;
-                      pin  = charToHex(commandBuffer[2]) & INPUT_PIN_MASK;
-                      if (   (node >= 0)
-                          && (pin  >= 0))
+            case 'I': node = charToHex(commandBuffer[1]);
+                      pin  = charToHex(commandBuffer[2]);
+                      if (   (node < INPUT_NODE_MAX)
+                          && (pin  < INPUT_PIN_MAX))
                       {
                           loadInput(node, pin);
                           processInput(state);
