@@ -645,10 +645,11 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
 
 
 /** Process a received command.
- *  iNP - Action input for node N, pin P.
- *  lNP - Action output Lo for node N, pin P.
- *  hNP - Action output Hi for node N, pin P.
- *  oNP - Action output Hi/Lo (based on current state) for node N, pin P.
+ *  Using the contents of the commandBuffer:
+ *      iNP - Action input for node N, pin P.
+ *      lNP - Action output Lo for node N, pin P.
+ *      hNP - Action output Hi for node N, pin P.
+ *      oNP - Action output Hi/Lo (based on current state) for node N, pin P.
  */
 void processCommand()
 {
@@ -672,9 +673,8 @@ void processCommand()
         node = charToHex(commandBuffer[1]);
         pin  = charToHex(commandBuffer[2]);
                       
-        switch (commandBuffer[0])
+        switch (commandBuffer[0] | 0x20)            // Command character converted to lower-case.
         {
-            case 'I':
             case 'i': if (   (node < INPUT_NODE_MAX)
                           && (pin  < INPUT_PIN_MAX))
                       {
@@ -683,11 +683,8 @@ void processCommand()
                           executed = true;
                       }
                       break;
-            case 'O':
             case 'o': state = getOutputState(node, pin);
-            case 'L':
             case 'l': state = !state;
-            case 'H':
             case 'h': if (   (node < OUTPUT_NODE_MAX)
                           && (pin  < OUTPUT_PIN_MAX))
                       {
@@ -708,7 +705,7 @@ void processCommand()
         disp.printProgStr(M_UNKNOWN);
         disp.printCh(CHAR_SPACE);
         disp.printStr(commandBuffer);
-        setDisplayTimeout(DELAY_READ);
+        setDisplayTimeout(reportDelay());
     }
 }
 
