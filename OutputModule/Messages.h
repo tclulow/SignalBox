@@ -202,7 +202,6 @@ const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG, M_DEBU
     // Master-only debug messages.
     const char M_DEBUG_BUTTON[]     PROGMEM = "Button";
 
-    const char M_DEBUG_INPUTS[]     PROGMEM = ", inputs=";
     const char M_DEBUG_OUTPUTS[]    PROGMEM = ", outputs=";
     const char M_DEBUG_PIN[]        PROGMEM = ", pin=";
     const char M_DEBUG_RETURN[]     PROGMEM = ", ret=";

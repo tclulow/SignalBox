@@ -693,20 +693,6 @@ void processCommand()
  */
 void setup()
 {
-#if LCD_I2C
-    // Scan for i2c LCD.
-    for (uint8_t id = LCD_I2C_HI; id >= LCD_I2C_LO; id--)
-    {
-        Wire.beginTransmission(id);
-        if (Wire.endTransmission() == 0)   
-        {
-            disp.setLcd(id);
-            announce();
-            break;
-        }
-    }
-#endif
-
     // Initial announcement/splash message.
     announce();
 
@@ -723,33 +709,12 @@ void setup()
     delay(DELAY_START);                 // Wait to avoid programmer conflicts.
     Serial.begin(SERIAL_SPEED);         // Serial IO.
     
-    if (isDebug(DEBUG_FULL))
-    {
-        Serial.print(millis());
-        Serial.print(CHAR_TAB);
-        Serial.print(PGMT(M_DEBUG_SYSTEM));
-        Serial.print(CHAR_SPACE);
-        Serial.print(SYSTEM_BASE, HEX);
-        Serial.print(CHAR_DASH);
-        Serial.print(SYSTEM_END, HEX);
-        Serial.print(PGMT(M_DEBUG_INPUTS));
-        Serial.print(INPUT_BASE, HEX);
-        Serial.print(CHAR_DASH);
-        Serial.print(INPUT_END, HEX);
-        Serial.println();
-    }
-
     // Initialise alternate button pins.
     initButtonPins();
     
     // Flash our version number on the built-in LED.
     flashVersion();
     
-    // Initialise subsystems.
-    Wire.begin(systemData.i2cControllerID);     // I2C network
-    // Wire.setTimeout(25000L);                 // Doesn't seem to have any effect.
-    pinMode(PIN_CALIBRATE, INPUT_PULLUP);       // Calibration input pin (11).
-
     // Deal with first run (software has never been run before).
     if (!loadSystemData())
     {
@@ -768,6 +733,25 @@ void setup()
     {
         dumpMemory();
     }
+
+    // Initialise subsystems.
+    Wire.begin(systemData.i2cControllerID);     // I2C network
+    // Wire.setTimeout(25000L);                 // Doesn't seem to have any effect.
+    pinMode(PIN_CALIBRATE, INPUT_PULLUP);       // Calibration input pin (11).
+
+#if LCD_I2C
+    // Scan for i2c LCD.
+    for (uint8_t id = LCD_I2C_HI; id >= LCD_I2C_LO; id--)
+    {
+        Wire.beginTransmission(id);
+        if (Wire.endTransmission() == 0)   
+        {
+            disp.setLcd(id);
+            announce();         // Again, to make sure it appears on i2c LCD.
+            break;
+        }
+    }
+#endif
 
     // Check if version update required.
     if (systemData.version != VERSION)
