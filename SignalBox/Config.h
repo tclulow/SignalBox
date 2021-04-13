@@ -72,6 +72,9 @@ const uint8_t BUTTON_PINS[] = { 0, A1, A2, A3, 2, 3 };
 // The module jumper pins
 const uint8_t jumperPins[JUMPER_PINS] = { 1, 0, A7, A6 };
 
+// Alternate jumper pins for new output module
+//const uint8_t jumperPins[JUMPER_PINS] = { 5, 6, 7, 8 };
+
 // The signal IO pins.
 const uint8_t sigPins[IO_PINS]        = { 4, 5, 6, 7, 8, 9, 10, 11 };
 
