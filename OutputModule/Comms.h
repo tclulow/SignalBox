@@ -28,10 +28,10 @@
  *  
  *  Messages:
  *  
- *      Command Option      Data        Response
- *      SYSTEM  STATES                  <PinStatus>
- *      SYSTEM  RENUMBER    <NewNode>   <NewNode>
- *      SYSTEM  MOVE_LOCKS  <Nodes>
+ *      Command Option      Data                    Response
+ *      SYSTEM  STATES                              <PinStatus>
+ *      SYSTEM  RENUMBER    <NewNode>               <NewNode>
+ *      SYSTEM  MOVE_LOCKS  <OldNode>   <NewNode>
  *      
  *      DEBUG   <Level>
  *      SET_LO  <Pin>       [Delay]
@@ -53,7 +53,8 @@
  *      
  * Response bytes
  *      PinStatus   The current status of all output pins. Pin 0 in bit 0, to Pin 7 in bit 7. Bit set = pin is "Hi".
- *      NewNode     The new number (0-31) of this output module.
+ *      NewNode     The new node number (0-31) of the output module.
+ *      OldNode     The old node number (0-31) of the output module.
  *      OutputDef   15 bytes defining an output. See below.
  *      
  * OutputDef
