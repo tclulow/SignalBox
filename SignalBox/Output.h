@@ -27,7 +27,6 @@
 
 // Masks for type, state and pace options within the outputDef.
 #define OUTPUT_STATE_MASK        0x80   // On or off, switched or not switched, 0 = lo, 1 = hi.
-#define OUTPUT_NUMBER_MASK       0x7f   // Output number (node and pin) occupy these bits.
 #define OUTPUT_TYPE_MASK         0x0f   // Output type mask (4 bits).
 #define OUTPUT_PACE_MASK         0x0f   // Pace is 4 bits.
 #define OUTPUT_PACE_SHIFT           4   // Pace is multiplied by 16 (shifted left 4 bits).
