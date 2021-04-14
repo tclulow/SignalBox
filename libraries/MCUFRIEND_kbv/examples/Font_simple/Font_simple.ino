@@ -18,10 +18,7 @@ void setup(void)
 {
     Serial.begin(9600);
     uint16_t ID = tft.readID();
-    Serial.println("Example: Font_simple");
-    Serial.print("found ID = 0x");
-    Serial.println(ID, HEX);
-    if (ID == 0xD3D3) ID = 0x9481; //force ID if write-only display
+    if (ID == 0xD3) ID = 0x9481;
     tft.begin(ID);
     tft.setRotation(0);
 }
@@ -66,3 +63,4 @@ void showmsgXY(int x, int y, int sz, const GFXfont *f, const char *msg)
     tft.print(msg);
     delay(1000);
 }
+
