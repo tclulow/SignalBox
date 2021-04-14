@@ -626,11 +626,10 @@ void processRenumber()
  */
 void processMoveLocks()
 {
-    if (Wire.available())
+    if (Wire.available() != OUTPUT_MOVE_LOCK_LEN)
     {
-        uint8_t oldNode = Wire.read();
-        uint8_t newNode = oldNode & OUTPUT_NODE_MASK;
-        oldNode = (oldNode >> 4) & OUTPUT_NODE_MASK;
+        uint8_t oldNode = Wire.read() & OUTPUT_NODE_MASK;
+        uint8_t newNode = Wire.read() & OUTPUT_NODE_MASK;
 
         if (isDebug(DEBUG_DETAIL))
         {

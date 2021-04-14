@@ -1147,7 +1147,8 @@ class Configure
             
                         Wire.beginTransmission(systemData.i2cOutputBaseID + node);
                         Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_MOVE_LOCKS);
-                        Wire.write((aOldNode << 4) | response);
+                        Wire.write(aOldNode);
+                        Wire.write(response);
                         Wire.endTransmission();
                     }
                     else
