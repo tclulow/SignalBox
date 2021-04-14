@@ -8,6 +8,64 @@
  *      http://creativecommons.org/licenses/by-nc-sa/4.0/
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
+ *  
+ *  
+ *  Comms protocol. 
+ *  Most commands are a simple (write) i2c message from the Master to the Output module.
+ *  Some messages require a response (maybe several bytes) from the output module. 
+ *  This is achieved by the master sending a write message indicating what's required,
+ *  and then immediately issuing a read i2c message to read the response from the Output module.
+ *  
+ *  Basic message:      <CommandByte><Data byte>...
+ *  Optional response:  <Response byte>...
+ *  
+ *  Command byte:   7 6 5 4   3 2 1 0
+ *                  Command   Option
+ *                  
+ *  Command nibble: As defined below with COMMS_CMD_... flags
+ *  Option  nibble: Either the system command option (COMMS_SYS_... flags below) or the pin (0-7) to operate the command against.
+ *  
+ *  
+ *  Messages:
+ *  
+ *      Command Option      Data        Response
+ *      SYSTEM  STATES                  <PinStatus>
+ *      SYSTEM  RENUMBER    <NewNode>   <NewNode>
+ *      SYSTEM  MOVE_LOCKS  <Nodes>
+ *      
+ *      DEBUG   <Level>
+ *      SET_LO  <Pin>       [Delay]
+ *      SET_HI  <Pin>       [Delay]
+ *      
+ *      READ    <Pin>                   <OutputDef>
+ *      WRITE   <Pin>       <OutputDef>
+ *      SAVE    <Pin>
+ *      RESET   <Pin>
+ *      
+ *      NONE    0xf
+ *
+ *      
+ * Data bytes
+ *      NewNode     The new number (0-31) for this output module.
+ *      Nodes       Most significant nibble, the node to move locks from, least significant nibble, node to move the locks to.
+ *      Delay       Optional delay (in seconds, 0-255) before actioning the command.
+ *      OutputDef   15 bytes defining an output. See below.
+ *      
+ * Response bytes
+ *      PinStatus   The current status of all output pins. Pin 0 in bit 0, to Pin 7 in bit 7. Bit set = pin is "Hi".
+ *      NewNode     The new number (0-31) of this output module.
+ *      OutputDef   15 bytes defining an output. See below.
+ *      
+ * OutputDef
+ *      Type        Byte indicating the type of output (see OUTPUT_TYPE_...).
+ *      Lo          The Lo setting for this output (0-255).
+ *      Hi          The Hi setting for this output (0-255).
+ *      Pace        The pace (speed) at which to operate (0-15).
+ *      Reset       The interval (in seconds) after which to reset (0-255).
+ *      Locks       Mask indicating which interlocks are active. Bottom niblle  for 4 Lo locks, top nibble for 4 Hi locks.
+ *      LocksLo     Four bytes indicating the 4 Lo locks. See Lock below.
+ *      LocksHi     Four bytes indicating the 4 Hi locks. See Lock below.
+ *      Lock        Byte defining a output node and pin. Node number (0-31) in top 5 bits, pin number (0-7) in bottom 3 bits. See OUTPUT_NODE_... and OUTPUT_PIN_...
  */
 #ifndef Comms_h
 #define Comms_h
