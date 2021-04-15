@@ -143,7 +143,7 @@ void flashVersion()
         Serial.println();
     }
     
-    #if !MASTER
+#if !MASTER
     // Flash module number.
     delay(DELAY_BLINK_LONG);
     for (uint8_t mask = 1; mask <= OUTPUT_NODE_MASK; mask <<= 1)
@@ -153,7 +153,7 @@ void flashVersion()
         digitalWrite(LED_BUILTIN, LOW);
         delay(DELAY_BLINK);
     }
-    #endif
+#endif
 }
 
 
