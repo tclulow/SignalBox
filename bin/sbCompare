@@ -1,7 +1,7 @@
 #!/bin/bash
 # Check common files have no differences
 
-cd ~/JavaDev/Pentad/Arduino/SignalBox
+cd ~/JavaDev/Pentad/Arduino/SignalBox/SignalBox
 for FILE in All.h Comms.h Config.h Messages.h Output.h System.h System.ino
 do
     echo $FILE
