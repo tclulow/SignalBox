@@ -9,7 +9,6 @@ It is positioned as a half-way house between the EzyBus system, and a CBUS one.
 There is no need for a computer, all configuration can be done using the LCD panel. A computer can be connected to save and/or restore the configuration if desired.
 
 ## Features
-Features of the system are (in brief):
 
 * Multiple input types: toggle switches (SPST) and intermittent (non-latching) push buttons.
 * Multiple inputs can be operated simultaneously.
