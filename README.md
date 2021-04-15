@@ -29,7 +29,7 @@ Features of the system are (in brief):
 * Interlocks that prevent certain outputs operating if other outputs are set incorrectly.
 
 ## Hardware
-The system uses the EzyBus hardware, either the kits (22 & 23) or self-assembled using the PCBs (kits 922 and 923) built exactly as described in the EzyBus manual.
+The system uses the EzyBus hardware, either the MERG kits (22 & 23) or self-assembled using the PCBs (kits 922 and 923) built exactly as described in the EzyBus manual.
 
 There are two versions of the PCB kits, the older ones use an Arduino Nano, the new ones an Atmega328 chip (the same as found on a Nano) but don’t include a serial interface so programming is via the ICSP header or with a USB-TTL serial cable or adapter.
 
