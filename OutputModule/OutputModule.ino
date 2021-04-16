@@ -1165,7 +1165,6 @@ void stepServo(uint8_t aPin)
 
     // Move Servo to new state.
     outputs[aPin].servo.write(outputs[aPin].value);
-    // digitalWrite(LED_BUILTIN, HIGH);                    // Indicate work in progress;
 
     // Report activity if debug level high enough.
     if (   (isDebug(DEBUG_FULL))
@@ -1478,7 +1477,6 @@ void loop()
     if (now > tickServo)
     {
         tickServo = now + STEP_SERVO;
-        // digitalWrite(LED_BUILTIN, LOW);       // Assume no work in progress.
         stepServos();
     }
 
