@@ -87,10 +87,10 @@ class Display
 
 #if LCD_I2C
     LiquidCrystal_I2C* lcd2;        // An LCD attached using i2c.
+    uint8_t            lcdId = 0;   // The ID of the I2C LCD.
 #else
     LiquidCrystal*     lcd2;        // Dummy variable, never set.
 #endif
-    uint8_t            lcdId = 0;   // The ID of the I2C LCD.
 
     
     public:
