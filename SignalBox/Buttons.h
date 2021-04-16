@@ -9,6 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
+ 
 #ifndef Buttons_h
 #define Buttons_h
 
@@ -31,13 +32,7 @@
 
 /** Initialise the alternate button pins.
  */
-void initButtonPins()
-{
-    for (uint8_t button = 1; button <= BUTTON_LIMIT; button++)
-    {
-        pinMode(BUTTON_PINS[button], INPUT_PULLUP);
-    }
-}
+void initButtonPins();
 
 
 /** Calibrate the analog buttons.

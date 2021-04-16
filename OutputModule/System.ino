@@ -10,7 +10,6 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
 
-
 #include "All.h"
 
 
@@ -40,6 +39,8 @@ void saveSystemData()
 }
 
 
+/** Print system data if debug so enabled.
+ */
 void debugSystemData()
 {
     if (isDebug(DEBUG_BRIEF))
@@ -105,19 +106,20 @@ void setDebug(uint8_t aLevel)
  */
 void flashVersion()
 {
-    pinMode(LED_BUILTIN, OUTPUT);   // Configure the on-board LED pin for output
-    
+    pinMode(LED_BUILTIN, OUTPUT);       // Configure the on-board LED pin for output
+
+    // Flash the digits of the version number string.
     for (uint8_t ind = 0; ind < strlen_P(M_VERSION); ind++)
     {
         char ch = pgm_read_byte_near(M_VERSION + ind);
         if (ch == CHAR_ZERO)
         {
-            digitalWrite(LED_BUILTIN, HIGH);
+            digitalWrite(LED_BUILTIN, HIGH);            // Long flash for zeros.
             delay(DELAY_BLINK_LONG);
             digitalWrite(LED_BUILTIN, LOW);
             delay(DELAY_BLINK);
         }
-        else if (ch > CHAR_ZERO && ch <= CHAR_NINE)
+        else if (ch > CHAR_ZERO && ch <= CHAR_NINE)     // Short flashes for digits.
         {
             while (ch-- > CHAR_ZERO)
             {
@@ -129,7 +131,7 @@ void flashVersion()
         }
         else
         {
-            delay(DELAY_BLINK_LONG);
+            delay(DELAY_BLINK_LONG);                    // Long gap for non-numeric data.
         }
     }
 
@@ -183,7 +185,7 @@ void systemFail(PGM_P aMessage, int aValue)
  */
 boolean ezyBusDetected()
 {
-    return EEPROM.read(EZY_MAGIC_ADDR) == EZY_MAGIC;
+    return EEPROM.read(EZY_MAGIC_ADDR) == EZY_MAGIC;    // Check for tell-tale value in EEPROM
 }
 
 
@@ -200,6 +202,7 @@ void ezyBusClear()
 
 #else // Not master - Slave output module.
 
+
 /** Gets the output module ID.
  *  Either by hardware jumpers or from EEPROM.
  */
@@ -209,7 +212,7 @@ uint8_t getModuleId(boolean aIncludeBase)
 
     if (moduleId > OUTPUT_NODE_MAX)
     {
-        // Configure i2c from jumpers.
+        // Module ID is defined by jumpers.
         moduleId = 0;
         for (uint8_t pin = 0, mask=1; pin < JUMPER_PINS; pin++, mask <<= 1)
         {
@@ -351,16 +354,20 @@ void dumpMemory()
 {
     dumpMemory(M_SYSTEM, SYSTEM_BASE, SYSTEM_END);
     Serial.println();
+    
 #if OUTPUT_BASE
     dumpMemory(M_OUTPUT, OUTPUT_BASE, OUTPUT_END);
     Serial.println();
 #endif
+
 #if TYPES_BASE
     dumpMemory(M_TYPES,  TYPES_BASE,  TYPES_END);
     Serial.println();
 #endif
+
 #if INPUT_BASE
     dumpMemory(M_INPUT,  INPUT_BASE,  INPUT_END);
     Serial.println();
 #endif
+
 }

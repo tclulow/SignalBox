@@ -10,7 +10,6 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
 
-
 #define MASTER false        // The is not the master, it's a nano output module.
 
 
@@ -89,7 +88,7 @@ struct
  */
 void setup()
 {
-    randomSeed(analogRead(0));
+    randomSeed(analogRead(0));      // Initialise random number generator.
     delay(DELAY_START);             // Wait to avoid programmer conflicts.
     Serial.begin(SERIAL_SPEED);     // Serial IO.
 
@@ -475,6 +474,7 @@ void processReceipt(int aLen)
 {
     if (aLen > 0)
     {
+        // Read the command byte.
         uint8_t command = Wire.read();
         uint8_t option  = command & COMMS_OPTION_MASK;
         uint8_t pin     = option  & OUTPUT_PIN_MASK;
@@ -496,18 +496,18 @@ void processReceipt(int aLen)
             Serial.print(aLen, HEX);
             Serial.println();
         }
-            
+
         switch (command)
         {
             case COMMS_CMD_SYSTEM: processSystem(option);
                                    break;
-            case COMMS_CMD_DEBUG:  setDebug(option);            // Option is used for the debug level.
+            case COMMS_CMD_DEBUG:  setDebug(option);                // Option is used for the debug level.
                                    saveSystemData();
                                    break;
             case COMMS_CMD_SET_LO:  
             case COMMS_CMD_SET_HI: if (Wire.available())
                                    {
-                                       delay = Wire.read();
+                                       delay = Wire.read();         // Optional delay value.
                                    }
                                    actionState(pin, command == COMMS_CMD_SET_HI, delay, false);
                                    break;
@@ -598,7 +598,7 @@ void processRenumber()
 {
     if (Wire.available())
     {
-        requestNode    = Wire.read();
+        requestNode = Wire.read();      // The desired new node number.
     }
     else
     {
@@ -628,6 +628,7 @@ void processMoveLocks()
 {
     if (Wire.available() != OUTPUT_MOVE_LOCK_LEN)
     {
+        // Read the old and new node numbers.
         uint8_t oldNode = Wire.read() & OUTPUT_NODE_MASK;
         uint8_t newNode = Wire.read() & OUTPUT_NODE_MASK;
 
@@ -643,6 +644,7 @@ void processMoveLocks()
             Serial.println();
         }
 
+        // Move all locks referencingnthe old node number to the new node number.
         for (uint8_t pin = 0; pin < OUTPUT_PIN_MAX; pin++)
         {
             for (uint8_t hi = 0; hi < 2; hi++)
@@ -701,12 +703,9 @@ void processWrite(uint8_t aPin)
     }
     else
     {
-        // Stop saving state to EEPROM.
-        persisting = false;
-
-        // Read the Output definition and save it.
-        outputDefs[aPin].read();
-        initOutput(aPin, oldType);
+        persisting = false;             // Stop saving state to EEPROM.
+        outputDefs[aPin].read();        // Read the Output definition.
+        initOutput(aPin, oldType);      // Initialise the pin.
 
         if (isDebug(DEBUG_BRIEF))
         {
@@ -722,10 +721,10 @@ void processSave(uint8_t aPin)
 {
     uint8_t oldType = outputDefs[aPin].getType();
     
-    persisting = true;          // Resume saving output to EEPROM.
-    saveOutput(aPin);           // And save the output.
-    initOutput(aPin, oldType);  // Ensure output is initialised to new state.
-    initFlasher(aPin);          // Ensure flasher is operating (or not).
+    persisting = true;              // Resume saving output to EEPROM.
+    saveOutput(aPin);               // And save the output.
+    initOutput(aPin, oldType);      // Ensure output is initialised to new state.
+    initFlasher(aPin);              // Ensure flasher is operating (or not).
 }
 
 
@@ -735,16 +734,16 @@ void processReset(uint8_t aPin)
 {
     uint8_t oldType = outputDefs[aPin].getType();
     
-    persisting = true;          // Resume saving output to EEPROM.
-    loadOutput(aPin);           // And recover the output's definition.
-    initOutput(aPin, oldType);  // Ensure output is initialised to new state.
-    initFlasher(aPin);          // Ensure flasher is operating (or not).
+    persisting = true;              // Resume saving output to EEPROM.
+    loadOutput(aPin);               // And recover the output's definition.
+    initOutput(aPin, oldType);      // Ensure output is initialised to new state.
+    initFlasher(aPin);              // Ensure flasher is operating (or not).
 }
 
 
 /** Action the state change against the specified pin.
  *  Delay for aDelay seconds.
- *  If a Servo and aUseValue is set, use it's current position rather than Lo-Hi when calculating range of movement.
+ *  If a Servo, and aUseValue is set, use its current position rather than Lo-Hi when calculating range of movement.
  */
 void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue)
 {
@@ -830,6 +829,7 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue
  */
 boolean actionServo(uint8_t aPin, boolean aState, boolean aUseValue)
 {
+    // Set movement range.
     outputs[aPin].value    = outputs[aPin].servo.read();
     outputs[aPin].start    = (aUseValue ? outputs[aPin].value 
                                         : (aState ? outputDefs[aPin].getLo() 
@@ -869,12 +869,13 @@ boolean actionServo(uint8_t aPin, boolean aState, boolean aUseValue)
 boolean actionLed(uint8_t aPin, boolean aState)
 {
     boolean newState = aState;      // Might want to change the state.
-    
+
+    // Start from current values.
     outputs[aPin].start     = outputs[aPin].value;
     outputs[aPin].altStart  = outputs[aPin].altValue;
-    
-    // Handle LED_4/ROAD as special case (if preceding output is a LED).
-    if (   (isDoubleLed(aPin))
+
+    // Set target intensities.
+    if (   (isDoubleLed(aPin))          // Handle LED_4/ROAD as special case (if preceding output is a LED).
         && (persisting))
     {
         newState = actionDoubleLed(aPin, aState);
@@ -917,7 +918,7 @@ boolean actionDoubleLed(uint8_t aPin, boolean aState)
                      | (outputDefs[aPin]  .getState() << 1);
     uint8_t newPhase = oldPhase;
 
-    // Set to phase=1 if Hi, otherwise next state in sequence
+    // Set to phase=1 if Hi, otherwise next phase in sequence
     if (aState)
     {
         newPhase = 1;
@@ -1077,7 +1078,7 @@ void stepServo(uint8_t aPin)
                 }
             }
         }
-        else
+        else                                                        // Descending to trigger step.
         {
             outputs[aPin].step -= 1;
             if (outputs[aPin].step <= outputs[aPin].altValue)       // Have descended to trigger step.
@@ -1154,7 +1155,7 @@ void stepServo(uint8_t aPin)
     if (outputDefs[aPin].getState())
     {
         // Only set pad when > half-way AND trigger has been handled.
-        digitalWrite(ioPins[aPin],    (outputs[aPin].step >  (outputs[aPin].steps >> 1))
+        digitalWrite(ioPins[aPin],    (outputs[aPin].step > (outputs[aPin].steps >> 1))
                                    && (outputs[aPin].altValue == 0));
     }
     else
@@ -1202,6 +1203,7 @@ void stepLed(uint8_t aPin)
 {
     if (outputs[aPin].step < outputs[aPin].steps)
     {
+        // Move to next step.
         outputs[aPin].step += 1;
 
         if (outputs[aPin].step >= outputs[aPin].steps)
@@ -1343,7 +1345,7 @@ void stepFlashes()
 void stepFlash(uint8_t aPin)
 {
     outputs[aPin].step += 1;
-    if (outputs[aPin].step >= outputs[aPin].steps)
+    if (outputs[aPin].step >= outputs[aPin].steps)          // Time to switch to other LED.
     {
         if (   (   (outputs[aPin].delayTo > 0)
                 && (outputs[aPin].delayTo < now))
@@ -1357,7 +1359,7 @@ void stepFlash(uint8_t aPin)
             if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_FLASH)
                 && (outputDefs[aPin].getState()))
             {
-                outputs[aPin].value    = outputDefs[aPin].getHi();
+                outputs[aPin].value    = outputDefs[aPin].getHi();      // FLASHes finish Hi.
                 outputs[aPin].altValue = 0;
             }
             else
@@ -1365,11 +1367,11 @@ void stepFlash(uint8_t aPin)
                 outputs[aPin].value = 0;
                 if (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
                 {
-                    outputs[aPin].altValue = 0;
+                    outputs[aPin].altValue = 0;                         // BLINKs finish off.
                 }
                 else
                 {
-                    outputs[aPin].altValue = outputDefs[aPin].getLo();
+                    outputs[aPin].altValue = outputDefs[aPin].getLo();  // FLASHes finish Lo.
                 }
             }
 
@@ -1385,9 +1387,9 @@ void stepFlash(uint8_t aPin)
         else
         {
             boolean doSwitch = true;
-            if (outputs[aPin].steps == 1)           // Fastest possible flash = flicker.
+            if (outputs[aPin].steps == 1)               // Fastest possible flash = flicker.
             {
-                doSwitch = (micros() & 0xc) == 0;   // One chance in four
+                doSwitch = (micros() & 0xc) == 0;       // One chance in four
                 
 //                // DEBUG - metrics for flickering
 //                if (doSwitch)

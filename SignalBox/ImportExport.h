@@ -9,6 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
+ 
 #ifndef ImportExport_h
 #define ImportExport_h
 
@@ -29,6 +30,7 @@
 class ImportExport
 {
     private:
+    
     int  lastChar;                              // Last character read.
     char wordBuffer[WORD_BUFFER_LENGTH + 1];    // Buffer to read characters with null terminator on the end.
     long messageTick = 1L;                      // Time the last message was emitted.
@@ -82,7 +84,8 @@ class ImportExport
         node = readData() & INPUT_NODE_MASK;
         pin  = readData() & INPUT_PIN_MASK;
         loadInput(node, pin);
-    
+
+        // Read the Input's type.
         readWord();
         for (inputType = 0; inputType < INPUT_TYPE_MAX; inputType++)
         {
@@ -136,7 +139,8 @@ class ImportExport
         
         outputNode = readData() & OUTPUT_NODE_MASK;
         outputPin  = readData() & OUTPUT_PIN_MASK;
-        
+
+        // Read the Output's type.
         readWord();
         for (type = 0; type < OUTPUT_TYPE_MAX; type++)
         {
@@ -152,10 +156,13 @@ class ImportExport
         }
         else
         {
+            // Read the Output's definition.
             outputDef.setType(type);
             outputDef.setState(getOutputState(outputNode, outputPin));
             outputDef.setLo(readData());
             outputDef.setHi(readData());
+
+            // Read (optional) Pace.
             value = readData();
             if (value >= 0)
             {
@@ -165,6 +172,8 @@ class ImportExport
             {
                 outputDef.setPace(OUTPUT_DEFAULT_PACE);
             }
+            
+            // Read (optional) reset.
             value = readData();
             if (value >= 0)
             {
@@ -196,9 +205,13 @@ class ImportExport
         outputPin  = readData() & OUTPUT_PIN_MASK;
         if (isOutputNodePresent(outputNode))
         {
+            // Fetch the Output's definition to update its locks.
             readOutput(outputNode, outputPin);
+
+            // Process the Lo and Hi lock definitions.
             for (uint8_t hi = 0; hi < 2; hi++)
             {
+                // Process the locks.
                 for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
                 {
                     if (   (readWord() <= 0)
@@ -263,7 +276,7 @@ class ImportExport
     
     /** Read (hexadecimal) data.
      *  Special-case: letters G-V represent 0x10 to 0x1f.
-     *  If dots are present, return a negative number relative to -HEX_MAX
+     *  If dots are present, return a negative number -HEX_MAX
      */
     int readData()
     {
@@ -388,12 +401,15 @@ class ImportExport
         }
     }
 
+
     /** Export the system parameters.
      */
     void exportSystem(boolean aIncludeDump)
     {
+        // Export header comment.
         Serial.println(PGMT(M_EXPORT_SYSTEM));
-        
+
+        // Export system definition.
         Serial.print(PGMT(M_SYSTEM));
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_VERSION));
@@ -419,11 +435,11 @@ class ImportExport
     
 
     /** Export the Inputs.
-     *  Only export connected inputs unless aAll is set.
+     *  Only export connected inputs, unless aAll is set.
      */
     void exportInputs(boolean aAll)
     {
-        // Output header comment
+        // Export header comment
         Serial.print(PGMT(M_EXPORT_INPUT));
         for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
         {
@@ -432,7 +448,7 @@ class ImportExport
         }
         Serial.println();
 
-        // Output all the inputs
+        // Export all the inputs
         for (int node = 0; node < INPUT_NODE_MAX; node++)
         {
             if (   (aAll)
@@ -440,6 +456,7 @@ class ImportExport
             {
                 for (int pin = 0; pin < INPUT_PIN_MAX; pin++)
                 {
+                    // Export Input defintion
                     loadInput(node, pin);
     
                     Serial.print(PGMT(M_INPUT));
@@ -449,7 +466,8 @@ class ImportExport
                     Serial.print(HEX_CHARS[pin]);
                     Serial.print(CHAR_TAB);
                     Serial.print(PGMT(M_INPUT_TYPES[inputType]));
-                    
+
+                    // Export Input's Outputs.
                     for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
                     {
                         Serial.print(CHAR_TAB);
@@ -485,15 +503,18 @@ class ImportExport
      */
     void exportOutputs()
     {
+        // Export header comment.
         Serial.print(PGMT(M_EXPORT_OUTPUT));
         Serial.println();
-        
+
+        // Export all the Outputs.
         for (int node = 0; node < OUTPUT_NODE_MAX; node++)
         {
             if (isOutputNodePresent(node))
             {
                 for (int pin = 0; pin < OUTPUT_PIN_MAX; pin++)
                 {
+                    // Export Output definition.
                     readOutput(node, pin);
     
                     Serial.print(PGMT(M_OUTPUT));
@@ -523,7 +544,10 @@ class ImportExport
      */
     void exportLocks(boolean aAll)
     {
+        // Export header comment.
         Serial.print(PGMT(M_EXPORT_LOCKS));
+
+        // Export the Lo and Hi lock header comments.
         for (uint8_t hi = 0; hi < 2; hi++)
         {
             for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
@@ -534,13 +558,15 @@ class ImportExport
             }
         }
         Serial.println();
-        
+
+        // Export all the locks.
         for (int node = 0; node < OUTPUT_NODE_MAX; node++)
         {
             if (isOutputNodePresent(node))
             {
                 for (int pin = 0; pin < OUTPUT_PIN_MAX; pin++)
                 {
+                    // Export a lock definition.
                     readOutput(node, pin);
 
                     Serial.print(PGMT(M_LOCK));
@@ -549,11 +575,12 @@ class ImportExport
                     Serial.print(CHAR_TAB);
                     Serial.print(HEX_CHARS[pin]);
 
-                    // Output locks, Lo and Hi
+                    // Export locks, Lo and Hi
                     for (uint8_t hi = 0; hi < 2; hi++)
                     {
                         for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
                         {
+                            // Export a lock.
                             Serial.print(CHAR_TAB);
                             if (outputDef.isLock(hi, index))
                             {
@@ -579,7 +606,7 @@ class ImportExport
     
     public:
     
-    /** A ImportExport object.
+    /** An ImportExport object.
      */
     ImportExport()
     {

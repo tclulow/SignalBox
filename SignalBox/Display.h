@@ -9,6 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
+ 
 #ifndef Display_h
 #define Display_h
 
@@ -51,7 +52,7 @@
 
 // #define LCD_COL_EXP_STATUS    7   // Export status.
 
-#define LCD_COL_INPUT_OUTPUT  8   // Input's outputs start at this col.
+#define LCD_COL_INPUT_OUTPUT  7   // Input's outputs start at this col.
 
 #define LCD_COL_OUTPUT_PARAM  7   // Output's parameters(3) start at this col.
 #define LCD_COL_OUTPUT_STEP   3   // Three columns per parameter.
@@ -65,12 +66,10 @@
 #define LCD_COL_LOCK_STATE    7   // Lock state at this column.
 
 
-
 /** A Display class that can print PROGMEM messages.
  */
 class Display
 {
-      
     private:
 
     /** An LCD attached as a shield.
@@ -91,7 +90,7 @@ class Display
 #else
     LiquidCrystal*     lcd2;        // Dummy variable, never set.
 #endif
-    uint8_t            lcdId = 0;
+    uint8_t            lcdId = 0;   // The ID of the I2C LCD.
 
     
     public:
@@ -112,7 +111,7 @@ class Display
 
 
 #if LCD_I2C
-    /** Sets the i2c LCD display.
+    /** Creates the i2c LCD object and sets its i2c ID.
      */
     void setLcd(uint8_t aLcdId)
     {
@@ -147,12 +146,14 @@ class Display
 
 
     /** Sets the cursor location.
+     *  Negative aCol measures from right-hand-end of display.
      *  Delegate to library class.
      */
     void setCursor(int aCol, int aRow)
     {
         if (aCol < 0)
         {
+            // Position relative to the end of the row.
             lcdShield.setCursor(aCol + LCD_COLS, aRow & LCD_ROW_MASK);
             if (lcd2)
             {
@@ -161,6 +162,7 @@ class Display
         }
         else
         {
+            // Position relative to the start of the row.
             lcdShield.setCursor(aCol, aRow & LCD_ROW_MASK);
             if (lcd2)
             {
@@ -260,8 +262,7 @@ class Display
     }
 
 
-    /** Print a number as a string of hex digits at the specified location.
-     *  Padded with leading zeros to length aDigits.
+    /** Print a number as 2 hex digits at the specified location.
      */
     void printHexByteAt(int aCol, uint8_t aRow, uint8_t aValue)
     {
@@ -271,6 +272,7 @@ class Display
 
 
     /** Print a HEX character.
+     *  Note that this can print 'hex' characters 'G' to 'V' also.
      */
     void printHexCh(uint8_t aHexValue)
     {
@@ -278,7 +280,8 @@ class Display
     }
 
 
-    /** Print a HEX character.
+    /** Print a HEX character. at the specified location.
+     *  Note that this can print 'hex' characters 'G' to 'V' also.
      */
     void printHexChAt(int aCol, uint8_t aRow, uint8_t aHexValue)
     {
@@ -298,7 +301,7 @@ class Display
 
 
     /** Print a number as a string of dec digits.
-     *  Padded with leading spaces to length aDigits.
+     *  Padded with leading aPad characters to length aDigits.
      */
     void printDec(int aValue, int aDigits, char aPad)
     {
@@ -353,6 +356,7 @@ class Display
 
 
     /** Clear a row from the given column to the end.
+     *  negative column measures from the right-hand-end of the display.
      */
     void clearRow(int aCol, uint8_t aRow)
     {

@@ -14,6 +14,17 @@
 #include "All.h"
 
 
+/** Initialise the alternate button pins.
+ */
+void initButtonPins()
+{
+    for (uint8_t button = 1; button <= BUTTON_LIMIT; button++)
+    {
+        pinMode(BUTTON_PINS[button], INPUT_PULLUP);
+    }
+}
+
+
 /** Calibrate the analog buttons.
  *  Each marker is half-way between the values the buttons return.
  */
@@ -40,8 +51,10 @@ void calibrateButtons()
         disp.printProgStrAt(LCD_COL_CALIBRATE, LCD_ROW_DET, M_BUTTONS[button + 1], LCD_LEN_OPTION);
 
         // Wait for a button to be pressed
-        while ((value = analogRead(A0)) > BUTTON_THRESHHOLD);
-        delay(DELAY_BUTTON_WAIT);
+        while ((value = analogRead(A0)) > BUTTON_THRESHHOLD)
+        {
+            delay(DELAY_BUTTON_WAIT);
+        }
 
         if (isDebug(DEBUG_ERRORS))
         {
@@ -87,7 +100,8 @@ void calibrateButtons()
 }
 
 
-uint8_t lastButton = 0xff;
+uint8_t lastButton = 0xff;      // Keep track of last button pressed for reporting in debug messages.
+
 /** Read the input button pressed.
  *  Return one of the button constants.
  */

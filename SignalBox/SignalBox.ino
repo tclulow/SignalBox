@@ -59,6 +59,7 @@ void scanInputHardware()
             if (disp.getLcdId() != (systemData.i2cInputBaseID + node))
 #endif
             {
+                // Send message to the Input and see if it responds.
                 Wire.beginTransmission(systemData.i2cInputBaseID + node);
                 if (Wire.endTransmission() == 0)
                 {
@@ -87,6 +88,7 @@ void scanInputHardware()
 
 
 /** Display the Input nodes present.
+ *  Show either the Input module's ID, or a dot character.
  */
 void dispInputHardware()
 {
@@ -128,13 +130,14 @@ void scanOutputHardware()
     {
         if (!isOutputNodePresent(node))
         {
-            readOutputStates(node);
+            readOutputStates(node);     // Automatically marked as present if it responds.
         }
     }
 }
 
 
 /** Display the Output nodes present.
+ *  Show either the Output module's ID, or a dot character.
  */
 void dispOutputHardware()
 {
@@ -162,7 +165,7 @@ void dispOutputHardware()
 }
 
 
-/** Map the Input and Output nodes.
+/** Scan for Input and Output nodes.
  */
 void scanHardware()
 {
@@ -332,7 +335,7 @@ void sendDebugLevel()
 }
 
 
-/** Scan all the inputs.
+/** Scan all the Inputs.
  *  Process any that have changed.
  */
 void scanInputs()
@@ -342,7 +345,7 @@ void scanInputs()
     {
         if (isInputNodePresent(node))                                        
         {
-            // Read current state of pins and if there's been a change
+            // Read current state of pins and if there's been a change.
             uint16_t pins = readInputNode(node);
             if (pins != currentSwitchState[node])
             {
@@ -386,7 +389,7 @@ uint16_t readInputNode(uint8_t aNode)
     Wire.beginTransmission(systemData.i2cInputBaseID + aNode);    
     Wire.write(MCP_GPIOA);
     if (   (Wire.endTransmission())
-        || (Wire.requestFrom(systemData.i2cInputBaseID + aNode, 2) != 2))
+        || (Wire.requestFrom(systemData.i2cInputBaseID + aNode, INPUT_STATE_LEN) != INPUT_STATE_LEN))
     {
         recordInputError(aNode);
         value = currentSwitchState[aNode];  // Pretend no change if comms error.
@@ -402,6 +405,7 @@ uint16_t readInputNode(uint8_t aNode)
 
 
 /** Process the changed input.
+ *  aState is the state of the input switch.
  */
 void processInput(boolean aState)
 {
@@ -472,16 +476,21 @@ void processInput(boolean aState)
  */
 boolean isLocked(boolean aNewState)
 {
+    // Check all the Input's Outputs.
     for (uint8_t inpIndex = 0; inpIndex < INPUT_OUTPUT_MAX; inpIndex++)
     {
+        // Process all definitions that aren't "delay"s.
         if (!inputDef.isDelay(inpIndex))
         {
             readOutput(inputDef.getOutputNode(inpIndex), inputDef.getOutputPin(inpIndex));
-    
+
+            // Check all the Output's locks.
             for (uint8_t outIndex = 0; outIndex < OUTPUT_LOCK_MAX; outIndex++)
             {
+                // If there's an active lock
                 if (outputDef.isLock(aNewState, outIndex))
                 {
+                    // And the state change is prohibited.
                     boolean state = getOutputState(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
                     if (outputDef.getLockState(aNewState, outIndex) == state)
                     {
@@ -505,7 +514,7 @@ boolean isLocked(boolean aNewState)
                             outputDef.printDef(M_VS, outputPin);
                         }
                         
-                        return true;
+                        return true;            // A lock exists.
                     }
                 }
             }
@@ -542,7 +551,8 @@ void processInputOutputs(boolean aNewState)
 
 
 /** Process an Input's n'th Output, setting it to the given state.
- *  Accumulate delay before or after movement depending on direction outputs are being processed.
+ *  Accumulate delay as we go.
+ *  Returns the accumulated delay.
  */
 uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
 {
@@ -554,7 +564,7 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
     // Process the Input's Outputs.
     if (inputDef.isDelay(aIndex))
     {
-        endDelay += inputDef.getOutputPin(aIndex);
+        endDelay += inputDef.getOutputPin(aIndex);          // Accumulate the delay.
     }
     else
     {
@@ -596,9 +606,10 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
             Serial.println();
         }
 
+        // Action the Output state change.
         writeOutputState(outNode, outPin, aState, endDelay);
 
-        // Recover all states from output module (in case LED_4 has moved one).
+        // Recover all states from output module (in case a double-LED has changed one).
         readOutputStates(outNode);
         // setOutputState(outNode, outPin, aState);
     }
@@ -714,7 +725,10 @@ void setup()
     
     // Flash our version number on the built-in LED.
     flashVersion();
-    
+
+    // Ensure calibration pin is configured for input.
+    pinMode(PIN_CALIBRATE, INPUT_PULLUP);
+
     // Deal with first run (software has never been run before).
     if (!loadSystemData())
     {
@@ -737,7 +751,6 @@ void setup()
     // Initialise subsystems.
     Wire.begin(systemData.i2cControllerID);     // I2C network
     // Wire.setTimeout(25000L);                 // Doesn't seem to have any effect.
-    pinMode(PIN_CALIBRATE, INPUT_PULLUP);       // Calibration input pin (11).
 
 #if LCD_I2C
     // Scan for i2c LCD.
@@ -775,7 +788,7 @@ void setup()
         saveSystemData();
     }
 
-    // Scan for input nodes.
+    // Scan for Input and Output nodes.
     scanHardware();
 }
 

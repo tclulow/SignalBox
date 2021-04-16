@@ -9,6 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
+ 
 #ifndef SignalBox_h
 #define SignalBox_h
 

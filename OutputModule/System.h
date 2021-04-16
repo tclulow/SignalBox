@@ -9,6 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
+ 
 #ifndef System_h
 #define System_h
 
@@ -42,6 +43,7 @@
 #define DEBUG_DETAIL    3
 #define DEBUG_FULL      4
 #define DEBUG_MAX       5       // Maximum debug option.
+
 
 // Reporting levels.
 #define REPORT_OFF      0       // See also M_REPORT_PROMPTS.
@@ -98,8 +100,10 @@
 //#define LOGO_LEN (sizeof(LOGO) / sizeof(LOGO[0]))
 #define LOGO_LEN 0
 
+
 // Custom character to indicate "Lo".
 byte BYTES_LO[]   = { 0, 0, 0, 0, 0x11, 0xa, 0x4, 0 };
+
 
 // Useful characters
 #define HEX_MAX  32

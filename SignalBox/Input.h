@@ -9,8 +9,10 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
+ 
 #ifndef Input_h
 #define Input_h
+
 
 // Input nodes.
 #define INPUT_NODE_MAX            8     // Maximum nodes.
@@ -33,6 +35,8 @@
 #define INPUT_TYPE_ON             2     // An on Input.
 #define INPUT_TYPE_OFF            3     // An off Input.
 #define INPUT_TYPE_MAX            4     // Limit of Input types.
+
+#define INPUT_STATE_LEN           2     // Length on an Input MCP state message.
 
 
 // Mask for MCP device none or all bits.
@@ -73,6 +77,7 @@ uint8_t INPUT_COMMANDS[] = { MCP_IODIRA, MCP_IODIRB, MCP_GPPUA, MCP_GPPUB };
 class InputDef
 {
     private:
+    
     uint8_t delayMask = 0;              // Mask showing which outputs are "delay"s.
     uint8_t output[INPUT_OUTPUT_MAX];   // The outputs conrolled by this input.
 

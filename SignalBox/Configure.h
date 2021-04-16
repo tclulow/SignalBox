@@ -9,6 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
+ 
 #ifndef Configure_h
 #define Configure_h
 
@@ -281,9 +282,11 @@ class Configure
     {
         disp.clearRow(LCD_COL_MARK, LCD_ROW_DET);
         disp.setCursor(LCD_COL_INPUT_OUTPUT, LCD_ROW_DET);
-        
-        for (uint8_t index = 0; index < INPUT_OUTPUT_DISP; index++)
+
+        // Show as many Outputs as will fit in the space available. 3 characters per output.
+        for (uint8_t index = 0; index < (LCD_COLS - LCD_COL_INPUT_OUTPUT) / 3; index++)
         {
+            disp.printCh(CHAR_SPACE);
             if (inputDef.isDelay(index))
             {
                 disp.printCh(CHAR_DOT);
@@ -301,7 +304,6 @@ class Configure
                 disp.printHexCh(inputDef.getOutputNode(index));
                 disp.printHexCh(inputDef.getOutputPin(index));
             }
-            disp.printCh(CHAR_SPACE);
         }
     }
     
@@ -458,7 +460,7 @@ class Configure
     {
         boolean finished = false;
 
-        // Initialise state.
+        // Ensure node numbers are legitimate.
         if (!isInputNodePresent(inpNode))
         {
             inpNode = nextNode(inpNode, 1, true, true);
@@ -467,7 +469,8 @@ class Configure
         {
             outNode = nextNode(outNode, 1, false, true);
         }
-        
+
+        // Ensure correct Input and Output node definitions are loaded.
         loadInput(inpNode, inpPin);
         if (isOutputNodePresent(outNode))
         {
@@ -499,16 +502,15 @@ class Configure
                                         case TOP_SYSTEM: menuSystem();
                                                          break;
                                         case TOP_INPUT:  menuNode(true);
-                                                         if (isOutputNodePresent(outNode))
+                                                         if (isOutputNodePresent(outNode))  // The outNode may have been corrupted by input node processing.
                                                          {
-                                                            // The output node may have been corrupted by input node processing.
-                                                            readOutput(outNode, outPin);
+                                                            readOutput(outNode, outPin);    // So reload it.
                                                          }
                                                          break;
                                         case TOP_OUTPUT:
-                                        case TOP_LOCKS:  if (isOutputNodePresent(outNode))     // Maybe there are no outputs connected.
+                                        case TOP_LOCKS:  if (isOutputNodePresent(outNode))  // Only if the output node is present
                                                          {
-                                                            menuNode(false);
+                                                            menuNode(false);                // Process the Output node.
                                                          }
                                                          break;
                                         case TOP_EXPORT: menuExport();
@@ -543,16 +545,16 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     sysMenu += 2;     // Use +1 to compensate for the -1 that the code below will do.
+                case BUTTON_UP:     sysMenu += 2;                   // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   sysMenu -= 1;
-                                    sysMenu += SYS_MAX;     // Ensure in-range.
+                                    sysMenu += SYS_MAX;             // Ensure in-range.
                                     sysMenu %= SYS_MAX;
                                     displayDetailSystem();
                                     markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, true);
                                     break;
                 case BUTTON_SELECT: if (changed)
                                     {
-                                        if (confirm())
+                                        if (confirm())              // Ask if change should be saved.
                                         {
                                             saveSystemData();
                                             if (debugLevel != getDebug())
@@ -575,7 +577,7 @@ class Configure
                                     break;
                 case BUTTON_LEFT:   if (changed)
                                     {
-                                        if (cancel())
+                                        if (cancel())               // Ask if change should be canelled.
                                         {
                                             loadSystemData();
                                             displayDetailSystem();
@@ -795,7 +797,7 @@ class Configure
     void menuNode(boolean aIsInput)
     {
         boolean finished    = false;
-        int8_t  reportLevel = systemData.reportLevel;    // Record reportLevel so we can turn it back on again.
+        int8_t  reportLevel = systemData.reportLevel;       // Record reportLevel so we can turn it back on again.
 
         systemData.reportLevel = 0;
         markField(LCD_COL_NODE, LCD_ROW_TOP, 1, true);
@@ -807,7 +809,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     adjust += 2;     // Use +1 to compensate for the -1 that the code below will do.
+                case BUTTON_UP:     adjust += 2;            // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   adjust -= 1;
                                     if (aIsInput)
                                     {
@@ -859,6 +861,8 @@ class Configure
 
     /** Find the next (inUse) node in the given direction.
      *  Or not inUse if flag indicates such.
+     *  Start at aStart and increment/decrement by aAdjust (ie search up or down).
+     *  aIsInput indicates if looking for an Input or an Output node number.
      */
     uint8_t nextNode(uint8_t aStart, int aAdjust, boolean aIsInput, boolean aInUse)
     {
@@ -882,8 +886,8 @@ class Configure
 
         // If there are no inputs, move to next one anyway
         if (   (aIsInput)
-            && (next   == aStart)                       // Didn't find a suitable input.
-            && (aInUse != isInputNodePresent(next)))    // And this node isn't correct either.
+            && (next   == aStart)                           // Didn't find a suitable input.
+            && (aInUse != isInputNodePresent(next)))        // And this node isn't correct either.
         {
             next = (next + aAdjust) & INPUT_NODE_MASK;
         }
@@ -932,9 +936,6 @@ class Configure
                                 displayDetail();
                             }
                         }
-                    
-                        // Record new input states.
-                        currentSwitchState[inpNode] = pins;
                     }
                 }
             }
@@ -963,10 +964,10 @@ class Configure
      */
     void menuNewNode()
     {
-        boolean finished = false;
-        boolean changed  = false;
-        boolean jumpers  = false;
-        uint8_t newNode  = outNode;
+        boolean finished = false;       // Set when done.
+        boolean changed  = false;       // Set if a new node number has been chosen.
+        boolean jumpers  = false;       // Set to reset node to its jumper setting.
+        uint8_t newNode  = outNode;     // The new node number to renumber to.
         
         displayNewNode(jumpers, newNode);
         markField(LCD_COL_NODE, LCD_ROW_DET, 1, true);
@@ -994,7 +995,7 @@ class Configure
                 case BUTTON_SELECT: if (   (jumpers)
                                         || (outNode != newNode))
                                     {
-                                        if (confirm())
+                                        if (confirm())      // Ask if change should be saved.
                                         {
                                             outNode = renumberNode(outNode, (jumpers ? I2C_MODULE_ID_JUMPERS : newNode));
                                             readOutput(outNode, outPin);
@@ -1013,7 +1014,7 @@ class Configure
                                     }
                                     break;
                 case BUTTON_LEFT:   if (   (!changed)
-                                        || (cancel()))
+                                        || (cancel()))      // Ask if change should be cancelled    .
                                     {
                                         finished = true;
                                     }
@@ -1048,7 +1049,8 @@ class Configure
     uint8_t renumberNode(uint8_t aOldNode, uint8_t aNewNode)
     {
         int response = aOldNode;
-        
+
+        // Send the renumber command to the node concerned.
         Wire.beginTransmission(systemData.i2cOutputBaseID + aOldNode);
         Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_RENUMBER);
         Wire.write(aNewNode);
@@ -1056,7 +1058,7 @@ class Configure
             && ((response = Wire.requestFrom(systemData.i2cOutputBaseID + outNode, OUTPUT_RENUMBER_LEN)) == OUTPUT_RENUMBER_LEN)
             && ((response = Wire.read()) >= 0))
         {
-            response &= OUTPUT_NODE_MASK;       // The new node number of the Output
+            response &= OUTPUT_NODE_MASK;       // The new node number of the Output as returned by the node
     
             if (isDebug(DEBUG_BRIEF))
             {
@@ -1070,7 +1072,7 @@ class Configure
                 Serial.println();    
             }
 
-            if (aOldNode != response)       // Change actually happened.
+            if (aOldNode != response)           // Change actually happened.
             {
                 // Mark the old node absent and the new one present.
                 setOutputNodePresent(aOldNode, false);
@@ -1285,7 +1287,7 @@ class Configure
                                     break;
                 case BUTTON_SELECT: if (changed)
                                     {
-                                        if (confirm())
+                                        if (confirm())              // Ask if change should be saved.
                                         {
                                             saveInput();
                                             finished = true;
@@ -1303,7 +1305,7 @@ class Configure
                                     break;
                 case BUTTON_LEFT:   if (changed)
                                     {
-                                        if (cancel())
+                                        if (cancel())               // Ask if change should be cancelled.
                                         {
                                             loadInput(inpNode, inpPin);
                                             finished = true;
@@ -1377,7 +1379,7 @@ class Configure
     }
 
 
-    /** Process an Input's Output's node.
+    /** Process an Input's Output node (at the given index).
      */
     boolean menuInputOutputNode(uint8_t aIndex)
     {
@@ -1401,15 +1403,14 @@ class Configure
                                     }
                                     else
                                     {
-                                        // Increment/Decrement the node number (to the next available) within the Input's output at this index.
+                                        // Increment/Decrement the node number (to the next available) at this index.
                                         inputDef.setOutputNode(aIndex, nextNode(inputDef.getOutputNode(aIndex), adjust, false, true));
                                     }
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
-                case BUTTON_SELECT: // Enable/disable this output.
-                                    changed = true;
-                                    inputDef.setDelay(aIndex, !inputDef.isDelay(aIndex));
+                case BUTTON_SELECT: changed = true;
+                                    inputDef.setDelay(aIndex, !inputDef.isDelay(aIndex));       // Enable/disable this output.
                                     displayInputEdit(aIndex);
                                     break;
                 case BUTTON_LEFT:   finished = true;
@@ -1439,12 +1440,12 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
-                case BUTTON_UP:     // Increment the pin number within the Input's output at this index.
+                case BUTTON_UP:     // Increment the pin number at this index.
                                     inputDef.setOutputPin(aIndex, inputDef.getOutputPin(aIndex) + 1);
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
-                case BUTTON_DOWN:   // Decrement the pin number within the Input's output at this index.
+                case BUTTON_DOWN:   // Decrement the pin number at this index.
                                     inputDef.setOutputPin(aIndex, inputDef.getOutputPin(aIndex) - 1);
                                     displayInputEdit(aIndex);
                                     changed = true;
@@ -1646,7 +1647,7 @@ class Configure
                                     break;
                 case BUTTON_SELECT: if (changed)
                                     {
-                                        if (confirm())
+                                        if (confirm())                  // Ask if change should be saved.
                                         {
                                             writeSaveOutput();
                                             finished = true;
@@ -1664,7 +1665,7 @@ class Configure
                                     break;
                 case BUTTON_LEFT:   if (changed)
                                     {
-                                        if (cancel())
+                                        if (cancel())                   // Ask if change should be cancelled.
                                         {
                                             finished = true;
                                         }
@@ -1967,7 +1968,7 @@ class Configure
                                     break;
                 case BUTTON_SELECT: if (changed)
                                     {
-                                        if (confirm())
+                                        if (confirm())                  // Ask if change should be saved.
                                         {
                                             writeOutput();
                                             writeSaveOutput();
@@ -1986,7 +1987,7 @@ class Configure
                                     break;
                 case BUTTON_LEFT:   if (changed)
                                     {
-                                        if (cancel())
+                                        if (cancel())                   // Ask if change should be cancelled.
                                         {
                                             resetOutput();
                                             finished = true;
@@ -2077,12 +2078,12 @@ class Configure
             {
                 case BUTTON_NONE:   break;
                 case BUTTON_UP:
-                case BUTTON_DOWN:   if (!outputDef.isLock(aHi, aIndex))
+                case BUTTON_DOWN:   if (!outputDef.isLock(aHi, aIndex))         // If currently no lock, enable one.
                                     {
                                         outputDef.setLock(aHi, aIndex, true);
                                         displayLockEdit(aHi, aIndex);
                                     }
-                                    else
+                                    else                                        // Change the lock type (Lo/Hi).
                                     {
                                         outputDef.setLockState(aHi, aIndex, !outputDef.getLockState(aHi, aIndex));
                                         disp.printProgStrAt(LCD_COL_LOCK_STATE, LCD_ROW_DET, outputDef.getLockState(aHi, aIndex) ? M_HI : M_LO);
@@ -2235,6 +2236,7 @@ class Configure
 
 
     /** Output confirmation message.
+     *  Wait for response.
      */
     boolean confirm()
     {
@@ -2244,6 +2246,7 @@ class Configure
 
     
     /** Output cancellation message.
+     *  Wait for response.
      */
     boolean cancel()
     {

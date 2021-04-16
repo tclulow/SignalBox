@@ -9,6 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
+ 
 #ifndef Messages_h
 #define Messages_h
 
@@ -35,6 +36,7 @@ const char M_SYSTEM[]           PROGMEM = "System";
 const char M_INPUT[]            PROGMEM = "Input";
 const char M_OUTPUT[]           PROGMEM = "Output";
 const char M_TYPES[]            PROGMEM = "Types";
+
 
 // Configuration - Output.
 const char M_NEW_NODE_NO[]      PROGMEM = "New node#";
@@ -74,6 +76,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char M_SCANNING[]         PROGMEM = "Scanning inputs";
     // const char M_TODO[]          PROGMEM = "TODO";
 
+
     // Calibrate LCD buttons.
     const char M_CALIBRATE[]        PROGMEM = "Calibrate button";
     const char M_PRESS[]            PROGMEM = "Press";
@@ -83,6 +86,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char M_UP[]               PROGMEM = "Up";
     const char M_RIGHT[]            PROGMEM = "Right";
     const char M_SEQUENCE[]         PROGMEM = "Out of sequence";
+
     
     // Start-up and first-run messages.
     const char M_SETUP[]            PROGMEM = "Setup";
@@ -95,11 +99,13 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char M_NO_INPUT[]         PROGMEM = "No input node";
     const char M_NO_OUTPUT[]        PROGMEM = "No output node";
     const char M_INIT_INPUTS[]      PROGMEM = "Init inputs";
+
     
     // Import/export actions.
     const char M_EXPORTING[]        PROGMEM = "Exporting";
     const char M_WAITING[]          PROGMEM = "Waiting";
-    
+
+
     // Configuration - general.
     const char M_LOCK[]             PROGMEM = "Lock";
     const char M_CONFIG[]           PROGMEM = "Configure";
@@ -108,22 +114,20 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char M_EXPORT[]           PROGMEM = "Export";
     const char M_IMPORT[]           PROGMEM = "Import";
     const char M_ALL[]              PROGMEM = "All";
+
     
     // Configuration - System.
     const char M_REPORT[]           PROGMEM = "Report";
     const char M_SYS_I2C[]          PROGMEM = "i2cID";
     const char M_DEBUG[]            PROGMEM = "Debug";
     const char M_IDENT[]            PROGMEM = "Ident";
-    
-    // const char M_NONE[]          PROGMEM = "None";
+
     const char M_SHORT[]            PROGMEM = "Short";
     const char M_LONG[]             PROGMEM = "Long";
     const char M_PAUSE[]            PROGMEM = "Pause";
     
-    //const char M_NONE[]           PROGMEM = "None";
     const char M_ERRORS[]           PROGMEM = "Errors";
     const char M_BRIEF[]            PROGMEM = "Brief";
-    //const char M_DETAIL[]         PROGMEM = "Detail";
     const char M_FULL[]             PROGMEM = "Full";
     
     const char M_ID_CONTROLLER[]    PROGMEM = "Con";
@@ -131,6 +135,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char M_ID_OUTPUT[]        PROGMEM = "Out";
 
     const char M_VS[]               PROGMEM = " vs ";
+
 
     // Configuration - Input.
     const char M_TOGGLE[]           PROGMEM = "Toggle";
@@ -156,7 +161,6 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char* const M_I2C_PROMPTS[]    = { M_ID_CONTROLLER, M_ID_INPUT, M_ID_OUTPUT };
     const char* const M_REPORT_PROMPTS[] = { M_NONE, M_SHORT, M_LONG, M_PAUSE };
     const char* const M_DEBUG_PROMPTS[]  = { M_NONE, M_ERRORS, M_BRIEF, M_DETAIL, M_FULL };
-    
     const char* const M_INPUT_TYPES[]    = { M_TOGGLE, M_ON_OFF, M_ON,  M_OFF };
     
 #endif

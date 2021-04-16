@@ -37,7 +37,7 @@
  *      SET_LO  <Pin>       [Delay]
  *      SET_HI  <Pin>       [Delay]
  *      
- *      READ    <Pin>                   <OutputDef>
+ *      READ    <Pin>                               <OutputDef>
  *      WRITE   <Pin>       <OutputDef>
  *      SAVE    <Pin>
  *      RESET   <Pin>
@@ -47,7 +47,8 @@
  *      
  * Data bytes
  *      NewNode     The new number (0-31) for this output module.
- *      Nodes       Most significant nibble, the node to move locks from, least significant nibble, node to move the locks to.
+ *      Level       The debug level to set (0-4). See DEBUG_... flags.
+ *      Pin         The pin (0-7) to action the command against.
  *      Delay       Optional delay (in seconds, 0-255) before actioning the command.
  *      OutputDef   15 bytes defining an output. See below.
  *      
@@ -68,6 +69,7 @@
  *      LocksHi     Four bytes indicating the 4 Hi locks. See Lock below.
  *      Lock        Byte defining a output node and pin. Node number (0-31) in top 5 bits, pin number (0-7) in bottom 3 bits. See OUTPUT_NODE_... and OUTPUT_PIN_...
  */
+ 
 #ifndef Comms_h
 #define Comms_h
 
