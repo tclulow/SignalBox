@@ -14,10 +14,7 @@
 #define SignalBox_h
 
 
-// Timeout for the display when important messages are showing.
-long displayTimeout = 1L;   // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
-
-// Record state of input switches.
+// Record state of input switches. Referenced by Configure object.
 uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
 
 

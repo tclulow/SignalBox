@@ -28,6 +28,10 @@ long tickInputScan    = 0;      // The time of the last scan of input switches.
 long tickHeartBeat    = 0;      // Time of last heartbeat.
 
 
+// Timeout for the display when important messages are showing.
+long displayTimeout   = 1L;     // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
+
+
 /** Announce ourselves.
  */ 
 void announce()
