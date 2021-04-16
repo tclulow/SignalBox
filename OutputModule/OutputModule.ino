@@ -1388,7 +1388,7 @@ void stepFlash(uint8_t aPin)
             boolean doSwitch = true;
             if (outputs[aPin].steps == 1)               // Fastest possible flash = flicker.
             {
-                doSwitch = (micros() & 0xc) == 0;       // One chance in four
+                doSwitch = random(100) < LED_FLICKER_CHANCE;
                 
 //                // DEBUG - metrics for flickering
 //                if (doSwitch)

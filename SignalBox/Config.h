@@ -48,10 +48,12 @@
 #define SIGNAL_BOUNCE_CHANCE       66   // Percentage chance a signal may bounce.
 #define SIGNAL_BOUNCE_PERCENTAGE   15   // Percentage of travel a Signal may bounce.
 
+#define LED_FLICKER_CHANCE         25   // Percentage chance flickering LED will switch.
+
 #define RANDOM_HI_CHANCE           60   // Chance that a RANDOM Hi output illuminates its LED.
 #define RANDOM_LO_CHANCE           40   // Chance that a RANDOM Lo output illuminates its LED.
 
-#define PWM_TICK                   -1   // PWM tick adjustment to give maximum frequence to PWM signal.
+#define PWM_TICK                   -1   // PWM tick adjustment to give maximum frequency to PWM signal.
 #define PWM_INC                  0x10   // Increment between pins to ensure even distribution.
 
 #define JUMPER_PINS                 4   // Four jumpers.
