@@ -122,7 +122,7 @@ class OutputDef
 
     /** Set all an Output's data.
      */
-    void set(uint8_t aType, uint8_t aState, uint8_t aLo, uint8_t aHi, uint8_t aPace, uint8_t aReset)
+    void set(uint8_t aType, boolean aState, uint8_t aLo, uint8_t aHi, uint8_t aPace, uint8_t aReset)
     {
         setType(aType);
         setState(aState);
@@ -364,10 +364,10 @@ class OutputDef
 
 
     /** Gets; the Output's state.
-     *  Hi - Non zero.
-     *  Lo - zero.
+     *  Hi - true.
+     *  Lo - false.
      */
-    uint8_t getState()
+    boolean getState()
     {
         return (type & OUTPUT_STATE_MASK) != 0;
     }
@@ -377,7 +377,7 @@ class OutputDef
      *  Hi - Non zero.
      *  Lo - zero.
      */
-    void setState(uint8_t aState)
+    void setState(boolean aState)
     {
         type = (aState ? OUTPUT_STATE_MASK : 0) | (type & OUTPUT_TYPE_MASK);
     }
