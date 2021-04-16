@@ -143,22 +143,6 @@ void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDela
 }
 
 
-/** Gets the states of all the given node's Outputs.
- */
-uint8_t getOutputStates(uint8_t aNode)
-{
-    return outputStates[aNode];
-}
-
-
-/** Sets the states of all the given node's Outputs.
- */
-void setOutputStates(uint8_t aNode, uint8_t aStates)
-{
-    outputStates[aNode] = aStates;
-}
-
-
 /** Reset current Output. 
  *  And then reload its definition.
  */
@@ -215,4 +199,69 @@ void readOutputStates(uint8_t aNode)
     {
         setOutputNodePresent(aNode, false);
     }
+}
+
+
+/** Gets the states of all the given node's Outputs.
+ */
+uint8_t getOutputStates(uint8_t aNode)
+{
+    return outputStates[aNode];
+}
+
+
+/** Sets the states of all the given node's Outputs.
+ */
+void setOutputStates(uint8_t aNode, uint8_t aStates)
+{
+    outputStates[aNode] = aStates;
+}
+
+
+/** Gets the state of the given Output's given pin.
+ */
+boolean getOutputState(uint8_t aNode, uint8_t aPin)
+{
+    return (outputStates[aNode] & (1 << aPin)) != 0;
+}
+
+
+/** Sets the state of the given node's Output pin.
+ */
+void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState)
+{
+    uint8_t mask = 1 << aPin;
+    
+    if (aState)
+    {
+        outputStates[aNode] |= mask;
+    }
+    else
+    {
+        outputStates[aNode] &= ~mask;
+    }
+}
+
+
+/** Record the presence of an OutputNode in the map.
+ */
+void setOutputNodePresent(uint8_t aNode, boolean aState)
+{
+    if (aState)
+    {
+        outputNodes |= ((long)1 << aNode);
+    }
+    else
+    {
+        outputNodes &= ~((long)1 << aNode); 
+    }
+}
+
+
+/** Is an Output node present?
+ *  Look for Output's node in outputNodes.
+ */
+boolean isOutputNodePresent(uint8_t aNode)
+{
+    return (aNode < OUTPUT_NODE_MAX) && (outputNodes & ((long)1 << aNode));
 }

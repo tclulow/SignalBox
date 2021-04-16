@@ -9,8 +9,10 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms
  */
+ 
 #ifndef Output_h
 #define Output_h
+
 
 // Output nodes.
 #define OUTPUT_PIN_MAX              8   // 8 outputs to each node.
@@ -45,7 +47,6 @@
 #define OUTPUT_DEFAULT_PACE       0xc   // Default pace is mid-range.
 #define OUTPUT_DEFAULT_RESET      0x0   // Default reset is none.
 
-
 // Output types.
 #define OUTPUT_TYPE_NONE         0x00   // Placeholder to mark "no type".
 #define OUTPUT_TYPE_SERVO        0x01   // Output is a servo.
@@ -76,6 +77,7 @@ class OutputDef
     uint8_t lockLo[OUTPUT_LOCK_MAX];    // Outputs that lock this output Lo.
     uint8_t lockHi[OUTPUT_LOCK_MAX];    // Outputs that lock this output Hi.
     uint8_t lockState = 0;              // Lock is against output being Hi (else Lo).
+
 
     public:
 
@@ -257,6 +259,7 @@ class OutputDef
 
 
     /** Write an Output down the i2c bus.
+     *  Must be the same order as read().
      */
     void write()
     {
@@ -277,6 +280,7 @@ class OutputDef
 
 
     /** Read an Output from the i2c bus.
+     *  Must be the same order as write().
      */
     void read()
     {
@@ -502,7 +506,7 @@ boolean isDoubleLed(uint8_t aPin)
 }
 
 
-#else   // Methods for loading/saving outputs to/from EEPROM in the OutputModule.
+#else   // Methods for reading/writing outputs to/from the OutputModules.
 
 
 /** Variables for working with an Output.
@@ -552,38 +556,6 @@ void resetOutput();
 void readOutputStates(uint8_t aNode);
 
 
-/** Record the presence of an OutputNode in the map.
- */
-void setOutputNodePresent(uint8_t aNode, boolean aState)
-{
-    if (aState)
-    {
-        outputNodes |= ((long)1 << aNode);
-    }
-    else
-    {
-        outputNodes &= ~((long)1 << aNode); 
-    }
-}
-
-
-/** Gets the state of the given Output's given pin.
- */
-boolean getOutputState(uint8_t aNode, uint8_t aPin)
-{
-    return (outputStates[aNode] & (1 << aPin)) != 0;
-}
-
-
-/** Is an Output node present?
- *  Look for Output's node in outputNodes.
- */
-boolean isOutputNodePresent(uint8_t aNode)
-{
-    return (aNode < OUTPUT_NODE_MAX) && (outputNodes & ((long)1 << aNode));
-}
-
-
 /** Gets the states of all the given node's Outputs.
  */
 uint8_t getOutputStates(uint8_t aNode);
@@ -594,21 +566,25 @@ uint8_t getOutputStates(uint8_t aNode);
 void setOutputStates(uint8_t aNode, uint8_t aStates);
 
 
+/** Gets the state of the given Output's given pin.
+ */
+boolean getOutputState(uint8_t aNode, uint8_t aPin);
+
+
 /** Sets the state of the given node's Output pin.
  */
-void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState)
-{
-    uint8_t mask = 1 << aPin;
-    
-    if (aState)
-    {
-        outputStates[aNode] |= mask;
-    }
-    else
-    {
-        outputStates[aNode] &= ~mask;
-    }
-}
+void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState);
+
+
+/** Record the presence of an OutputNode in the map.
+ */
+void setOutputNodePresent(uint8_t aNode, boolean aState);
+
+
+/** Is an Output node present?
+ *  Look for Output's node in outputNodes.
+ */
+boolean isOutputNodePresent(uint8_t aNode);
 
 
 #endif
