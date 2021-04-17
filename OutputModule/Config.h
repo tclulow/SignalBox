@@ -19,7 +19,6 @@
 
 #define SERIAL_SPEED            19200   // Speed of the serial port.
 
-#define DELAY_START              2000   // Pause during start-up to avoid swamping Serial IO.
 #define DELAY_BLINK               250   // Blink interval when showing version number.
 #define DELAY_BLINK_LONG          750   // Blink to show zero, or gap between sections.
 #define DELAY_READ               2000   // Delay in msecs when the LCD may need to be read by an operator.

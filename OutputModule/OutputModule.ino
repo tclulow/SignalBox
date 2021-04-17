@@ -89,7 +89,6 @@ struct
 void setup()
 {
     randomSeed(analogRead(0));      // Initialise random number generator.
-    delay(DELAY_START);             // Wait to avoid programmer conflicts.
     Serial.begin(SERIAL_SPEED);     // Serial IO.
 
     // Configure the Jumper pins for input.

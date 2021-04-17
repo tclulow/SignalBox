@@ -721,18 +721,12 @@ void setup()
     {
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_SETUP);
     }
-    
-    delay(DELAY_START);                 // Wait to avoid programmer conflicts.
-    Serial.begin(SERIAL_SPEED);         // Serial IO.
-    
-    // Initialise alternate button pins.
-    initButtonPins();
-    
-    // Flash our version number on the built-in LED.
-    flashVersion();
 
-    // Ensure calibration pin is configured for input.
-    pinMode(PIN_CALIBRATE, INPUT_PULLUP);
+    // Initialise
+    Serial.begin(SERIAL_SPEED);             // Start Serial IO.
+    initButtonPins();                       // Initialise alternate button pins.
+    flashVersion();                         // Flash our version number on the built-in LED.
+    pinMode(PIN_CALIBRATE, INPUT_PULLUP);   // Ensure calibration pin is configured for input.
 
     // Deal with first run (software has never been run before).
     if (!loadSystemData())
