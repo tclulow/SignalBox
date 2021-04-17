@@ -173,6 +173,25 @@ class InputDef
 
         return 0;
     }
+
+
+//    /** Gets the number of outputs this input drives.
+//     *  Ignoring delay entries.
+//     */
+//    uint8_t getOutputCount()
+//    {
+//        uint8_t count = 0;
+//
+//        for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
+//        {
+//            if (!isDelay(index))
+//            {
+//                count += 1;
+//            }
+//        }
+//
+//        return count;
+//    }
 };
 
 

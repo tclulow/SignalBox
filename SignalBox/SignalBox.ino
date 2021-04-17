@@ -567,7 +567,9 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
     }
     else
     {
-        if (reportEnabled(REPORT_PAUSE))
+        if (   (reportEnabled(REPORT_PAUSE)))
+//            || (   (reportEnabled(REPORT_SHORT))
+//                && (inputDef.getOutputCount() <= 1)))
         {
             readOutput(inputDef.getOutput(aIndex));
             disp.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_COLS);
@@ -579,7 +581,11 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
             disp.printCh(CHAR_SPACE);
             disp.printCh(CHAR_SPACE);
             disp.printHexCh(aDelay);
-            reportPause();
+            
+//            if (reportEnabled(REPORT_PAUSE))
+            {
+                reportPause();
+            }
         }
         else if (reportEnabled(REPORT_SHORT))
         {
