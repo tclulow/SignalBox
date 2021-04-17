@@ -414,6 +414,7 @@ uint16_t readInputNode(uint8_t aNode)
 void processInput(boolean aState)
 {
     boolean newState = aState;
+    uint8_t first    = 0;
     
     // Process all input state changes for Toggles, only state going low for other Input types.
     if (   (!aState)
@@ -425,14 +426,8 @@ void processInput(boolean aState)
             case INPUT_TYPE_TOGGLE: // newState = aState;      // Set state to that of the Toggle.
                                     break;
             case INPUT_TYPE_ON_OFF: // Find first real output (not a delay) to determine new state.
-                                    for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
-                                    {
-                                        if (!inputDef.isDelay(index))
-                                        {
-                                            newState = !getOutputState(inputDef.getOutputNode(index), inputDef.getOutputPin(index));
-                                            break;
-                                        }
-                                    }
+                                    first = inputDef.getFirstOutput();
+                                    newState = !getOutputState(inputDef.getOutputNode(first), inputDef.getOutputPin(first));
                                     break;
             case INPUT_TYPE_ON:     newState = true;            // Set the state.
                                     break;

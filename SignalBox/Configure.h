@@ -1470,7 +1470,7 @@ class Configure
     {
         boolean currentState = false;
         
-        readOutput(inputDef.getOutput(0));
+        readOutput(inputDef.getOutput(inputDef.getFirstOutput()));
         currentState = outputDef.getState();
 
         processInputOutputs(!currentState);

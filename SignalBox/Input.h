@@ -156,6 +156,23 @@ class InputDef
             delayMask &= ~mask;
         }
     }
+
+
+    /** Gets the index of the first Output that's a real output (not a delay).
+     *  Return 0 if there are no outputs configured.
+     */
+    uint8_t getFirstOutput()
+    {
+        for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
+        {
+            if (!isDelay(index))
+            {
+                return index;
+            }
+        }
+
+        return 0;
+    }
 };
 
 
