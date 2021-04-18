@@ -15,7 +15,7 @@
 
 /** Is reporting enabled (at a particular level)?
  */
-boolean reportEnabled(uint8_t aLevel)
+boolean isReportEnabled(uint8_t aLevel)
 {
     return aLevel <= systemData.reportLevel;
 }
@@ -23,7 +23,7 @@ boolean reportEnabled(uint8_t aLevel)
 
 /** Length of time to wait for depending on the reporting level.
  */
-int reportDelay()
+int getReportDelay()
 {
     return DELAY_READ * systemData.reportLevel;    
 }

@@ -16,12 +16,12 @@
 
 /** Is reporting enabled (at a particular level)?
  */
-boolean reportEnabled(uint8_t aLevel);
+boolean isReportEnabled(uint8_t aLevel);
 
 
 /** Length of time to wait for depending on the reporting level.
  */
-int reportDelay();
+int getReportDelay();
 
 
 /** Pause for user-input if so configured.

@@ -436,7 +436,7 @@ void processInput(boolean aState)
         }
 
         // Report state change if reporting enabled.
-        if (reportEnabled(REPORT_SHORT))
+        if (isReportEnabled(REPORT_SHORT))
         {
             disp.clearBottomRows();
             disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
@@ -444,7 +444,7 @@ void processInput(boolean aState)
             disp.printHexChAt(LCD_COL_NODE,    LCD_ROW_EDT, (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK);
             disp.printHexChAt(LCD_COL_PIN,     LCD_ROW_EDT, (inputNumber                    ) & INPUT_PIN_MASK);
             disp.setCursor(LCD_COL_START + 1,  LCD_ROW_BOT);
-            setDisplayTimeout(reportDelay());
+            setDisplayTimeout(getReportDelay());
 
             if (isDebug(DEBUG_BRIEF))
             {
@@ -493,7 +493,7 @@ boolean isLocked(boolean aNewState)
                     boolean state = getOutputState(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
                     if (outputDef.getLockState(aNewState, outIndex) == state)
                     {
-                        if (reportEnabled(REPORT_SHORT))
+                        if (isReportEnabled(REPORT_SHORT))
                         {
                             disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_LOCK, LCD_LEN_OPTION);
                             disp.printCh(aNewState ? CHAR_HI : CHAR_LO);
@@ -503,7 +503,7 @@ boolean isLocked(boolean aNewState)
                             disp.printCh(state ? CHAR_HI : CHAR_LO);
                             disp.printHexCh(outputDef.getLockNode(aNewState, outIndex));
                             disp.printHexCh(outputDef.getLockPin (aNewState, outIndex));
-                            setDisplayTimeout(reportDelay());
+                            setDisplayTimeout(getReportDelay());
                         }
 
                         if (isDebug(DEBUG_BRIEF))
@@ -567,8 +567,8 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
     }
     else
     {
-        if (   (reportEnabled(REPORT_PAUSE)))
-//            || (   (reportEnabled(REPORT_SHORT))
+        if (   (isReportEnabled(REPORT_PAUSE)))
+//            || (   (isReportEnabled(REPORT_SHORT))
 //                && (inputDef.getOutputCount() <= 1)))
         {
             readOutput(inputDef.getOutput(aIndex));
@@ -582,17 +582,17 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
             disp.printCh(CHAR_SPACE);
             disp.printHexCh(aDelay);
             
-//            if (reportEnabled(REPORT_PAUSE))
+//            if (isReportEnabled(REPORT_PAUSE))
             {
                 reportPause();
             }
         }
-        else if (reportEnabled(REPORT_SHORT))
+        else if (isReportEnabled(REPORT_SHORT))
         {
             disp.printCh(CHAR_SPACE);
             disp.printHexCh(outNode);
             disp.printHexCh(outPin);
-            setDisplayTimeout(reportDelay());
+            setDisplayTimeout(getReportDelay());
         }
 
         if (isDebug(DEBUG_BRIEF))
@@ -677,14 +677,14 @@ void processCommand()
 
     // Report error if not executed.
     if (   (!executed)
-        && (reportEnabled(REPORT_SHORT)))
+        && (isReportEnabled(REPORT_SHORT)))
     {
         disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
         disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
         disp.printProgStr(M_UNKNOWN);
         disp.printCh(CHAR_SPACE);
         disp.printStr(commandBuffer);
-        setDisplayTimeout(reportDelay());
+        setDisplayTimeout(getReportDelay());
     }
 }
 
