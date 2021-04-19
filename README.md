@@ -2,7 +2,7 @@
 
 SignalBox is software for controlling model railway signals, points and other accessories. It doesn’t attempt to control the running of trains at all. 
 
-It use the same hardware as the EzyBus system: An Arduino Uno with LCD shield, Arduino Nanos to provide outputs (to Servos, LEDs etc) and MCP23-17 input expanders to read switches and buttons, all connected by an I2C bus. Although it uses exactly the same hardware as EzyBus, all the software is completely new.
+It use the same hardware as the EzyBus system: An Arduino Uno with LCD shield, Arduino Nanos to provide outputs (to Servos, LEDs etc) and MCP23017 input expanders to read switches and buttons, all connected by an I2C bus. Although it uses exactly the same hardware as EzyBus, all the software is completely new.
 
 It is positioned as a half-way house between the EzyBus system, and a CBUS one.
 
@@ -30,7 +30,7 @@ There is no need for a computer, all configuration can be done using the LCD pan
 ## Hardware
 The system uses the EzyBus hardware, either the MERG kits (22 & 23) or self-assembled using the PCBs (kits 922 and 923) built exactly as described in the EzyBus manual.
 
-There are two versions of the PCB kits, the older ones use an Arduino Nano, the new ones an Atmega328 chip (the same as found on a Nano) but don’t include a serial interface so programming is via the ICSP header or with a USB-TTL serial cable or adapter.
+There are two versions of the output module PCB kits, the older ones use an Arduino Nano, the new ones an Atmega328 chip (the same as found on a Nano) but don’t include a serial interface so programming requires more hardware - a USB-TTL serial cable or adapter and a few supporting components.
 
 The software must be programmed onto the Uno (via the USB) and the Nanos (which is more difficult with the new kits). With a serial cable you can use either the Arduino IDE or the avrdude program directly.
 
