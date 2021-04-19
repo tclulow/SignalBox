@@ -40,7 +40,7 @@ There are two version of the output module PCB. The original takes a Uno on a da
 
 The former is easy to program using the Arduino IDE and a USB cable. The latter requires some additional hardware to program.
 
-The software for the Unos is designed for the original EzyBus PCBs which had the address jumpers on pins 1, 0, A7 and A6. The code normally ignores the digital pins one and zero as these are also used for serial-IO and setting jumpers here will disable the comms. The code can be adjusted to use these pins but then the Nano must be (re)programmed out of the PCB as the jumprs on these pins (J1 and J2) will disable programming on the PCB.
+The software for the Unos is designed for the original EzyBus PCBs which had the address jumpers on pins 1, 0, A7 and A6. The code normally ignores the digital pins one and zero as these are also used for serial-IO and setting jumpers here will disable the comms. The code can be adjusted to use these pins but then the Nano must be (re)programmed out of the PCB as the jumpers on these pins (J1 and J2) will disable programming on the PCB.
 
 With the jumpers disabled, only J3 and J4 are used and will set the ID to 0, 4, 8 or C (Hexadecimal). For more than four modules either enable the IO pins for J1 and J2 or set the modules to use the software-allocated ID as described in the manual.
 
