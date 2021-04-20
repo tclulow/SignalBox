@@ -68,7 +68,7 @@ uint8_t requestOption  = 0;
 uint8_t requestNode    = 0;
 
 
-// An Array of Output control structures.i
+// An Array of Output control structures.
 struct 
 {
     Servo   servo;          // The Servo (if there is one).
@@ -643,18 +643,20 @@ void processMoveLocks()
             Serial.println();
         }
 
-        // Move all locks referencingnthe old node number to the new node number.
+        // Move all locks referencing the old node number to the new node number.
         for (uint8_t pin = 0; pin < OUTPUT_PIN_MAX; pin++)
         {
+            // Process Lo and Hi lock types.
             for (uint8_t hi = 0; hi < 2; hi++)
             {
+                // Process all the locks of the type.
                 for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
                 {
                     if (outputDefs[pin].getLockNode(hi, index) == oldNode)
                     {
                         outputDefs[pin].setLockNode(hi, index, newNode);
                     }
-                    else if (outputDefs[pin].getLockNode(hi, index) == newNode)     // TODO - check this is really required.
+                    else if (outputDefs[pin].getLockNode(hi, index) == newNode)
                     {
                         outputDefs[pin].setLockNode(hi, index, oldNode);
                     }
