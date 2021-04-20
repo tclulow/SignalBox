@@ -363,7 +363,7 @@ class OutputDef
     }
 
 
-    /** Gets; the Output's state.
+    /** Gets the Output's state.
      *  Hi - true.
      *  Lo - false.
      */
