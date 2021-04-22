@@ -1145,11 +1145,11 @@ class Configure
                             Serial.print(CHAR_TAB);
                             Serial.print(PGMT(M_DEBUG_MOVE));
                             Serial.print(CHAR_SPACE);
-                            Serial.print(HEX_CHARS[node]);
+                            Serial.print(node, HEX);
                             Serial.print(PGMT(M_DEBUG_NODE));
-                            Serial.print(HEX_CHARS[aOldNode]);
+                            Serial.print(aOldNode, HEX);
                             Serial.print(PGMT(M_DEBUG_TO));
-                            Serial.print(HEX_CHARS[response]);
+                            Serial.print(response, HEX);
                             Serial.println();    
                         }
             
