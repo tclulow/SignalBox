@@ -91,11 +91,8 @@ void setup()
     randomSeed(analogRead(0));      // Initialise random number generator.
     Serial.begin(SERIAL_SPEED);     // Serial IO.
 
-    // Configure the Jumper pins for input.
-    for (uint8_t pin = 0; pin < JUMPER_PINS; pin++)
-    {
-        pinMode(jumperPins[pin], INPUT_PULLUP);
-    }
+    // Read jumper pins in case they're needed.
+    readJumperPins();
 
     // Configure the IO pins for output.
     for (uint8_t pin = 0; pin < IO_PINS; pin++)

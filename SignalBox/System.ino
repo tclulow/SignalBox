@@ -203,6 +203,31 @@ void ezyBusClear()
 #else // Not master - Slave output module.
 
 
+// The hardware module ID - read from jumperPins.
+uint8_t jumperModuleId = 0;
+
+/** Read the hardware jumper pins and record the setting at startup.
+ */
+void readJumperPins()
+{
+    for (uint8_t pin = 0, mask=1; pin < JUMPER_PINS; pin++, mask <<= 1)
+    {
+        if (jumperPins[pin] <= ANALOG_PIN_LAST)
+        {
+            // Pins should be in INPUT_PULLUP state at startup.
+            // pinMode(jumperPins[pin], INPUT_PULLUP);
+            if (   (   (jumperPins[pin] >= ANALOG_PIN_FIRST)
+                    && (analogRead(jumperPins[pin]) > ANALOG_PIN_CUTOFF))
+                || (   (jumperPins[pin] <  ANALOG_PIN_FIRST)
+                    && (digitalRead(jumperPins[pin]))))
+            {
+                jumperModuleId |= mask;
+            }
+        }
+    }
+}
+
+
 /** Gets the output module ID.
  *  Either by hardware jumpers or from EEPROM.
  */
@@ -212,30 +237,7 @@ uint8_t getModuleId(boolean aIncludeBase)
 
     if (moduleId > OUTPUT_NODE_MAX)
     {
-        // Module ID is defined by jumpers.
-        moduleId = 0;
-        for (uint8_t pin = 0, mask=1; pin < JUMPER_PINS; pin++, mask <<= 1)
-        {
-            if (   (   (jumperPins[pin] >= ANALOG_PIN_FIRST)
-                    && (analogRead(jumperPins[pin]) > ANALOG_PIN_CUTOFF))
-                || (   (jumperPins[pin] <  ANALOG_PIN_FIRST)
-                    && (false)      // TODO - handle digital pins on TxRx
-                    && (digitalRead(jumperPins[pin]))))
-            {
-                moduleId |= mask;
-            }
-//            Serial.print(millis());
-//            Serial.print(CHAR_TAB);
-//            Serial.print("Jumper ");
-//            Serial.print(jumperPins[pin], HEX);
-//            Serial.print(": digital=");
-//            Serial.print(digitalRead(jumperPins[pin]), HEX);
-//            Serial.print(", analog=");
-//            Serial.print(analogRead(jumperPins[pin]), HEX);
-//            Serial.print(". ID=");
-//            Serial.print(systemData.i2cModuleId, HEX);
-//            Serial.println();
-        }
+        moduleId = jumperModuleId;          // Module ID is defined by jumpers.
     }
 
     // Announce module ID
