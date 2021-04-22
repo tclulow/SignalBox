@@ -39,7 +39,7 @@
 // Wire response message lengths.
 #define OUTPUT_STATE_LEN            1   // One byte used to return a node's Outputs' states.
 #define OUTPUT_RENUMBER_LEN         1   // One byte used to return a node's new module ID.
-#define OUTPUT_MOVE_LOCK_LEN        2   // Two bytes used to move a nodes locks.
+#define OUTPUT_MOVE_LOCK_LEN        3   // Two bytes used to move a nodes locks.
 
 // Defaults when initialising.
 #define OUTPUT_DEFAULT_LO          90   // Default low  position is 90 degrees.
