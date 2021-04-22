@@ -329,7 +329,7 @@ void sendDebugLevel()
                 Serial.print(CHAR_TAB);
                 Serial.print(PGMT(M_DEBUG_DEBUG));
                 Serial.print(PGMT(M_DEBUG_NODE));
-                Serial.print(node);
+                Serial.print(HEX_CHARS[node]);
                 Serial.print(CHAR_SPACE);
                 Serial.print(PGMT(M_DEBUG_PROMPTS[getDebug()]));
                 Serial.println();

@@ -28,8 +28,8 @@ void readOutput(uint8_t aNode, uint8_t aPin)
             Serial.print(millis());
             Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_READ));
-            Serial.print(outputNode, HEX);
-            Serial.print(outputPin, HEX);
+            Serial.print(HEX_CHARS[outputNode]);
+            Serial.print(HEX_CHARS[outputPin]);
             Serial.println();
         }
     
@@ -84,8 +84,8 @@ void writeOutput()
         Serial.print(millis());
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_WRITE));
-        Serial.print(outputNode, HEX);
-        Serial.print(outputPin, HEX);
+        Serial.print(HEX_CHARS[outputNode]);
+        Serial.print(HEX_CHARS[outputPin]);
         Serial.println();
         outputDef.printDef(M_DEBUG_WRITE, outputPin);
     }
@@ -106,8 +106,8 @@ void writeSaveOutput()
         Serial.print(millis());
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_SAVE));
-        Serial.print(outputNode, HEX);
-        Serial.print(outputPin, HEX);
+        Serial.print(HEX_CHARS[outputNode]);
+        Serial.print(HEX_CHARS[outputPin]);
         Serial.println();
         outputDef.printDef(M_DEBUG_SAVE, outputPin);
     }

@@ -669,7 +669,7 @@ void processMoveLocks()
             Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_RECEIPT));
             Serial.print(PGMT(M_DEBUG_COMMAND));
-            Serial.print(PGMT(M_DEBUG_COMMANDS[requestCommand >> COMMS_COMMAND_SHIFT]));
+            Serial.print(PGMT(M_DEBUG_MOVE));
             Serial.print(PGMT(M_DEBUG_LEN));
             Serial.print(Wire.available());
             Serial.println();
