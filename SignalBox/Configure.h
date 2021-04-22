@@ -1103,6 +1103,7 @@ class Configure
                     // For all the Input's pins.
                     for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
                     {
+                        boolean changed = false;
                         loadInput(node, pin);
 
                         // Adjust all the Input's Outputs if they referencethe old node number.
@@ -1111,8 +1112,12 @@ class Configure
                             if (inputDef.getOutputNode(index) == aOldNode)
                             {
                                 inputDef.setOutputNode(index, response);
-                                saveInput();
+                                changed = true;
                             }
+                        }
+                        if (changed)
+                        {
+                            saveInput();
                         }
                     }
                 }
@@ -1139,10 +1144,12 @@ class Configure
                             Serial.print(millis());
                             Serial.print(CHAR_TAB);
                             Serial.print(PGMT(M_DEBUG_MOVE));
+                            Serial.print(CHAR_SPACE);
+                            Serial.print(HEX_CHARS[node]);
                             Serial.print(PGMT(M_DEBUG_NODE));
-                            Serial.print(aOldNode, HEX);
+                            Serial.print(HEX_CHARS[aOldNode]);
                             Serial.print(PGMT(M_DEBUG_TO));
-                            Serial.print(response, HEX);
+                            Serial.print(HEX_CHARS[response]);
                             Serial.println();    
                         }
             
