@@ -20,7 +20,7 @@
     #define MAGIC_NUMBER 0x74756f53         // Magic number = "Sout".
 #endif
 
-#define VERSION         0x0341              // Version number of software.  See also M_VERSION.
+#define VERSION         0x0342              // Version number of software.  See also M_VERSION.
 
 
 // Timing constants
