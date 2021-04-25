@@ -217,17 +217,20 @@ void readJumperPins()
 }
 
 
+/** Is the ID set by jumpers?
+ */
+boolean isJumperId()
+{
+    return systemData.i2cModuleID > OUTPUT_NODE_MAX;
+}
+
+
 /** Gets the output module ID.
  *  Either by hardware jumpers or from EEPROM.
  */
 uint8_t getModuleId(boolean aIncludeBase)
 {
-    uint8_t moduleId = systemData.i2cModuleID;
-
-    if (moduleId > OUTPUT_NODE_MAX)
-    {
-        moduleId = jumperModuleId;          // Module ID is defined by jumpers.
-    }
+    uint8_t moduleId = isJumperId() ? jumperModuleId : systemData.i2cModuleID;
 
     // Announce module ID
     if (   (isDebug(DEBUG_BRIEF))
