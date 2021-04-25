@@ -56,6 +56,7 @@ change this:
     const uint8_t jumperPins[JUMPER_PINS] = { 0xff, 0xff, A7, A6 };
     
 to this:
+
     const uint8_t jumperPins[JUMPER_PINS] = { 4, 5, 6, 7 };
 
 
