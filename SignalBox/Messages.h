@@ -55,7 +55,6 @@ const char M_RFU[]              PROGMEM = "RFU";
 const char M_HI[]               PROGMEM = "Hi";
 const char M_LO[]               PROGMEM = "Lo";
 const char M_PACE[]             PROGMEM = "Spd";
-const char M_DELAY[]            PROGMEM = "Delay";
 const char M_RESET[]            PROGMEM = "Reset";
 
 const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_LED_4, M_ROAD_UK, M_ROAD_RW, M_FLASH, 
