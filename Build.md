@@ -46,7 +46,7 @@ The software for the Unos is designed for the original EzyBus PCBs which had the
 
 With the jumpers disabled, only J3 and J4 are used and will set the ID to 0, 4, 8 or C (Hexadecimal). For more than four modules either enable the IO pins for J1 and J2 or set the modules to use the software-allocated ID as described in the manual.
 
-### new PCB
+### New PCB
 
 The new PCB  requires some additional hardware to program. A Serial-TTL converter and a few external components to make the ATmega328 enter programming mode.
 
