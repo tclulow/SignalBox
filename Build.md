@@ -52,8 +52,11 @@ The new PCB  requires some additional hardware to program. A Serial-TTL converte
 
 If using the new EzyBus PCBs or kits, then the jumpers have been moved to pins 5, 6, 7 and 8. The Config.h files must be edited to reflect this:
 change this:
+
     const uint8_t jumperPins[JUMPER_PINS] = { 0xff, 0xff, A7, A6 };
+    
 to this:
     const uint8_t jumperPins[JUMPER_PINS] = { 4, 5, 6, 7 };
+
 
  
