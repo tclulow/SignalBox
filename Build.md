@@ -4,7 +4,7 @@
 
 There are two sketches:
 * SignalBox for the master module which runs on a Uno with an LCD shield.
-* OutputModule for the output modules which run on Nanos.
+* OutputModule for the output modules which runs on Nanos.
 
 Seven source files are duplicated across both sketches and are identical for both.
 
