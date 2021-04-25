@@ -50,8 +50,8 @@ With the jumpers disabled, only J3 and J4 are used and will set the ID to 0, 4, 
 
 The new PCB  requires some additional hardware to program. A Serial-TTL converter and a few external components to make the ATmega328 enter programming mode.
 
-If using the new EzyBus PCBs or kits, then the jumpers have been moved to pins 5, 6, 7 and 8. The Config.h files must be edited to reflect this:
-change this:
+If using the new EzyBus PCBs or kits, then the jumpers have been moved to pins 4, 5, 6 and 7. The Config.h files must be edited to reflect this.
+Change this:
 
     const uint8_t jumperPins[JUMPER_PINS] = { 0xff, 0xff, A7, A6 };
     
