@@ -222,7 +222,7 @@ void readJumperPins()
  */
 uint8_t getModuleId(boolean aIncludeBase)
 {
-    uint8_t moduleId = I2C_OUTPUT_BASE_ID;
+    uint8_t moduleId = systemData.i2cModuleID;
 
     if (moduleId > OUTPUT_NODE_MAX)
     {
