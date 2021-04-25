@@ -140,7 +140,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     
     
     // Headers for the exports
-    const char M_EXPORT_SYSTEM[]    PROGMEM = "#System\tVersion\tDetail\tReport";
+    const char M_EXPORT_SYSTEM[]    PROGMEM = "#System\tVersion\tReport\tDebug";
     const char M_EXPORT_INPUT[]     PROGMEM = "#Input\tNode\tPin\tType";
     const char M_EXPORT_INPUT_OUT[] PROGMEM = "\tOutput";
     const char M_EXPORT_OUTPUT[]    PROGMEM = "#Output\tNode\tPin\tType\tLo\tHi\tSpd\tReset";

@@ -404,7 +404,7 @@ class ImportExport
 
     /** Export the system parameters.
      */
-    void exportSystem(boolean aIncludeDump)
+    void exportSystem(uint8_t aDebugLevel)
     {
         // Export header comment.
         Serial.println(PGMT(M_EXPORT_SYSTEM));
@@ -415,10 +415,12 @@ class ImportExport
         Serial.print(PGMT(M_VERSION));
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_REPORT_PROMPTS[systemData.reportLevel]));
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_DEBUG_PROMPTS[aDebugLevel]));
         Serial.println();
         Serial.println();
 
-        if (aIncludeDump)
+        if (aDebugLevel >= DEBUG_FULL)
         {
             dumpMemory();
         }
@@ -652,7 +654,7 @@ class ImportExport
                               exportOutputs();
                               exportLocks(true);
                               break;
-            case EXP_SYSTEM:  exportSystem(debugLevel >= DEBUG_FULL);
+            case EXP_SYSTEM:  exportSystem(debugLevel);
                               break;
             case EXP_INPUTS:  exportInputs(false);
                               break;
