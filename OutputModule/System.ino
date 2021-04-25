@@ -135,9 +135,16 @@ void flashVersion()
     }
     
 #if !MASTER
+    // Decide how many jumper pins to indicate
+    uint8_t maskLimit = OUTPUT_NODE_MASK;
+    if (isJumperId())
+    {
+        maskLimit >>= 1;            // Don't show software jumper pin
+    }
+    
     // Flash module number.
     delay(DELAY_BLINK_LONG);
-    for (uint8_t mask = 1; mask <= OUTPUT_NODE_MASK; mask <<= 1)
+    for (uint8_t mask = 1; mask <= maskLimit; mask <<= 1)
     {
         digitalWrite(LED_BUILTIN, HIGH);
         delay((getModuleId(false) & mask) ? DELAY_BLINK_LONG : DELAY_BLINK);
