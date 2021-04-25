@@ -41,9 +41,6 @@
 #define LCD_COL_NODE         11   // Node number.
 #define LCD_COL_PIN          14   // Pin number.
 
-#define LCD_COL_I2C_PARAM     7   // I2C parameters(3) start at this col.
-#define LCD_COL_I2C_STEP      3   // Three columns per parameter.
-
 #define LCD_COL_REPORT_PARAM  8   // Report parameter.
 #define LCD_COL_REPORT_LENGTH 5   // Report parameter length.
 

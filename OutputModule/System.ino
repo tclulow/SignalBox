@@ -49,17 +49,6 @@ void debugSystemData()
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_SYSTEM));
         Serial.print(CHAR_SPACE);
-        Serial.print(PGMT(M_DEBUG_I2C));
-        Serial.print(CHAR_SPACE);
-        Serial.print(systemData.i2cControllerID, HEX);
-        Serial.print(CHAR_SPACE);
-        Serial.print(systemData.i2cInputBaseID,  HEX);
-        Serial.print(CHAR_SPACE);
-        Serial.print(systemData.i2cOutputBaseID, HEX);
-        Serial.print(CHAR_SPACE);
-        Serial.print(systemData.i2cModuleID,     HEX);
-
-        Serial.print(CHAR_SPACE);
         Serial.print(PGMT(M_DEBUG_DEBUG));
         Serial.print(CHAR_SPACE);
         Serial.print(systemData.debugLevel,      HEX);
@@ -233,7 +222,7 @@ void readJumperPins()
  */
 uint8_t getModuleId(boolean aIncludeBase)
 {
-    uint8_t moduleId = systemData.i2cModuleID;
+    uint8_t moduleId = I2C_OUTPUT_BASE_ID;
 
     if (moduleId > OUTPUT_NODE_MAX)
     {
@@ -248,11 +237,11 @@ uint8_t getModuleId(boolean aIncludeBase)
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_MODULE));
         Serial.print(CHAR_SPACE);
-        Serial.print(systemData.i2cOutputBaseID + moduleId, HEX);
+        Serial.print(I2C_OUTPUT_BASE_ID + moduleId, HEX);
         Serial.println();
     }
 
-    return (aIncludeBase ? systemData.i2cOutputBaseID : 0) + moduleId;
+    return (aIncludeBase ? I2C_OUTPUT_BASE_ID : 0) + moduleId;
 }
 
 

@@ -33,10 +33,10 @@ void readOutput(uint8_t aNode, uint8_t aPin)
             Serial.println();
         }
     
-        Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
+        Wire.beginTransmission(I2C_OUTPUT_BASE_ID + outputNode);
         Wire.write(COMMS_CMD_READ | outputPin);
         if (   (Wire.endTransmission() == 0)
-            && (Wire.requestFrom(systemData.i2cOutputBaseID + outputNode, sizeof(outputDef)) == sizeof(outputDef))
+            && (Wire.requestFrom(I2C_OUTPUT_BASE_ID + outputNode, sizeof(outputDef)) == sizeof(outputDef))
             && (Wire.available() == sizeof(outputDef)))
         {
             // Read the outputDef from the OutputModule.
@@ -90,7 +90,7 @@ void writeOutput()
         outputDef.printDef(M_DEBUG_WRITE, outputPin);
     }
 
-    Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
+    Wire.beginTransmission(I2C_OUTPUT_BASE_ID + outputNode);
     Wire.write(COMMS_CMD_WRITE | outputPin);
     outputDef.write();
     Wire.endTransmission();
@@ -112,7 +112,7 @@ void writeSaveOutput()
         outputDef.printDef(M_DEBUG_SAVE, outputPin);
     }
 
-    Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
+    Wire.beginTransmission(I2C_OUTPUT_BASE_ID + outputNode);
     Wire.write(COMMS_CMD_SAVE | outputPin);
     Wire.endTransmission();
 }
@@ -136,7 +136,7 @@ void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDela
         Serial.println();
     }
 
-    Wire.beginTransmission(systemData.i2cOutputBaseID + aNode);
+    Wire.beginTransmission(I2C_OUTPUT_BASE_ID + aNode);
     Wire.write((aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | aPin);
     Wire.write(aDelay);
     Wire.endTransmission();
@@ -159,7 +159,7 @@ void resetOutput()
         outputDef.printDef(M_DEBUG_RESET, outputPin);
     }
 
-    Wire.beginTransmission(systemData.i2cOutputBaseID + outputNode);
+    Wire.beginTransmission(I2C_OUTPUT_BASE_ID + outputNode);
     Wire.write(COMMS_CMD_RESET | outputPin);
     Wire.endTransmission();
 
@@ -175,10 +175,10 @@ void readOutputStates(uint8_t aNode)
 {
     int states;
     
-    Wire.beginTransmission(systemData.i2cOutputBaseID + aNode);
+    Wire.beginTransmission(I2C_OUTPUT_BASE_ID + aNode);
     Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_STATES);
     if (   (Wire.endTransmission() == 0)
-        && (Wire.requestFrom(systemData.i2cOutputBaseID + aNode, OUTPUT_STATE_LEN) == OUTPUT_STATE_LEN)
+        && (Wire.requestFrom(I2C_OUTPUT_BASE_ID + aNode, OUTPUT_STATE_LEN) == OUTPUT_STATE_LEN)
         && ((states = Wire.read()) >= 0))
     {
         setOutputNodePresent(aNode, true);

@@ -13,12 +13,23 @@
 #ifndef Config_h
 #define Config_h
 
+
+// i2c node numbers.
+#define I2C_CONTROLLER_ID        0x10   // Controller ID.
+#define I2C_INPUT_BASE_ID        0x20   // Input nodes' base ID.
+#define I2C_OUTPUT_BASE_ID       0x50   // Output nodes' base ID.
+#define I2C_MODULE_ID_JUMPERS    0xff   // Use jumpers to decide module ID.
+
 #define LCD_I2C                  true   // Include code for LCD connected by I2C.
 #define LCD_I2C_LO               0x27   // Range of IDs to scan for LCD I2C device.
 #define LCD_I2C_HI               0x3F
 
+
+// Serial IO
 #define SERIAL_SPEED            19200   // Speed of the serial port.
 
+
+// Delays
 #define DELAY_BLINK               250   // Blink interval when showing version number.
 #define DELAY_BLINK_LONG          750   // Blink to show zero, or gap between sections.
 #define DELAY_READ               2000   // Delay in msecs when the LCD may need to be read by an operator.
@@ -30,6 +41,8 @@
 
 #define DELAY_MULTIPLIER        1000L   // Multiply delay values by this amount (convert to seconds).
 
+
+// Steps
 #define STEP_HARDWARE_SCAN     10000L   // Re-scan for new hardware every 10 seconds.
 #define STEP_INPUT_SCAN           50L   // Steps in msecs between scans of the input switches.
 #define STEP_HEARTBEAT           200L   // Steps in msecs between changes of the heartbeat indicator.
@@ -37,6 +50,8 @@
 #define STEP_LED                   5L   // Delay (msecs) between steps of a LED.
 #define STEP_FLASH                10L   // Delay (msecs) between steps of flashes of a FLASH or BLINK.
 
+
+// Operational constants
 #define MAX_PACE                  124   // Maximum pace value.
 #define PACE_STEPS                128   // Pace adjustment when converting to steps.
 

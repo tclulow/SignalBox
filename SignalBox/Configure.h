@@ -24,11 +24,10 @@
 
 // Sys menu states.
 #define SYS_REPORT   0
-#define SYS_I2C      1
-#define SYS_NODES    2
-#define SYS_IDENT    3
-#define SYS_DEBUG    4
-#define SYS_MAX      5
+#define SYS_NODES    1
+#define SYS_IDENT    2
+#define SYS_DEBUG    3
+#define SYS_MAX      4
 
 
 /** Configure the system.
@@ -178,8 +177,6 @@ class Configure
         {
             case SYS_REPORT: displaySystemReportParams();
                              break;
-            case SYS_I2C:    displaySystemI2cParams();
-                             break;
             case SYS_NODES:  displaySystemNodesParams();
                              break;
             case SYS_IDENT:  displaySystemIdentParams();
@@ -198,22 +195,6 @@ class Configure
     {
         disp.clearRow(LCD_COL_MARK, LCD_ROW_DET);
         disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_DET, M_REPORT_PROMPTS[systemData.reportLevel], LCD_LEN_OPTION);    
-    }
-
-
-    /** Display System's I2C parameters.
-     */
-    void displaySystemI2cParams()
-    {
-        uint8_t col = LCD_COL_I2C_PARAM;
-
-        disp.clearRow(LCD_COL_MARK, LCD_ROW_DET);
-        
-        disp.printHexByteAt(col, LCD_ROW_DET, systemData.i2cControllerID);
-        col += LCD_COL_OUTPUT_STEP;
-        disp.printHexByteAt(col, LCD_ROW_DET, systemData.i2cInputBaseID);
-        col += LCD_COL_OUTPUT_STEP;
-        disp.printHexByteAt(col, LCD_ROW_DET, systemData.i2cOutputBaseID);
     }
 
 
@@ -239,15 +220,6 @@ class Configure
     {
         disp.clearRow(LCD_COL_MARK, LCD_ROW_DET);
         disp.printProgStrAt(LCD_COL_DEBUG_PARAM, LCD_ROW_DET, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_LEN_OPTION);    
-    }
-
-
-    /** Display an i2c parameter's prompt above it.
-     */
-    void displayI2cPrompt(uint8_t aParam)
-    {
-        disp.clearRow(LCD_COL_I2C_PARAM, LCD_ROW_EDT);
-        disp.printProgStrAt(LCD_COL_I2C_PARAM + aParam * LCD_COL_I2C_STEP, LCD_ROW_EDT, M_I2C_PROMPTS[aParam], LCD_LEN_OPTION);
     }
 
 
@@ -599,8 +571,6 @@ class Configure
                                     {
                                         case SYS_REPORT: changed |= menuSystemReport();
                                                          break;
-                                        case SYS_I2C:    changed |= menuSystemI2c();
-                                                         break;
                                         case SYS_NODES:  scanHardware();
                                                          break;
                                         case SYS_IDENT:  identOutputs();
@@ -652,63 +622,6 @@ class Configure
 
         markField(LCD_COL_REPORT_PARAM, LCD_ROW_DET, LCD_COL_REPORT_LENGTH, false);
         
-        return changed;
-    }
-
-
-    /** Process System i2c menu.
-     *  Reurn true if changes made.
-     */
-    boolean menuSystemI2c()
-    {
-        boolean changed = false;
-        int     index   = 0;
-
-        uint8_t params[] = { systemData.i2cControllerID, systemData.i2cInputBaseID, systemData.i2cOutputBaseID };
-        displayI2cPrompt(index);
-        markField(LCD_COL_I2C_PARAM, LCD_ROW_DET, 2, true);
-
-        while (index >= 0)
-        {
-            switch (waitForButtonPress())
-            {
-                case BUTTON_NONE:   break;
-                case BUTTON_UP:     params[index] += 1;
-                                    disp.printHexByteAt(LCD_COL_I2C_PARAM + index * LCD_COL_I2C_STEP, LCD_ROW_DET, params[index]);
-                                    changed = true;
-                                    break;
-                case BUTTON_DOWN:   params[index] -= 1;
-                                    disp.printHexByteAt(LCD_COL_I2C_PARAM + index * LCD_COL_I2C_STEP, LCD_ROW_DET, params[index]);
-                                    changed = true;
-                                    break;
-                case BUTTON_SELECT: break;
-                case BUTTON_LEFT:   markField(LCD_COL_I2C_PARAM + index * LCD_COL_I2C_STEP, LCD_ROW_DET, 2, false);
-                                    index -= 1;
-                                    if (index >= 0)
-                                    {
-                                        displayI2cPrompt(index);
-                                        markField(LCD_COL_I2C_PARAM + index * LCD_COL_I2C_STEP, LCD_ROW_DET, 2, true);
-                                    }
-                                    break;
-                case BUTTON_RIGHT:  if (index < 2)
-                                    {
-                                        markField(LCD_COL_I2C_PARAM + index * LCD_COL_I2C_STEP, LCD_ROW_DET, 2, false);
-                                        index += 1;
-                                        displayI2cPrompt(index);
-                                        markField(LCD_COL_I2C_PARAM + index * LCD_COL_I2C_STEP, LCD_ROW_DET, 2, true);
-                                    }
-                                    break;
-            }
-        }
-
-        // Update systemData if changes have been made.
-        if (changed)
-        {
-            systemData.i2cControllerID = params[0];
-            systemData.i2cInputBaseID  = params[1];
-            systemData.i2cOutputBaseID = params[2];
-        }
-
         return changed;
     }
 
@@ -1050,11 +963,11 @@ class Configure
         int response = aOldNode;
 
         // Send the renumber command to the node concerned.
-        Wire.beginTransmission(systemData.i2cOutputBaseID + aOldNode);
+        Wire.beginTransmission(I2C_OUTPUT_BASE_ID + aOldNode);
         Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_RENUMBER);
         Wire.write(aNewNode);
         if (   ((response = Wire.endTransmission()) == 0)
-            && ((response = Wire.requestFrom(systemData.i2cOutputBaseID + outNode, OUTPUT_RENUMBER_LEN)) == OUTPUT_RENUMBER_LEN)
+            && ((response = Wire.requestFrom(I2C_OUTPUT_BASE_ID + outNode, OUTPUT_RENUMBER_LEN)) == OUTPUT_RENUMBER_LEN)
             && ((response = Wire.read()) >= 0))
         {
             response &= OUTPUT_NODE_MASK;       // The new node number of the Output as returned by the node
@@ -1153,7 +1066,7 @@ class Configure
                             Serial.println();    
                         }
             
-                        Wire.beginTransmission(systemData.i2cOutputBaseID + node);
+                        Wire.beginTransmission(I2C_OUTPUT_BASE_ID + node);
                         Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_MOVE_LOCKS);
                         Wire.write(aOldNode);
                         Wire.write(response);

@@ -414,15 +414,6 @@ class ImportExport
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_VERSION));
         Serial.print(CHAR_TAB);
-        Serial.print(PGMT(M_SYS_I2C));
-        Serial.print(CHAR_TAB);
-        printHex(systemData.i2cControllerID, 2);
-        Serial.print(CHAR_TAB);
-        printHex(systemData.i2cInputBaseID,  2);
-        Serial.print(CHAR_TAB);
-        printHex(systemData.i2cOutputBaseID, 2);
-        Serial.print(CHAR_TAB);
-        // printHex(systemData.reportLevel,     2);
         Serial.print(PGMT(M_REPORT_PROMPTS[systemData.reportLevel]));
         Serial.println();
         Serial.println();

@@ -60,11 +60,11 @@ void scanInputHardware()
         if (!isInputNodePresent(node))
         {
 #if LCD_I2C
-            if (disp.getLcdId() != (systemData.i2cInputBaseID + node))
+            if (disp.getLcdId() != (I2C_INPUT_BASE_ID + node))
 #endif
             {
                 // Send message to the Input and see if it responds.
-                Wire.beginTransmission(systemData.i2cInputBaseID + node);
+                Wire.beginTransmission(I2C_INPUT_BASE_ID + node);
                 if (Wire.endTransmission() == 0)
                 {
                     setInputNodePresent(node, true);
@@ -72,7 +72,7 @@ void scanInputHardware()
                     // Configure MCP for input.
                     for (uint8_t command = 0; command < INPUT_COMMANDS_LEN; command++)
                     {
-                        Wire.beginTransmission(systemData.i2cInputBaseID + node); 
+                        Wire.beginTransmission(I2C_INPUT_BASE_ID + node); 
                         Wire.write(INPUT_COMMANDS[command]);
                         Wire.write(MCP_ALL_HIGH);
                         Wire.endTransmission();
@@ -104,7 +104,7 @@ void dispInputHardware()
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
 #if LCD_I2C
-        if (disp.getLcdId() == (systemData.i2cInputBaseID + node))
+        if (disp.getLcdId() == (I2C_INPUT_BASE_ID + node))
         {
             disp.printCh(CHAR_HASH);   
         }
@@ -319,7 +319,7 @@ void sendDebugLevel()
     {
         if (isOutputNodePresent(node))
         {
-            Wire.beginTransmission(systemData.i2cOutputBaseID + node);
+            Wire.beginTransmission(I2C_OUTPUT_BASE_ID + node);
             Wire.write(COMMS_CMD_DEBUG | (getDebug() & COMMS_OPTION_MASK));
             Wire.endTransmission();
 
@@ -390,10 +390,10 @@ uint16_t readInputNode(uint8_t aNode)
 {
     uint16_t value = 0;
 
-    Wire.beginTransmission(systemData.i2cInputBaseID + aNode);    
+    Wire.beginTransmission(I2C_INPUT_BASE_ID + aNode);    
     Wire.write(MCP_GPIOA);
     if (   (Wire.endTransmission())
-        || (Wire.requestFrom(systemData.i2cInputBaseID + aNode, INPUT_STATE_LEN) != INPUT_STATE_LEN))
+        || (Wire.requestFrom(I2C_INPUT_BASE_ID + aNode, INPUT_STATE_LEN) != INPUT_STATE_LEN))
     {
         recordInputError(aNode);
         value = currentSwitchState[aNode];  // Pretend no change if comms error.
@@ -748,8 +748,8 @@ void setup()
     }
 
     // Initialise subsystems.
-    Wire.begin(systemData.i2cControllerID);     // I2C network
-    // Wire.setTimeout(25000L);                 // Doesn't seem to have any effect.
+    Wire.begin(I2C_CONTROLLER_ID);      // I2C network
+    // Wire.setTimeout(25000L);         // Doesn't seem to have any effect.
 
 #if LCD_I2C
     // Scan for i2c LCD.
@@ -759,7 +759,7 @@ void setup()
         if (Wire.endTransmission() == 0)   
         {
             disp.setLcd(id);
-            announce();         // Again, to make sure it appears on i2c LCD.
+            announce();                 // Again, to make sure it appears on i2c LCD.
             break;
         }
     }

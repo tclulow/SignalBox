@@ -23,13 +23,6 @@
 #define VERSION         0x0341              // Version number of software.  See also M_VERSION.
 
 
-// i2c node numbers.
-#define I2C_DEFAULT_CONTROLLER_ID   0x10    // Controller ID.
-#define I2C_DEFAULT_INPUT_BASE_ID   0x20    // Input nodes' base ID.
-#define I2C_DEFAULT_OUTPUT_BASE_ID  0x50    // Output nodes' base ID.
-#define I2C_MODULE_ID_JUMPERS       0xff    // Use jumpers to decide module ID.
-
-
 // Timing constants
 #define MILLIS_PER_SECOND   (1000L)                     // Millisecs in a second.
 #define MILLIS_PER_MINUTE   (MILLIS_PER_SECOND * 60L)   // Millisecs in a minute.
@@ -142,9 +135,8 @@ struct SystemData
     long    magic           = MAGIC_NUMBER;                 // Magic number to identify software.
     long    version         = VERSION;                      // Software version number to identify upgrades.
 
-    uint8_t i2cControllerID = I2C_DEFAULT_CONTROLLER_ID;    // I2C node IDs.
-    uint8_t i2cInputBaseID  = I2C_DEFAULT_INPUT_BASE_ID;
-    uint8_t i2cOutputBaseID = I2C_DEFAULT_OUTPUT_BASE_ID;
+    uint8_t rfu3[3];                                        // RFU. Was the I2C addresses.
+    
     uint8_t i2cModuleID     = I2C_MODULE_ID_JUMPERS;        // The module number we're using - default, use hardware.
 
     uint8_t debugLevel      = DEBUG_ERRORS;                 // Debugging level.
