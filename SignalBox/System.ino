@@ -178,14 +178,11 @@ boolean ezyBusDetected()
 }
 
 
-/** Make sure Ezybus won't recognise the (Panel) setup.
+/** Make sure Ezybus won't recognise the (SignalBox) setup.
  */
 void ezyBusClear()
 {
-    if (ezyBusDetected())
-    {
-        EEPROM.put(EZY_MAGIC_ADDR, EZY_MAGIC + 1);      // Corrupt the EzyBus magic number slightly.
-    }
+    EEPROM.put(EZY_MAGIC_ADDR, EZY_MAGIC + 1);      // Corrupt the EzyBus magic number slightly.
 }
 
 
