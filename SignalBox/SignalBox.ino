@@ -753,7 +753,7 @@ void setup()
 
 #if LCD_I2C
     // Scan for i2c LCD.
-    for (uint8_t id = LCD_I2C_HI; id >= LCD_I2C_LO; id--)
+    for (uint8_t id = I2C_LCD_HI; id >= I2C_LCD_LO; id--)
     {
         Wire.beginTransmission(id);
         if (Wire.endTransmission() == 0)   
