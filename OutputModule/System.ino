@@ -211,7 +211,14 @@ void readJumperPins()
         if (jumperPins[pin] <= ANALOG_PIN_LAST)
         {
             // Pins should be in INPUT_PULLUP state at startup.
-            // pinMode(jumperPins[pin], INPUT_PULLUP);
+            pinMode(jumperPins[pin], INPUT_PULLUP);
+//            Serial.print("Pin ");
+//            Serial.print(jumperPins[pin]);
+//            Serial.print(", analog=");
+//            Serial.print(analogRead(jumperPins[pin]));
+//            Serial.print(", digital=");
+//            Serial.print(digitalRead(jumperPins[pin]));
+//            Serial.println();
             if (   (   (jumperPins[pin] >= ANALOG_PIN_FIRST)
                     && (analogRead(jumperPins[pin]) > ANALOG_PIN_CUTOFF))
                 || (   (jumperPins[pin] <  ANALOG_PIN_FIRST)
