@@ -135,9 +135,16 @@ void flashVersion()
     }
     
 #if !MASTER
+    // Decide how many jumper pins to indicate
+    uint8_t maskLimit = OUTPUT_NODE_MASK;
+    if (isJumperId())
+    {
+        maskLimit >>= 1;            // Don't show software jumper pin
+    }
+    
     // Flash module number.
     delay(DELAY_BLINK_LONG);
-    for (uint8_t mask = 1; mask <= OUTPUT_NODE_MASK; mask <<= 1)
+    for (uint8_t mask = 1; mask <= maskLimit; mask <<= 1)
     {
         digitalWrite(LED_BUILTIN, HIGH);
         delay((getModuleId(false) & mask) ? DELAY_BLINK_LONG : DELAY_BLINK);
@@ -178,11 +185,14 @@ boolean ezyBusDetected()
 }
 
 
-/** Make sure Ezybus won't recognise the (SignalBox) setup.
+/** Make sure Ezybus won't recognise the (Panel) setup.
  */
 void ezyBusClear()
 {
-    EEPROM.put(EZY_MAGIC_ADDR, EZY_MAGIC + 1);      // Corrupt the EzyBus magic number slightly.
+    if (ezyBusDetected())
+    {
+        EEPROM.put(EZY_MAGIC_ADDR, EZY_MAGIC + 1);      // Corrupt the EzyBus magic number slightly.
+    }
 }
 
 
@@ -201,7 +211,14 @@ void readJumperPins()
         if (jumperPins[pin] <= ANALOG_PIN_LAST)
         {
             // Pins should be in INPUT_PULLUP state at startup.
-            // pinMode(jumperPins[pin], INPUT_PULLUP);
+            pinMode(jumperPins[pin], INPUT_PULLUP);
+//            Serial.print("Pin ");
+//            Serial.print(jumperPins[pin]);
+//            Serial.print(", analog=");
+//            Serial.print(analogRead(jumperPins[pin]));
+//            Serial.print(", digital=");
+//            Serial.print(digitalRead(jumperPins[pin]));
+//            Serial.println();
             if (   (   (jumperPins[pin] >= ANALOG_PIN_FIRST)
                     && (analogRead(jumperPins[pin]) > ANALOG_PIN_CUTOFF))
                 || (   (jumperPins[pin] <  ANALOG_PIN_FIRST)
