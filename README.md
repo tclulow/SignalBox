@@ -36,3 +36,6 @@ The software must be programmed onto the Uno (via the USB) and the Nanos (which 
 
 Note that EzyBus numbers its input and output modules and their pins from 1 to 8 or 1 to 16 (0x10 hexadecimal). This software numbers from zero to 7 or 15 (0xF hexadecimal).
 
+## Building
+
+Documentation to help building the sketches is [here](Build.md).
