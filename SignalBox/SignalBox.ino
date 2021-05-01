@@ -32,6 +32,10 @@ long tickHeartBeat    = 0;      // Time of last heartbeat.
 long displayTimeout   = 1L;     // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
 
 
+// A singleton instance of the Configure class.
+Configure configure;
+
+
 /** Announce ourselves.
  */ 
 void announce()
@@ -340,9 +344,9 @@ void sendDebugLevel()
 
 
 /** Scan all the Inputs.
- *  Process any that have changed.
+ *  Parameter indicates if Configuration is in progress.
  */
-void scanInputs()
+void scanInputs(boolean aConfiguration)
 { 
     // Scan all the nodes. 
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
@@ -359,8 +363,16 @@ void scanInputs()
                     uint16_t state = pins & mask;
                     if (state != (currentSwitchState[node] & mask))
                     {
+                        // Ensure Input is loaded and handle the action.
                         loadInput(node, pin);
-                        processInput(state != 0);
+                        if (aConfiguration)
+                        {
+                            configure.displaySelectedInput(node, pin);  // Configuring is in progress, display the input actioned.
+                        }
+                        else
+                        {
+                            processInput(state != 0);                   // Normal processing, action the input.
+                        }
                     }
                 }
             
@@ -469,6 +481,7 @@ void processInput(boolean aState)
         }
     }
 }
+
 
 
 /** Check if any of the Input's Outputs are locked.
@@ -835,7 +848,7 @@ void loop()
     {
         tickInputScan = now + STEP_INPUT_SCAN;
         // scanOutputs();
-        scanInputs();
+        scanInputs(false);
     }
     
     // Show heartbeat.

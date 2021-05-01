@@ -805,9 +805,6 @@ class Configure
         uint8_t button   = BUTTON_NONE;     // The button that was pressed.
         uint8_t curNode  = inpNode;         // The current input node and pin.
         uint8_t curPin   = inpPin;
-        uint8_t selNode  = inpNode;         // The most recently selected node and pin.
-        uint8_t selPin   = inpPin;
-        int     mask     = 0;               // Mask for checking input pin states.
 
         // Announce we're scanning
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_SCANNING, LCD_COLS);
@@ -816,62 +813,23 @@ class Configure
         // Scan all the input nodes until a button is pressed.
         while ((button = readButton()) == BUTTON_NONE)
         {
-            for (inpNode = 0; inpNode < INPUT_NODE_MAX; inpNode++)
-            {
-                if (isInputNodePresent(inpNode))                                        
-                {
-                    // Read current state of pins and if there's been a change
-                    uint16_t pins = readInputNode(inpNode);
-                    if (pins != currentSwitchState[inpNode])
-                    {
-                        // Process all the changed pins.
-                        for (inpPin = 0, mask = 1; inpPin < INPUT_PIN_MAX; inpPin++, mask <<= 1)
-                        {
-                            uint16_t state = pins & mask;
-                            if (state != (currentSwitchState[inpNode] & mask))
-                            {
-                                // An input was actioned, record it and show it.
-                                selNode = inpNode;
-                                selPin  = inpPin;
-                                loadInput(inpNode, inpPin);
-                                displayInputNode();
-                                displayDetail();
-
-                                if (state != 0)
-                                {
-                                    currentSwitchState[inpNode] |=  mask;
-                                }
-                                else
-                                {
-                                    currentSwitchState[inpNode] &= ~mask;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            
+            scanInputs(true);
             delay(DELAY_BUTTON_WAIT);
         }
 
-        // Recover current node/pin unless a different one was selected.
-        if (button == BUTTON_SELECT)
-        {
-            inpNode = selNode;
-            inpPin  = selPin;
-        }
-        else
+        // If operation cancelled, revert to original input.
+        if (button != BUTTON_SELECT)
         {
             inpNode = curNode;
             inpPin  = curPin;
         }
 
-        // Re-load current button and display attributes.
+        // Load/reload selected (or original) input and display attributes.
         loadInput(inpNode, inpPin);
         displayInputNode();
         displayDetail();
     }
-    
+
 
     /** Move a node to a new number.
      */
@@ -2197,12 +2155,26 @@ class Configure
         return button == BUTTON_SELECT;
     }
 
+
     public:
     
     /** A Configure object.
      */
     Configure()
     {
+    }
+
+
+    /** Helper to display currently-selected input.
+     *  Used when scanning inputs during configuration.
+     */
+    void displaySelectedInput(uint8_t aNode, uint8_t aPin)
+    {
+        inpNode = aNode;        // Record the node and pin.
+        inpPin  = aPin;
+        
+        displayInputNode();     // Display tInput and it's configuration.
+        displayDetail();
     }
 
 
@@ -2219,9 +2191,7 @@ class Configure
 };
 
 
-/** A singleton instance of the class.
- */
-Configure configure;
+
 
 
 #endif

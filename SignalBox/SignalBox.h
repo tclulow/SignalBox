@@ -31,6 +31,12 @@ void scanHardware();
 uint16_t readInputNode(uint8_t aNode);
 
 
+/** Scan all the Inputs.
+ *  Parameter indicates if Configuration is in progress.
+ */
+void scanInputs(boolean aConfiguration);
+
+
 /** Process all the Input's Outputs.
  */
 void processInputOutputs(boolean aNewState);
