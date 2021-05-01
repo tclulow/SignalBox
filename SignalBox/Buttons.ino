@@ -18,7 +18,7 @@
  */
 void initButtonPins()
 {
-    for (uint8_t button = 1; button <= BUTTON_LIMIT; button++)
+    for (uint8_t button = BUTTON_LOW; button <= BUTTON_HIGH; button++)
     {
         pinMode(BUTTON_PINS[button], INPUT_PULLUP);
     }
@@ -42,10 +42,10 @@ void calibrateButtons()
 
     // Now start calibration
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_PRESS);   // Announce we're ready to start
-    systemData.buttons[BUTTON_LIMIT] = 0;                       // Marker for last button.
+    systemData.buttons[BUTTON_HIGH] = 0;                        // Marker for last button.
     
     // Request values for all buttons in turn.
-    for (int button = 0; button < BUTTON_LIMIT; button++)
+    for (int button = 0; button < BUTTON_HIGH; button++)
     {
         disp.clearRow(LCD_COL_CALIBRATE, LCD_ROW_DET);
         disp.printProgStrAt(LCD_COL_CALIBRATE, LCD_ROW_DET, M_BUTTONS[button + 1], LCD_LEN_OPTION);
@@ -120,7 +120,8 @@ uint8_t readButton()
 //    }
 
     // See if BUTTON_ANALOG is pressed.
-    for (button = 0; button < BUTTON_LIMIT; button++)
+    // Analog cutoff is in the previous cell in the systemData.button array, so index from BUTTON_NONE.
+    for (button = BUTTON_NONE; button < BUTTON_HIGH; button++)
     {
         if (value >= systemData.buttons[button])
         {
@@ -132,7 +133,7 @@ uint8_t readButton()
     if (button == BUTTON_NONE)
     {
         // Scan alternate buttons.
-        for (button = BUTTON_LIMIT; button > BUTTON_NONE; button--)
+        for (button = BUTTON_HIGH; button >= BUTTON_LOW; button--)
         {
             if (!digitalRead(BUTTON_PINS[button]))
             {

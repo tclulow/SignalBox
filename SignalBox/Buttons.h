@@ -25,7 +25,9 @@
 #define BUTTON_DOWN   3
 #define BUTTON_UP     4
 #define BUTTON_RIGHT  5
-#define BUTTON_LIMIT  5
+
+#define BUTTON_LOW    1             // Button range, 1 to 5
+#define BUTTON_HIGH   5
 
 #define BUTTON_THRESHHOLD   1000    // Analog limit above which no button is considered to be pressed.
 

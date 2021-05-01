@@ -142,7 +142,7 @@ struct SystemData
     uint8_t debugLevel      = DEBUG_ERRORS;                 // Debugging level.
     uint8_t reportLevel     = REPORT_LONG;                  // Reporting level.
     
-    int     buttons[6];                                     // Configuration of analog buttons - BUTTON_LIMIT + 1.
+    int     buttons[6];                                     // Configuration of analog buttons - BUTTON_HIGH + 1.
     
     char    rfu[6];                                         // RFU. 32 bytes in all.
 };
