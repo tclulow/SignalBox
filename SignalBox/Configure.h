@@ -836,11 +836,22 @@ class Configure
                                 loadInput(inpNode, inpPin);
                                 displayInputNode();
                                 displayDetail();
+
+                                if (state != 0)
+                                {
+                                    currentSwitchState[inpNode] |=  mask;
+                                }
+                                else
+                                {
+                                    currentSwitchState[inpNode] &= ~mask;
+                                }
                             }
                         }
                     }
                 }
             }
+            
+            delay(DELAY_BUTTON_WAIT);
         }
 
         // Recover current node/pin unless a different one was selected.
