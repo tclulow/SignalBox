@@ -2173,7 +2173,7 @@ class Configure
         inpNode = aNode;        // Record the node and pin.
         inpPin  = aPin;
         
-        displayInputNode();     // Display tInput and it's configuration.
+        displayInputNode();     // Display the Input and it's configuration.
         displayDetail();
     }
 
