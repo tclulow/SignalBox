@@ -36,15 +36,15 @@ There are also various tuning parameters that can be adjusted here.
 
 ## PCBs
 
-There are two version of the output module PCB. The original takes a Uno on a daughter board, the new one uses a DIP ATmega328 chip.
+There are two version of the output module PCB. The original takes a Nano on a daughter board, the new one uses a DIP ATmega328 chip.
 
 ### Old PCB
 
 The old PCB is easy to program using the Arduino IDE and a USB cable. 
 
-The software for the Unos is designed for the original EzyBus PCBs which had the address jumpers on pins 1, 0, A7 and A6. The code normally ignores the digital pins one and zero as these are also used for serial-IO and setting jumpers here will disable the comms. The code can be adjusted to use these pins but then the Nano must be (re)programmed out of the PCB as the jumpers on these pins (J1 and J2) will disable programming on the PCB.
+The software for the Nanos is designed for the original EzyBus PCBs which had the address jumpers on pins 1, 0, A7 and A6. This code normally ignores the digital pins one and zero as these are also used for serial-IO and setting jumpers here will disable the comms. The code can be adjusted to use these pins but then the Nano must be (re)programmed out of the PCB as the jumpers on these pins (J1 and J2) will disable programming on the PCB.
 
-If J1 and J2 are disabled, then only J3 and J4 are used and will set the ID to 0, 4, 8 or C (Hexadecimal). For more than four modules either enable the IO pins for J1 and J2 or set the modules to use the software-allocated ID as described in the manual.
+If J1 and J2 are disabled, then only J3 and J4 are used and will set the ID to 0, 4, 8 or C (Hexadecimal). For more than four modules either enable the IO pins for J1 and J2, or set the modules to use the software-allocated ID as described in the manual.
 
 ### New PCB
 
@@ -59,10 +59,10 @@ to this:
 
     const uint8_t jumperPins[JUMPER_PINS] = { 4, 5, 6, 7 };
 
-Note that these pins are shared with the outputs (the software reads these pins as inputs to read the jumpers at start-up, then configures them as outputs to drive the attached hardware (Servos, LEDs etc). If no jmpers are set, then this will give the module a hardware ID of 0xf (ie all jumpers default to high) but if a sufficiently low-impedance output is connected (and a LED with dropper resistor is often low enough) then these pins will read low (and change the i2c ID accordingly).
+Note that these pins are shared with the outputs (the software configures these pins as inputs to read the jumpers at start-up, then configures them as outputs to drive the attached hardware (Servos, LEDs etc). If no jmpers are set, then this will give the module a hardware ID of 0xf (ie all jumpers default to high) but if a sufficiently low-impedance output is connected (and a LED with dropper resistor is often low enough) then these pins will read low (and change the i2c ID accordingly).
 
 Either ensure that only Servos are connected to outputs 4, 5, 6, and 7, or use software-allocated ID as described in the manual.
-If using software-allocation, perform this operation with no outputs connected and seperately from the rest of the system if the default ID (0xf) would clash with an existing module.
+If using software-allocation and if the default ID (0xf) would clash with an existing module, perform this operation with no outputs connected and seperately from the rest of the system .
 
 
 
