@@ -576,11 +576,11 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
             disp.printHexChAt(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, outNode);
             disp.printHexCh(outPin);
             disp.printCh(CHAR_SPACE);
-            disp.printCh(CHAR_SPACE);
             disp.printHexCh(outputDef.getPace());
             disp.printCh(CHAR_SPACE);
-            disp.printCh(CHAR_SPACE);
-            disp.printHexCh(aDelay);
+            disp.printCh(outputDef.getResetCh());
+            disp.setCursor(-2, LCD_ROW_BOT);
+            disp.printDec(aDelay, 2, CHAR_SPACE);
             
 //            if (isReportEnabled(REPORT_PAUSE))
             {

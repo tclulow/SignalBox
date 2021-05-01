@@ -445,6 +445,31 @@ class OutputDef
     {
         reset = aReset;
     }
+
+
+    /** Gets the reset value as a character.
+     *  Space if zero.
+     *  Hex character if 0x1 - 0xf.
+     *  Hash symbol if greater.
+     */
+    char getResetCh()
+    {
+        char ch = CHAR_SPACE;
+        
+        if (getReset() > 0)
+        {
+            if (getReset() < 0x10)
+            {
+                ch = HEX_CHARS[reset];
+            }
+            else
+            {
+                ch = CHAR_HASH;
+            }
+        }
+
+        return ch;
+    }
 };
 
 

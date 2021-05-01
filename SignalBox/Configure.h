@@ -337,17 +337,7 @@ class Configure
                 disp.printCh(CHAR_SPACE);
                 disp.printHexCh(outputDef.getPace());
                 disp.printCh(CHAR_SPACE);
-                if (outputDef.getReset() > 0)
-                {
-                    if (outputDef.getReset() < 0x10)
-                    {
-                        disp.printHexCh(outputDef.getReset());
-                    }
-                    else
-                    {
-                        disp.printCh(CHAR_HASH);
-                    }
-                }
+                disp.printCh(outputDef.getResetCh());
             }
             else if (topMenu == TOP_LOCKS)
             {
