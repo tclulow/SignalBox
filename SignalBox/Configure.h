@@ -2070,11 +2070,11 @@ class Configure
 
     /** Test the current Configuration.
      *  Most outputs change state and then change back again.
-     *  Flashers always go Hi first, then Lo.
+     *  Blinkers always go Hi first, then Lo.
      */
     void testOutput()
     {
-        if (outputDef.isFlasher())
+        if (outputDef.getType() == OUTPUT_TYPE_BLINK)
         {
             writeOutputState(outputNode, outputPin, true,  0);
             waitForButtonRelease();
