@@ -84,10 +84,10 @@ class Display
 
 #if LCD_I2C
     LiquidCrystal_I2C* lcd2;        // An LCD attached using i2c.
-    uint8_t            lcdId = 0;   // The ID of the I2C LCD.
 #else
     LiquidCrystal*     lcd2;        // Dummy variable, never set.
 #endif
+    uint8_t            lcdId = 0;   // The ID of the i2c LCD. Never set if no i2c LCD.
 
     
     public:
@@ -118,15 +118,17 @@ class Display
         lcd2->backlight();
         lcd2->createChar(CHAR_LO, BYTES_LO);      
     }
+#endif
 
 
     /** Gets the i2c LCD's ID.
+     *  If no i2c LCD connected (or code is disabled with LCD_I2C false),
+     *  then this is never set.
      */
     uint8_t getLcdId()
     {
         return lcdId;
     }
-#endif
     
 
     /** Clears the display.

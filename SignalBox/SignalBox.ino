@@ -63,9 +63,7 @@ void scanInputHardware()
     {
         if (!isInputNodePresent(node))
         {
-#if LCD_I2C
             if (disp.getLcdId() != (I2C_INPUT_BASE_ID + node))
-#endif
             {
                 // Send message to the Input and see if it responds.
                 Wire.beginTransmission(I2C_INPUT_BASE_ID + node);
@@ -107,13 +105,11 @@ void dispInputHardware()
 
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
-#if LCD_I2C
         if (disp.getLcdId() == (I2C_INPUT_BASE_ID + node))
         {
             disp.printCh(CHAR_HASH);   
         }
         else
-#endif
         {
             if (isInputNodePresent(node))
             {  
@@ -722,6 +718,19 @@ void processCommand()
  */
 void setup()
 {
+#if LCD_I2C
+    // Scan for i2c LCD before we do anything else.
+    for (uint8_t id = I2C_LCD_HI; id >= I2C_LCD_LO; id--)
+    {
+        Wire.beginTransmission(id);
+        if (Wire.endTransmission() == 0)   
+        {
+            disp.setLcd(id);
+            break;
+        }
+    }
+#endif
+
     // Initial announcement/splash message.
     announce();
 
@@ -763,20 +772,6 @@ void setup()
     // Initialise subsystems.
     Wire.begin(I2C_CONTROLLER_ID);      // I2C network
     // Wire.setTimeout(25000L);         // Doesn't seem to have any effect.
-
-#if LCD_I2C
-    // Scan for i2c LCD.
-    for (uint8_t id = I2C_LCD_HI; id >= I2C_LCD_LO; id--)
-    {
-        Wire.beginTransmission(id);
-        if (Wire.endTransmission() == 0)   
-        {
-            disp.setLcd(id);
-            announce();                 // Again, to make sure it appears on i2c LCD.
-            break;
-        }
-    }
-#endif
 
     // Check if version update required.
     if (systemData.version != VERSION)
