@@ -21,7 +21,7 @@ char    commandBuffer[COMMAND_BUFFER_LEN + 1];  // Buffer to read characters wit
 uint8_t commandLen = 0;                         // Length of command.
 
 
-// Tickings
+// Ticking
 long now              = 0;      // The current time in millisecs.
 long tickHardwareScan = 0;      // The time of the last scan for hardware.
 long tickInputScan    = 0;      // The time of the last scan of input switches.
