@@ -113,8 +113,8 @@ class Display
     void setLcd(uint8_t aLcdId)
     {
         lcdId = aLcdId;
-        lcd2 = new LiquidCrystal_I2C(lcdId, LCD2_COLS, LCD2_COLS);
-        lcd2->begin(LCD2_COLS, LCD2_COLS);
+        lcd2 = new LiquidCrystal_I2C(lcdId, LCD2_COLS, LCD2_ROWS);
+        lcd2->begin(LCD2_COLS, LCD2_ROWS);
         lcd2->backlight();
         lcd2->createChar(CHAR_LO, BYTES_LO);      
     }
