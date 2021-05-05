@@ -21,7 +21,7 @@ char    commandBuffer[COMMAND_BUFFER_LEN + 1];  // Buffer to read characters wit
 uint8_t commandLen = 0;                         // Length of command.
 
 
-// Ticking
+// Tickings
 long now              = 0;      // The current time in millisecs.
 long tickHardwareScan = 0;      // The time of the last scan for hardware.
 long tickInputScan    = 0;      // The time of the last scan of input switches.
@@ -718,34 +718,34 @@ void processCommand()
  */
 void setup()
 {
+    // Start Serial IO  first - needed if there's any debug output.
+    Serial.begin(SERIAL_SPEED);             
+
+    // Initial announcement/splash message.
+    announce();
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INIT_I2C, LCD_LEN_STATUS);
+    
+    // Initialise I2C.
+    Wire.begin(I2C_CONTROLLER_ID);          // I2C network
+    // Wire.setTimeout(25000L);             // Doesn't seem to have any effect.
+
 #if LCD_I2C
-    // Scan for i2c LCD before we do anything else.
+    // Scan for i2c LCD.
     for (uint8_t id = I2C_LCD_HI; id >= I2C_LCD_LO; id--)
     {
         Wire.beginTransmission(id);
         if (Wire.endTransmission() == 0)   
         {
             disp.setLcd(id);
+            announce();                     // Again for i2c LCD.
             break;
         }
     }
 #endif
 
-    // Initial announcement/splash message.
-    announce();
-
-    // Add suitable startup/setup message
-    if (loadSystemData())
-    {
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_STARTUP);
-    }
-    else
-    {
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_SETUP);
-    }
-
     // Initialise
-    Serial.begin(SERIAL_SPEED);             // Start Serial IO.
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_STARTUP, LCD_LEN_STATUS);
+    
     initButtonPins();                       // Initialise alternate button pins.
     flashVersion();                         // Flash our version number on the built-in LED.
     pinMode(PIN_CALIBRATE, INPUT_PULLUP);   // Ensure calibration pin is configured for input.
@@ -768,10 +768,6 @@ void setup()
     {
         dumpMemory();
     }
-
-    // Initialise subsystems.
-    Wire.begin(I2C_CONTROLLER_ID);      // I2C network
-    // Wire.setTimeout(25000L);         // Doesn't seem to have any effect.
 
     // Check if version update required.
     if (systemData.version != VERSION)
