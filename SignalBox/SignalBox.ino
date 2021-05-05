@@ -782,7 +782,7 @@ void setup()
             Serial.println();
         }
 
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_UPDATE);
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_UPDATE, LCD_LEN_STATUS);
 
         // Do the update here.
         waitForButtonClick();           // Nothing to do, just show it's happening.
