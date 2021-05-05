@@ -26,8 +26,9 @@
 #endif
 const char M_VERSION[]          PROGMEM = "v3.4.2";        // See also system.VERSION.
 const char M_VERSION_DATE[]     PROGMEM = "Apr 21";
+const char M_INIT_I2C[]         PROGMEM = "Init I2C";
 const char M_STARTUP[]          PROGMEM = "Startup";
-const char M_UPDATE[]           PROGMEM = "Update ";
+const char M_UPDATE[]           PROGMEM = "Update";
 const char M_UNKNOWN[]          PROGMEM = "Unknown";
 
 
@@ -88,7 +89,6 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
 
     
     // Start-up and first-run messages.
-    const char M_SETUP[]            PROGMEM = "Setup";
     const char M_INITIALISING[]     PROGMEM = "Initialising";
     const char M_EZY_FOUND[]        PROGMEM = "EzyBus  detected";
     const char M_EZY_UPDATE[]       PROGMEM = "Update?  Sel=Yes";
