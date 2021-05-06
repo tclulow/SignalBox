@@ -30,7 +30,7 @@ long tickHeartBeat    = 0;      // Time of last heartbeat.
 long displayTimeout   = 1L;     // Timeout for the display when important messages are showing.
                                 // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
 
-Configure configure;            // A singleton instance of the Configure class.
+
 boolean   lcdShield = false;    // An LCD shield is present.
 
 

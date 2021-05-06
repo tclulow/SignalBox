@@ -2191,7 +2191,7 @@ class Configure
 };
 
 
-
+Configure configure;            // A singleton instance of the Configure class.
 
 
 #endif
