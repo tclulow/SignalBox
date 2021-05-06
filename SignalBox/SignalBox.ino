@@ -27,13 +27,19 @@ long tickHardwareScan = 0;      // The time of the last scan for hardware.
 long tickInputScan    = 0;      // The time of the last scan of input switches.
 long tickHeartBeat    = 0;      // Time of last heartbeat.
 
+long displayTimeout   = 1L;     // Timeout for the display when important messages are showing.
+                                // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
 
-// Timeout for the display when important messages are showing.
-long displayTimeout   = 1L;     // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
+Configure configure;            // A singleton instance of the Configure class.
+boolean   lcdShield = false;    // An LCD shield is present.
 
 
-// A singleton instance of the Configure class.
-Configure configure;
+/** Is an LCD shield present?
+ */
+boolean hasLcdShield()
+{
+    return lcdShield;
+}
 
 
 /** Announce ourselves.
@@ -210,8 +216,11 @@ void firstRun()
     // Initialise SystemData.
     systemData.magic   = MAGIC_NUMBER;
 
-    //Calibrate the LCD buttons.
-    calibrateButtons();
+    // Calibrate the LCD buttons.
+    if (hasLcdShield())
+    {
+        calibrateButtons();
+    }
 
     // Decide if EzyBus conversion required.
     if (ezyBusDetected())
@@ -719,7 +728,14 @@ void processCommand()
 void setup()
 {
     // Start Serial IO  first - needed if there's any debug output.
-    Serial.begin(SERIAL_SPEED);             
+    Serial.begin(SERIAL_SPEED);
+
+    // Detect presence of LCD shield using PIN_LCD_SHIELD
+    pinMode(PIN_LCD_SHIELD, INPUT_PULLUP);
+    lcdShield = !digitalRead(PIN_LCD_SHIELD);
+
+    Serial.println("Starting");
+    delay(4000);
 
     // Initial announcement/splash message.
     announce();
@@ -746,19 +762,18 @@ void setup()
     // Initialise
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_STARTUP, LCD_LEN_STATUS);
     
-    initButtonPins();                       // Initialise alternate button pins.
-    flashVersion();                         // Flash our version number on the built-in LED.
-    pinMode(PIN_CALIBRATE, INPUT_PULLUP);   // Ensure calibration pin is configured for input.
+    initButtonPins();                           // Initialise alternate button pins.
+    flashVersion();                             // Flash our version number on the built-in LED.
 
     // Deal with first run (software has never been run before).
     if (!loadSystemData())
     {
         firstRun();
     }
-    else if (   (digitalRead(PIN_CALIBRATE) == 0)   // Calibration pin grounded.
-             || (readButton() != BUTTON_NONE))      // An input button is being pressed.
+    else if (   (hasLcdShield())
+             && (   (calibrationRequired())             // Calibration required if it's never been done.
+                 || (readButton() != BUTTON_NONE)))     // An input button is being pressed.
     {
-        // Calibration requested.
         calibrateButtons();
         saveSystemData();
     }

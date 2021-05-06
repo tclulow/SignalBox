@@ -18,6 +18,11 @@
 uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
 
 
+/** Is an LCD shield present?
+ */
+boolean hasLcdShield();
+
+
 /** Scan for attached hardware (Input and Output nodes).
  */
 void scanHardware();

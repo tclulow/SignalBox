@@ -25,6 +25,14 @@ void initButtonPins()
 }
 
 
+/** Is button calibration required?
+ */
+boolean calibrationRequired()
+{
+    return systemData.buttons[BUTTON_NONE] == 0;  
+}
+
+
 /** Calibrate the analog buttons.
  *  Each marker is half-way between the values the buttons return.
  */
@@ -73,8 +81,10 @@ void calibrateButtons()
         disp.printDec(value, 4, CHAR_SPACE);
 
         // Wait for button to be released.
-        while (analogRead(A0) < BUTTON_THRESHHOLD);
-        delay(DELAY_BUTTON_WAIT);
+        while (analogRead(A0) < BUTTON_THRESHHOLD)
+        {
+            delay(DELAY_BUTTON_WAIT);
+        }
 
         // Check for buttons out-of-sequence
         if (previous < value)
@@ -104,11 +114,12 @@ uint8_t lastButton = 0xff;      // Keep track of last button pressed for reporti
 
 /** Read the input button pressed.
  *  Return one of the button constants.
+ *  Use the attached LCD shield, or the dedicated pins.
  */
 uint8_t readButton()
 {
-    uint8_t button = 0;
-    int value  = analogRead(BUTTON_ANALOG);
+    uint8_t button = BUTTON_NONE;
+    int     value  = analogRead(BUTTON_ANALOG);
 
 //    static int previous = 0;
 //    if (value != previous)
@@ -119,13 +130,16 @@ uint8_t readButton()
 //        Serial.println(value);
 //    }
 
-    // See if BUTTON_ANALOG is pressed.
-    // Analog cutoff is in the previous cell in the systemData.button array, so index from BUTTON_NONE.
-    for (button = BUTTON_NONE; button < BUTTON_HIGH; button++)
+    if (hasLcdShield())
     {
-        if (value >= systemData.buttons[button])
+        // See if BUTTON_ANALOG is pressed.
+        // Analog cutoff is in the previous cell in the systemData.button array, so index from BUTTON_NONE.
+        for (button = BUTTON_NONE; button < BUTTON_HIGH; button++)
         {
-            break;
+            if (value >= systemData.buttons[button])
+            {
+                break;
+            }
         }
     }
 
