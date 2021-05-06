@@ -83,9 +83,9 @@ class Display
     LiquidCrystal lcdShield = LiquidCrystal(8, 9, 4, 5, 6, 7);
 
 #if LCD_I2C
-    LiquidCrystal_I2C* lcd2;        // An LCD attached using i2c.
+    LiquidCrystal_I2C* lcdI2C;      // An LCD attached using i2c.
 #else
-    LiquidCrystal*     lcd2;        // Dummy variable, never set.
+    LiquidCrystal*     lcdI2C;      // Dummy variable, never set.
 #endif
     uint8_t            lcdId = 0;   // The ID of the i2c LCD. Never set if no i2c LCD.
 
@@ -113,10 +113,10 @@ class Display
     void setLcd(uint8_t aLcdId)
     {
         lcdId = aLcdId;
-        lcd2 = new LiquidCrystal_I2C(lcdId, LCD2_COLS, LCD2_ROWS);
-        lcd2->begin(LCD2_COLS, LCD2_ROWS);
-        lcd2->backlight();
-        lcd2->createChar(CHAR_LO, BYTES_LO);      
+        lcdI2C = new LiquidCrystal_I2C(lcdId, LCD2_COLS, LCD2_ROWS);
+        lcdI2C->begin(LCD2_COLS, LCD2_ROWS);
+        lcdI2C->backlight();
+        lcdI2C->createChar(CHAR_LO, BYTES_LO);      
     }
 #endif
 
@@ -137,9 +137,9 @@ class Display
     void clear()
     {
         lcdShield.clear();
-        if (lcd2)
+        if (lcdI2C)
         {
-            lcd2->clear();
+            lcdI2C->clear();
         }
     }
 
@@ -154,18 +154,18 @@ class Display
         {
             // Position relative to the end of the row.
             lcdShield.setCursor(aCol + LCD_COLS, aRow & LCD_ROW_MASK);
-            if (lcd2)
+            if (lcdI2C)
             {
-                lcd2->setCursor(aCol + LCD2_COLS, aRow);
+                lcdI2C->setCursor(aCol + LCD2_COLS, aRow);
             }
         }
         else
         {
             // Position relative to the start of the row.
             lcdShield.setCursor(aCol, aRow & LCD_ROW_MASK);
-            if (lcd2)
+            if (lcdI2C)
             {
-                lcd2->setCursor(aCol, aRow);
+                lcdI2C->setCursor(aCol, aRow);
             }
         }
     }
@@ -177,9 +177,9 @@ class Display
     void printCh(char aChar)
     {
         lcdShield.print(aChar);
-        if (lcd2)
+        if (lcdI2C)
         {
-            lcd2->print(aChar);
+            lcdI2C->print(aChar);
         }
     }
 
@@ -199,9 +199,9 @@ class Display
     void printStr(char* aString)
     {
         lcdShield.print(aString);
-        if (lcd2)
+        if (lcdI2C)
         {
-            lcd2->print(aString);
+            lcdI2C->print(aString);
         }
     }
 
@@ -212,9 +212,9 @@ class Display
     void printProgStr(PGM_P aMessagePtr)
     {
         lcdShield.print(PGMT(aMessagePtr));
-        if (lcd2)
+        if (lcdI2C)
         {
-            lcd2->print(PGMT(aMessagePtr));
+            lcdI2C->print(PGMT(aMessagePtr));
         }
     }
 
@@ -371,13 +371,13 @@ class Display
             printCh(CHAR_SPACE);
         }
 
-        // Add extra spaces for lcd2 if necessary.
-        if (   (lcd2)
+        // Add extra spaces for lcdI2C if necessary.
+        if (   (lcdI2C)
             && (aCol >= 0))
         {
             for (uint8_t spaces = LCD_COLS; spaces < LCD2_COLS; spaces++)
             {
-                lcd2->print(CHAR_SPACE);
+                lcdI2C->print(CHAR_SPACE);
             }
         }
     }
