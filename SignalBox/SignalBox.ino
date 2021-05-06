@@ -22,16 +22,15 @@ uint8_t commandLen = 0;                         // Length of command.
 
 
 // Ticking
-long now              = 0;      // The current time in millisecs.
-long tickHardwareScan = 0;      // The time of the last scan for hardware.
-long tickInputScan    = 0;      // The time of the last scan of input switches.
-long tickHeartBeat    = 0;      // Time of last heartbeat.
+long    now              = 0;       // The current time in millisecs.
+long    tickHardwareScan = 0;       // The time of the last scan for hardware.
+long    tickInputScan    = 0;       // The time of the last scan of input switches.
+long    tickHeartBeat    = 0;       // Time of last heartbeat.
 
-long displayTimeout   = 1L;     // Timeout for the display when important messages are showing.
-                                // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
+long    displayTimeout   = 1L;      // Timeout for the display when important messages are showing.
+                                    // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
 
-
-boolean   lcdShield = false;    // An LCD shield is present.
+boolean lcdShield = LCD_SHIELD;     // An LCD shield is present.
 
 
 /** Is an LCD shield present?
@@ -730,9 +729,11 @@ void setup()
     // Start Serial IO  first - needed if there's any debug output.
     Serial.begin(SERIAL_SPEED);
 
-    // Detect presence of LCD shield using PIN_LCD_SHIELD
-    pinMode(PIN_LCD_SHIELD, INPUT_PULLUP);
-    lcdShield = !digitalRead(PIN_LCD_SHIELD);
+    // Detect presence of LCD shield using LCD_SHIELD_DETECT_PIN
+#if ! LCD_SHIELD && LCD_SHIELD_DETECT_PIN
+    pinMode(LCD_SHIELD_DETECT_PIN, INPUT_PULLUP);
+    lcdShield = !digitalRead(LCD_SHIELD_DETECT_PIN);
+#endif
 
     Serial.println("Starting");
     delay(4000);

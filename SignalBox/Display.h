@@ -394,7 +394,7 @@ class Display
 };
 
 
-/** A singleton instance of the class.
+/** A singleton instance of the Display class.
  */
 Display disp; 
 

@@ -17,7 +17,9 @@
 // Serial IO
 #define SERIAL_SPEED            19200   // Speed of the serial port.
 
-// Attached I2C LCD display.
+// Attached LCD displays.
+#define LCD_SHIELD               true   // Assume LCD shield present (or not). If false, use LCD_SHIELD_DETECT_PIN.
+#define LCD_SHIELD_DETECT_PIN      11   // Use this pin (must be low) to detect presence of LCD shield. If zero, don't detect.
 #define LCD_I2C                  true   // Include code for LCD connected by I2C.
 
 
@@ -81,7 +83,6 @@
 
 
 #if MASTER
-#define PIN_LCD_SHIELD             11   // A pin to indicate LCD shield present.
 
 // Alternate pins that can be used to control the menus. First entry unused.
 const uint8_t BUTTON_PINS[] = { 0xff, A1, A2, A3, 2, 3 };
