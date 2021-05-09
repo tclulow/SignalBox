@@ -47,8 +47,6 @@
 #define LCD_COL_DEBUG_PARAM   8   // Debug parameter.
 #define LCD_COL_DEBUG_LENGTH  6   // Debug parameter length.
 
-// #define LCD_COL_EXP_STATUS    7   // Export status.
-
 #define LCD_COL_INPUT_OUTPUT  7   // Input's outputs start at this col.
 
 #define LCD_COL_OUTPUT_PARAM  7   // Output's parameters(3) start at this col.
@@ -77,7 +75,7 @@ class Display
      *  LiquidCrystal(rs,     enable, d0, d1, d2, d3, d4, d5, d6, d7)
      *  LiquidCrystal(rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7) 
      *  
-     *  LiquidCrystal lcdShield(8, 9, 4, 5, 6, 7);
+     *  LiquidCrystal lcdShield(8,   9, 4, 5, 6, 7);
      *  LiquidCrystal lcdShield(12, 11, 5, 4, 3, 2);
      */ 
     LiquidCrystal* lcdShield;
@@ -103,7 +101,7 @@ class Display
      */
     void createLcdShield()
     {
-        lcdShield = new LiquidCrystal(8, 9, 4, 5, 6, 7);
+        lcdShield = new LiquidCrystal(LCD_RS, LCD_ENABLE, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
         lcdShield->begin(LCD_COLS, LCD_ROWS);
         
         // Custom character to indicate "Lo".
