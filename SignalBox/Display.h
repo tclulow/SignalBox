@@ -103,10 +103,11 @@ class Display
     {
         lcdShield = new LiquidCrystal(LCD_RS, LCD_ENABLE, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
         lcdShield->begin(LCD_COLS, LCD_ROWS);
+        // lcdShield->noBlink();
         
         // Custom character to indicate "Lo".
         lcdShield->createChar(CHAR_LO, BYTES_LO);
-
+        
 //        for (uint8_t index = 0; index < CHAR_LO; index++)
 //        {
 //            lcdShield->createChar(index, LOGO[index]);
@@ -122,6 +123,7 @@ class Display
         lcdId = aLcdId;
         lcdI2C = new LiquidCrystal_I2C(lcdId, LCD2_COLS, LCD2_ROWS);
         lcdI2C->begin(LCD2_COLS, LCD2_ROWS);
+        // lcdI2C->noBlink();
         lcdI2C->backlight();
         lcdI2C->createChar(CHAR_LO, BYTES_LO);      
     }
