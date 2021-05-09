@@ -14,13 +14,14 @@
 #define SignalBox_h
 
 
-// Record state of input switches. Referenced by Configure object.
+/** Record state of input switches. Referenced by Configure object.
+ */
 uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
 
 
 /** Is an LCD shield present?
  */
-boolean hasLcdShield();
+boolean hasLcdShield = LCD_SHIELD;              // An LCD shield is present.
 
 
 /** Scan for attached hardware (Input and Output nodes).

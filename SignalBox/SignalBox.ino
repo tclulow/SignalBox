@@ -30,17 +30,6 @@ long    tickHeartBeat    = 0;       // Time of last heartbeat.
 long    displayTimeout   = 1L;      // Timeout for the display when important messages are showing.
                                     // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
 
-boolean lcdShield = LCD_SHIELD;     // An LCD shield is present.
-
-
-/** Is an LCD shield present?
- */
-boolean hasLcdShield()
-{
-    return lcdShield;
-}
-
-
 /** Announce ourselves.
  */ 
 void announce()
@@ -216,7 +205,7 @@ void firstRun()
     systemData.magic   = MAGIC_NUMBER;
 
     // Calibrate the LCD buttons.
-    if (hasLcdShield())
+    if (hasLcdShield)
     {
         calibrateButtons();
     }
@@ -729,14 +718,15 @@ void setup()
     // Start Serial IO  first - needed if there's any debug output.
     Serial.begin(SERIAL_SPEED);
 
-    // Detect presence of LCD shield using LCD_SHIELD_DETECT_PIN
+    // Detect presence of LCD shield using LCD_SHIELD_DETECT_PIN if necessary
 #if ! LCD_SHIELD && LCD_SHIELD_DETECT_PIN
     pinMode(LCD_SHIELD_DETECT_PIN, INPUT_PULLUP);
-    lcdShield = !digitalRead(LCD_SHIELD_DETECT_PIN);
+    hasLcdShield = !digitalRead(LCD_SHIELD_DETECT_PIN);
 #endif
-
-    Serial.println("Starting");
-    delay(4000);
+    if (hasLcdShield)
+    {
+        disp.createLcdShield();
+    }
 
     // Initial announcement/splash message.
     announce();
@@ -754,7 +744,7 @@ void setup()
         if (Wire.endTransmission() == 0)   
         {
             disp.setLcd(id);
-            announce();                     // Again for i2c LCD.
+            announce();                     // Again for I2C LCD.
             break;
         }
     }
@@ -771,7 +761,7 @@ void setup()
     {
         firstRun();
     }
-    else if (   (hasLcdShield())
+    else if (   (hasLcdShield)
              && (   (calibrationRequired())             // Calibration required if it's never been done.
                  || (readButton() != BUTTON_NONE)))     // An input button is being pressed.
     {
