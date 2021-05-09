@@ -105,7 +105,8 @@ class Display
         lcdShield->begin(LCD_COLS, LCD_ROWS);
         
         // Custom character to indicate "Lo".
-        lcdShield->createChar(CHAR_LO, BYTES_LO);      
+        lcdShield->createChar(CHAR_LO, BYTES_LO);
+
 //        for (uint8_t index = 0; index < CHAR_LO; index++)
 //        {
 //            lcdShield->createChar(index, LOGO[index]);

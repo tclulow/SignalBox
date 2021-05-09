@@ -25,7 +25,7 @@
  *  D9      LCD shield enable.          Servo pin 5.
  *  D10     LCD shield backlight.       Servo pin 6.
  *  D11     LCD shield detect.          Servo pin 7.
- *  D12     Not used.                   IO pin 7.
+ *  D12     Interlock warning.          IO pin 7.
  *  D13     Flash firmare version.      IO pin 6.       Also flash firmware version.
  *  
  *  A0      LCD shield buttons.         IO pin 5.
@@ -49,6 +49,7 @@
 #define LCD_SHIELD              false   // Assume LCD shield present (or not). If false, use LCD_SHIELD_DETECT_PIN.
 #define LCD_SHIELD_DETECT_PIN      11   // Use this pin (must be low) to detect presence of LCD shield. If zero, don't detect.
 #define LCD_I2C                  true   // Include code for LCD connected by I2C.
+#define INTERLOCK_WARNING_PIN      12   // When interlocks prevent an operation, set this pin high. If zero, no warning is made.
 
 #define LCD_RS                      8   // LCD shield pins.
 #define LCD_ENABLE                  9
@@ -79,6 +80,8 @@
 #define DELAY_BUTTON_REPEAT       100   // Auto-repeat button when held continuously.
 
 #define DELAY_MULTIPLIER        1000L   // Multiply delay values by this amount (convert to seconds).
+
+#define DELAY_INTERLOCK_WARNING 2000L   // Interlock warning lasts this long.
 
 
 // Steps

@@ -22,11 +22,12 @@ uint8_t commandLen = 0;                         // Length of command.
 
 
 // Ticking
-long    now              = 0;       // The current time in millisecs.
-long    tickHardwareScan = 0;       // The time of the last scan for hardware.
-long    tickInputScan    = 0;       // The time of the last scan of input switches.
-long    tickHeartBeat    = 0;       // Time of last heartbeat.
+long    now              = 0L;      // Current time in millisecs.
+long    tickHardwareScan = 0L;      // Time of the last scan for hardware.
+long    tickInputScan    = 0L;      // Time of the last scan of input switches.
+long    tickHeartBeat    = 0L;      // Time of last heartbeat.
 
+long    timeoutInterlock = 0L;      // Timeout for interlock warning to be reset.
 long    displayTimeout   = 1L;      // Timeout for the display when important messages are showing.
                                     // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
 
@@ -519,6 +520,11 @@ boolean isLocked(boolean aNewState)
                             outputDef.printDef(M_VS, outputPin);
                         }
                         
+#if INTERLOCK_WARNING_PIN
+                        digitalWrite(INTERLOCK_WARNING_PIN, HIGH);
+                        timeoutInterlock = millis() + DELAY_INTERLOCK_WARNING;
+#endif
+                        
                         return true;            // A lock exists.
                     }
                 }
@@ -847,6 +853,15 @@ void loop()
         // scanOutputs();
         scanInputs(false);
     }
+
+#if INTERLOCK_WARNING_PIN
+    // Check for interlock warning expired
+    if (   (timeoutInterlock > 0)
+        && (now > timeoutInterlock))
+    {
+        digitalWrite(INTERLOCK_WARNING_PIN, LOW);
+    }
+#endif
     
     // Show heartbeat.
     if (now > tickHeartBeat)
