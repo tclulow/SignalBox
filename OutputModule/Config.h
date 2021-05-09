@@ -12,30 +12,30 @@
  *
  *  Pin usage:
  *  
- *  Pin     Master(Uno)                 Output(Nano)
- *  D0      Serial Rx.                  Serial Tx.      Could be jumper J2.
- *  D1      Serial Tx.                  Serial Rx.      Could be jumper J1.
- *  D2      Alternate up button.        IO pin 1.
- *  D3      Alternate right button.     IO pin 0.
- *  D4      LCD shield data D4.         Servo pin 0.    Alternate jumper J1.
- *  D5      LCD shield data D5.         Servo pin 1.    Alternate jumper J2.
- *  D6      LCD shield data D6.         Servo pin 2.    Alternate jumper J3.
- *  D7      LCD shield data D7.         Servo pin 3.    Alternate jumper J4.
- *  D8      LCD shield rs.              Servo pin 4.
- *  D9      LCD shield enable.          Servo pin 5.
- *  D10     LCD shield backlight.       Servo pin 6.
- *  D11     LCD shield detect.          Servo pin 7.
- *  D12     Interlock warning.          IO pin 7.
- *  D13     Flash firmare version.      IO pin 6.       Also flash firmware version.
+ *  Pin     Master(Uno)                     Output(Nano)
+ *  D0      Serial Rx.                      Serial Tx.      Could be jumper J2.
+ *  D1      Serial Tx.                      Serial Rx.      Could be jumper J1.
+ *  D2      Alternate up button.            IO pin 1.
+ *  D3      Alternate right button.         IO pin 0.
+ *  D4      LCD shield data D4.             Servo pin 0.    Alternate jumper J1.
+ *  D5      LCD shield data D5.             Servo pin 1.    Alternate jumper J2.
+ *  D6      LCD shield data D6.             Servo pin 2.    Alternate jumper J3.
+ *  D7      LCD shield data D7.             Servo pin 3.    Alternate jumper J4.
+ *  D8      LCD shield rs.                  Servo pin 4.
+ *  D9      LCD shield enable.              Servo pin 5.
+ *  D10     LCD shield backlight.           Servo pin 6.
+ *  D11     LCD shield detect.              Servo pin 7.
+ *  D12     Interlock warning.              IO pin 7.
+ *  D13     Flash firmare version.          IO pin 6.       Also flash firmware version.
  *  
- *  A0      LCD shield buttons.         IO pin 5.
- *  A1      Alternate select button.    IO pin 4.
- *  A2      Alternate left button.      IO pin 3.
- *  A3      Alternate down button.      IO pin 2.
- *  A4      I2C SDA.                    I2C SDA.
- *  A5      I2C SCL.                    I2C SCL.
- *  A6      Not available.              Jumper J4
- *  A7      Not available.              Jumper J3
+ *  A0      LCD shield buttons.             IO pin 5.
+ *  A1      Alternate select button.        IO pin 4.
+ *  A2      Alternate left button.          IO pin 3.
+ *  A3      Alternate down button.          IO pin 2.
+ *  A4      I2C SDA.                        I2C SDA.
+ *  A5      I2C SCL.                        I2C SCL.
+ *  A6      Not available.                  Jumper J4
+ *  A7      Not available.                  Jumper J3
  */
  
 #ifndef Config_h
@@ -50,6 +50,8 @@
 #define LCD_SHIELD_DETECT_PIN      11   // Use this pin (must be low) to detect presence of LCD shield. If zero, don't detect.
 #define LCD_I2C                  true   // Include code for LCD connected by I2C.
 #define INTERLOCK_WARNING_PIN      12   // When interlocks prevent an operation, set this pin high. If zero, no warning is made.
+#define INTERLOCK_WARNING_FREQ    440   // Frequency of warning tone (if using tone library).
+#define INTERLOCK_WARNING_TIME   2000   // Duration (msecs) of interlock warning.
 
 #define LCD_RS                      8   // LCD shield pins.
 #define LCD_ENABLE                  9
@@ -80,8 +82,6 @@
 #define DELAY_BUTTON_REPEAT       100   // Auto-repeat button when held continuously.
 
 #define DELAY_MULTIPLIER        1000L   // Multiply delay values by this amount (convert to seconds).
-
-#define DELAY_INTERLOCK_WARNING 2000L   // Interlock warning lasts this long.
 
 
 // Steps

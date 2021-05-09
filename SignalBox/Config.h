@@ -50,6 +50,8 @@
 #define LCD_SHIELD_DETECT_PIN      11   // Use this pin (must be low) to detect presence of LCD shield. If zero, don't detect.
 #define LCD_I2C                  true   // Include code for LCD connected by I2C.
 #define INTERLOCK_WARNING_PIN      12   // When interlocks prevent an operation, set this pin high. If zero, no warning is made.
+#define INTERLOCK_WARNING_FREQ    440   // Frequency of warning tone (if using tone library).
+#define INTERLOCK_WARNING_TIME   2000   // Duration (msecs) of interlock warning.
 
 #define LCD_RS                      8   // LCD shield pins.
 #define LCD_ENABLE                  9
@@ -80,8 +82,6 @@
 #define DELAY_BUTTON_REPEAT       100   // Auto-repeat button when held continuously.
 
 #define DELAY_MULTIPLIER        1000L   // Multiply delay values by this amount (convert to seconds).
-
-#define DELAY_INTERLOCK_WARNING 2000L   // Interlock warning lasts this long.
 
 
 // Steps
