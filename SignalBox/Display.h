@@ -47,7 +47,7 @@
 #define LCD_COL_DEBUG_PARAM   8   // Debug parameter.
 #define LCD_COL_DEBUG_LENGTH  6   // Debug parameter length.
 
-#define LCD_COL_INPUT_OUTPUT  7   // Input's outputs start at this col.
+#define LCD_COL_INPUT_OUTPUT  8   // Input's outputs start at this col.
 
 #define LCD_COL_OUTPUT_PARAM  7   // Output's parameters(3) start at this col.
 #define LCD_COL_OUTPUT_STEP   3   // Three columns per parameter.
