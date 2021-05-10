@@ -759,6 +759,14 @@ void setup()
     }
 #endif
 
+    if (   (!hasLcdShield)
+        && (disp.getLcdId() == 0))
+    {
+        hasLcdShield = true;
+        disp.createLcdShield();
+        announce();
+    }
+
     // Initialise
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_STARTUP, LCD_LEN_STATUS);
     

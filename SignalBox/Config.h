@@ -45,13 +45,11 @@
 // Serial IO
 #define SERIAL_SPEED            19200   // Speed of the serial port.
 
+
 // Attached LCD displays.
 #define LCD_SHIELD              false   // Assume LCD shield present (or not). If false, use LCD_SHIELD_DETECT_PIN.
 #define LCD_SHIELD_DETECT_PIN      11   // Use this pin (must be low) to detect presence of LCD shield. If zero, don't detect.
 #define LCD_I2C                  true   // Include code for LCD connected by I2C.
-#define INTERLOCK_WARNING_PIN      12   // When interlocks prevent an operation, set this pin high. If zero, no warning is made.
-#define INTERLOCK_WARNING_FREQ    440   // Frequency of warning tone (if using tone library).
-#define INTERLOCK_WARNING_TIME   2000   // Duration (msecs) of interlock warning.
 
 #define LCD_RS                      8   // LCD shield pins.
 #define LCD_ENABLE                  9
@@ -59,6 +57,10 @@
 #define LCD_D5                      5
 #define LCD_D6                      6
 #define LCD_D7                      7
+
+#define INTERLOCK_WARNING_PIN      12   // When interlocks prevent an operation, set this pin high. If zero, no warning is made.
+#define INTERLOCK_WARNING_FREQ    440   // Frequency of warning tone (if using tone library).
+#define INTERLOCK_WARNING_TIME   2000   // Duration (msecs) of interlock warning.
 
 
 // i2c node numbers.
