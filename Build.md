@@ -27,10 +27,12 @@ The LiquidCrystal_I2C library can be removed by editing the LCD_I2C flag in the 
 Some aspects of the code can be modified by adjusting configuration constants defined in the Config.h files.
 Note, there are two such files, one for each sketch and they're identical.
 
-Parameter    | Purpose
------------- | -------
-LCD_I2C      | Disable the I2C LCD code.
-SERIAL_SPEED | Specify the speed that all serial IO should run at.
+Parameter             | Purpose
+------------          | -------
+SERIAL_SPEED          | Specify the speed that all serial IO should run at.
+LCD_SHIELD            | Specify the existentence of an LCD shield.
+LCD_SHIELD_DETECT_PIN | Pin to detect the presence of an LCD shield automatically.
+LCD_I2C               | Enable the I2C LCD code.
 
 There are also various tuning parameters that can be adjusted here.
 
