@@ -303,11 +303,12 @@ class OutputDef
     /** Prints an Output's definition.
      *  Only when debug level is high enough (at callers discretion).
      */
-    void printDef(PGM_P aHeader, uint8_t aPin)
+    void printDef(PGM_P aHeader, uint8_t aNode, uint8_t aPin)
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(aHeader));
+        Serial.print(HEX_CHARS[aNode & OUTPUT_NODE_MASK]);
         Serial.print(aPin);
         Serial.print(PGMT(M_DEBUG_TYPE));
         Serial.print(PGMT(M_OUTPUT_TYPES[getType() & OUTPUT_TYPE_MASK]));
@@ -487,7 +488,7 @@ void loadOutput(uint8_t aPin)
     EEPROM.get(OUTPUT_BASE + aPin * sizeof(OutputDef), outputDefs[aPin]);
     if (isDebug(DEBUG_DETAIL))
     { 
-        outputDefs[aPin].printDef(M_DEBUG_LOAD, aPin);
+        outputDefs[aPin].printDef(M_DEBUG_LOAD, getModuleId(false), aPin);
     }
 }
 
@@ -501,7 +502,7 @@ void saveOutput(uint8_t aPin)
         EEPROM.put(OUTPUT_BASE + aPin * sizeof(OutputDef), outputDefs[aPin]);
         if (isDebug(DEBUG_DETAIL))
         {
-            outputDefs[aPin].printDef(M_DEBUG_SAVE, aPin);
+            outputDefs[aPin].printDef(M_DEBUG_SAVE, getModuleId(false), aPin);
         }
     }
 }

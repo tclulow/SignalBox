@@ -520,9 +520,9 @@ boolean isLocked(boolean aNewState)
 
                         if (isDebug(DEBUG_BRIEF))
                         {
-                            outputDef.printDef(M_LOCK, outputPin);
+                            outputDef.printDef(M_LOCK, outputNode, outputPin);
                             readOutput(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
-                            outputDef.printDef(M_VS, outputPin);
+                            outputDef.printDef(M_VS, outputNode, outputPin);
                         }
                         
 #if INTERLOCK_WARNING_PIN

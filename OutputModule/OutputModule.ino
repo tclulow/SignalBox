@@ -457,7 +457,7 @@ void returnDef()
 {
     if (isDebug(DEBUG_BRIEF))
     {
-        outputDefs[requestOption].printDef(M_DEBUG_SEND, requestOption);
+        outputDefs[requestOption].printDef(M_DEBUG_SEND, getModuleId(false), requestOption);
     }
     outputDefs[requestOption].write();
 }
@@ -707,7 +707,7 @@ void processWrite(uint8_t aPin)
 
         if (isDebug(DEBUG_BRIEF))
         {
-            outputDefs[aPin].printDef(M_DEBUG_WRITE, aPin);
+            outputDefs[aPin].printDef(M_DEBUG_WRITE, getModuleId(false), aPin);
         }
     }
 }

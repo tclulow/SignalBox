@@ -44,7 +44,7 @@ void readOutput(uint8_t aNode, uint8_t aPin)
             
             if (isDebug(DEBUG_DETAIL))
             {
-                outputDef.printDef(M_DEBUG_READ, outputPin);
+                outputDef.printDef(M_DEBUG_READ, outputNode, outputPin);
             }
         }
         else
@@ -87,7 +87,7 @@ void writeOutput()
         Serial.print(HEX_CHARS[outputNode]);
         Serial.print(HEX_CHARS[outputPin]);
         Serial.println();
-        outputDef.printDef(M_DEBUG_WRITE, outputPin);
+        outputDef.printDef(M_DEBUG_WRITE, outputNode, outputPin);
     }
 
     Wire.beginTransmission(I2C_OUTPUT_BASE_ID + outputNode);
@@ -109,7 +109,7 @@ void writeSaveOutput()
         Serial.print(HEX_CHARS[outputNode]);
         Serial.print(HEX_CHARS[outputPin]);
         Serial.println();
-        outputDef.printDef(M_DEBUG_SAVE, outputPin);
+        outputDef.printDef(M_DEBUG_SAVE, outputNode, outputPin);
     }
 
     Wire.beginTransmission(I2C_OUTPUT_BASE_ID + outputNode);
@@ -156,7 +156,7 @@ void resetOutput()
         Serial.print(outputNode, HEX);
         Serial.print(outputPin, HEX);
         Serial.println();
-        outputDef.printDef(M_DEBUG_RESET, outputPin);
+        outputDef.printDef(M_DEBUG_RESET, outputNode, outputPin);
     }
 
     Wire.beginTransmission(I2C_OUTPUT_BASE_ID + outputNode);
