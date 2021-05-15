@@ -692,16 +692,27 @@ void processCommand()
     }
 
     // Report error if not executed.
-    if (   (!executed)
-        && (isReportEnabled(REPORT_SHORT)))
+    if (!executed)
     {
-        disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
-        disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
-        disp.printProgStr(M_UNKNOWN);
-        disp.printCh(CHAR_SPACE);
-        disp.printStr(commandBuffer);
-        setDisplayTimeout(getReportDelay());
-    }
+        if (isDebug(DEBUG_ERRORS))
+        {
+          Serial.print(millis());
+          Serial.print(CHAR_TAB);
+          Serial.print(PGMT(M_UNKNOWN));
+          Serial.print(PGMT(M_DEBUG_COMMAND));
+          Serial.println(commandBuffer);
+        }
+
+        if (isReportEnabled(REPORT_SHORT))
+        {
+            disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+            disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
+            disp.printProgStr(M_UNKNOWN);
+            disp.printCh(CHAR_SPACE);
+            disp.printStr(commandBuffer);
+            setDisplayTimeout(getReportDelay());
+        }
+    }        
 }
 
 
