@@ -24,7 +24,7 @@
 #else
     const char M_SOFTWARE[]     PROGMEM = "Output module";
 #endif
-const char M_VERSION[]          PROGMEM = "v3.5.2";        // See also system.VERSION.
+const char M_VERSION[]          PROGMEM = "v3.5.3";        // See also system.VERSION.
 const char M_VERSION_DATE[]     PROGMEM = "May 21";
 const char M_INIT_I2C[]         PROGMEM = "Init I2C";
 const char M_STARTUP[]          PROGMEM = "Startup";
