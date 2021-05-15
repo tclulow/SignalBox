@@ -452,27 +452,31 @@ void processInput(boolean aState)
             disp.printHexChAt(LCD_COL_PIN,     LCD_ROW_EDT, (inputNumber                    ) & INPUT_PIN_MASK);
             disp.setCursor(LCD_COL_START + 1,  LCD_ROW_BOT);
             setDisplayTimeout(getReportDelay());
-
-            if (isDebug(DEBUG_BRIEF))
-            {
-                Serial.println();
-                Serial.print(millis());
-                Serial.print(CHAR_TAB);
-                Serial.print(PGMT(M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]));
-                Serial.print(PGMT(M_DEBUG_STATE));
-                Serial.print(PGMT(newState ? M_HI : M_LO));
-                Serial.print(PGMT(M_DEBUG_NODE));
-                Serial.print((inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK, HEX);
-                Serial.print(PGMT(M_DEBUG_PIN));
-                Serial.print((inputNumber                    ) & INPUT_PIN_MASK,  HEX);
-                Serial.println();
-            }
+        }
+        
+        if (isDebug(DEBUG_BRIEF))
+        {
+            Serial.print(millis());
+            Serial.print(CHAR_TAB);
+            Serial.print(PGMT(M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]));
+            Serial.print(PGMT(M_DEBUG_STATE));
+            Serial.print(PGMT(newState ? M_HI : M_LO));
+            Serial.print(PGMT(M_DEBUG_NODE));
+            Serial.print((inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK, HEX);
+            Serial.print(PGMT(M_DEBUG_PIN));
+            Serial.print((inputNumber                    ) & INPUT_PIN_MASK,  HEX);
+            Serial.println();
         }
 
         // If not locked, process the Input's Outputs.
         if (!isLocked(newState))
         {
             processInputOutputs(newState);
+        }
+        
+        if (isDebug(DEBUG_BRIEF))
+        {
+            Serial.println();
         }
     }
 }
