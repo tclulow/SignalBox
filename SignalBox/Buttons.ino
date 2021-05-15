@@ -64,7 +64,7 @@ void calibrateButtons()
             delay(DELAY_BUTTON_WAIT);
         }
 
-        if (isDebug(DEBUG_ERRORS))
+        if (isDebug(DEBUG_BRIEF))
         {
             Serial.print(millis());
             Serial.print(CHAR_TAB);
