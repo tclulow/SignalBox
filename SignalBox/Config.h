@@ -12,7 +12,7 @@
  *
  *  Pin usage:
  *  
- *  Pin     Master(Uno)                     Output(Nano)
+ *  Pin     Master(Uno)                     Output module (Nano)
  *  D0      Serial Rx.                      Serial Tx.      Could be jumper J2.
  *  D1      Serial Tx.                      Serial Rx.      Could be jumper J1.
  *  D2      Alternate up button.            IO pin 1.
@@ -86,13 +86,13 @@
 #define DELAY_MULTIPLIER        1000L   // Multiply delay values by this amount (convert to seconds).
 
 
-// Steps
+// Steps (all in msecs)
 #define STEP_HARDWARE_SCAN     10000L   // Re-scan for new hardware every 10 seconds.
-#define STEP_INPUT_SCAN           50L   // Steps in msecs between scans of the input switches.
-#define STEP_HEARTBEAT           200L   // Steps in msecs between changes of the heartbeat indicator.
-#define STEP_SERVO                25L   // Delay (msecs) between steps of a Servo.
-#define STEP_LED                   5L   // Delay (msecs) between steps of a LED.
-#define STEP_FLASH                10L   // Delay (msecs) between steps of flashes of a FLASH or BLINK.
+#define STEP_INPUT_SCAN           50L   // Scans of the input switches.
+#define STEP_HEARTBEAT           200L   // Refresh heartbeat indicator.
+#define STEP_SERVO                25L   // Step Servos.
+#define STEP_LED                   5L   // Step LEDs.
+#define STEP_FLASH                10L   // Step flashers (FLASH or BLINK).
 
 
 // Operational constants
