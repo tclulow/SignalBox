@@ -222,6 +222,7 @@ void firstRun()
         if (waitForButtonPress() == BUTTON_SELECT)
         {
             ezyBusConvert();
+            waitForButtonClick();            
             defaultInputs(INPUT_TYPE_TOGGLE);
         }
         else
@@ -246,9 +247,9 @@ void firstRun()
  */
 void defaultInputs(uint8_t aInputType)
 {
-    disp.clearBottomRows();
-    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INITIALISING);
-    disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
+    disp.clear();
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_INITIALISING);
+    disp.setCursor(LCD_COL_START, LCD_ROW_DET);
 
     inputNumber = 0;
     inputType   = aInputType;
@@ -285,7 +286,7 @@ void ezyBusConvert()
     
     disp.clearRow(LCD_COL_START, LCD_ROW_DET);
     disp.clearBottomRows();
-    disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_EZY_UPDATING);
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_EZY_UPDATING, LCD_COLS);
     disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
 
     for (outputNode = 0; outputNode < EZY_NODE_MAX; outputNode++)
