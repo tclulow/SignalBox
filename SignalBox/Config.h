@@ -13,8 +13,8 @@
  *  Pin usage:
  *  
  *  Pin     Master(Uno)                     Output module (Nano)
- *  D0      Serial Rx.                      Serial Tx.      Could be jumper J2.
- *  D1      Serial Tx.                      Serial Rx.      Could be jumper J1.
+ *  D0      Serial Rx.                      Serial Rx.      Could be jumper J2.
+ *  D1      Serial Tx.                      Serial Tx.      Could be jumper J1.
  *  D2      Alternate up button.            IO pin 1.
  *  D3      Alternate right button.         IO pin 0.
  *  D4      LCD shield data D4.             Servo pin 0.    Alternate jumper J1.
