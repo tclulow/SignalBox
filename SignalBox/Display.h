@@ -21,15 +21,17 @@
 
 #define LCD_COLS             16   // Display is 16 columns
 #define LCD_ROWS              2   // by 2 rows.
+#define LCD_ROW_MASK          1   // Row mask for shield LCD (1 = 2 row, 3 = 4 rows)
+
 #define LCD2_COLS            20   // I2C Display is 20 columns
 #define LCD2_ROWS             4   // by 4 rows.
+#define LCD2_ROW_MASK         3   // Row mask for I2C LCD (1 = 2 row, 3 = 4 rows)
 
 
 #define LCD_ROW_TOP           0   // Rows for Display state messages.
 #define LCD_ROW_DET           1   // Detail goes on second row.  
 #define LCD_ROW_EDT           2   // Edit on row 2 (if available).
 #define LCD_ROW_BOT           3   // Bottom row.
-#define LCD_ROW_MASK          1   // Row mask for shield LCD (1 = 2 row, 3 = 4 rows)
 
 #define LCD_LEN_OPTION        6   // Command menu options are (padded to) this length.
 #define LCD_LEN_STATUS        8   // Status messages take up to 8 characters.
@@ -172,7 +174,7 @@ class Display
             }
             if (lcdI2C)
             {
-                lcdI2C->setCursor(aCol + LCD2_COLS, aRow);
+                lcdI2C->setCursor(aCol + LCD2_COLS, aRow & LCD2_ROW_MASK);
             }
         }
         else
@@ -184,7 +186,7 @@ class Display
             }
             if (lcdI2C)
             {
-                lcdI2C->setCursor(aCol, aRow);
+                lcdI2C->setCursor(aCol, aRow & LCD2_ROW_MASK);
             }
         }
     }
