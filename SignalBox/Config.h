@@ -10,6 +10,12 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  *
  *
+ *  Required libraries:
+ *
+ *  LiquidCrystal.h         For driving an attached LCD shield.
+ *  LiquidCrystal_I2C.h     For driving a LCD attached by I2C protocol. Set LCD_I2C false to disable this functionality.
+ *
+ *
  *  Pin usage:
  *  
  *  Pin     Master(Uno)                     Output module (Nano)

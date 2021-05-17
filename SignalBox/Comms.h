@@ -8,9 +8,10 @@
  *      http://creativecommons.org/licenses/by-nc-sa/4.0/
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
- *  
- *  
- *  Comms protocol. 
+ *
+ *
+ *  Comms protocol.
+ *
  *  Most commands are a simple (write) i2c message from the Master to the Output module.
  *  Some messages require a response (maybe several bytes) from the output module. 
  *  This is achieved by the master sending a write message indicating what's required,
@@ -64,10 +65,10 @@
  *      Hi          The Hi setting for this output (0-255).
  *      Pace        The pace (speed) at which to operate (0-15).
  *      Reset       The interval (in seconds) after which to reset (0-255).
- *      Locks       Mask indicating which interlocks are active. Bottom niblle  for 4 Lo locks, top nibble for 4 Hi locks.
+ *      Locks       Mask indicating which interlocks are active. Bottom nibble for 4 Lo locks, top nibble for 4 Hi locks.
  *      LocksLo     Four bytes indicating the 4 Lo locks. See Lock below.
  *      LocksHi     Four bytes indicating the 4 Hi locks. See Lock below.
- *      Lock        Byte defining a output node and pin. Node number (0-31) in top 5 bits, pin number (0-7) in bottom 3 bits. See OUTPUT_NODE_... and OUTPUT_PIN_...
+ *      Lock        Byte defining an output node and pin. Node number (0-31) in top 5 bits, pin number (0-7) in bottom 3 bits. See OUTPUT_NODE_... and OUTPUT_PIN_...
  */
  
 #ifndef Comms_h
