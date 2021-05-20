@@ -740,7 +740,7 @@ void processCommand()
  */
 void setup()
 {
-    // Start Serial IO  first - needed if there's any debug output.
+    // Start Serial IO first - needed if there's any debug output.
     Serial.begin(SERIAL_SPEED);
 
     // Detect presence of LCD shield using LCD_SHIELD_DETECT_PIN if necessary
@@ -751,11 +751,11 @@ void setup()
     if (hasLcdShield)
     {
         disp.createLcdShield();
-    }
 
-    // Initial announcement/splash message.
-    announce();
-    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INIT_I2C, LCD_LEN_STATUS);
+        // Initial announcement/splash message.
+        announce();
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INIT_I2C, LCD_LEN_STATUS);
+    }
     
     // Initialise I2C.
     Wire.begin(I2C_CONTROLLER_ID);          // I2C network
@@ -775,6 +775,7 @@ void setup()
     }
 #endif
 
+    // Force an LCD shield if no I2C LCD present.
     if (   (!hasLcdShield)
         && (disp.getLcdId() == 0))
     {
@@ -796,7 +797,7 @@ void setup()
     }
     else if (   (hasLcdShield)
              && (   (calibrationRequired())             // Calibration required if it's never been done.
-                 || (readButton() != BUTTON_NONE)))     // An input button is being pressed.
+                 || (readButton() != BUTTON_NONE)))     // or an input button is being pressed.
     {
         calibrateButtons();
         saveSystemData();
@@ -850,12 +851,19 @@ void loop()
     while (Serial.available() > 0)
     {
         char ch = Serial.read();
-        if (ch == '\n')
+        if (ch == CHAR_RETURN)
+        {
+            // Ignore carriage-return
+        }
+        else if (ch == CHAR_NEWLINE)
         {
             // Process the received command
-            commandBuffer[commandLen] = CHAR_NULL;
-            processCommand();
-            commandLen = 0;
+            if (commandLen > 0)
+            {
+                commandBuffer[commandLen] = CHAR_NULL;
+                processCommand();
+                commandLen = 0;
+            }
         }
         else if (commandLen <= COMMAND_BUFFER_LEN)
         {
@@ -886,6 +894,7 @@ void loop()
     if (   (timeoutInterlock > 0)
         && (now > timeoutInterlock))
     {
+        timeoutInterlock = 0L;
         digitalWrite(INTERLOCK_WARNING_PIN, LOW);
     }
 #endif
