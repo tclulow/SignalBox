@@ -89,7 +89,7 @@
 
 #define COMMS_CMD_READ          0x40    // Read data from Output's EEPROM definition (to the i2c master).    
 #define COMMS_CMD_WRITE         0x50    // Write data to Output's EEPROM definition (from the i2c master).
-#define COMMS_CMD_SAVE          0x60    // Write data to Output's EEPROM definition and save it.
+#define COMMS_CMD_SAVE          0x60    // Save Output's EEPROM definition (as set by a previous WRITE).
 #define COMMS_CMD_RESET         0x70    // Reset output to its saved state (from its EEPROM).
 
 #define COMMS_CMD_NONE          0xff    // Null command.
