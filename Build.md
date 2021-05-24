@@ -61,7 +61,7 @@ to this:
 
     const uint8_t jumperPins[JUMPER_PINS] = { 4, 5, 6, 7 };
 
-Note that these pins are shared with the outputs (the software configures these pins as inputs to read the jumpers at start-up, then configures them as outputs to drive the attached hardware (Servos, LEDs etc). If no jmpers are set, then this will give the module a hardware ID of 0xf (ie all jumpers default to high) but if a sufficiently low-impedance output is connected (and a LED with dropper resistor is often low enough) then these pins will read low (and change the i2c ID accordingly).
+Note that these pins are shared with the outputs - the software configures these pins as inputs to read the jumpers at start-up, then configures them as outputs to drive the attached hardware (Servos, LEDs etc). If no jmpers are set, then this will give the module a hardware ID of 0xf (ie all jumpers default to high) but if a sufficiently low-impedance output is connected (and a LED with dropper resistor is often low enough) then these pins will read low (and change the i2c ID accordingly).
 
 Either ensure that only Servos are connected to outputs 4, 5, 6, and 7, or use software-allocated ID as described in the manual.
 If using software-allocation and if the default ID (0xf) would clash with an existing module, perform this operation with no outputs connected and seperately from the rest of the system .
