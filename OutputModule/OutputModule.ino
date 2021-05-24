@@ -423,7 +423,7 @@ void returnStates()
         }
     }
     
-    Wire.write(states);
+    comms.sendByte(states);
 
     if (isDebug(DEBUG_BRIEF))
     {
@@ -444,7 +444,7 @@ void returnRenumber()
     systemData.i2cModuleID = requestNode;
     saveSystemData();
 
-    Wire.write(getModuleId(false));
+    comms.sendByte(getModuleId(false));
 
     // Now change our module ID.
     Wire.begin(getModuleId(true));
@@ -471,7 +471,7 @@ void processReceipt(int aLen)
     if (aLen > 0)
     {
         // Read the command byte.
-        uint8_t command = Wire.read();
+        uint8_t command = comms.readByte();
         uint8_t option  = command & COMMS_OPTION_MASK;
         uint8_t pin     = option  & OUTPUT_PIN_MASK;
         uint8_t delay   = 0;
@@ -503,7 +503,7 @@ void processReceipt(int aLen)
             case COMMS_CMD_SET_LO:  
             case COMMS_CMD_SET_HI: if (Wire.available())
                                    {
-                                       delay = Wire.read();         // Optional delay value.
+                                       delay = comms.readByte();    // Optional delay value.
                                    }
                                    actionState(pin, command == COMMS_CMD_SET_HI, delay, false);
                                    break;
@@ -552,7 +552,7 @@ void processReceipt(int aLen)
         
         while (Wire.available())
         {
-            uint8_t ch = Wire.read();
+            uint8_t ch = comms.readByte();
             if (isDebug(DEBUG_ERRORS))
             {
                 Serial.print(CHAR_SPACE);
@@ -594,7 +594,7 @@ void processRenumber()
 {
     if (Wire.available())
     {
-        requestNode = Wire.read();      // The desired new node number.
+        requestNode = comms.readByte();      // The desired new node number.
     }
     else
     {
@@ -622,11 +622,11 @@ void processRenumber()
  */
 void processMoveLocks()
 {
-    if (Wire.available() != OUTPUT_MOVE_LOCK_LEN)
+    if (Wire.available() == OUTPUT_MOVE_LOCK_LEN)
     {
         // Read the old and new node numbers.
-        uint8_t oldNode = Wire.read() & OUTPUT_NODE_MASK;
-        uint8_t newNode = Wire.read() & OUTPUT_NODE_MASK;
+        uint8_t oldNode = comms.readByte() & OUTPUT_NODE_MASK;
+        uint8_t newNode = comms.readByte() & OUTPUT_NODE_MASK;
 
         if (isDebug(DEBUG_DETAIL))
         {

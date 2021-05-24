@@ -69,10 +69,7 @@ void scanInputHardware()
                     // Configure MCP for input.
                     for (uint8_t command = 0; command < INPUT_COMMANDS_LEN; command++)
                     {
-                        Wire.beginTransmission(I2C_INPUT_BASE_ID + node); 
-                        Wire.write(INPUT_COMMANDS[command]);
-                        Wire.write(MCP_ALL_HIGH);
-                        Wire.endTransmission();
+                        comms.sendData(I2C_INPUT_BASE_ID + node, INPUT_COMMANDS[command], MCP_ALL_HIGH, -1);
                     }
         
                     // Record current switch state
@@ -318,9 +315,7 @@ void sendDebugLevel()
     {
         if (isOutputNodePresent(node))
         {
-            Wire.beginTransmission(I2C_OUTPUT_BASE_ID + node);
-            Wire.write(COMMS_CMD_DEBUG | (getDebug() & COMMS_OPTION_MASK));
-            Wire.endTransmission();
+            comms.sendShort(I2C_OUTPUT_BASE_ID + node, COMMS_CMD_DEBUG | (getDebug() & COMMS_OPTION_MASK));
 
             if (isDebug(DEBUG_BRIEF))
             {
@@ -397,18 +392,15 @@ uint16_t readInputNode(uint8_t aNode)
 {
     uint16_t value = 0;
 
-    Wire.beginTransmission(I2C_INPUT_BASE_ID + aNode);    
-    Wire.write(MCP_GPIOA);
-    if (   (Wire.endTransmission())
-        || (Wire.requestFrom(I2C_INPUT_BASE_ID + aNode, INPUT_STATE_LEN) != INPUT_STATE_LEN))
+    if (   (comms.sendShort(I2C_INPUT_BASE_ID + aNode, MCP_GPIOA))
+        || (!comms.requestPacket(I2C_INPUT_BASE_ID + aNode, INPUT_STATE_LEN)))
     {
         recordInputError(aNode);
         value = currentSwitchState[aNode];  // Pretend no change if comms error.
     }
     else
     {
-        value = Wire.read()
-              + (Wire.read() << 8);
+        value = comms.readWord();
     }
 
     return value;

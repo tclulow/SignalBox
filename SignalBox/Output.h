@@ -37,9 +37,7 @@
 #define OUTPUT_LOCK_MAX             4   // Four locks of each type (Hi/Lo).
 
 // Wire response message lengths.
-#define OUTPUT_STATE_LEN            1   // One byte used to return a node's Outputs' states.
-#define OUTPUT_RENUMBER_LEN         1   // One byte used to return a node's new module ID.
-#define OUTPUT_MOVE_LOCK_LEN        3   // Two bytes used to move a nodes locks.
+#define OUTPUT_MOVE_LOCK_LEN        2   // Two bytes used to move a node's locks.
 
 // Defaults when initialising.
 #define OUTPUT_DEFAULT_LO          90   // Default low  position is 90 degrees.
@@ -263,19 +261,19 @@ class OutputDef
      */
     void write()
     {
-        Wire.write(type);
-        Wire.write(lo);
-        Wire.write(hi);
-        Wire.write(pace);
-        Wire.write(reset);
+        comms.sendByte(type);
+        comms.sendByte(lo);
+        comms.sendByte(hi);
+        comms.sendByte(pace);
+        comms.sendByte(reset);
 
-        Wire.write(locks);
+        comms.sendByte(locks);
         for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
         {
-            Wire.write(lockLo[index]);
-            Wire.write(lockHi[index]);
+            comms.sendByte(lockLo[index]);
+            comms.sendByte(lockHi[index]);
         }
-        Wire.write(lockState);
+        comms.sendByte(lockState);
     }
 
 
@@ -284,19 +282,19 @@ class OutputDef
      */
     void read()
     {
-        type  = Wire.read();
-        lo    = Wire.read();
-        hi    = Wire.read();
-        pace  = Wire.read();
-        reset = Wire.read();
+        type  = comms.readByte();
+        lo    = comms.readByte();
+        hi    = comms.readByte();
+        pace  = comms.readByte();
+        reset = comms.readByte();
 
-        locks = Wire.read();
+        locks = comms.readByte();
         for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
         {
-            lockLo[index] = Wire.read();
-            lockHi[index] = Wire.read();
+            lockLo[index] = comms.readByte();
+            lockHi[index] = comms.readByte();
         }
-        lockState = Wire.read();
+        lockState = comms.readByte();
     }
 
 

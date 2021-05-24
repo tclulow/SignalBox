@@ -75,6 +75,9 @@
 #define Comms_h
 
 
+#include "Wire.h"
+
+
 // Command byte.
 #define COMMS_COMMAND_MASK      0xf0    // Top 4 bits.
 #define COMMS_OPTION_MASK       0x0f    // Bottom 4 bits.
@@ -101,4 +104,112 @@
 #define COMMS_SYS_MOVE_LOCKS    0x02    // System renumber lock node numbers.
 
 
+class Comms
+{
+    public:
+    
+    /** Send an I2C message with no data.
+     */
+    uint8_t sendShort(uint8_t aNodeId, uint8_t aCommand)
+    {
+        Wire.beginTransmission(aNodeId);
+        Wire.write(aCommand);
+        return Wire.endTransmission();
+    }
+
+
+    /** Send an I2C message with data bytes.
+     */
+    uint8_t sendData(uint8_t aNodeId, uint8_t aCommand, int aDataByte1, int aDataByte2)
+    {
+        Wire.beginTransmission(aNodeId);
+        Wire.write(aCommand);
+        if (aDataByte1 >= 0)
+        {
+            Wire.write((uint8_t)aDataByte1);
+        }    
+        if (aDataByte2 >= 0)
+        {
+            Wire.write((uint8_t)aDataByte2);
+        }    
+        return Wire.endTransmission();
+    }
+
+
+    /** Send an I2C message with payload.
+     */
+    uint8_t sendPayload(uint8_t aNodeId, uint8_t aCommand, void(* payload)())
+    {
+        Wire.beginTransmission(aNodeId);
+        Wire.write(aCommand);
+        payload();
+        return Wire.endTransmission();
+    }
+
+
+    /** Send a byte.
+     *  For use by payload functions.
+     */
+    size_t sendByte(uint8_t aByte)
+    {
+        return Wire.write(aByte);
+    }
+
+
+    /** Request a 1-byte response.
+     *  Return the byte, or a negative number if failed.
+     */
+    int requestByte(uint8_t aNodeId)
+    {
+        Wire.requestFrom(aNodeId, (uint8_t)1);
+        
+        return Wire.read();
+    }
+
+
+    /** Request a packet (of aLength).
+     *  Return true if correct packet-length arrives, else false.
+     */     
+    boolean requestPacket(uint8_t aNodeId, uint8_t aLength)
+    {
+        return    (Wire.requestFrom(aNodeId, aLength) == aLength)
+               && (Wire.available() == aLength);
+    }
+
+
+    /** Reads a byte from the receive buffer.
+     */
+    int readByte()
+    {
+        return Wire.read();
+    }
+
+
+    /** Reads a word (16 bits, 2 bytes) from the comms receive buffer.
+     */    
+    int readWord()
+    {
+        return   (Wire.read() & 0xff)
+               | (Wire.read() << 8);
+
+    }
+
+
+    /** Ignore all received data that's left in the receive buffer.
+     */
+    void readAll()
+    {
+        while (Wire.available())
+        {
+            Wire.read();
+        }
+    }
+};
+
+
+/** A singleton instance of the Comms class.
+ */
+Comms comms;
+
+        
 #endif
