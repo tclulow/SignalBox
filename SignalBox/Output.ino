@@ -33,11 +33,8 @@ void readOutput(uint8_t aNode, uint8_t aPin)
             Serial.println();
         }
     
-        Wire.beginTransmission(I2C_OUTPUT_BASE_ID + outputNode);
-        Wire.write(COMMS_CMD_READ | outputPin);
-        if (   (Wire.endTransmission() == 0)
-            && (Wire.requestFrom(I2C_OUTPUT_BASE_ID + outputNode, sizeof(outputDef)) == sizeof(outputDef))
-            && (Wire.available() == sizeof(outputDef)))
+        if (   (i2cComms.sendShort(I2C_OUTPUT_BASE_ID + outputNode, COMMS_CMD_READ | outputPin) == 0)
+            && (i2cComms.requestPacket(I2C_OUTPUT_BASE_ID + outputNode, sizeof(outputDef))))
         {
             // Read the outputDef from the OutputModule.
             outputDef.read();
@@ -54,14 +51,12 @@ void readOutput(uint8_t aNode, uint8_t aPin)
             setOutputNodePresent(aNode, false);
         }
 
-        // Ignore any data that's left
-        while (Wire.available())
-        {
-            Wire.read();
-        }
+        // Discard any remaining data.
+        i2cComms.readAll();
     }
     else
     {
+        // Node not present, set to NONE.
         outputDef.set(OUTPUT_TYPE_NONE, false, OUTPUT_DEFAULT_LO, OUTPUT_DEFAULT_HI, OUTPUT_DEFAULT_PACE, 0);
     }
 }
@@ -72,6 +67,14 @@ void readOutput(uint8_t aNode, uint8_t aPin)
 void readOutput(uint8_t aOutputNumber)
 {
     readOutput((aOutputNumber >> OUTPUT_NODE_SHIFT) & OUTPUT_NODE_MASK, aOutputNumber & OUTPUT_PIN_MASK);
+}
+
+
+/** Helper to write the current OutputDef.
+ */
+void writeOutputDef()
+{
+    outputDef.write();
 }
 
 
@@ -90,10 +93,7 @@ void writeOutput()
         outputDef.printDef(M_DEBUG_WRITE, outputNode, outputPin);
     }
 
-    Wire.beginTransmission(I2C_OUTPUT_BASE_ID + outputNode);
-    Wire.write(COMMS_CMD_WRITE | outputPin);
-    outputDef.write();
-    Wire.endTransmission();
+    i2cComms.sendPayload(I2C_OUTPUT_BASE_ID + outputNode, COMMS_CMD_WRITE | outputPin, writeOutputDef);
 }
 
 
@@ -112,9 +112,7 @@ void writeSaveOutput()
         outputDef.printDef(M_DEBUG_SAVE, outputNode, outputPin);
     }
 
-    Wire.beginTransmission(I2C_OUTPUT_BASE_ID + outputNode);
-    Wire.write(COMMS_CMD_SAVE | outputPin);
-    Wire.endTransmission();
+    i2cComms.sendShort(I2C_OUTPUT_BASE_ID + outputNode, COMMS_CMD_SAVE | outputPin);
 }
 
 
@@ -136,10 +134,7 @@ void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDela
         Serial.println();
     }
 
-    Wire.beginTransmission(I2C_OUTPUT_BASE_ID + aNode);
-    Wire.write((aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | aPin);
-    Wire.write(aDelay);
-    Wire.endTransmission();
+    i2cComms.sendData(I2C_OUTPUT_BASE_ID + aNode, (aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | aPin, aDelay, -1);
 }
 
 
@@ -159,9 +154,7 @@ void resetOutput()
         outputDef.printDef(M_DEBUG_RESET, outputNode, outputPin);
     }
 
-    Wire.beginTransmission(I2C_OUTPUT_BASE_ID + outputNode);
-    Wire.write(COMMS_CMD_RESET | outputPin);
-    Wire.endTransmission();
+    i2cComms.sendShort(I2C_OUTPUT_BASE_ID + outputNode, COMMS_CMD_RESET | outputPin);
 
     // Reload the Output now it's been reset.
     readOutput(outputNode, outputPin);
@@ -175,11 +168,8 @@ void readOutputStates(uint8_t aNode)
 {
     int states;
     
-    Wire.beginTransmission(I2C_OUTPUT_BASE_ID + aNode);
-    Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_STATES);
-    if (   (Wire.endTransmission() == 0)
-        && (Wire.requestFrom(I2C_OUTPUT_BASE_ID + aNode, OUTPUT_STATE_LEN) == OUTPUT_STATE_LEN)
-        && ((states = Wire.read()) >= 0))
+    if (   (i2cComms.sendShort(I2C_OUTPUT_BASE_ID + aNode, COMMS_CMD_SYSTEM | COMMS_SYS_STATES) == 0)
+        && ((states = i2cComms.requestByte(I2C_OUTPUT_BASE_ID + aNode)) >= 0))
     {
         setOutputNodePresent(aNode, true);
         setOutputStates(aNode, states);

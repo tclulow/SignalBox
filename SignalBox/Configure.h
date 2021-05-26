@@ -963,12 +963,8 @@ class Configure
         int response = aOldNode;
 
         // Send the renumber command to the node concerned.
-        Wire.beginTransmission(I2C_OUTPUT_BASE_ID + aOldNode);
-        Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_RENUMBER);
-        Wire.write(aNewNode);
-        if (   ((response = Wire.endTransmission()) == 0)
-            && ((response = Wire.requestFrom(I2C_OUTPUT_BASE_ID + outNode, OUTPUT_RENUMBER_LEN)) == OUTPUT_RENUMBER_LEN)
-            && ((response = Wire.read()) >= 0))
+        if (   ((response = i2cComms.sendData(I2C_OUTPUT_BASE_ID + aOldNode, COMMS_CMD_SYSTEM | COMMS_SYS_RENUMBER, aNewNode, -1)) == 0)
+            && ((response = i2cComms.requestByte(I2C_OUTPUT_BASE_ID + aOldNode)) >= 0))
         {
             response &= OUTPUT_NODE_MASK;       // The new node number of the Output as returned by the node
     
@@ -1065,12 +1061,8 @@ class Configure
                             Serial.print(response, HEX);
                             Serial.println();    
                         }
-            
-                        Wire.beginTransmission(I2C_OUTPUT_BASE_ID + node);
-                        Wire.write(COMMS_CMD_SYSTEM | COMMS_SYS_MOVE_LOCKS);
-                        Wire.write(aOldNode);
-                        Wire.write(response);
-                        Wire.endTransmission();
+
+                        i2cComms.sendData(I2C_OUTPUT_BASE_ID + node, COMMS_CMD_SYSTEM | COMMS_SYS_MOVE_LOCKS, aOldNode, response);
                     }
                     else
                     {
@@ -1153,10 +1145,8 @@ class Configure
                                     else
                                     {
                                         testOutput();
-                                        
-                                        // A short delay to prevent over-loading output module, then ensure output is reset.
-                                        delay(DELAY_BUTTON_DELAY);
-                                        resetOutput();
+                                        // delay(DELAY_BUTTON_DELAY);       // A short delay to prevent over-loading output module
+                                        resetOutput();                      // Ensure output is reset.
                                     }
                                     break;
 

@@ -11,12 +11,11 @@
  */
 
 #include <EEPROM.h>
-#include <Wire.h>
 
 #include "Config.h"
 #include "Messages.h"
 #include "System.h"
-#include "Comms.h"
+#include "I2cComms.h"
 #include "Output.h"
 
 #if MASTER

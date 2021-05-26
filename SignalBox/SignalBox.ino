@@ -61,18 +61,14 @@ void scanInputHardware()
             if (disp.getLcdId() != (I2C_INPUT_BASE_ID + node))
             {
                 // Send message to the Input and see if it responds.
-                Wire.beginTransmission(I2C_INPUT_BASE_ID + node);
-                if (Wire.endTransmission() == 0)
+                if (i2cComms.exists(I2C_INPUT_BASE_ID + node))
                 {
                     setInputNodePresent(node, true);
 
                     // Configure MCP for input.
                     for (uint8_t command = 0; command < INPUT_COMMANDS_LEN; command++)
                     {
-                        Wire.beginTransmission(I2C_INPUT_BASE_ID + node); 
-                        Wire.write(INPUT_COMMANDS[command]);
-                        Wire.write(MCP_ALL_HIGH);
-                        Wire.endTransmission();
+                        i2cComms.sendData(I2C_INPUT_BASE_ID + node, INPUT_COMMANDS[command], MCP_ALL_HIGH, -1);
                     }
         
                     // Record current switch state
@@ -318,9 +314,7 @@ void sendDebugLevel()
     {
         if (isOutputNodePresent(node))
         {
-            Wire.beginTransmission(I2C_OUTPUT_BASE_ID + node);
-            Wire.write(COMMS_CMD_DEBUG | (getDebug() & COMMS_OPTION_MASK));
-            Wire.endTransmission();
+            i2cComms.sendShort(I2C_OUTPUT_BASE_ID + node, COMMS_CMD_DEBUG | (getDebug() & COMMS_OPTION_MASK));
 
             if (isDebug(DEBUG_BRIEF))
             {
@@ -397,18 +391,15 @@ uint16_t readInputNode(uint8_t aNode)
 {
     uint16_t value = 0;
 
-    Wire.beginTransmission(I2C_INPUT_BASE_ID + aNode);    
-    Wire.write(MCP_GPIOA);
-    if (   (Wire.endTransmission())
-        || (Wire.requestFrom(I2C_INPUT_BASE_ID + aNode, INPUT_STATE_LEN) != INPUT_STATE_LEN))
+    if (   (i2cComms.sendShort(I2C_INPUT_BASE_ID + aNode, MCP_GPIOA))
+        || (!i2cComms.requestPacket(I2C_INPUT_BASE_ID + aNode, INPUT_STATE_LEN)))
     {
         recordInputError(aNode);
         value = currentSwitchState[aNode];  // Pretend no change if comms error.
     }
     else
     {
-        value = Wire.read()
-              + (Wire.read() << 8);
+        value = i2cComms.readWord();
     }
 
     return value;
@@ -767,11 +758,10 @@ void setup()
     // Wire.setTimeout(25000L);             // Doesn't seem to have any effect.
 
 #if LCD_I2C
-    // Scan for i2c LCD.
+    // Scan for I2C LCD.
     for (uint8_t id = I2C_LCD_HI; id >= I2C_LCD_LO; id--)
     {
-        Wire.beginTransmission(id);
-        if (Wire.endTransmission() == 0)   
+        if (i2cComms.exists(id))   
         {
             disp.setLcd(id);
             announce();                     // Again for I2C LCD.

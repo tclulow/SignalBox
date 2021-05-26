@@ -1,4 +1,4 @@
-/* Communications between the modules.
+/* Encapsulate Wire library for communications between the modules.
  *
  *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
@@ -10,12 +10,12 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  *
  *
- *  Comms protocol.
+ *  I2C Comms protocol.
  *
- *  Most commands are a simple (write) i2c message from the Master to the Output module.
+ *  Most commands are a simple (write) I2C message from the Master to the Output module.
  *  Some messages require a response (maybe several bytes) from the output module. 
  *  This is achieved by the master sending a write message indicating what's required,
- *  and then immediately issuing a read i2c message to read the response from the Output module.
+ *  and then immediately issuing a read I2C message to read the response from the Output module.
  *  
  *  Basic message:      <CommandByte><Data byte>...
  *  Optional response:  <Response byte>...
@@ -71,8 +71,11 @@
  *      Lock        Byte defining an output node and pin. Node number (0-31) in top 5 bits, pin number (0-7) in bottom 3 bits. See OUTPUT_NODE_... and OUTPUT_PIN_...
  */
  
-#ifndef Comms_h
-#define Comms_h
+#ifndef I2cComms_h
+#define I2cComms_h
+
+
+#include "Wire.h"
 
 
 // Command byte.
@@ -87,8 +90,8 @@
 #define COMMS_CMD_SET_LO        0x20    // Go Lo
 #define COMMS_CMD_SET_HI        0x30    // Go Hi
 
-#define COMMS_CMD_READ          0x40    // Read data from Output's EEPROM definition (to the i2c master).    
-#define COMMS_CMD_WRITE         0x50    // Write data to Output's EEPROM definition (from the i2c master).
+#define COMMS_CMD_READ          0x40    // Read data from Output's EEPROM definition (to the I2C master).    
+#define COMMS_CMD_WRITE         0x50    // Write data to Output's EEPROM definition (from the I2C master).
 #define COMMS_CMD_SAVE          0x60    // Save Output's EEPROM definition (as set by a previous WRITE).
 #define COMMS_CMD_RESET         0x70    // Reset output to its saved state (from its EEPROM).
 
@@ -101,4 +104,154 @@
 #define COMMS_SYS_MOVE_LOCKS    0x02    // System renumber lock node numbers.
 
 
+class I2cComms
+{
+    public:
+
+
+    /** Set the I2C node ID.
+     */
+    void setId(uint8_t aNodeId)
+    {
+        Wire.begin(aNodeId);
+    }
+
+
+    /** Set the Receive handler.
+    */
+    void onReceive(void (*aHandler)(int))
+    {
+        Wire.onReceive(aHandler);
+    }
+
+
+    /** Set the Request handler.
+    */
+    void onRequest(void (*aHandler)(void))
+    {
+        Wire.onRequest(aHandler);
+    }
+
+
+    /** Is a particular node ID connected to the I2C bus?
+     */    
+    boolean exists(uint8_t aNodeId)
+    {
+        Wire.beginTransmission(aNodeId);
+        return Wire.endTransmission() == 0;
+    }
+    
+    
+    /** Send an I2C message with no data.
+     */
+    uint8_t sendShort(uint8_t aNodeId, uint8_t aCommand)
+    {
+        Wire.beginTransmission(aNodeId);
+        Wire.write(aCommand);
+        return Wire.endTransmission();
+    }
+
+
+    /** Send an I2C message with data bytes.
+     */
+    uint8_t sendData(uint8_t aNodeId, uint8_t aCommand, int aDataByte1, int aDataByte2)
+    {
+        Wire.beginTransmission(aNodeId);
+        Wire.write(aCommand);
+        if (aDataByte1 >= 0)
+        {
+            Wire.write((uint8_t)aDataByte1);
+        }    
+        if (aDataByte2 >= 0)
+        {
+            Wire.write((uint8_t)aDataByte2);
+        }    
+        return Wire.endTransmission();
+    }
+
+
+    /** Send an I2C message with payload.
+     */
+    uint8_t sendPayload(uint8_t aNodeId, uint8_t aCommand, void(* payload)())
+    {
+        Wire.beginTransmission(aNodeId);
+        Wire.write(aCommand);
+        payload();
+        return Wire.endTransmission();
+    }
+
+
+    /** Send a byte.
+     *  For use by payload functions.
+     */
+    size_t sendByte(uint8_t aByte)
+    {
+        return Wire.write(aByte);
+    }
+
+
+    /** Request a 1-byte response.
+     *  Return the byte, or a negative number if failed.
+     */
+    int requestByte(uint8_t aNodeId)
+    {
+        Wire.requestFrom(aNodeId, (uint8_t)1);
+        
+        return Wire.read();
+    }
+
+
+    /** Request a packet (of aLength).
+     *  Return true if correct packet-length arrives, else false.
+     */     
+    boolean requestPacket(uint8_t aNodeId, uint8_t aLength)
+    {
+        return    (Wire.requestFrom(aNodeId, aLength) == aLength)
+               && (Wire.available() == aLength);
+    }
+
+
+    /** Gets the number of bytes available to read.
+     */
+    int available()
+    {
+        return Wire.available();
+    }
+
+
+    /** Reads a byte from the receive buffer.
+     */
+    int readByte()
+    {
+        return Wire.read();
+    }
+
+
+    /** Reads a word (16 bits, 2 bytes) from the I2C comms receive buffer.
+     */    
+    int readWord()
+    {
+        return   (Wire.read() & 0xff)
+               | (Wire.read() << 8);
+
+    }
+
+
+    /** Ignore all received data that's left in the receive buffer.
+     */
+    void readAll()
+    {
+        while (Wire.available())
+        {
+            Wire.read();
+        }
+    }
+};
+
+
+/** A singleton instance of the I2cComms class.
+ */
+I2cComms i2cComms;
+
+        
 #endif

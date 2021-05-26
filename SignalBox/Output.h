@@ -37,9 +37,7 @@
 #define OUTPUT_LOCK_MAX             4   // Four locks of each type (Hi/Lo).
 
 // Wire response message lengths.
-#define OUTPUT_STATE_LEN            1   // One byte used to return a node's Outputs' states.
-#define OUTPUT_RENUMBER_LEN         1   // One byte used to return a node's new module ID.
-#define OUTPUT_MOVE_LOCK_LEN        3   // Two bytes used to move a nodes locks.
+#define OUTPUT_MOVE_LOCK_LEN        2   // Two bytes used to move a node's locks.
 
 // Defaults when initialising.
 #define OUTPUT_DEFAULT_LO          90   // Default low  position is 90 degrees.
@@ -258,45 +256,45 @@ class OutputDef
     }
 
 
-    /** Write an Output down the i2c bus.
+    /** Write an Output down the I2C bus.
      *  Must be the same order as read().
      */
     void write()
     {
-        Wire.write(type);
-        Wire.write(lo);
-        Wire.write(hi);
-        Wire.write(pace);
-        Wire.write(reset);
+        i2cComms.sendByte(type);
+        i2cComms.sendByte(lo);
+        i2cComms.sendByte(hi);
+        i2cComms.sendByte(pace);
+        i2cComms.sendByte(reset);
 
-        Wire.write(locks);
+        i2cComms.sendByte(locks);
         for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
         {
-            Wire.write(lockLo[index]);
-            Wire.write(lockHi[index]);
+            i2cComms.sendByte(lockLo[index]);
+            i2cComms.sendByte(lockHi[index]);
         }
-        Wire.write(lockState);
+        i2cComms.sendByte(lockState);
     }
 
 
-    /** Read an Output from the i2c bus.
+    /** Read an Output from the I2C bus.
      *  Must be the same order as write().
      */
     void read()
     {
-        type  = Wire.read();
-        lo    = Wire.read();
-        hi    = Wire.read();
-        pace  = Wire.read();
-        reset = Wire.read();
+        type  = i2cComms.readByte();
+        lo    = i2cComms.readByte();
+        hi    = i2cComms.readByte();
+        pace  = i2cComms.readByte();
+        reset = i2cComms.readByte();
 
-        locks = Wire.read();
+        locks = i2cComms.readByte();
         for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
         {
-            lockLo[index] = Wire.read();
-            lockHi[index] = Wire.read();
+            lockLo[index] = i2cComms.readByte();
+            lockHi[index] = i2cComms.readByte();
         }
-        lockState = Wire.read();
+        lockState = i2cComms.readByte();
     }
 
 
