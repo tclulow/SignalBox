@@ -1,4 +1,4 @@
-/* Communications between the modules.
+/* Encapsulate Wire library for communications between the modules.
  *
  *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
@@ -107,6 +107,40 @@
 class Comms
 {
     public:
+
+
+    /** Set the I2C node ID.
+     */
+    void setId(uint8_t aNodeId)
+    {
+        Wire.begin(aNodeId);
+    }
+
+
+    /** Set the Receive handler.
+    */
+    void onReceive(void (*aHandler)(int))
+    {
+        Wire.onReceive(aHandler);
+    }
+
+
+    /** Set the Request handler.
+    */
+    void onRequest(void (*aHandler)(void))
+    {
+        Wire.onRequest(aHandler);
+    }
+
+
+    /** Is a particular node ID connected to the I2C bus?
+     */    
+    boolean exists(uint8_t aNodeId)
+    {
+        Wire.beginTransmission(aNodeId);
+        return Wire.endTransmission() == 0;
+    }
+    
     
     /** Send an I2C message with no data.
      */
@@ -174,6 +208,14 @@ class Comms
     {
         return    (Wire.requestFrom(aNodeId, aLength) == aLength)
                && (Wire.available() == aLength);
+    }
+
+
+    /** Gets the number of bytes available to read.
+     */
+    int available()
+    {
+        return Wire.available();
     }
 
 

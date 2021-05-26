@@ -11,7 +11,6 @@
  */
 
 #include <EEPROM.h>
-#include <Wire.h>
 
 #include "Config.h"
 #include "Messages.h"

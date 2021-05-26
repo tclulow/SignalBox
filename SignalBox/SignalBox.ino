@@ -61,8 +61,7 @@ void scanInputHardware()
             if (disp.getLcdId() != (I2C_INPUT_BASE_ID + node))
             {
                 // Send message to the Input and see if it responds.
-                Wire.beginTransmission(I2C_INPUT_BASE_ID + node);
-                if (Wire.endTransmission() == 0)
+                if (comms.exists(I2C_INPUT_BASE_ID + node))
                 {
                     setInputNodePresent(node, true);
 
@@ -757,8 +756,7 @@ void setup()
     // Scan for i2c LCD.
     for (uint8_t id = I2C_LCD_HI; id >= I2C_LCD_LO; id--)
     {
-        Wire.beginTransmission(id);
-        if (Wire.endTransmission() == 0)   
+        if (comms.exists(id))   
         {
             disp.setLcd(id);
             announce();                     // Again for I2C LCD.

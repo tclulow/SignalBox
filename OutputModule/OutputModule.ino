@@ -118,9 +118,9 @@ void setup()
     }
 
     // Start i2c communications.
-    Wire.begin(getModuleId(true));
-    Wire.onReceive(processReceipt);
-    Wire.onRequest(processRequest);
+    comms.setId(getModuleId(true));
+    comms.onReceive(processReceipt);
+    comms.onRequest(processRequest);
 
     // Flash out version number on the built-in LED,
     // unless that's a Servo - don't want to mess with it's attached base pin.
@@ -447,7 +447,7 @@ void returnRenumber()
     comms.sendByte(getModuleId(false));
 
     // Now change our module ID.
-    Wire.begin(getModuleId(true));
+    comms.setId(getModuleId(true));
 }
 
 
@@ -501,7 +501,7 @@ void processReceipt(int aLen)
                                    saveSystemData();
                                    break;
             case COMMS_CMD_SET_LO:  
-            case COMMS_CMD_SET_HI: if (Wire.available())
+            case COMMS_CMD_SET_HI: if (comms.available())
                                    {
                                        delay = comms.readByte();    // Optional delay value.
                                    }
@@ -537,7 +537,7 @@ void processReceipt(int aLen)
     }
     
     // Consume unexpected data.
-    if (Wire.available())
+    if (comms.available())
     {
         if (isDebug(DEBUG_ERRORS))
         {
@@ -546,11 +546,11 @@ void processReceipt(int aLen)
             Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_UNEXPECTED));
             Serial.print(PGMT(M_DEBUG_LEN));
-            Serial.print(Wire.available(), HEX);
+            Serial.print(comms.available(), HEX);
             Serial.print(CHAR_COLON);
         }
         
-        while (Wire.available())
+        while (comms.available())
         {
             uint8_t ch = comms.readByte();
             if (isDebug(DEBUG_ERRORS))
@@ -592,7 +592,7 @@ void processSystem(uint8_t aOption)
  */
 void processRenumber()
 {
-    if (Wire.available())
+    if (comms.available())
     {
         requestNode = comms.readByte();      // The desired new node number.
     }
@@ -608,7 +608,7 @@ void processRenumber()
             Serial.print(PGMT(M_DEBUG_OPTION));
             Serial.print(requestOption);
             Serial.print(PGMT(M_DEBUG_LEN));
-            Serial.print(Wire.available());
+            Serial.print(comms.available());
             Serial.println();
         }
         
@@ -622,7 +622,7 @@ void processRenumber()
  */
 void processMoveLocks()
 {
-    if (Wire.available() == OUTPUT_MOVE_LOCK_LEN)
+    if (comms.available() == OUTPUT_MOVE_LOCK_LEN)
     {
         // Read the old and new node numbers.
         uint8_t oldNode = comms.readByte() & OUTPUT_NODE_MASK;
@@ -671,7 +671,7 @@ void processMoveLocks()
             Serial.print(PGMT(M_DEBUG_COMMAND));
             Serial.print(PGMT(M_DEBUG_MOVE));
             Serial.print(PGMT(M_DEBUG_LEN));
-            Serial.print(Wire.available());
+            Serial.print(comms.available());
             Serial.println();
         }
     }
@@ -686,7 +686,7 @@ void processWrite(uint8_t aPin)
 {
     uint8_t oldType = outputDefs[aPin].getType();       // Remember old type.
     
-    if (Wire.available() < OUTPUT_SIZE)
+    if (comms.available() < OUTPUT_SIZE)
     {
         if (isDebug(DEBUG_ERRORS))
         {
@@ -695,7 +695,7 @@ void processWrite(uint8_t aPin)
             Serial.print(PGMT(M_DEBUG_WRITE));
             Serial.print(aPin, HEX);
             Serial.print(PGMT(M_DEBUG_LEN));
-            Serial.print(Wire.available(), HEX);
+            Serial.print(comms.available(), HEX);
             Serial.println();
         }
     }
