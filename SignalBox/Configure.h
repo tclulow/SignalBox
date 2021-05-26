@@ -73,14 +73,18 @@ class Configure
         {
             case TOP_SYSTEM: displaySystem();
                              break;
+
             case TOP_INPUT:  displayInputNode();
                              break;
+
             case TOP_OUTPUT:
             case TOP_LOCKS:  displayOutputNode();
                              break;
+
             case TOP_EXPORT: 
             case TOP_IMPORT: displaySystem();
                              break;
+
             default:         configFail(M_ALL, topMenu);
                              break;
         }
@@ -145,15 +149,20 @@ class Configure
         {
             case TOP_SYSTEM: displayDetailSystem();
                              break;
+
             case TOP_INPUT:  displayDetailInput();
                              break;
+
             case TOP_OUTPUT:
             case TOP_LOCKS:  displayDetailOutput();
                              break;
+
             case TOP_EXPORT: displayDetailExport();
                              break;
+
             case TOP_IMPORT: displayDetailImport();
                              break;
+
             default:         configFail(M_DETAIL, topMenu);
                              break;
         }
@@ -177,12 +186,16 @@ class Configure
         {
             case SYS_REPORT: displaySystemReportParams();
                              break;
+
             case SYS_NODES:  displaySystemNodesParams();
                              break;
+
             case SYS_IDENT:  displaySystemIdentParams();
                              break;
+
             case SYS_DEBUG:  displaySystemDebugParams();
                              break;
+
             default:         configFail(M_PARAMS, sysMenu);
                              break;
         }
@@ -448,6 +461,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     topMenu += 2;           // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   topMenu -= 1;
                                     topMenu += TOP_MAX;     // Ensure in-range.
@@ -455,9 +469,12 @@ class Configure
                                     displayAll();
                                     markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
                                     break;
+
                 case BUTTON_SELECT: break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, false);
                                     switch (topMenu)
                                     {
@@ -507,6 +524,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     sysMenu += 2;                   // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   sysMenu -= 1;
                                     sysMenu += SYS_MAX;             // Ensure in-range.
@@ -514,6 +532,7 @@ class Configure
                                     displayDetailSystem();
                                     markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, true);
                                     break;
+
                 case BUTTON_SELECT: if (changed)
                                     {
                                         if (confirm())              // Ask if change should be saved.
@@ -537,6 +556,7 @@ class Configure
                                         finished = true;
                                     }
                                     break;
+
                 case BUTTON_LEFT:   if (changed)
                                     {
                                         if (cancel())               // Ask if change should be canelled.
@@ -556,6 +576,7 @@ class Configure
                                         finished = true;
                                     }
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, false);
                                     switch (sysMenu)
                                     {
@@ -596,6 +617,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     systemData.reportLevel += 2;              // Allow for decrement in BUTTON_DOWN code below.
                 case BUTTON_DOWN:   systemData.reportLevel -= 1;
                                     systemData.reportLevel += REPORT_MAX;     // Ensure in-range.
@@ -603,9 +625,12 @@ class Configure
                                     disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_DET, M_REPORT_PROMPTS[systemData.reportLevel], LCD_COL_REPORT_LENGTH);
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  break;
             }
         }
@@ -631,6 +656,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     systemData.debugLevel += 2;             // Allow for decrement in BUTTON_DOWN code below.
                 case BUTTON_DOWN:   systemData.debugLevel -= 1;
                                     systemData.debugLevel += DEBUG_MAX;     // Ensure in-range.
@@ -638,9 +664,12 @@ class Configure
                                     disp.printProgStrAt(LCD_COL_DEBUG_PARAM, LCD_ROW_DET, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_COL_DEBUG_LENGTH);
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  break;
             }
         }
@@ -664,15 +693,19 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     expMenu += 2;           // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   expMenu -= 1;
                                     expMenu += EXP_MAX;     // Ensure in-range.
                                     expMenu %= EXP_MAX;
                                     displayDetailExport();
                                     break;
+
                 case BUTTON_SELECT: break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, false);
                                     importExport.doExport(expMenu);
                                     markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, true);
@@ -711,6 +744,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     adjust += 2;            // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   adjust -= 1;
                                     if (aIsInput)
@@ -735,6 +769,7 @@ class Configure
                                     disp.printHexChAt(LCD_COL_NODE, LCD_ROW_TOP, aIsInput ? inpNode : outNode);
                                     displayDetail();
                                     break;
+
                 case BUTTON_SELECT: markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
                                     if (aIsInput)
                                     {
@@ -746,9 +781,11 @@ class Configure
                                     }
                                     markField(LCD_COL_NODE, LCD_ROW_TOP, 1, true);
                                     break;
+
                 case BUTTON_LEFT:   finished = true;
                                     markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
                                     menuPin(aIsInput);
                                     markField(LCD_COL_NODE, LCD_ROW_TOP, 1, true);
@@ -850,6 +887,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     adjust += 2;        // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   adjust -= 1;
                                     if (jumpers)
@@ -863,6 +901,7 @@ class Configure
                                     disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, newNode);
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: if (   (jumpers)
                                         || (outNode != newNode))
                                     {
@@ -884,6 +923,7 @@ class Configure
                                         finished = true;
                                     }
                                     break;
+
                 case BUTTON_LEFT:   if (   (!changed)
                                         || (cancel()))      // Ask if change should be cancelled    .
                                     {
@@ -895,6 +935,7 @@ class Configure
                                         markField(LCD_COL_NODE, LCD_ROW_DET, 1, true);
                                     }
                                     break;
+
                 case BUTTON_RIGHT:  jumpers = !jumpers;
                                     changed = true;
                                     disp.setCursor(LCD_COL_NODE, LCD_ROW_DET);
@@ -1076,6 +1117,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     if (aIsInput)
                                     {
                                         inpPin = (inpPin + 1) & INPUT_PIN_MASK;
@@ -1089,6 +1131,7 @@ class Configure
                                     disp.printHexChAt(LCD_COL_PIN, LCD_ROW_TOP, aIsInput ? inpPin : outPin);
                                     displayDetail();
                                     break;
+
                 case BUTTON_DOWN:   if (aIsInput)
                                     {
                                         inpPin = (inpPin - 1) & INPUT_PIN_MASK;
@@ -1102,6 +1145,7 @@ class Configure
                                     disp.printHexChAt(LCD_COL_PIN, LCD_ROW_TOP, aIsInput ? inpPin : outPin);
                                     displayDetail();
                                     break;
+
                 case BUTTON_SELECT: if (aIsInput)
                                     {
                                         testInput();
@@ -1115,8 +1159,10 @@ class Configure
                                         resetOutput();
                                     }
                                     break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_PIN, LCD_ROW_TOP, 1, false);
                                     if (aIsInput)
                                     {
@@ -1156,6 +1202,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     inputType += 2;                 // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   inputType -= 1;
                                     inputType += INPUT_TYPE_MAX;    // Ensure in-range.
@@ -1163,6 +1210,7 @@ class Configure
                                     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT_TYPES[inputType], LCD_LEN_OPTION);
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: if (changed)
                                     {
                                         if (confirm())              // Ask if change should be saved.
@@ -1181,6 +1229,7 @@ class Configure
                                         finished = true;
                                     }
                                     break;
+
                 case BUTTON_LEFT:   if (changed)
                                     {
                                         if (cancel())               // Ask if change should be cancelled.
@@ -1199,6 +1248,7 @@ class Configure
                                         finished = true;
                                     }
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, false);
                                     changed |= menuInputSelect();
                                     displayDetailInputOutput();
@@ -1233,6 +1283,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     index += 2;                     // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   index -= 1;
                                     index += INPUT_OUTPUT_MAX;      // Ensure in-range.
@@ -1240,10 +1291,13 @@ class Configure
                                     disp.printChAt(LCD_COL_INPUT_OUTPUT, LCD_ROW_DET, (OPTION_ID(index)));
                                     displayInputEdit(index);
                                     break;
+
                 case BUTTON_SELECT: testInputOutput(index);
                                     break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_INPUT_OUTPUT, LCD_ROW_DET, 1, false);
                                     changed |= menuInputOutputNode(index);
                                     markField(LCD_COL_INPUT_OUTPUT, LCD_ROW_DET, 1, true);
@@ -1273,6 +1327,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     adjust += 2;        // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   adjust -= 1;
                                     if (inputDef.isDelay(aIndex))
@@ -1287,12 +1342,15 @@ class Configure
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: changed = true;
                                     inputDef.setDelay(aIndex, !inputDef.isDelay(aIndex));       // Enable/disable this output.
                                     displayInputEdit(aIndex);
                                     break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_NODE, LCD_ROW_DET, 1, false);
                                     changed |= menuInputOutputPin(aIndex);
                                     markField(LCD_COL_NODE, LCD_ROW_DET, 1, true);
@@ -1318,20 +1376,25 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     // Increment the pin number at this index.
                                     inputDef.setOutputPin(aIndex, inputDef.getOutputPin(aIndex) + 1);
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
+
                 case BUTTON_DOWN:   // Decrement the pin number at this index.
                                     inputDef.setOutputPin(aIndex, inputDef.getOutputPin(aIndex) - 1);
                                     displayInputEdit(aIndex);
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: testInputOutput(aIndex);
                                     break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  break;
             }
         }
@@ -1439,13 +1502,16 @@ class Configure
                         switch (button)
                         {
                             case BUTTON_NONE:   break;
+
                             case BUTTON_UP:     adjust += 2;    // Use +1 to compensate for the -1 that the code below will do.
                             case BUTTON_DOWN:   adjust -= 1;
                                                 node = nextNode(node, adjust, false, true);
                                                 pin = 0;
                                                 break;
+
                             case BUTTON_SELECT: interrupted = true;
                                                 break;
+
                             case BUTTON_LEFT:   for (pin -= 1; pin > 0; pin--)
                                                 {
                                                     readOutput(node, pin);
@@ -1455,6 +1521,7 @@ class Configure
                                                     }
                                                 }
                                                 break;
+
                             case BUTTON_RIGHT:  pin += 1;
                                                 break;
                         }
@@ -1511,6 +1578,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     outputType += 2;                    // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   outputType -= 1;
                                     outputType += OUTPUT_TYPE_MAX;      // Ensure in-range.
@@ -1523,6 +1591,7 @@ class Configure
                                     markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, true);
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: if (changed)
                                     {
                                         if (confirm())                  // Ask if change should be saved.
@@ -1541,6 +1610,7 @@ class Configure
                                         finished = true;
                                     }
                                     break;
+
                 case BUTTON_LEFT:   if (changed)
                                     {
                                         if (cancel())                   // Ask if change should be cancelled.
@@ -1559,6 +1629,7 @@ class Configure
                                         finished = true;
                                     }
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, false);
                                     switch (outputType)
                                     {
@@ -1608,6 +1679,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     do
                                     {
                                         outputDef.setLo(outputDef.getLo() + 1);
@@ -1623,6 +1695,7 @@ class Configure
                                     while (readButton() != 0);
                                     changed = true;
                                     break;
+
                 case BUTTON_DOWN:   do
                                     {
                                         outputDef.setLo(outputDef.getLo() - 1);
@@ -1638,10 +1711,13 @@ class Configure
                                     while (readButton() != 0);
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: testOutput();
                                     break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
                                     changed |= menuOutputHi(aLimit);
                                     markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
@@ -1676,6 +1752,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     do
                                     {
                                         outputDef.setHi(outputDef.getHi() + 1);
@@ -1691,6 +1768,7 @@ class Configure
                                     while (readButton() != 0);
                                     changed = true;
                                     break;
+
                 case BUTTON_DOWN:   do
                                     {
                                         outputDef.setHi(outputDef.getHi() - 1);
@@ -1706,10 +1784,13 @@ class Configure
                                     while (readButton() != 0);
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: testOutput();
                                     break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
                                     changed |= menuOutputPace();
                                     displayOutputAngles();
@@ -1743,22 +1824,27 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     value = (value + 1) & OUTPUT_PACE_MASK;
                                     outputDef.setPace(value);
                                     disp.printHexChAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, value);
                                     writeOutput();
                                     changed = true;
                                     break;
+
                 case BUTTON_DOWN:   value = (value - 1) & OUTPUT_PACE_MASK;
                                     outputDef.setPace(value);
                                     disp.printHexChAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, value);
                                     writeOutput();
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: testOutput();
                                     break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, 1, false);
                                     changed |= menuOutputReset();
                                     markField(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, 1, true);
@@ -1787,6 +1873,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     do
                                     {
                                         outputDef.setReset(outputDef.getReset() + 1);
@@ -1798,6 +1885,7 @@ class Configure
                                     writeOutput();
                                     changed = true;
                                     break;
+
                 case BUTTON_DOWN:   do
                                     {
                                         outputDef.setReset(outputDef.getReset() - 1);
@@ -1809,10 +1897,13 @@ class Configure
                                     writeOutput();
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: testOutput();
                                     break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  break;
             }
         }
@@ -1839,11 +1930,13 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:
                 case BUTTON_DOWN:   hi = !hi;
                                     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, hi ? M_HI : M_LO);
                                     displayLockEdit(hi, 0);
                                     break;
+
                 case BUTTON_SELECT: if (changed)
                                     {
                                         if (confirm())                  // Ask if change should be saved.
@@ -1863,6 +1956,7 @@ class Configure
                                         finished = true;
                                     }
                                     break;
+
                 case BUTTON_LEFT:   if (changed)
                                     {
                                         if (cancel())                   // Ask if change should be cancelled.
@@ -1881,6 +1975,7 @@ class Configure
                                         finished = true;
                                     }
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_LOCK_MARK, false);
                                     changed |= menuLockSelect(hi);
                                     markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_LOCK_MARK, true);
@@ -1913,6 +2008,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     index += 2;                     // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   index -= 1;
                                     index += OUTPUT_LOCK_MAX;       // Ensure in-range.
@@ -1920,13 +2016,16 @@ class Configure
                                     disp.printChAt(LCD_COL_LOCK_SELECT, LCD_ROW_DET, OPTION_ID(index));
                                     displayLockEdit(aHi, index);
                                     break;
+
                 case BUTTON_SELECT: if (outputDef.isLock(aHi, index))
                                     {
                                         testOutput(outputDef.getLockNode(aHi, index), outputDef.getLockPin(aHi, index));
                                     }
                                     break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_LOCK_SELECT, LCD_ROW_DET, 1, false);
                                     changed |= menuLockState(aHi, index);
                                     markField(LCD_COL_LOCK_SELECT, LCD_ROW_DET, 1, true);
@@ -1955,6 +2054,7 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:
                 case BUTTON_DOWN:   if (!outputDef.isLock(aHi, aIndex))         // If currently no lock, enable one.
                                     {
@@ -1968,12 +2068,15 @@ class Configure
                                     }
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: outputDef.setLock(aHi, aIndex, !outputDef.isLock(aHi, aIndex));
                                     displayLockEdit(aHi, aIndex);
                                     changed = true;
                                     break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  if (!outputDef.isLock(aHi, aIndex))
                                     {
                                         outputDef.setLock(aHi, aIndex, true);
@@ -2009,16 +2112,20 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     adjust += 2;    // Use +1 to compensate for the -1 that the code below will do.
                 case BUTTON_DOWN:   adjust -= 1;
                                     outputDef.setLockNode(aHi, aIndex, nextNode(outputDef.getLockNode(aHi, aIndex), adjust, false, true));
                                     disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, outputDef.getLockNode(aHi, aIndex));
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: testOutput(outputDef.getLockNode(aHi, aIndex), outputDef.getLockPin(aHi, aIndex));
                                     break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  markField(LCD_COL_NODE, LCD_ROW_DET, 1, false);
                                     changed |= menuLockPin(aHi, aIndex);
                                     markField(LCD_COL_NODE, LCD_ROW_DET, 1, true);
@@ -2046,18 +2153,23 @@ class Configure
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
+
                 case BUTTON_UP:     outputDef.setLockPin(aHi, aIndex, (outputDef.getLockPin(aHi, aIndex) + 1) & OUTPUT_PIN_MASK);
                                     disp.printHexChAt(LCD_COL_PIN, LCD_ROW_DET, outputDef.getLockPin(aHi, aIndex));
                                     changed = true;
                                     break;
+
                 case BUTTON_DOWN:   outputDef.setLockPin(aHi, aIndex, (outputDef.getLockPin(aHi, aIndex) - 1) & OUTPUT_PIN_MASK);
                                     disp.printHexChAt(LCD_COL_PIN, LCD_ROW_DET, outputDef.getLockPin(aHi, aIndex));
                                     changed = true;
                                     break;
+
                 case BUTTON_SELECT: testOutput(outputDef.getLockNode(aHi, aIndex), outputDef.getLockPin(aHi, aIndex));
                                     break;
+
                 case BUTTON_LEFT:   finished = true;
                                     break;
+
                 case BUTTON_RIGHT:  break;
             }
         }

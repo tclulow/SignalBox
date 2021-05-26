@@ -432,12 +432,15 @@ void processInput(boolean aState)
         {
             case INPUT_TYPE_TOGGLE: // newState = aState;      // Set state to that of the Toggle.
                                     break;
+
             case INPUT_TYPE_ON_OFF: // Find first real output (not a delay) to determine new state.
                                     first = inputDef.getFirstOutput();
                                     newState = !getOutputState(inputDef.getOutputNode(first), inputDef.getOutputPin(first));
                                     break;
+
             case INPUT_TYPE_ON:     newState = true;            // Set the state.
                                     break;
+
             case INPUT_TYPE_OFF:    newState = false;           // Clear the state.
                                     break;
         }
@@ -682,6 +685,7 @@ void processCommand()
                           executed = true;
                       }
                       break;
+
             case 'o': state = getOutputState(node, pin);
             case 'l': state = !state;
             case 'h': if (   (node < OUTPUT_NODE_MAX)
@@ -691,6 +695,7 @@ void processCommand()
                           readOutputStates(node);                   // Recover states in case LED_4 has moved one.
                           executed = true;
                       }
+
             default:  break;
         }
     }

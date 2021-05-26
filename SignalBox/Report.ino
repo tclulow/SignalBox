@@ -39,17 +39,22 @@ void reportPause()
         switch (waitForButtonPress())
         {
             case BUTTON_NONE:   break;
+
             case BUTTON_UP:     systemData.reportLevel = REPORT_LONG;
                                 saveSystemData();
                                 break;
+
             case BUTTON_DOWN:   systemData.reportLevel = REPORT_SHORT;
                                 saveSystemData();
                                 break;
+
             case BUTTON_LEFT:   systemData.reportLevel = 0;
                                 saveSystemData();
                                 break;
+
             case BUTTON_RIGHT:  configure.run();
                                 break;
+
             case BUTTON_SELECT: break;
         }
 

@@ -381,8 +381,10 @@ void processRequest()
     {
         case COMMS_CMD_SYSTEM: returnSystem();
                                break;
+
         case COMMS_CMD_READ:   returnDef();
                                break;
+
         default:               unrecognisedCommand(M_DEBUG_REQUEST, requestCommand, requestOption);
                                break;
     }
@@ -400,6 +402,7 @@ void returnSystem()
     {
         case COMMS_SYS_STATES:   returnStates();
                                  break;
+
         case COMMS_SYS_RENUMBER: returnRenumber();
                                  break;
         default:                 unrecognisedCommand(M_DEBUG_SYSTEM, requestCommand, requestOption);
@@ -497,9 +500,11 @@ void processReceipt(int aLen)
         {
             case COMMS_CMD_SYSTEM: processSystem(option);
                                    break;
+
             case COMMS_CMD_DEBUG:  setDebug(option);                // Option is used for the debug level.
                                    saveSystemData();
                                    break;
+
             case COMMS_CMD_SET_LO:  
             case COMMS_CMD_SET_HI: if (Wire.available())
                                    {
@@ -507,15 +512,20 @@ void processReceipt(int aLen)
                                    }
                                    actionState(pin, command == COMMS_CMD_SET_HI, delay, false);
                                    break;
+
             case COMMS_CMD_READ:   requestCommand = command;        // Record the command.
                                    requestOption  = option;         // and the pin the master wants to read.
                                    break;
+
             case COMMS_CMD_WRITE:  processWrite(pin);               // Process the Output's data.
                                    break;
+
             case COMMS_CMD_SAVE:   processSave(pin);                // Save the Output's data.
                                    break;
+
             case COMMS_CMD_RESET:  processReset(pin);               // Reset the Output.
                                    break;
+
             default:               unrecognisedCommand(M_DEBUG_RECEIPT, command, option);
                                    break;
         }
@@ -576,12 +586,15 @@ void processSystem(uint8_t aOption)
         case COMMS_SYS_STATES:     requestCommand = COMMS_CMD_SYSTEM;
                                    requestOption  = aOption;
                                    break;
+
         case COMMS_SYS_RENUMBER:   requestCommand = COMMS_CMD_SYSTEM;
                                    requestOption  = aOption;
                                    processRenumber();
                                    break;
+
         case COMMS_SYS_MOVE_LOCKS: processMoveLocks();
                                    break;
+
         default:                   unrecognisedCommand(M_DEBUG_SYSTEM, COMMS_CMD_SYSTEM, aOption);
                                    break;
     }

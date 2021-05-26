@@ -654,14 +654,19 @@ class ImportExport
                               exportOutputs();
                               exportLocks(true);
                               break;
+
             case EXP_SYSTEM:  exportSystem(debugLevel);
                               break;
+
             case EXP_INPUTS:  exportInputs(false);
                               break;
+
             case EXP_OUTPUTS: exportOutputs();
                               break;
+
             case EXP_LOCKS:   exportLocks(false);
                               break;
+
             default:          systemFail(M_EXPORT, aExport);
         }
     
