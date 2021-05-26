@@ -83,11 +83,11 @@ class Display
     LiquidCrystal* lcdShield;
 
 #if LCD_I2C
-    LiquidCrystal_I2C* lcdI2C;      // An LCD attached using i2c.
+    LiquidCrystal_I2C* lcdI2C;      // An LCD attached using I2C.
 #else
     LiquidCrystal*     lcdI2C;      // Dummy variable, never set.
 #endif
-    uint8_t            lcdId = 0;   // The ID of the i2c LCD. Never set if no i2c LCD.
+    uint8_t            lcdId = 0;   // The ID of the I2C LCD. Never set if no I2C LCD.
 
     
     public:
@@ -118,7 +118,7 @@ class Display
 
 
 #if LCD_I2C
-    /** Creates the i2c LCD object and sets its i2c ID.
+    /** Creates the I2C LCD object and sets its I2C ID.
      */
     void setLcd(uint8_t aLcdId)
     {
@@ -132,8 +132,8 @@ class Display
 #endif
 
 
-    /** Gets the i2c LCD's ID.
-     *  If no i2c LCD connected (or code is disabled with LCD_I2C false),
+    /** Gets the I2C LCD's ID.
+     *  If no I2C LCD connected (or code is disabled with LCD_I2C false),
      *  then this is never set.
      */
     uint8_t getLcdId()

@@ -256,45 +256,45 @@ class OutputDef
     }
 
 
-    /** Write an Output down the i2c bus.
+    /** Write an Output down the I2C bus.
      *  Must be the same order as read().
      */
     void write()
     {
-        comms.sendByte(type);
-        comms.sendByte(lo);
-        comms.sendByte(hi);
-        comms.sendByte(pace);
-        comms.sendByte(reset);
+        i2cComms.sendByte(type);
+        i2cComms.sendByte(lo);
+        i2cComms.sendByte(hi);
+        i2cComms.sendByte(pace);
+        i2cComms.sendByte(reset);
 
-        comms.sendByte(locks);
+        i2cComms.sendByte(locks);
         for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
         {
-            comms.sendByte(lockLo[index]);
-            comms.sendByte(lockHi[index]);
+            i2cComms.sendByte(lockLo[index]);
+            i2cComms.sendByte(lockHi[index]);
         }
-        comms.sendByte(lockState);
+        i2cComms.sendByte(lockState);
     }
 
 
-    /** Read an Output from the i2c bus.
+    /** Read an Output from the I2C bus.
      *  Must be the same order as write().
      */
     void read()
     {
-        type  = comms.readByte();
-        lo    = comms.readByte();
-        hi    = comms.readByte();
-        pace  = comms.readByte();
-        reset = comms.readByte();
+        type  = i2cComms.readByte();
+        lo    = i2cComms.readByte();
+        hi    = i2cComms.readByte();
+        pace  = i2cComms.readByte();
+        reset = i2cComms.readByte();
 
-        locks = comms.readByte();
+        locks = i2cComms.readByte();
         for (uint8_t index = 0; index < OUTPUT_LOCK_MAX; index++)
         {
-            lockLo[index] = comms.readByte();
-            lockHi[index] = comms.readByte();
+            lockLo[index] = i2cComms.readByte();
+            lockHi[index] = i2cComms.readByte();
         }
-        lockState = comms.readByte();
+        lockState = i2cComms.readByte();
     }
 
 

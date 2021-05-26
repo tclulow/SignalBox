@@ -10,12 +10,12 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  *
  *
- *  Comms protocol.
+ *  I2C Comms protocol.
  *
- *  Most commands are a simple (write) i2c message from the Master to the Output module.
+ *  Most commands are a simple (write) I2C message from the Master to the Output module.
  *  Some messages require a response (maybe several bytes) from the output module. 
  *  This is achieved by the master sending a write message indicating what's required,
- *  and then immediately issuing a read i2c message to read the response from the Output module.
+ *  and then immediately issuing a read I2C message to read the response from the Output module.
  *  
  *  Basic message:      <CommandByte><Data byte>...
  *  Optional response:  <Response byte>...
@@ -71,8 +71,8 @@
  *      Lock        Byte defining an output node and pin. Node number (0-31) in top 5 bits, pin number (0-7) in bottom 3 bits. See OUTPUT_NODE_... and OUTPUT_PIN_...
  */
  
-#ifndef Comms_h
-#define Comms_h
+#ifndef I2cComms_h
+#define I2cComms_h
 
 
 #include "Wire.h"
@@ -90,8 +90,8 @@
 #define COMMS_CMD_SET_LO        0x20    // Go Lo
 #define COMMS_CMD_SET_HI        0x30    // Go Hi
 
-#define COMMS_CMD_READ          0x40    // Read data from Output's EEPROM definition (to the i2c master).    
-#define COMMS_CMD_WRITE         0x50    // Write data to Output's EEPROM definition (from the i2c master).
+#define COMMS_CMD_READ          0x40    // Read data from Output's EEPROM definition (to the I2C master).    
+#define COMMS_CMD_WRITE         0x50    // Write data to Output's EEPROM definition (from the I2C master).
 #define COMMS_CMD_SAVE          0x60    // Save Output's EEPROM definition (as set by a previous WRITE).
 #define COMMS_CMD_RESET         0x70    // Reset output to its saved state (from its EEPROM).
 
@@ -104,7 +104,7 @@
 #define COMMS_SYS_MOVE_LOCKS    0x02    // System renumber lock node numbers.
 
 
-class Comms
+class I2cComms
 {
     public:
 
@@ -227,7 +227,7 @@ class Comms
     }
 
 
-    /** Reads a word (16 bits, 2 bytes) from the comms receive buffer.
+    /** Reads a word (16 bits, 2 bytes) from the I2C comms receive buffer.
      */    
     int readWord()
     {
@@ -249,9 +249,9 @@ class Comms
 };
 
 
-/** A singleton instance of the Comms class.
+/** A singleton instance of the I2cComms class.
  */
-Comms comms;
+I2cComms i2cComms;
 
         
 #endif

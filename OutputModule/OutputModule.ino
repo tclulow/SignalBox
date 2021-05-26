@@ -62,7 +62,7 @@ long    tickFlash = 0;  // Ticking for Flashers.
 uint8_t tickPwm   = 0;  // Ticking for PWM output of LEDs.
 
 
-// i2c request command parameters
+// I2C request command parameters
 uint8_t requestCommand = COMMS_CMD_NONE;
 uint8_t requestOption  = 0;
 uint8_t requestNode    = 0;
@@ -117,10 +117,10 @@ void setup()
         }
     }
 
-    // Start i2c communications.
-    comms.setId(getModuleId(true));
-    comms.onReceive(processReceipt);
-    comms.onRequest(processRequest);
+    // Start I2C communications.
+    i2cComms.setId(getModuleId(true));
+    i2cComms.onReceive(processReceipt);
+    i2cComms.onRequest(processRequest);
 
     // Flash out version number on the built-in LED,
     // unless that's a Servo - don't want to mess with it's attached base pin.
@@ -423,7 +423,7 @@ void returnStates()
         }
     }
     
-    comms.sendByte(states);
+    i2cComms.sendByte(states);
 
     if (isDebug(DEBUG_BRIEF))
     {
@@ -444,10 +444,10 @@ void returnRenumber()
     systemData.i2cModuleID = requestNode;
     saveSystemData();
 
-    comms.sendByte(getModuleId(false));
+    i2cComms.sendByte(getModuleId(false));
 
     // Now change our module ID.
-    comms.setId(getModuleId(true));
+    i2cComms.setId(getModuleId(true));
 }
 
 
@@ -471,7 +471,7 @@ void processReceipt(int aLen)
     if (aLen > 0)
     {
         // Read the command byte.
-        uint8_t command = comms.readByte();
+        uint8_t command = i2cComms.readByte();
         uint8_t option  = command & COMMS_OPTION_MASK;
         uint8_t pin     = option  & OUTPUT_PIN_MASK;
         uint8_t delay   = 0;
@@ -501,9 +501,9 @@ void processReceipt(int aLen)
                                    saveSystemData();
                                    break;
             case COMMS_CMD_SET_LO:  
-            case COMMS_CMD_SET_HI: if (comms.available())
+            case COMMS_CMD_SET_HI: if (i2cComms.available())
                                    {
-                                       delay = comms.readByte();    // Optional delay value.
+                                       delay = i2cComms.readByte();    // Optional delay value.
                                    }
                                    actionState(pin, command == COMMS_CMD_SET_HI, delay, false);
                                    break;
@@ -537,7 +537,7 @@ void processReceipt(int aLen)
     }
     
     // Consume unexpected data.
-    if (comms.available())
+    if (i2cComms.available())
     {
         if (isDebug(DEBUG_ERRORS))
         {
@@ -546,13 +546,13 @@ void processReceipt(int aLen)
             Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_UNEXPECTED));
             Serial.print(PGMT(M_DEBUG_LEN));
-            Serial.print(comms.available(), HEX);
+            Serial.print(i2cComms.available(), HEX);
             Serial.print(CHAR_COLON);
         }
         
-        while (comms.available())
+        while (i2cComms.available())
         {
-            uint8_t ch = comms.readByte();
+            uint8_t ch = i2cComms.readByte();
             if (isDebug(DEBUG_ERRORS))
             {
                 Serial.print(CHAR_SPACE);
@@ -592,9 +592,9 @@ void processSystem(uint8_t aOption)
  */
 void processRenumber()
 {
-    if (comms.available())
+    if (i2cComms.available())
     {
-        requestNode = comms.readByte();      // The desired new node number.
+        requestNode = i2cComms.readByte();      // The desired new node number.
     }
     else
     {
@@ -608,7 +608,7 @@ void processRenumber()
             Serial.print(PGMT(M_DEBUG_OPTION));
             Serial.print(requestOption);
             Serial.print(PGMT(M_DEBUG_LEN));
-            Serial.print(comms.available());
+            Serial.print(i2cComms.available());
             Serial.println();
         }
         
@@ -622,11 +622,11 @@ void processRenumber()
  */
 void processMoveLocks()
 {
-    if (comms.available() == OUTPUT_MOVE_LOCK_LEN)
+    if (i2cComms.available() == OUTPUT_MOVE_LOCK_LEN)
     {
         // Read the old and new node numbers.
-        uint8_t oldNode = comms.readByte() & OUTPUT_NODE_MASK;
-        uint8_t newNode = comms.readByte() & OUTPUT_NODE_MASK;
+        uint8_t oldNode = i2cComms.readByte() & OUTPUT_NODE_MASK;
+        uint8_t newNode = i2cComms.readByte() & OUTPUT_NODE_MASK;
 
         if (isDebug(DEBUG_DETAIL))
         {
@@ -671,7 +671,7 @@ void processMoveLocks()
             Serial.print(PGMT(M_DEBUG_COMMAND));
             Serial.print(PGMT(M_DEBUG_MOVE));
             Serial.print(PGMT(M_DEBUG_LEN));
-            Serial.print(comms.available());
+            Serial.print(i2cComms.available());
             Serial.println();
         }
     }
@@ -686,7 +686,7 @@ void processWrite(uint8_t aPin)
 {
     uint8_t oldType = outputDefs[aPin].getType();       // Remember old type.
     
-    if (comms.available() < OUTPUT_SIZE)
+    if (i2cComms.available() < OUTPUT_SIZE)
     {
         if (isDebug(DEBUG_ERRORS))
         {
@@ -695,7 +695,7 @@ void processWrite(uint8_t aPin)
             Serial.print(PGMT(M_DEBUG_WRITE));
             Serial.print(aPin, HEX);
             Serial.print(PGMT(M_DEBUG_LEN));
-            Serial.print(comms.available(), HEX);
+            Serial.print(i2cComms.available(), HEX);
             Serial.println();
         }
     }

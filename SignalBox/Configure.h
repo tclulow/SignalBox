@@ -922,8 +922,8 @@ class Configure
         int response = aOldNode;
 
         // Send the renumber command to the node concerned.
-        if (   ((response = comms.sendData(I2C_OUTPUT_BASE_ID + aOldNode, COMMS_CMD_SYSTEM | COMMS_SYS_RENUMBER, aNewNode, -1)) == 0)
-            && ((response = comms.requestByte(I2C_OUTPUT_BASE_ID + aOldNode)) >= 0))
+        if (   ((response = i2cComms.sendData(I2C_OUTPUT_BASE_ID + aOldNode, COMMS_CMD_SYSTEM | COMMS_SYS_RENUMBER, aNewNode, -1)) == 0)
+            && ((response = i2cComms.requestByte(I2C_OUTPUT_BASE_ID + aOldNode)) >= 0))
         {
             response &= OUTPUT_NODE_MASK;       // The new node number of the Output as returned by the node
     
@@ -1021,7 +1021,7 @@ class Configure
                             Serial.println();    
                         }
 
-                        comms.sendData(I2C_OUTPUT_BASE_ID + node, COMMS_CMD_SYSTEM | COMMS_SYS_MOVE_LOCKS, aOldNode, response);
+                        i2cComms.sendData(I2C_OUTPUT_BASE_ID + node, COMMS_CMD_SYSTEM | COMMS_SYS_MOVE_LOCKS, aOldNode, response);
                     }
                     else
                     {

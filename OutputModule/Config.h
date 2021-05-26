@@ -69,7 +69,7 @@
 #define INTERLOCK_WARNING_TIME   2000   // Duration (msecs) of interlock warning.
 
 
-// i2c node numbers.
+// I2C node numbers.
 #define I2C_CONTROLLER_ID        0x10   // Controller ID.
 #define I2C_INPUT_BASE_ID        0x20   // Input nodes' base ID.
 #define I2C_OUTPUT_BASE_ID       0x50   // Output nodes' base ID.
