@@ -105,10 +105,9 @@ class Display
     {
         lcdShield = new LiquidCrystal(LCD_RS, LCD_ENABLE, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
         lcdShield->begin(LCD_COLS, LCD_ROWS);
+        // lcdShield->noCursor();
         // lcdShield->noBlink();
-        
-        // Custom character to indicate "Lo".
-        lcdShield->createChar(CHAR_LO, BYTES_LO);
+        lcdShield->createChar(CHAR_LO, BYTES_LO);       // Custom character to indicate "Lo".
         
 //        for (uint8_t index = 0; index < CHAR_LO; index++)
 //        {
@@ -125,9 +124,10 @@ class Display
         lcdId = aLcdId;
         lcdI2C = new LiquidCrystal_I2C(lcdId, LCD2_COLS, LCD2_ROWS);
         lcdI2C->begin(LCD2_COLS, LCD2_ROWS);
-        // lcdI2C->noBlink();
+        lcdI2C->noCursor();                             // Cursor and Blink should be off by default,
+        lcdI2C->noBlink();                              // but sometimes appear on, so force them off.
         lcdI2C->backlight();
-        lcdI2C->createChar(CHAR_LO, BYTES_LO);      
+        lcdI2C->createChar(CHAR_LO, BYTES_LO);          // Custom character to indicate "Lo".
     }
 #endif
 
@@ -143,7 +143,7 @@ class Display
     
 
     /** Clears the display.
-     *  Delegate to library class.
+     *  Delegate to library classes.
      */
     void clear()
     {
@@ -161,7 +161,7 @@ class Display
 
     /** Sets the cursor location.
      *  Negative aCol measures from right-hand-end of display.
-     *  Delegate to library class.
+     *  Delegate to library classes.
      */
     void setCursor(int aCol, int aRow)
     {
@@ -193,7 +193,7 @@ class Display
     
 
     /** Prints a character on the LCD.
-     *  Delegate to library class.
+     *  Delegate to library classes.
      */
     void printCh(char aChar)
     {
@@ -218,7 +218,7 @@ class Display
 
 
     /** Prints a char string on the LCD.
-     *  Delegate to library class.
+     *  Delegate to library classes.
      */
     void printStr(char* aString)
     {
@@ -234,7 +234,7 @@ class Display
 
 
     /** Prints a Flash string on the LCD.
-     *  Delegate to library class.
+     *  Delegate to library classes.
      */
     void printProgStr(PGM_P aMessagePtr)
     {
