@@ -38,7 +38,7 @@ There are also various tuning parameters that can be adjusted here.
 
 ## PCBs
 
-There are two version of the output module PCB. The original takes a Nano on a daughter board, the new one uses a DIP ATmega328 chip.
+There are two versions of the output module PCB. The original takes a Nano on a daughter board, the new one uses a DIP ATmega328 chip.
 
 ### Old PCB
 
