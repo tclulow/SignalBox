@@ -63,9 +63,9 @@ uint8_t tickPwm   = 0;  // Ticking for PWM output of LEDs.
 
 
 // I2C request command parameters
-uint8_t requestCommand = COMMS_CMD_NONE;
-uint8_t requestOption  = 0;
-uint8_t requestNode    = 0;
+volatile uint8_t requestCommand = COMMS_CMD_NONE;
+volatile uint8_t requestOption  = 0;
+volatile uint8_t requestNode    = 0;
 
 
 // An Array of Output control structures.
