@@ -963,7 +963,7 @@ class Configure
         int response = aOldNode;
 
         // Send the renumber command to the node concerned.
-        if (   ((response = i2cComms.sendData(I2C_OUTPUT_BASE_ID + aOldNode, COMMS_CMD_SYSTEM | COMMS_SYS_RENUMBER, aNewNode, -1)) == 0)
+        if (   ((response = i2cComms.sendData(I2C_OUTPUT_BASE_ID + aOldNode, COMMS_CMD_SYSTEM | COMMS_SYS_RENUMBER, aOldNode, aNewNode)) == 0)
             && ((response = i2cComms.requestByte(I2C_OUTPUT_BASE_ID + aOldNode)) >= 0))
         {
             response &= OUTPUT_NODE_MASK;       // The new node number of the Output as returned by the node

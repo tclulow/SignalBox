@@ -506,10 +506,8 @@ void processReceipt(int aLen)
                                    break;
 
             case COMMS_CMD_SET_LO:  
-            case COMMS_CMD_SET_HI: if (i2cComms.available())
-                                   {
-                                       delay = i2cComms.readByte();    // Optional delay value.
-                                   }
+            case COMMS_CMD_SET_HI: i2cComms.readByte();             // Dummy node number (not required).
+                                   delay = i2cComms.readByte();     // Delay value.
                                    actionState(pin, command == COMMS_CMD_SET_HI, delay, false);
                                    break;
 
@@ -605,6 +603,8 @@ void processSystem(uint8_t aOption)
  */
 void processRenumber()
 {
+    i2cComms.readByte();                        // Swallow the redundant node number.
+
     if (i2cComms.available())
     {
         requestNode = i2cComms.readByte();      // The desired new node number.

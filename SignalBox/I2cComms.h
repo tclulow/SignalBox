@@ -31,12 +31,12 @@
  *  
  *      Command Option      Data                    Response
  *      SYSTEM  STATES                              <PinStatus>
- *      SYSTEM  RENUMBER    <NewNode>               <NewNode>
- *      SYSTEM  MOVE_LOCKS  <OldNode>   <NewNode>
+ *      SYSTEM  RENUMBER    <Node>      <NewNode>   <NewNode>
+ *      SYSTEM  MOVE_LOCKS  <Node>      <NewNode>
  *      
  *      DEBUG   <Level>
- *      SET_LO  <Pin>       [Delay]
- *      SET_HI  <Pin>       [Delay]
+ *      SET_LO  <Pin>       <Node>      <Delay>
+ *      SET_HI  <Pin>       <Node>      <Delay>
  *      
  *      READ    <Pin>                               <OutputDef>
  *      WRITE   <Pin>       <OutputDef>
@@ -47,6 +47,7 @@
  *
  *      
  * Data bytes
+ *      Node        The node being addressed.
  *      NewNode     The new number (0-31) for this output module.
  *      Level       The debug level to set (0-4). See DEBUG_... flags.
  *      Pin         The pin (0-7) to action the command against.
@@ -56,7 +57,6 @@
  * Response bytes
  *      PinStatus   The current status of all output pins. Pin 0 in bit 0, to Pin 7 in bit 7. Bit set = pin is "Hi".
  *      NewNode     The new node number (0-31) of the output module.
- *      OldNode     The old node number (0-31) of the output module.
  *      OutputDef   15 bytes defining an output. See below.
  *      
  * OutputDef

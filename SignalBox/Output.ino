@@ -134,7 +134,7 @@ void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDela
         Serial.println();
     }
 
-    i2cComms.sendData(I2C_OUTPUT_BASE_ID + aNode, (aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | aPin, aDelay, -1);
+    i2cComms.sendData(I2C_OUTPUT_BASE_ID + aNode, (aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | aPin, aNode, aDelay);
 }
 
 
