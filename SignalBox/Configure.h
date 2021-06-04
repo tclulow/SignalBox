@@ -269,9 +269,8 @@ class Configure
         disp.setCursor(LCD_COL_INPUT_OUTPUT, LCD_ROW_DET);
 
         // Show as many Outputs as will fit in the space available. 3 characters per output.
-        for (uint8_t index = 0; index < (LCD_COLS - LCD_COL_INPUT_OUTPUT) / 3; index++)
+        for (uint8_t index = 0; index <= (LCD_COLS - LCD_COL_INPUT_OUTPUT) / 3; index++)
         {
-            disp.printCh(CHAR_SPACE);
             if (inputDef.isDelay(index))
             {
                 disp.printCh(CHAR_DOT);
@@ -289,6 +288,7 @@ class Configure
                 disp.printHexCh(inputDef.getOutputNode(index));
                 disp.printHexCh(inputDef.getOutputPin(index));
             }
+            disp.printCh(CHAR_SPACE);
         }
     }
     
