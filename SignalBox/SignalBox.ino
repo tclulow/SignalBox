@@ -750,6 +750,7 @@ void setup()
     pinMode(LCD_SHIELD_DETECT_PIN, INPUT_PULLUP);
     hasLcdShield = !digitalRead(LCD_SHIELD_DETECT_PIN);
 #endif
+
     if (hasLcdShield)
     {
         disp.createLcdShield();
@@ -776,6 +777,15 @@ void setup()
     }
 #endif
 
+    // Force an LCD shield if no I2C LCD present.
+    if (   (!hasLcdShield)
+        && (disp.getLcdId() == 0))
+    {
+        hasLcdShield = true;
+        disp.createLcdShield();
+        announce();
+    }
+
     // Scan for I2C Gateway.
     for (uint8_t id = I2C_GATEWAY_LO; id <= I2C_GATEWAY_HI; id++)
     {
@@ -786,20 +796,11 @@ void setup()
         }
     }
 
-    // Force an LCD shield if no I2C LCD present.
-    if (   (!hasLcdShield)
-        && (disp.getLcdId() == 0))
-    {
-        hasLcdShield = true;
-        disp.createLcdShield();
-        announce();
-    }
-
     // Initialise
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_STARTUP, LCD_LEN_STATUS);
     
-    initButtonPins();                           // Initialise alternate button pins.
-    flashVersion();                             // Flash our version number on the built-in LED.
+    initButtonPins();                                   // Initialise alternate button pins.
+    flashVersion();                                     // Flash our version number on the built-in LED.
 
     // Deal with first run (software has never been run before).
     if (!loadSystemData())
