@@ -31,6 +31,7 @@ long    timeoutInterlock = 0L;      // Timeout for interlock warning to be reset
 long    displayTimeout   = 1L;      // Timeout for the display when important messages are showing.
                                     // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
 
+
 /** Announce ourselves.
  */ 
 void announce()
@@ -413,6 +414,8 @@ void processInput(boolean aState)
 {
     boolean newState = aState;
     uint8_t first    = 0;
+    uint8_t node     = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
+    uint8_t pin      = (inputNumber                    ) & INPUT_PIN_MASK;
     
     // Process all input state changes for Toggles, only state going low for other Input types.
     if (   (!aState)
@@ -442,8 +445,8 @@ void processInput(boolean aState)
             disp.clearBottomRows();
             disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
             disp.printProgStrAt(LCD_COL_STATE, LCD_ROW_EDT, (newState ? M_HI : M_LO));
-            disp.printHexChAt(LCD_COL_NODE,    LCD_ROW_EDT, (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK);
-            disp.printHexChAt(LCD_COL_PIN,     LCD_ROW_EDT, (inputNumber                    ) & INPUT_PIN_MASK);
+            disp.printHexChAt(LCD_COL_NODE,    LCD_ROW_EDT, node);
+            disp.printHexChAt(LCD_COL_PIN,     LCD_ROW_EDT, pin);
             disp.setCursor(LCD_COL_START + 1,  LCD_ROW_BOT);
             setDisplayTimeout(getReportDelay());
         }
@@ -456,15 +459,16 @@ void processInput(boolean aState)
             Serial.print(PGMT(M_DEBUG_STATE));
             Serial.print(PGMT(newState ? M_HI : M_LO));
             Serial.print(PGMT(M_DEBUG_NODE));
-            Serial.print((inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK, HEX);
+            Serial.print(node, HEX);
             Serial.print(PGMT(M_DEBUG_PIN));
-            Serial.print((inputNumber                    ) & INPUT_PIN_MASK,  HEX);
+            Serial.print(pin,  HEX);
             Serial.println();
         }
 
         // If not locked, process the Input's Outputs.
         if (!isLocked(newState))
         {
+            i2cComms.sendGateway((newState ? COMMS_CMD_INP_HI : COMMS_CMD_INP_LO) | pin, node, -1); 
             processInputOutputs(newState);
         }
         
@@ -627,6 +631,7 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
 
         // Action the Output state change.
         writeOutputState(outNode, outPin, aState, endDelay);
+        i2cComms.sendGateway((aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | outPin, outNode, endDelay);
 
         // Recover all states from output module (in case a double-LED has changed one).
         readOutputStates(outNode);
@@ -683,6 +688,7 @@ void processCommand()
                           && (pin  < OUTPUT_PIN_MAX))
                       {
                           writeOutputState(node, pin, state, 0);
+                          i2cComms.sendGateway((state ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | pin, node, 0);
                           readOutputStates(node);                   // Recover states in case LED_4 has moved one.
                           executed = true;
                       }
@@ -769,6 +775,16 @@ void setup()
         }
     }
 #endif
+
+    // Scan for I2C Gateway.
+    for (uint8_t id = I2C_GATEWAY_LO; id <= I2C_GATEWAY_HI; id++)
+    {
+        if (i2cComms.exists(id))   
+        {
+            i2cComms.setGateway(id);
+            break;
+        }
+    }
 
     // Force an LCD shield if no I2C LCD present.
     if (   (!hasLcdShield)

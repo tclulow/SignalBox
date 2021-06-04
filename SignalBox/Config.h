@@ -78,6 +78,9 @@
 #define I2C_LCD_LO               0x27   // Range of IDs to scan for LCD I2C device.
 #define I2C_LCD_HI               0x3F
 
+#define I2C_GATEWAY_LO           0x11   // Range of IDs to scan for Gateway I2C device.
+#define I2C_GATEWAY_HI           0x1F
+
 
 // Delays
 #define DELAY_BLINK               250   // Blink interval when showing version number.

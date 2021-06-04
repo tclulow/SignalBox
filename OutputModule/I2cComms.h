@@ -87,13 +87,16 @@
 // Commands (in top nibble).
 #define COMMS_CMD_SYSTEM        0x00    // System commands.
 #define COMMS_CMD_DEBUG         0x10    // Set debug level.
-#define COMMS_CMD_SET_LO        0x20    // Go Lo
-#define COMMS_CMD_SET_HI        0x30    // Go Hi
+#define COMMS_CMD_SET_LO        0x20    // Set Output Lo
+#define COMMS_CMD_SET_HI        0x30    // Set Output Hi
 
 #define COMMS_CMD_READ          0x40    // Read data from Output's EEPROM definition (to the I2C master).    
 #define COMMS_CMD_WRITE         0x50    // Write data to Output's EEPROM definition (from the I2C master).
 #define COMMS_CMD_SAVE          0x60    // Save Output's EEPROM definition (as set by a previous WRITE).
 #define COMMS_CMD_RESET         0x70    // Reset output to its saved state (from its EEPROM).
+
+#define COMMS_CMD_INP_LO        0x80    // Input went Lo
+#define COMMS_CMD_INP_HI        0x90    // Input went Hi
 
 #define COMMS_CMD_NONE          0xff    // Null command.
 
@@ -106,8 +109,12 @@
 
 class I2cComms
 {
-    public:
+    private:
 
+    uint8_t gatewayId     = 0;          // Marks the presence og an I2C gateway module.
+
+
+    public:
 
     /** Set the I2C node ID.
      */
@@ -141,6 +148,14 @@ class I2cComms
         return Wire.endTransmission() == 0;
     }
     
+
+    /** Set the Id of the Gateway module.
+    *  Certain messages get duplicated to this ID.
+    */
+    void setGateway(uint8_t aId)
+    {
+        gatewayId = aId;       // Marks the presence of an I2C gateway module.
+    }
     
     /** Send an I2C message with no data.
      */
@@ -169,6 +184,17 @@ class I2cComms
         return Wire.endTransmission();
     }
 
+
+    /** Send an I2C message to the Gateway (if there is one).
+     */
+    uint8_t sendGateway(uint8_t aCommand, int aDataByte1, int aDataByte2)
+    {
+        if (gatewayId > 0)
+        {
+            sendData(gatewayId, aCommand, aDataByte1, aDataByte2); 
+        }
+    }
+    
 
     /** Send an I2C message with payload.
      */
