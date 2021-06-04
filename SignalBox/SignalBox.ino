@@ -631,7 +631,6 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
 
         // Action the Output state change.
         writeOutputState(outNode, outPin, aState, endDelay);
-        i2cComms.sendGateway((aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | outPin, outNode, endDelay);
 
         // Recover all states from output module (in case a double-LED has changed one).
         readOutputStates(outNode);
@@ -688,7 +687,6 @@ void processCommand()
                           && (pin  < OUTPUT_PIN_MAX))
                       {
                           writeOutputState(node, pin, state, 0);
-                          i2cComms.sendGateway((state ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | pin, node, 0);
                           readOutputStates(node);                   // Recover states in case LED_4 has moved one.
                           executed = true;
                       }
