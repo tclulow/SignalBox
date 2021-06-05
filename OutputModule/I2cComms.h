@@ -30,10 +30,10 @@
  *  Messages:
  *  
  *      Command Option      Data                    Response
- *      SYSTEM  STATES                              <PinStatus>
+ *      SYSTEM  GATEWAY                             <Request>    <Node>
+ *      SYSTEM  OUT_STATES                          <OutStates>
  *      SYSTEM  RENUMBER    <Node>      <NewNode>   <NewNode>
  *      SYSTEM  MOVE_LOCKS  <Node>      <NewNode>
- *      SYSTEM  REQUEST                             <Request>
  *      
  *      DEBUG   <Level>
  *      SET_LO  <Pin>       <Node>      <Delay>
@@ -56,7 +56,8 @@
  *      OutputDef   15 bytes defining an output. See below.
  *      
  * Response bytes
- *      PinStatus   The current status of all output pins. Pin 0 in bit 0, to Pin 7 in bit 7. Bit set = pin is "Hi".
+ *      Request     The command (and option) requested by the gateway.
+ *      OutStates   The current state of all output pins. Pin 0 in bit 0, to Pin 7 in bit 7. Bit set = pin is "Hi".
  *      NewNode     The new node number (0-31) of the output module.
  *      OutputDef   15 bytes defining an output. See below.
  *      
@@ -103,10 +104,11 @@
 
 
 // System sub-commands (in bottom nibble)
-#define COMMS_SYS_STATES        0x00    // System - states sub-command.
-#define COMMS_SYS_RENUMBER      0x01    // System - renumber node sub-command.
-#define COMMS_SYS_MOVE_LOCKS    0x02    // System - renumber lock node numbers.
-#define COMMS_SYS_GATEWAY       0x03    // System - any gateway request?
+#define COMMS_SYS_GATEWAY       0x00    // System - any gateway request?
+#define COMMS_SYS_OUT_STATES    0x01    // System - Output states sub-command.
+#define COMMS_SYS_INP_STATES    0x02    // System - Input states sub-command.
+#define COMMS_SYS_RENUMBER      0x03    // System - renumber node sub-command.
+#define COMMS_SYS_MOVE_LOCKS    0x04    // System - renumber lock node numbers.
 
 
 class I2cComms

@@ -171,7 +171,7 @@ void readOutputStates(uint8_t aNode)
 {
     int states;
     
-    if (   (i2cComms.sendShort(I2C_OUTPUT_BASE_ID + aNode, COMMS_CMD_SYSTEM | COMMS_SYS_STATES) == 0)
+    if (   (i2cComms.sendShort(I2C_OUTPUT_BASE_ID + aNode, COMMS_CMD_SYSTEM | COMMS_SYS_OUT_STATES) == 0)
         && ((states = i2cComms.requestByte(I2C_OUTPUT_BASE_ID + aNode)) >= 0))
     {
         setOutputNodePresent(aNode, true);

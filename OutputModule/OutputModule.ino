@@ -400,13 +400,14 @@ void returnSystem()
 {
     switch (requestOption)
     {
-        case COMMS_SYS_STATES:   returnStates();
-                                 break;
+        case COMMS_SYS_OUT_STATES: returnStates();
+                                   break;
 
-        case COMMS_SYS_RENUMBER: returnRenumber();
-                                 break;
-        default:                 unrecognisedCommand(M_DEBUG_SYSTEM, requestCommand, requestOption);
-                                 break;
+        case COMMS_SYS_RENUMBER:   returnRenumber();
+                                   break;
+
+        default:                   unrecognisedCommand(M_DEBUG_SYSTEM, requestCommand, requestOption);
+                                   break;
     }
 }
 
@@ -581,7 +582,7 @@ void processSystem(uint8_t aOption)
 {
     switch (aOption)
     {
-        case COMMS_SYS_STATES:     requestCommand = COMMS_CMD_SYSTEM;
+        case COMMS_SYS_OUT_STATES: requestCommand = COMMS_CMD_SYSTEM;
                                    requestOption  = aOption;
                                    break;
 

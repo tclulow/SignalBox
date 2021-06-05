@@ -740,11 +740,9 @@ boolean gatewayRequest()
 
         switch (command)
         {
-            case COMMS_CMD_NONE:   break;
-
-            case COMMS_CMD_SYSTEM: if (option == COMMS_SYS_STATES)
+            case COMMS_CMD_SYSTEM: if (option == COMMS_SYS_OUT_STATES)
                                    {
-                                       i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_STATES, getOutputStates(node), -1);
+                                       i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_OUT_STATES, getOutputStates(node), -1);
                                        workDone = true;
                                    }
                                    else
@@ -753,8 +751,9 @@ boolean gatewayRequest()
                                    }
                                    break;
 
+            case COMMS_CMD_NONE:   break;
+
             default:               systemFail(M_GATEWAY, command | option);
-                                   command = COMMS_CMD_NONE;
         }
     }
 //    else
