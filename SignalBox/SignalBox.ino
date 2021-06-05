@@ -736,7 +736,8 @@ boolean gatewayRequest()
         uint8_t node    = i2cComms.readByte();
         uint8_t option  = command & COMMS_OPTION_MASK;
         uint8_t pin     = option & OUTPUT_PIN_MASK;
-        command = command & COMMS_COMMAND_MASK;
+        
+        command &= COMMS_COMMAND_MASK;
 
         switch (command)
         {
