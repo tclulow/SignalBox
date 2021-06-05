@@ -30,6 +30,7 @@ const char M_INIT_I2C[]         PROGMEM = "Init I2C";
 const char M_STARTUP[]          PROGMEM = "Startup";
 const char M_UPDATE[]           PROGMEM = "Update";
 const char M_UNKNOWN[]          PROGMEM = "Unknown";
+const char M_GATEWAY[]          PROGMEM = "Gateway";
 
 
 // General messages (shared)

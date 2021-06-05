@@ -33,6 +33,7 @@
  *      SYSTEM  STATES                              <PinStatus>
  *      SYSTEM  RENUMBER    <Node>      <NewNode>   <NewNode>
  *      SYSTEM  MOVE_LOCKS  <Node>      <NewNode>
+ *      SYSTEM  REQUEST                             <Request>
  *      
  *      DEBUG   <Level>
  *      SET_LO  <Pin>       <Node>      <Delay>
@@ -98,13 +99,14 @@
 #define COMMS_CMD_INP_LO        0x80    // Input went Lo
 #define COMMS_CMD_INP_HI        0x90    // Input went Hi
 
-#define COMMS_CMD_NONE          0xff    // Null command.
+#define COMMS_CMD_NONE          0xf0    // Null command.
 
 
 // System sub-commands (in bottom nibble)
-#define COMMS_SYS_STATES        0x00    // System states sub-command.
-#define COMMS_SYS_RENUMBER      0x01    // System renumber node sub-command.
-#define COMMS_SYS_MOVE_LOCKS    0x02    // System renumber lock node numbers.
+#define COMMS_SYS_STATES        0x00    // System - states sub-command.
+#define COMMS_SYS_RENUMBER      0x01    // System - renumber node sub-command.
+#define COMMS_SYS_MOVE_LOCKS    0x02    // System - renumber lock node numbers.
+#define COMMS_SYS_GATEWAY       0x03    // System - any gateway request?
 
 
 class I2cComms
@@ -234,6 +236,16 @@ class I2cComms
     {
         return    (Wire.requestFrom(aNodeId, aLength) == aLength)
                && (Wire.available() == aLength);
+    }
+
+
+    /** Request a Gateway command.
+     *  Return true if command received.
+     */
+    boolean requestGateway()
+    {
+        return    (gatewayId > 0)
+               && (requestPacket(gatewayId, 2));
     }
 
 

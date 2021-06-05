@@ -96,8 +96,9 @@
 
 
 // Steps (all in msecs)
-#define STEP_HARDWARE_SCAN     10000L   // Re-scan for new hardware every 10 seconds.
-#define STEP_INPUT_SCAN           50L   // Scans of the input switches.
+#define STEP_HARDWARE_SCAN     10000L   // Scan for new hardware every 10 seconds.
+#define STEP_INPUT_SCAN           50L   // Scan the input switches.
+#define STEP_GATEWAY             100L   // Scan the gateway.
 #define STEP_HEARTBEAT           200L   // Refresh heartbeat indicator.
 #define STEP_SERVO                25L   // Step Servos.
 #define STEP_LED                   5L   // Step LEDs.

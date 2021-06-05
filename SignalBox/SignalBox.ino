@@ -23,8 +23,9 @@ uint8_t commandLen = 0;                         // Length of command.
 
 // Ticking
 long    now              = 0L;      // Current time in millisecs.
-long    tickHardwareScan = 0L;      // Time of the last scan for hardware.
-long    tickInputScan    = 0L;      // Time of the last scan of input switches.
+long    tickHardwareScan = 0L;      // Time for next scan for hardware.
+long    tickInputScan    = 0L;      // Time for next scan of input switches.
+long    tickGateway      = 0L;      // Time for next gateway request.
 long    tickHeartBeat    = 0L;      // Time of last heartbeat.
 
 long    timeoutInterlock = 0L;      // Timeout for interlock warning to be reset.
@@ -720,6 +721,54 @@ void processCommand()
 }
 
 
+/** See if there's a Gateway request.
+ *  Process the request.
+ *  Return true if work done.
+ */
+boolean gatewayRequest()
+{
+    boolean workDone = false;
+
+    i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_GATEWAY, -1, -1);
+    if (i2cComms.requestGateway())
+    {
+        uint8_t command = i2cComms.readByte();
+        uint8_t node    = i2cComms.readByte();
+        uint8_t option  = command & COMMS_OPTION_MASK;
+        uint8_t pin     = option & OUTPUT_PIN_MASK;
+        command = command & COMMS_COMMAND_MASK;
+
+        switch (command)
+        {
+            case COMMS_CMD_NONE:   break;
+
+            case COMMS_CMD_SYSTEM: if (option == COMMS_SYS_STATES)
+                                   {
+                                       i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_STATES, getOutputStates(node), -1);
+                                       workDone = true;
+                                   }
+                                   else
+                                   {
+                                       systemFail(M_GATEWAY, command | option);
+                                   }
+                                   break;
+
+            default:               systemFail(M_GATEWAY, command | option);
+                                   command = COMMS_CMD_NONE;
+        }
+    }
+//    else
+//    {
+//        // Turn off Gateway if there's a comms error.
+//        i2cComms.setGateway(0);
+//    }
+
+    i2cComms.readAll();
+
+    return workDone;
+}
+
+
 //uint8_t * heapPtr, * stackPtr;
 //
 //void checkMem(const char* aMessage)
@@ -897,6 +946,15 @@ void loop()
         tickInputScan = now + STEP_INPUT_SCAN;
         // scanOutputs();
         scanInputs(false);
+    }
+
+    // See if there are any Gateway requests
+    if (now > tickGateway)
+    {
+        if (!gatewayRequest())
+        {
+            tickGateway = now + STEP_GATEWAY;
+        }
     }
 
 #if INTERLOCK_WARNING_PIN
