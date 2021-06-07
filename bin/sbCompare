@@ -8,3 +8,8 @@ do
     diff $FILE ../OutputModule
 done
 
+for FILE in I2cComms.h
+do
+    echo $FILE
+    diff $FILE ../Gateway
+done
