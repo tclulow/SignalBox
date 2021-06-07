@@ -14,13 +14,17 @@
 #include "I2cComms.h"
 
 
+#define OUTPUT_NODE_MAX      32        // Length of output node array
+
+
 // I2C request command parameters
 volatile uint8_t requestCommand = COMMS_CMD_NONE;
 volatile uint8_t requestNode    = 0;
 
 
-// Time for next request
-long tickRequest = 0L;
+volatile uint8_t outputNodeCount = 0;
+volatile uint8_t outputStates[OUTPUT_NODE_MAX];
+
 
 /** Setup the Arduino.
  */
@@ -148,20 +152,22 @@ void processSystem(uint8_t aOption)
 {
     switch (aOption)
     {
-        case COMMS_SYS_GATEWAY:    if (millis() > tickRequest)
+        case COMMS_SYS_GATEWAY:    if (outputNodeCount < OUTPUT_NODE_MAX)
                                    {
                                        requestCommand = COMMS_CMD_SYSTEM | COMMS_SYS_OUT_STATES;   // Ask for (next) node's states.
-                                       requestNode = (requestNode + 1) &0x0F;
-                                       tickRequest = millis() + 10000L;                            // Wait for 10 seconds before sending another request.
+                                       requestNode = outputNodeCount;
                                    }
                                    break;
 
-        case COMMS_SYS_OUT_STATES: Serial.print(millis());
+        case COMMS_SYS_OUT_STATES: outputStates[outputNodeCount] = i2cComms.readByte();
+                                   Serial.print(millis());
                                    Serial.print("\tStates, node=");
-                                   Serial.print(requestNode, HEX);
+                                   Serial.print(outputNodeCount, HEX);
                                    Serial.print(", states=");
-                                   Serial.print(i2cComms.readByte(), HEX);
+                                   Serial.print(outputStates[outputNodeCount], HEX);
                                    Serial.println();
+                               
+                                   outputNodeCount += 1;                    // Ensure next request is for next node
                                    break; 
 
         default:                   unrecognisedCommand("Unrecognised system", COMMS_CMD_SYSTEM, aOption);
