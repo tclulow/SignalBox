@@ -2,14 +2,19 @@
 # Check common files have no differences
 
 cd ~/JavaDev/Pentad/Arduino/SignalBox/SignalBox
+
+DIR=OutputModule
+echo
 for FILE in All.h Config.h I2cComms.h Messages.h Output.h System.h System.ino
 do
-    echo $FILE
-    diff $FILE ../OutputModule
+    echo $DIR/$FILE
+    diff $FILE ../$DIR
 done
 
+DIR=Gateway
+echo
 for FILE in I2cComms.h
 do
-    echo $FILE
-    diff $FILE ../Gateway
+    echo $DIR/$FILE
+    diff $FILE ../$DIR
 done
