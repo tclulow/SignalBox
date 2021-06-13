@@ -14,16 +14,20 @@
 #include "I2cComms.h"
 
 
-#define OUTPUT_NODE_MAX      32        // Length of output node array
+#define OUTPUT_NODE_MAX      32        // Length of output node array.
+#define INPUT_NODE_MAX        8        // Length of input node array.
 
 
 // I2C request command parameters
-volatile uint8_t requestCommand = COMMS_CMD_NONE;
-volatile uint8_t requestNode    = 0;
+volatile uint8_t  requestCommand = COMMS_CMD_NONE;
+volatile uint8_t  requestNode    = 0;
 
 
-volatile uint8_t outputNodeCount = 0;
-volatile uint8_t outputStates[OUTPUT_NODE_MAX];
+volatile uint8_t  outputNodeCount = 0;
+volatile uint8_t  outputStates[OUTPUT_NODE_MAX];
+
+volatile uint8_t  inputNodeCount = 0;
+volatile uint16_t inputStates[OUTPUT_NODE_MAX];
 
 
 /** Setup the Arduino.
@@ -154,20 +158,36 @@ void processSystem(uint8_t aOption)
     {
         case COMMS_SYS_GATEWAY:    if (outputNodeCount < OUTPUT_NODE_MAX)
                                    {
-                                       requestCommand = COMMS_CMD_SYSTEM | COMMS_SYS_OUT_STATES;   // Ask for (next) node's states.
+                                       requestCommand = COMMS_CMD_SYSTEM | COMMS_SYS_OUT_STATES;   // Ask for (next) Output node's states.
                                        requestNode = outputNodeCount;
+                                   }
+                                   else if (inputNodeCount < INPUT_NODE_MAX)
+                                   {
+                                       requestCommand = COMMS_CMD_SYSTEM | COMMS_SYS_INP_STATES;   // Ask for (next) Input node's states.
+                                       requestNode = inputNodeCount;
                                    }
                                    break;
 
         case COMMS_SYS_OUT_STATES: outputStates[outputNodeCount] = i2cComms.readByte();
                                    Serial.print(millis());
-                                   Serial.print("\tStates, node=");
+                                   Serial.print("\tOutput node=");
                                    Serial.print(outputNodeCount, HEX);
                                    Serial.print(", states=");
                                    Serial.print(outputStates[outputNodeCount], HEX);
                                    Serial.println();
                                
                                    outputNodeCount += 1;                    // Ensure next request is for next node
+                                   break; 
+
+        case COMMS_SYS_INP_STATES: inputStates[inputNodeCount] = (i2cComms.readByte() << 8) | i2cComms.readByte();
+                                   Serial.print(millis());
+                                   Serial.print("\tInput  node=");
+                                   Serial.print(inputNodeCount, HEX);
+                                   Serial.print(", states=");
+                                   Serial.print(inputStates[inputNodeCount], HEX);
+                                   Serial.println();
+                               
+                                   inputNodeCount += 1;                    // Ensure next request is for next node
                                    break; 
 
         default:                   unrecognisedCommand("Unrecognised system", COMMS_CMD_SYSTEM, aOption);
