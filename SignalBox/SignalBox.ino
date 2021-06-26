@@ -8,6 +8,18 @@
  *      http://creativecommons.org/licenses/by-nc-sa/4.0/
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
+ *
+ *
+ *  Libraries used by the sketches are:
+ *  
+ *  Name              | Purpose 
+ *  ----------------- | -------
+ *  EEPROM            | Reading and writing to EEPROM memory.
+ *  Wire              | To handle i2c communications. 
+ *  LiquidCrystal     | For driving an LCD shield attached to the Uno.
+ *  LiquidCrystal_I2C | For driving an LCD attached by i2c.
+ *  
+ *  The LiquidCrystal_I2C library can be removed by editing the LCD_I2C flag in the Config.h files. 
  */
 
 #define MASTER true         // The master (Uno) device.
