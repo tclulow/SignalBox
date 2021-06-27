@@ -8,6 +8,16 @@
  *      http://creativecommons.org/licenses/by-nc-sa/4.0/
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
+ *
+ *
+ *  Libraries used by the sketches are:
+ *  
+ *  Name              | Purpose 
+ *  ----------------- | -------
+ *  EEPROM            | Reading and writing to EEPROM memory.
+ *  Wire              | To handle i2c communications. 
+ *  Servo             | To control Servos. 
+ * 
  */
 
 #define MASTER false        // The is not the master, it's a nano output module.
