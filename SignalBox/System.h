@@ -14,7 +14,7 @@
 #define System_h
 
 
-#if MASTER
+#if SB_CONTROLLER
     #define MAGIC_NUMBER 0x786f6253         // Magic number = "Sbox".
 #else
     #define MAGIC_NUMBER 0x74756f53         // Magic number = "Sout".
@@ -56,7 +56,7 @@
 #define SYSTEM_END   (SYSTEM_BASE + SYSTEM_SIZE)                        // End of System EEPROM.
 
 
-#if MASTER
+#if SB_CONTROLLER
 
     // Input types saved in EEPROM
     #define TYPES_BASE   SYSTEM_END                                     // EEPROM base of Input type data.
@@ -185,7 +185,7 @@ void setDebug(uint8_t aLevel);
 void flashVersion();
 
 
-#if MASTER
+#if SB_CONTROLLER
 
 /** Report a system failure.
  */

@@ -134,7 +134,7 @@ void flashVersion()
         Serial.println();
     }
     
-#if !MASTER
+#if !SB_CONTROLLER
     // Decide how many jumper pins to indicate
     uint8_t maskLimit = OUTPUT_NODE_MASK;
     if (isJumperId())
@@ -155,7 +155,7 @@ void flashVersion()
 }
 
 
-#if MASTER
+#if SB_CONTROLLER
 
 /** Report a system failure.
  */

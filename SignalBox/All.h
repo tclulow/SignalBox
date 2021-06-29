@@ -18,7 +18,7 @@
 #include "I2cComms.h"
 #include "Output.h"
 
-#if MASTER
+#if SB_CONTROLLER
 
 #include "EzyBus.h"
 #include "Input.h"

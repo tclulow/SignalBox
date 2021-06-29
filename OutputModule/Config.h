@@ -99,7 +99,7 @@
 #define ANALOG_PIN_CUTOFF       0x200   // When usinging analog pin for digital purposes, cutoff at this value (half of full range 0-3ff).     
 
 
-#if MASTER
+#if SB_CONTROLLER
 
 // Alternate pins that can be used to control the menus. First entry unused.
 const uint8_t BUTTON_PINS[] = { 0xff, A1, A2, A3, 2, 3 };

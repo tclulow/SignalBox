@@ -49,7 +49,7 @@
  */
 
 
-#define MASTER true         // The master (Uno) device.
+#define SB_CONTROLLER true         // The controller (Uno) device.
 
 
 #include "All.h"

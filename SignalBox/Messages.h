@@ -19,7 +19,7 @@
 
 
 // Software versioning.
-#if MASTER
+#if SB_CONTROLLER
     const char M_SOFTWARE[]     PROGMEM = "SignalBox";
 #else
     const char M_SOFTWARE[]     PROGMEM = "Output module";
@@ -63,7 +63,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
                                          M_BLINK, M_RANDOM, M_RFU,    M_RFU, M_RFU,   M_RFU,     M_RFU,     M_RFU };
 
 
-#if MASTER
+#if SB_CONTROLLER
 
     // General messages.
     const char M_CONFIRM[]          PROGMEM = "Confirm? Sel=Yes";
@@ -194,7 +194,7 @@ const char M_DEBUG_VALUE[]      PROGMEM = ", value=";
 const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG, M_DEBUG_SET_LO, M_DEBUG_SET_HI, M_DEBUG_READ, M_DEBUG_WRITE, M_DEBUG_SAVE, M_DEBUG_RESET,
                                            M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_NONE };
 
-#if MASTER
+#if SB_CONTROLLER
 
     // Master-only debug messages.
     const char M_DEBUG_BUTTON[]     PROGMEM = "Button";
