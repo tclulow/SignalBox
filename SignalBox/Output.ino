@@ -32,13 +32,13 @@ void readOutput(uint8_t aNode, uint8_t aPin)
             Serial.print(HEX_CHARS[outputPin]);
             Serial.println();
         }
-    
+
         if (   (i2cComms.sendShort(I2C_OUTPUT_BASE_ID + outputNode, COMMS_CMD_READ | outputPin) == 0)
             && (i2cComms.requestPacket(I2C_OUTPUT_BASE_ID + outputNode, sizeof(outputDef))))
         {
             // Read the outputDef from the OutputModule.
             outputDef.read();
-            
+
             if (isDebug(DEBUG_DETAIL))
             {
                 outputDef.printDef(M_DEBUG_READ, outputNode, outputPin);
@@ -121,7 +121,7 @@ void writeSaveOutput()
 void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay)
 {
     uint8_t command = (aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | aPin;
-    
+
     if (isDebug(DEBUG_BRIEF))
     {
         Serial.print(millis());
@@ -141,7 +141,7 @@ void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDela
 }
 
 
-/** Reset current Output. 
+/** Reset current Output.
  *  And then reload its definition.
  */
 void resetOutput()
@@ -170,7 +170,7 @@ void resetOutput()
 void readOutputStates(uint8_t aNode)
 {
     int states;
-    
+
     if (   (i2cComms.sendShort(I2C_OUTPUT_BASE_ID + aNode, COMMS_CMD_SYSTEM | COMMS_SYS_OUT_STATES) == 0)
         && ((states = i2cComms.requestByte(I2C_OUTPUT_BASE_ID + aNode)) >= 0))
     {
@@ -224,7 +224,7 @@ boolean getOutputState(uint8_t aNode, uint8_t aPin)
 void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState)
 {
     uint8_t mask = 1 << aPin;
-    
+
     if (aState)
     {
         outputStates[aNode] |= mask;
@@ -246,7 +246,7 @@ void setOutputNodePresent(uint8_t aNode, boolean aState)
     }
     else
     {
-        outputNodes &= ~((long)1 << aNode); 
+        outputNodes &= ~((long)1 << aNode);
     }
 }
 

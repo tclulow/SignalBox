@@ -29,7 +29,7 @@ void initButtonPins()
  */
 boolean calibrationRequired()
 {
-    return systemData.buttons[BUTTON_NONE] == 0;  
+    return systemData.buttons[BUTTON_NONE] == 0;
 }
 
 
@@ -51,7 +51,7 @@ void calibrateButtons()
     // Now start calibration
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_PRESS);   // Announce we're ready to start
     systemData.buttons[BUTTON_HIGH] = 0;                        // Marker for last button.
-    
+
     // Request values for all buttons in turn.
     for (int button = 0; button < BUTTON_HIGH; button++)
     {
@@ -169,7 +169,7 @@ uint8_t readButton()
         Serial.println();
     }
     lastButton = button;
-    
+
     return button;
 }
 
@@ -196,13 +196,13 @@ void waitForButtonRelease()
 uint8_t waitForButtonPress()
 {
     uint8_t button = BUTTON_NONE;
-    
+
     waitForButtonRelease();
     while ((button = readButton()) == BUTTON_NONE)
     {
         delay(DELAY_BUTTON_WAIT);
     }
-    
+
     return button;
 }
 
@@ -216,15 +216,15 @@ uint8_t waitForButtonClick()
 {
     long delayTo = millis() + DELAY_READ;
     uint8_t button = BUTTON_NONE;
-    
+
     waitForButtonRelease();
-    
+
     while (   ((button = readButton()) == BUTTON_NONE)
            && (millis() < delayTo))
     {
         delay(DELAY_BUTTON_WAIT);
     }
-    
+
     waitForButtonRelease();
 
     return button;

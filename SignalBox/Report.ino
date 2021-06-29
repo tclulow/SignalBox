@@ -25,7 +25,7 @@ boolean isReportEnabled(uint8_t aLevel)
  */
 int getReportDelay()
 {
-    return DELAY_READ * systemData.reportLevel;    
+    return DELAY_READ * systemData.reportLevel;
 }
 
 
@@ -62,7 +62,7 @@ void reportPause()
         disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
         disp.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_REPORT);
         disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemData.reportLevel], LCD_LEN_OPTION);
-        
+
         waitForButtonRelease();
         disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
     }

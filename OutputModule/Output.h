@@ -9,7 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
- 
+
 #ifndef Output_h
 #define Output_h
 
@@ -109,7 +109,7 @@ class OutputDef
     }
 
 
-    /** Gets the pace as steps. 
+    /** Gets the pace as steps.
      *  From 0 -> f to 240 -> 0.
      */
     uint8_t getPaceAsSteps()
@@ -127,7 +127,7 @@ class OutputDef
         setLo(aLo);
         setHi(aHi);
         setPace(aPace);
-        setReset(aReset);        
+        setReset(aReset);
     }
 
 
@@ -345,7 +345,7 @@ class OutputDef
         Serial.println();
     }
 
-    
+
     /** Gets the output's type.
      */
     uint8_t getType()
@@ -381,7 +381,7 @@ class OutputDef
         type = (aState ? OUTPUT_STATE_MASK : 0) | (type & OUTPUT_TYPE_MASK);
     }
 
-    
+
     /** Gets the Output's Lo value.
      */
     uint8_t getLo()
@@ -396,7 +396,7 @@ class OutputDef
     {
         lo = aLo;
     }
-    
+
 
     /** Gets the Output's Hi value.
      */
@@ -412,7 +412,7 @@ class OutputDef
     {
         hi = aHi;
     }
-    
+
 
     /** Gets the Output's pace.
      */
@@ -428,8 +428,8 @@ class OutputDef
     {
         pace = aPace & OUTPUT_PACE_MASK;
     }
-    
-    
+
+
     /** Gets the Output's type.
      */
     uint8_t getReset()
@@ -454,7 +454,7 @@ class OutputDef
     char getResetCh()
     {
         char ch = CHAR_SPACE;
-        
+
         if (getReset() > 0)
         {
             if (getReset() < 0x10)
@@ -485,7 +485,7 @@ void loadOutput(uint8_t aPin)
 {
     EEPROM.get(OUTPUT_BASE + aPin * sizeof(OutputDef), outputDefs[aPin]);
     if (isDebug(DEBUG_DETAIL))
-    { 
+    {
         outputDefs[aPin].printDef(M_DEBUG_LOAD, getModuleId(false), aPin);
     }
 }
@@ -568,7 +568,7 @@ void writeSaveOutput();
 void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay);
 
 
-/** Reset current Output. 
+/** Reset current Output.
  *  And then reload its definition.
  */
 void resetOutput();

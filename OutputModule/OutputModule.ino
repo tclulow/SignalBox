@@ -11,16 +11,16 @@
  *
  *
  *  Libraries used by the sketches are:
- *  
- *  Name              | Purpose 
+ *
+ *  Name              | Purpose
  *  ----------------- | -------
  *  EEPROM            | Reading and writing to EEPROM memory.
- *  Wire              | To handle i2c communications. 
- *  Servo             | To control Servos. 
- * 
+ *  Wire              | To handle i2c communications.
+ *  Servo             | To control Servos.
+ *
  *
  *  Pin usage:
- *  
+ *
  *  D0      Serial Rx.      Could be jumper J2.
  *  D1      Serial Tx.      Could be jumper J1.
  *  D2      IO pin 1.
@@ -35,7 +35,7 @@
  *  D11     Servo pin 7.
  *  D12     IO pin 7.
  *  D13     IO pin 6.       Also flash firmware version.
- *  
+ *
  *  A0      IO pin 5.
  *  A1      IO pin 4.
  *  A2      IO pin 3.
@@ -44,7 +44,7 @@
  *  A5      I2C SCL.
  *  A6      Jumper J4
  *  A7      Jumper J3
- * 
+ *
  */
 
 
@@ -107,7 +107,7 @@ volatile uint8_t requestNode    = 0;
 
 
 // An Array of Output control structures.
-struct 
+struct
 {
     Servo   servo;          // The Servo (if there is one).
     long    delayTo   = 0;  // Start at this time.
@@ -177,7 +177,7 @@ void setup()
 void firstRun()
 {
     uint8_t moduleId = getModuleId(false);
-    
+
     // Initialise SystemData.
     systemData.magic = MAGIC_NUMBER;
 
@@ -256,7 +256,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
     {
         reportOutput(M_DEBUG_INIT, aPin);
     }
-        
+
     // Detach servo if currently attached and no longer required.
     if (   (isServo(aOldType))
         && (!outputDefs[aPin].isServo()))
@@ -308,7 +308,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
         {
             // Handle double-LEDs as special case (if previous output is a LED).
             // See table at top of source for states and colour sequences.
-            if (isDoubleLed(aPin))   
+            if (isDoubleLed(aPin))
             {
                 if  (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
                 {
@@ -332,7 +332,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
                     outputs[aPin    ].value    = 0;
                     outputs[aPin    ].altValue = 0;
                 }
-    
+
                 // Make sure auto-reset is actioned (unless pair of ROADs adjacent to each other).
                 if (outputDefs[aPin].getReset() > 0)
                 {
@@ -352,7 +352,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
     }
     else
     {
-        // All other outputs, turn pins off. 
+        // All other outputs, turn pins off.
         digitalWrite(sigPins[aPin], LOW);
         digitalWrite(ioPins[aPin],  LOW);
     }
@@ -414,7 +414,7 @@ void processRequest()
         Serial.print(requestOption, HEX);
         Serial.println();
     }
-    
+
     switch (requestCommand)
     {
         case COMMS_CMD_SYSTEM: returnSystem();
@@ -464,7 +464,7 @@ void returnStates()
             states |= mask;
         }
     }
-    
+
     i2cComms.sendByte(states);
 
     if (isDebug(DEBUG_BRIEF))
@@ -517,7 +517,7 @@ void processReceipt(int aLen)
         uint8_t option  = command & COMMS_OPTION_MASK;
         uint8_t pin     = option  & OUTPUT_PIN_MASK;
         uint8_t delay   = 0;
-    
+
         command &= COMMS_COMMAND_MASK;
 
         if (isDebug(DEBUG_BRIEF))
@@ -544,7 +544,7 @@ void processReceipt(int aLen)
                                    saveSystemData();
                                    break;
 
-            case COMMS_CMD_SET_LO:  
+            case COMMS_CMD_SET_LO:
             case COMMS_CMD_SET_HI: i2cComms.readByte();             // Dummy node number (not required).
                                    delay = i2cComms.readByte();     // Delay value.
                                    actionState(pin, command == COMMS_CMD_SET_HI, delay, false);
@@ -582,7 +582,7 @@ void processReceipt(int aLen)
             Serial.println();
         }
     }
-    
+
     // Consume unexpected data.
     if (i2cComms.available())
     {
@@ -596,7 +596,7 @@ void processReceipt(int aLen)
             Serial.print(i2cComms.available(), HEX);
             Serial.print(CHAR_COLON);
         }
-        
+
         while (i2cComms.available())
         {
             uint8_t ch = i2cComms.readByte();
@@ -663,7 +663,7 @@ void processRenumber()
             Serial.print(i2cComms.available());
             Serial.println();
         }
-        
+
         // Revoke the request so it can't be actioned.
         requestCommand == COMMS_CMD_NONE;
     }
@@ -737,7 +737,7 @@ void processMoveLocks()
 void processWrite(uint8_t aPin)
 {
     uint8_t oldType = outputDefs[aPin].getType();       // Remember old type.
-    
+
     if (i2cComms.available() < OUTPUT_SIZE)
     {
         if (isDebug(DEBUG_ERRORS))
@@ -770,7 +770,7 @@ void processWrite(uint8_t aPin)
 void processSave(uint8_t aPin)
 {
     uint8_t oldType = outputDefs[aPin].getType();
-    
+
     persisting = true;              // Resume saving output to EEPROM.
     saveOutput(aPin);               // And save the output.
     initOutput(aPin, oldType);      // Ensure output is initialised to new state.
@@ -783,7 +783,7 @@ void processSave(uint8_t aPin)
 void processReset(uint8_t aPin)
 {
     uint8_t oldType = outputDefs[aPin].getType();
-    
+
     persisting = true;              // Resume saving output to EEPROM.
     loadOutput(aPin);               // And recover the output's definition.
     initOutput(aPin, oldType);      // Ensure output is initialised to new state.
@@ -798,17 +798,17 @@ void processReset(uint8_t aPin)
 void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue)
 {
     boolean newState = aState;      // Might want to change the state (some LED_4 and FLASHERS).
-    
+
     if (isDebug(DEBUG_BRIEF))
     {
         Serial.print(millis());
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_ACTION));
-        Serial.print(aPin, HEX);    
+        Serial.print(aPin, HEX);
         Serial.print(PGMT(M_DEBUG_STATE));
-        Serial.print(PGMT(aState ? M_HI : M_LO));    
+        Serial.print(PGMT(aState ? M_HI : M_LO));
         Serial.print(PGMT(M_DEBUG_DELAY_TO));
-        Serial.print(aDelay, HEX);    
+        Serial.print(aDelay, HEX);
         Serial.println();
     }
 
@@ -829,7 +829,7 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue
         outputs[aPin].delayTo = millis() + DELAY_MULTIPLIER * aDelay;
         outputs[aPin].steps   = outputDefs[aPin].getPaceAsSteps() + 1;
         outputs[aPin].step    = 0;
-    
+
         // Output type-specific parameters.
         if (outputDefs[aPin].isServo())
         {
@@ -856,16 +856,16 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue
                 Serial.println();
             }
         }
-    
+
         // Set the Output to the new state.
         outputDefs[aPin].setState(newState);
-        
+
         // Save the new state if persisting is enabled.
         if (persisting)
         {
             saveOutput(aPin);
         }
-    
+
         if (isDebug(DEBUG_DETAIL))
         {
             reportOutput(M_DEBUG_MOVE, aPin);
@@ -881,20 +881,20 @@ boolean actionServo(uint8_t aPin, boolean aState, boolean aUseValue)
 {
     // Set movement range.
     outputs[aPin].value    = outputs[aPin].servo.read();
-    outputs[aPin].start    = (aUseValue ? outputs[aPin].value 
-                                        : (aState ? outputDefs[aPin].getLo() 
+    outputs[aPin].start    = (aUseValue ? outputs[aPin].value
+                                        : (aState ? outputDefs[aPin].getLo()
                                                   : outputDefs[aPin].getHi()));
     outputs[aPin].target   = aState ? outputDefs[aPin].getHi() : outputDefs[aPin].getLo();
     outputs[aPin].altValue = 0;
 
     long range = abs(outputs[aPin].target - outputs[aPin].start);
-    
+
     // Adjust steps in proportion to the Servo's range.
     outputs[aPin].steps = ((long)outputs[aPin].steps - 1)
                         * (range)
                         / ((long)OUTPUT_SERVO_MAX)
                         + 1;
-                        
+
     // Adjust start step for Servos that are already in mid-travel.
     outputs[aPin].step = ((long)outputs[aPin].steps)
                        * (abs(((long)outputs[aPin].value) - ((long)outputs[aPin].start)))
@@ -1006,7 +1006,7 @@ boolean actionDoubleLed(uint8_t aPin, boolean aState)
 
         outputs[ledPin].start    = outputs[ledPin].value;           // LED movement common values.
         outputs[ledPin].altStart = outputs[ledPin].altValue;
-             
+
         // Set targets according to new states.
         outputs[aPin].target      = newState ? outputDefs[aPin].getHi() : 0;
         outputs[aPin].altTarget   = newState ? 0 : outputDefs[aPin].getLo();
@@ -1024,7 +1024,7 @@ boolean actionDoubleLed(uint8_t aPin, boolean aState)
             outputs[aPin].target    = 0;
             outputs[aPin].altTarget = 0;
         }
-        
+
         // Save the new state if persisting is enabled.
         if (persisting)
         {
@@ -1041,7 +1041,7 @@ boolean actionDoubleLed(uint8_t aPin, boolean aState)
 boolean actionFlasher(uint8_t aPin, boolean aState)
 {
     boolean newState = aState;      // Might want to change the state.
-    
+
     // For a BLINK that's not running, force state on.
     if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
         && (outputs[aPin].value    == 0)
@@ -1121,7 +1121,7 @@ void stepServo(uint8_t aPin)
                                               * SIGNAL_PAUSE_PERCENTAGE
                                               / 100;
                 outputs[aPin].delayTo = millis() + random(SIGNAL_PAUSE_DELAY);
-                
+
                 if (isDebug(DEBUG_DETAIL))
                 {
                     reportOutput(M_DEBUG_TRIGGER, aPin);
@@ -1138,7 +1138,7 @@ void stepServo(uint8_t aPin)
                 {
                     outputs[aPin].delayTo = millis() + random(SIGNAL_PAUSE_RESTART);
                 }
-                
+
                 if (isDebug(DEBUG_DETAIL))
                 {
                     reportOutput(M_DEBUG_TRIGGER, aPin);
@@ -1157,7 +1157,7 @@ void stepServo(uint8_t aPin)
     {
         // Last step, make sure to hit the target bang-on.
         outputs[aPin].value = outputs[aPin].target;
-        
+
         // No need to set pin, actioned later in the function.
         // digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
 
@@ -1181,7 +1181,7 @@ void stepServo(uint8_t aPin)
         {
             // Stop further movement.
             outputs[aPin].steps = 0;
-            
+
             // If there's a reset, reset the servo after the specified delay.
             if (   (persisting)
                 && (outputDefs[aPin].getState())
@@ -1195,7 +1195,7 @@ void stepServo(uint8_t aPin)
     {
         // Intermediate step, move proportionately (step/steps) along the range (start to target).
         // Use long arithmetic to avoid overflow problems.
-        outputs[aPin].value = ((long)outputs[aPin].start) 
+        outputs[aPin].value = ((long)outputs[aPin].start)
                             +   (((long)outputs[aPin].target) - ((long)outputs[aPin].start))
                               * ((long)outputs[aPin].step)
                               / ((long)outputs[aPin].steps);
@@ -1291,11 +1291,11 @@ void stepLed(uint8_t aPin)
         {
             // Intermediate step, move proportionately (step/steps) along the range (start to target and altStart to altTarget).
             // Use long arithmetic to avoid overflow problems.
-            outputs[aPin].value    = ((long)outputs[aPin].start) 
+            outputs[aPin].value    = ((long)outputs[aPin].start)
                                    +   (((long)outputs[aPin].target) - ((long)outputs[aPin].start))
                                      * ((long)outputs[aPin].step)
                                      / ((long)outputs[aPin].steps);
-            outputs[aPin].altValue = ((long)outputs[aPin].altStart) 
+            outputs[aPin].altValue = ((long)outputs[aPin].altStart)
                                    +   (((long)outputs[aPin].altTarget) - ((long)outputs[aPin].altStart))
                                      * ((long)outputs[aPin].step)
                                      / ((long)outputs[aPin].steps);
@@ -1320,7 +1320,7 @@ void stepDoubleLed(uint8_t aPin)
     int     pin   = aPin;                                       // Pin (signed) to fire next (normally the same pin).
     uint8_t reset = outputDefs[aPin].getReset();                // Interval before next firing.
     uint8_t type  = outputDefs[aPin].getType();                 // Type of this pin.
-    
+
     if (   (type == OUTPUT_TYPE_ROAD_UK)                        // ROAD outputs are a special case.
         || (type == OUTPUT_TYPE_ROAD_RW))
     {
@@ -1360,7 +1360,7 @@ void stepDoubleLed(uint8_t aPin)
             }
         }
     }
-    
+
     // Move desired pin to next state after correct interval.
     actionState(pin, false, reset, false);
 }
@@ -1439,7 +1439,7 @@ void stepFlash(uint8_t aPin)
             if (outputs[aPin].steps == 1)               // Fastest possible flash = flicker.
             {
                 doSwitch = random(100) < LED_FLICKER_CHANCE;
-                
+
 //                // DEBUG - metrics for flickering
 //                if (doSwitch)
 //                {
@@ -1494,7 +1494,7 @@ void loop()
 {
     // Record the time now
     now = millis();
-    
+
 //  // Metrics
 //  count += 1;
 //  if ((now - start) > 1000L)
@@ -1536,7 +1536,7 @@ void loop()
         tickLed = now + STEP_LED;
         stepLeds();
     }
-    
+
     // Every STEP_FLASH msecs, step the FLASH/BLINKs if necessary
     if (now > tickFlash)
     {
@@ -1566,7 +1566,7 @@ void loop()
 //        // Servo pin 3 is Arduino pin 7 which is PORTD mask 0x80
 //        if (pin == 3)
 //        {
-//            if (   outputs[pin].value    >  0 
+//            if (   outputs[pin].value    >  0
 //                && outputs[pin].value    >= ( nowMicros & 0xff))
 //            {
 //                PORTD |= 0x80;

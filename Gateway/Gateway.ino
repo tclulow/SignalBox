@@ -86,7 +86,7 @@ void processReceipt(int aLen)
         uint8_t option  = command & COMMS_OPTION_MASK;
         uint8_t node    = 0;
         uint8_t pin     = option  & 0x07;
-        
+
         command &= COMMS_COMMAND_MASK;
 
 //        Serial.println();
@@ -105,13 +105,13 @@ void processReceipt(int aLen)
         {
             case COMMS_CMD_SYSTEM: processSystem(option);
                                    break;
-                                   
+
             case COMMS_CMD_SET_LO:
             case COMMS_CMD_SET_HI:
             case COMMS_CMD_INP_LO:
             case COMMS_CMD_INP_HI: processStateChange(command, pin);
                                    break;
-                              
+
             default:               reportError("Unrecognised", command, option);
                                    break;
         }
@@ -126,7 +126,7 @@ void processReceipt(int aLen)
         Serial.print(aLen, HEX);
         Serial.println();
     }
-    
+
     // Consume unexpected data.
     if (i2cComms.available())
     {
@@ -136,7 +136,7 @@ void processReceipt(int aLen)
         Serial.print("Unexpected, len=");
         Serial.print(i2cComms.available(), HEX);
         Serial.print(':');
-        
+
         while (i2cComms.available())
         {
             uint8_t ch = i2cComms.readByte();
@@ -170,8 +170,8 @@ void processSystem(uint8_t aOption)
                                    else
                                    {
                                        // TODO - handle pending requests.
-                                   }                                   
- 
+                                   }
+
                                    break;
 
         case COMMS_SYS_OUT_STATES: if (i2cComms.available() == 1)
@@ -183,15 +183,15 @@ void processSystem(uint8_t aOption)
                                        Serial.print(", states=");
                                        Serial.print(outputStates[outputNodeCount], HEX);
                                        Serial.println();
-                                  
+
                                        outputNodeCount += 1;                    // Ensure next request is for next node
                                    }
                                    else
                                    {
                                        reportError("Missing output state", COMMS_CMD_SYSTEM, i2cComms.available());
-                                   }                                   
+                                   }
 
-                                   break; 
+                                   break;
 
         case COMMS_SYS_INP_STATES: if (i2cComms.available() != 2)
                                    {
@@ -202,15 +202,15 @@ void processSystem(uint8_t aOption)
                                        Serial.print(", states=");
                                        Serial.print(inputStates[inputNodeCount], HEX);
                                        Serial.println();
-                                  
+
                                        inputNodeCount += 1;                    // Ensure next request is for next node
-                                   }                                       
+                                   }
                                    else
                                    {
                                        reportError("Missing input state", COMMS_CMD_SYSTEM, i2cComms.available());
-                                   }                                   
+                                   }
 
-                                   break; 
+                                   break;
 
         default:                   reportError("Unrecognised system", COMMS_CMD_SYSTEM, aOption);
     }
@@ -227,17 +227,17 @@ void processStateChange(uint8_t aCommand, uint8_t aPin)
                        || (aCommand == COMMS_CMD_SET_HI);
     boolean isHi     =    (aCommand == COMMS_CMD_INP_HI)
                        || (aCommand == COMMS_CMD_SET_HI);
-                      
+
     if (i2cComms.available())           // Should be present for all state change commands.
     {
         node = i2cComms.readByte();
     }
-    
+
     if (i2cComms.available())           // Set commands only.
     {
         delay = i2cComms.readByte();
     }
-    
+
     Serial.print(millis());
     Serial.print('\t');
     Serial.print(isOutput ? "Output " : "Input ");

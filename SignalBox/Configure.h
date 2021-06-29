@@ -9,7 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
- 
+
 #ifndef Configure_h
 #define Configure_h
 
@@ -43,7 +43,7 @@ class Configure
     uint8_t outPin  = 0;    // The output pin we last configured.
     uint8_t inpNode = 0;    // The input node we last configured.
     uint8_t inpPin  = 0;    // The input pin we last configured.
-    
+
 
     /** Report a failure during configuration
      */
@@ -53,7 +53,7 @@ class Configure
         waitForButtonClick();
     }
 
-    
+
     /** Display all current data.
      */
     void displayAll()
@@ -81,7 +81,7 @@ class Configure
             case TOP_LOCKS:  displayOutputNode();
                              break;
 
-            case TOP_EXPORT: 
+            case TOP_EXPORT:
             case TOP_IMPORT: displaySystem();
                              break;
 
@@ -112,7 +112,7 @@ class Configure
         }
     }
 
-    
+
     /** Display the input node/pin selection line of the menu.
      */
     void displayInputNode()
@@ -139,7 +139,7 @@ class Configure
         }
     }
 
-    
+
     /** Display the detail line of the menu.
      */
     void displayDetail()
@@ -207,7 +207,7 @@ class Configure
     void displaySystemReportParams()
     {
         disp.clearRow(LCD_COL_MARK, LCD_ROW_DET);
-        disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_DET, M_REPORT_PROMPTS[systemData.reportLevel], LCD_LEN_OPTION);    
+        disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_DET, M_REPORT_PROMPTS[systemData.reportLevel], LCD_LEN_OPTION);
     }
 
 
@@ -232,7 +232,7 @@ class Configure
     void displaySystemDebugParams()
     {
         disp.clearRow(LCD_COL_MARK, LCD_ROW_DET);
-        disp.printProgStrAt(LCD_COL_DEBUG_PARAM, LCD_ROW_DET, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_LEN_OPTION);    
+        disp.printProgStrAt(LCD_COL_DEBUG_PARAM, LCD_ROW_DET, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_LEN_OPTION);
     }
 
 
@@ -242,7 +242,7 @@ class Configure
     {
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_EXPORT_TYPES[expMenu], LCD_LEN_OPTION);
     }
-    
+
 
     /** Display Import detail menu.
      */
@@ -250,7 +250,7 @@ class Configure
     {
         disp.clearRow(LCD_COL_START, LCD_ROW_DET);
     }
-    
+
 
     /** Display Input details.
      */
@@ -291,7 +291,7 @@ class Configure
             disp.printCh(CHAR_SPACE);
         }
     }
-    
+
 
     /** Display an Input's output settings, node and pin.
      */
@@ -339,7 +339,7 @@ class Configure
     {
         disp.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_DET);
         disp.setCursor(LCD_COL_OUTPUT_PARAM, LCD_ROW_DET);
-        
+
         if (aType != OUTPUT_TYPE_NONE)
         {
             if (topMenu == TOP_OUTPUT)
@@ -390,7 +390,7 @@ class Configure
     {
         disp.clearRow(LCD_COL_OUTPUT_PARAM, LCD_ROW_EDT);
         disp.printProgStrAt(LCD_COL_OUTPUT_PACE  - 1, LCD_ROW_EDT, M_PACE);
-        disp.printProgStrAt(LCD_COL_OUTPUT_RESET - 1, LCD_ROW_EDT, M_RESET);        
+        disp.printProgStrAt(LCD_COL_OUTPUT_RESET - 1, LCD_ROW_EDT, M_RESET);
 
         disp.clearRow(LCD_COL_OUTPUT_PARAM,    LCD_ROW_BOT);
         disp.printHexChAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, outputDef.getPace());
@@ -503,7 +503,7 @@ class Configure
                                     break;
             }
         }
-        
+
         disp.clear();
         waitForButtonRelease();
     }
@@ -591,7 +591,7 @@ class Configure
                                                          break;
                                         default:         configFail(M_SYSTEM, sysMenu);
                                     }
-                                    
+
                                     displayAll();
                                     markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, true);
                                     break;
@@ -636,7 +636,7 @@ class Configure
         }
 
         markField(LCD_COL_REPORT_PARAM, LCD_ROW_DET, LCD_COL_REPORT_LENGTH, false);
-        
+
         return changed;
     }
 
@@ -675,7 +675,7 @@ class Configure
         }
 
         markField(LCD_COL_DEBUG_PARAM, LCD_ROW_DET, LCD_COL_DEBUG_LENGTH, false);
-        
+
         return changed;
     }
 
@@ -685,7 +685,7 @@ class Configure
     void menuExport()
     {
         boolean finished = false;
-        
+
         markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, true);
 
         while (!finished)
@@ -736,11 +736,11 @@ class Configure
 
         systemData.reportLevel = 0;
         markField(LCD_COL_NODE, LCD_ROW_TOP, 1, true);
-        
+
         while (!finished)
         {
             int adjust = 0;
-            
+
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
@@ -756,7 +756,7 @@ class Configure
                                     {
                                         outNode = nextNode(outNode, adjust, aIsInput, true);
                                         readOutput(outNode, outPin);
-                                        
+
                                         // Handle (rare) case where output node has failed (and this is first time we noticed).
                                         if (!isOutputNodePresent(outNode))
                                         {
@@ -806,11 +806,11 @@ class Configure
     uint8_t nextNode(uint8_t aStart, int aAdjust, boolean aIsInput, boolean aInUse)
     {
         uint8_t next = aStart & (aIsInput ? INPUT_NODE_MASK : OUTPUT_NODE_MASK);
-        
+
         for (uint8_t ind = 0; ind < (aIsInput ? INPUT_NODE_MAX : OUTPUT_NODE_MAX); ind++)
         {
             next = (next + aAdjust) & (aIsInput ? INPUT_NODE_MASK : OUTPUT_NODE_MASK);
-            
+
             if (   (aIsInput)
                 && (aInUse == isInputNodePresent(next)))
             {
@@ -846,7 +846,7 @@ class Configure
         // Announce we're scanning
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_SCANNING, LCD_COLS);
         waitForButtonRelease();
-        
+
         // Scan all the input nodes until a button is pressed.
         while ((button = readButton()) == BUTTON_NONE)
         {
@@ -876,14 +876,14 @@ class Configure
         boolean changed  = false;       // Set if a new node number has been chosen.
         boolean jumpers  = false;       // Set to reset node to its jumper setting.
         uint8_t newNode  = outNode;     // The new node number to renumber to.
-        
+
         displayNewNode(jumpers, newNode);
         markField(LCD_COL_NODE, LCD_ROW_DET, 1, true);
-        
+
         while (!finished)
         {
             int adjust = 0;
-            
+
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
@@ -967,7 +967,7 @@ class Configure
             && ((response = i2cComms.requestByte(I2C_OUTPUT_BASE_ID + aOldNode)) >= 0))
         {
             response &= OUTPUT_NODE_MASK;       // The new node number of the Output as returned by the node
-    
+
             if (isDebug(DEBUG_BRIEF))
             {
                 Serial.print(millis());
@@ -977,7 +977,7 @@ class Configure
                 Serial.print(aOldNode, HEX);
                 Serial.print(PGMT(M_DEBUG_TO));
                 Serial.print(aNewNode, HEX);
-                Serial.println();    
+                Serial.println();
             }
 
             if (aOldNode != response)           // Change actually happened.
@@ -996,7 +996,7 @@ class Configure
                 disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_RENUMBER);
                 disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT, LCD_LEN_OPTION);
                 disp.setCursor(-INPUT_NODE_MAX, LCD_ROW_DET);
-                
+
                 // Renumber all the effected inputs' Output nodes.
                 for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
                 {
@@ -1047,7 +1047,7 @@ class Configure
                     if (isOutputNodePresent(node))
                     {
                         disp.printHexCh(node);
-                    
+
                         if (isDebug(DEBUG_BRIEF))
                         {
                             Serial.print(millis());
@@ -1059,7 +1059,7 @@ class Configure
                             Serial.print(aOldNode, HEX);
                             Serial.print(PGMT(M_DEBUG_TO));
                             Serial.print(response, HEX);
-                            Serial.println();    
+                            Serial.println();
                         }
 
                         i2cComms.sendData(I2C_OUTPUT_BASE_ID + node, COMMS_CMD_SYSTEM | COMMS_SYS_MOVE_LOCKS, aOldNode, response);
@@ -1084,26 +1084,26 @@ class Configure
                 Serial.print(aNewNode, HEX);
                 Serial.print(PGMT(M_DEBUG_RETURN));
                 Serial.print(response, HEX);
-                Serial.println();    
+                Serial.println();
             }
 
             configFail(M_OUTPUT, response);
             response = aOldNode;
         }
-        
+
         waitForButtonClick();
         return response;
     }
-    
+
 
     /** Process Pin menu.
      */
     void menuPin(boolean aIsInput)
     {
         boolean finished = false;
-        
+
         markField(LCD_COL_PIN, LCD_ROW_TOP, 1, true);
-        
+
         while (!finished)
         {
             switch (waitForButtonPress())
@@ -1177,16 +1177,16 @@ class Configure
         markField(LCD_COL_PIN, LCD_ROW_TOP, 1, false);
     }
 
-    
+
     /** Process Input menu.
      */
     void menuInput()
     {
         boolean finished = false;
         boolean changed  = false;
-        
+
         markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, true);
-        
+
         while (!finished)
         {
             switch (waitForButtonPress())
@@ -1296,7 +1296,7 @@ class Configure
         }
 
         markField(LCD_COL_INPUT_OUTPUT, LCD_ROW_DET, 1, false);
-        
+
         return changed;
     }
 
@@ -1313,7 +1313,7 @@ class Configure
         while (!finished)
         {
             int adjust = 0;
-            
+
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
@@ -1390,7 +1390,7 @@ class Configure
         }
 
         markField(LCD_COL_PIN, LCD_ROW_DET, 1, false);
-        
+
         return finished;
     }
 
@@ -1400,7 +1400,7 @@ class Configure
     void testInput()
     {
         boolean currentState = false;
-        
+
         readOutput(inputDef.getOutput(inputDef.getFirstOutput()));
         currentState = outputDef.getState();
 
@@ -1415,7 +1415,7 @@ class Configure
     void testInputOutput(uint8_t aIndex)
     {
         boolean currentState = false;
-        
+
         readOutput(inputDef.getOutput(aIndex));
         currentState = outputDef.getState();
         processInputOutput(aIndex, !currentState, 0);
@@ -1432,7 +1432,7 @@ class Configure
         uint8_t button      = BUTTON_NONE;
         long    interval    = 0L;           // Interval between changes of output.
         long    finishAt    = 0L;           // Time to finish output's ident.
-        
+
         waitForButtonRelease();
         disp.clearRow(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP);
         disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_IDENT, LCD_LEN_OPTION);
@@ -1473,7 +1473,7 @@ class Configure
                             outputDef.setState(!outputDef.getState());
                             writeOutput();
                             button = delayFor(interval);
-                            
+
                             outputDef.setState(!outputDef.getState());
                             writeOutput();
                             if (button == BUTTON_NONE)
@@ -1483,12 +1483,12 @@ class Configure
                         }
                         resetOutput();
                     }
-                    
+
                     // If button pressed, handle the interuption.
                     if (button != BUTTON_NONE)
                     {
                         int adjust = 0;
-                        
+
                         switch (button)
                         {
                             case BUTTON_NONE:   break;
@@ -1575,7 +1575,7 @@ class Configure
                                     outputType %= OUTPUT_TYPE_MAX;
                                     outputDef.setType(outputType);
                                     writeOutput();
-                                    
+
                                     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputType], LCD_LEN_OPTION);
                                     displayOutputParams(outputType);
                                     markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, true);
@@ -1643,7 +1643,7 @@ class Configure
                                     break;
             }
         }
-        
+
         resetOutput();              // Ensure output module is in correct state (and will persist state changes).
         displayDetailOutput();
     }
@@ -1659,7 +1659,7 @@ class Configure
 
         displayOutputAngles();
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
-        
+
         outputDef.setState(false);
         writeOutput();
 
@@ -1716,10 +1716,10 @@ class Configure
         }
 
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
-        
+
         outputDef.setState(state);
         writeOutput();
-        
+
         return changed;
     }
 
@@ -1793,7 +1793,7 @@ class Configure
 
         outputDef.setState(false);
         writeOutput();
-                
+
         return changed;
     }
 
@@ -1914,7 +1914,7 @@ class Configure
 
         displayLockDetail(hi);
         markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_LOCK_MARK, true);
-        
+
         while (!finished)
         {
             switch (waitForButtonPress())
@@ -2025,7 +2025,7 @@ class Configure
 
         markField(LCD_COL_LOCK_SELECT, LCD_ROW_DET, 1, false);
         // displayLockEdit(aHi, index);
-        
+
         return changed;
     }
 
@@ -2081,7 +2081,7 @@ class Configure
         }
 
         markField(LCD_COL_LOCK_STATE, LCD_ROW_DET, LCD_COL_LOCK_MARK, false);
-        
+
         return changed;
     }
 
@@ -2098,7 +2098,7 @@ class Configure
         while (!finished)
         {
             int adjust = 0;
-            
+
             switch (waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
@@ -2224,7 +2224,7 @@ class Configure
         return waitForConfirm(M_CONFIRMED);
     }
 
-    
+
     /** Output cancellation message.
      *  Wait for response.
      */
@@ -2253,13 +2253,13 @@ class Configure
 
         waitForButtonRelease();
         disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
-        
+
         return button == BUTTON_SELECT;
     }
 
 
     public:
-    
+
     /** A Configure object.
      */
     Configure()
@@ -2274,7 +2274,7 @@ class Configure
     {
         inpNode = aNode;        // Record the node and pin.
         inpPin  = aPin;
-        
+
         displayInputNode();     // Display the Input and it's configuration.
         displayDetail();
     }

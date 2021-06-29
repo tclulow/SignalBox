@@ -133,7 +133,7 @@ void flashVersion()
         Serial.print(PGMT(M_VERSION_DATE));
         Serial.println();
     }
-    
+
 #if !SB_CONTROLLER
     // Decide how many jumper pins to indicate
     uint8_t maskLimit = OUTPUT_NODE_MASK;
@@ -141,7 +141,7 @@ void flashVersion()
     {
         maskLimit >>= 1;            // Don't show software jumper pin
     }
-    
+
     // Flash module number.
     delay(DELAY_BLINK_LONG);
     for (uint8_t mask = 1; mask <= maskLimit; mask <<= 1)
@@ -167,7 +167,7 @@ void systemFail(PGM_P aMessage, int aValue)
     Serial.print(CHAR_SPACE);
     Serial.print(aValue, HEX);
     Serial.println();
-    
+
     disp.clear();
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_FAILURE);
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, aMessage);
@@ -272,7 +272,7 @@ uint8_t getModuleId(boolean aIncludeBase)
 int charToHex(char ch)
 {
     int value = (int)(10 + ch);         // Assume alphabetic.
-    
+
     if (ch >= CHAR_LOWER_A)
     {
         value -= CHAR_LOWER_A;          // Adjust for lower-case range.
@@ -290,7 +290,7 @@ int charToHex(char ch)
     {
         value = -HEX_MAX;
     }
-    
+
     if (value > 0x1f)
     {
         value = -HEX_MAX;
@@ -319,14 +319,14 @@ void dumpMemory(PGM_P aMessage, int aStart, int aEnd)
     Serial.print(CHAR_HASH);
     Serial.print(CHAR_SPACE);
     Serial.println(PGMT(aMessage));
-    
+
     for (int base = aStart; base < aEnd; base += 16)
     {
         Serial.print(CHAR_HASH);
         Serial.print(CHAR_SPACE);
         printHex(base, 4);
         Serial.print(CHAR_COLON);
-        
+
         for (int offs = 0; offs < 16; offs++)
         {
             Serial.print(CHAR_SPACE);
@@ -343,7 +343,7 @@ void dumpMemory(PGM_P aMessage, int aStart, int aEnd)
             if (   (ch >= CHAR_SPACE)
                 && (ch <= CHAR_TILDE))
             {
-                Serial.print(ch);    
+                Serial.print(ch);
             }
             else
             {
@@ -362,7 +362,7 @@ void dumpMemory()
 {
     dumpMemory(M_SYSTEM, SYSTEM_BASE, SYSTEM_END);
     Serial.println();
-    
+
 #if OUTPUT_BASE
     dumpMemory(M_OUTPUT, OUTPUT_BASE, OUTPUT_END);
     Serial.println();

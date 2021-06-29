@@ -13,41 +13,41 @@
  *  I2C Comms protocol.
  *
  *  Most commands are a simple (write) I2C message from the Master to the Output module.
- *  Some messages require a response (maybe several bytes) from the output module. 
+ *  Some messages require a response (maybe several bytes) from the output module.
  *  This is achieved by the master sending a write message indicating what's required,
  *  and then immediately issuing a read I2C message to read the response from the Output module.
- *  
+ *
  *  Basic message:      <CommandByte><Data byte>...
  *  Optional response:  <Response byte>...
- *  
+ *
  *  Command byte:   7 6 5 4   3 2 1 0
  *                  Command   Option
- *                  
+ *
  *  Command nibble: As defined below with COMMS_CMD_... flags
  *  Option  nibble: Either the system command option (COMMS_SYS_... flags below) or the pin (0-7) to operate the command against.
- *  
- *  
+ *
+ *
  *  Messages:
- *  
+ *
  *      Command Option      Data                    Response
  *      SYSTEM  GATEWAY                             <Request>    <Node>
  *      SYSTEM  OUT_STATES                          <OutStates>
  *      SYSTEM  INP_STATES                          <InpStates>
  *      SYSTEM  RENUMBER    <Node>      <NewNode>   <NewNode>
  *      SYSTEM  MOVE_LOCKS  <Node>      <NewNode>
- *      
+ *
  *      DEBUG   <Level>
  *      SET_LO  <Pin>       <Node>      <Delay>
  *      SET_HI  <Pin>       <Node>      <Delay>
- *      
+ *
  *      READ    <Pin>                               <OutputDef>
  *      WRITE   <Pin>       <OutputDef>
  *      SAVE    <Pin>
  *      RESET   <Pin>
- *      
+ *
  *      NONE    0xf
  *
- *      
+ *
  * Data bytes
  *      Node        The node being addressed.
  *      NewNode     The new number (0-31) for this output module.
@@ -55,7 +55,7 @@
  *      Pin         The pin (0-7) to action the command against.
  *      Delay       Optional delay (in seconds, 0-255) before actioning the command.
  *      OutputDef   15 bytes defining an output. See below.
- *      
+ *
  * Response bytes
  *      Request     The command (and option) requested by the gateway.
  *      OutStates   The current state of all output pins. Pin 0 in bit 0, to Pin 7 in bit 7. Bit set = pin is "Hi".
@@ -63,7 +63,7 @@
  *                                                  then Low-order byte second, Pin 0 in bit 0, to Pin 7 in bit 7. Bit set = pin is "Hi".
  *      NewNode     The new node number (0-31) of the output module.
  *      OutputDef   15 bytes defining an output. See below.
- *      
+ *
  * OutputDef
  *      Type        Byte indicating the type of output (see OUTPUT_TYPE_...).
  *      Lo          The Lo setting for this output (0-255).
@@ -75,7 +75,7 @@
  *      LocksHi     Four bytes indicating the 4 Hi locks. See Lock below.
  *      Lock        Byte defining an output node and pin. Node number (0-31) in top 5 bits, pin number (0-7) in bottom 3 bits. See OUTPUT_NODE_... and OUTPUT_PIN_...
  */
- 
+
 #ifndef I2cComms_h
 #define I2cComms_h
 
@@ -95,7 +95,7 @@
 #define COMMS_CMD_SET_LO        0x20    // Set Output Lo
 #define COMMS_CMD_SET_HI        0x30    // Set Output Hi
 
-#define COMMS_CMD_READ          0x40    // Read data from Output's EEPROM definition (to the I2C master).    
+#define COMMS_CMD_READ          0x40    // Read data from Output's EEPROM definition (to the I2C master).
 #define COMMS_CMD_WRITE         0x50    // Write data to Output's EEPROM definition (from the I2C master).
 #define COMMS_CMD_SAVE          0x60    // Save Output's EEPROM definition (as set by a previous WRITE).
 #define COMMS_CMD_RESET         0x70    // Reset output to its saved state (from its EEPROM).
@@ -148,13 +148,13 @@ class I2cComms
 
 
     /** Is a particular node ID connected to the I2C bus?
-     */    
+     */
     boolean exists(uint8_t aNodeId)
     {
         Wire.beginTransmission(aNodeId);
         return Wire.endTransmission() == 0;
     }
-    
+
 
     /** Set the Id of the Gateway module.
     *  Certain messages get duplicated to this ID.
@@ -163,7 +163,7 @@ class I2cComms
     {
         gatewayId = aId;       // Marks the presence of an I2C gateway module.
     }
-    
+
     /** Send an I2C message with no data.
      */
     uint8_t sendShort(uint8_t aNodeId, uint8_t aCommand)
@@ -183,11 +183,11 @@ class I2cComms
         if (aDataByte1 >= 0)
         {
             Wire.write((uint8_t)aDataByte1);
-        }    
+        }
         if (aDataByte2 >= 0)
         {
             Wire.write((uint8_t)aDataByte2);
-        }    
+        }
         return Wire.endTransmission();
     }
 
@@ -198,10 +198,10 @@ class I2cComms
     {
         if (gatewayId > 0)
         {
-            sendData(gatewayId, aCommand, aDataByte1, aDataByte2); 
+            sendData(gatewayId, aCommand, aDataByte1, aDataByte2);
         }
     }
-    
+
 
     /** Send an I2C message with payload.
      */
@@ -229,14 +229,14 @@ class I2cComms
     int requestByte(uint8_t aNodeId)
     {
         Wire.requestFrom(aNodeId, (uint8_t)1);
-        
+
         return Wire.read();
     }
 
 
     /** Request a packet (of aLength).
      *  Return true if correct packet-length arrives, else false.
-     */     
+     */
     boolean requestPacket(uint8_t aNodeId, uint8_t aLength)
     {
         return    (Wire.requestFrom(aNodeId, aLength) == aLength)
@@ -271,7 +271,7 @@ class I2cComms
 
 
     /** Reads a word (16 bits, 2 bytes) from the I2C comms receive buffer.
-     */    
+     */
     int readWord()
     {
         return   (Wire.read() & 0xff)
@@ -296,5 +296,5 @@ class I2cComms
  */
 I2cComms i2cComms;
 
-        
+
 #endif

@@ -9,7 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
- 
+
 #ifndef Input_h
 #define Input_h
 
@@ -60,7 +60,7 @@
 #define MCP_GPPUB     0x0D
 #define MCP_INTFA     0x0E    // Interupt occurred on these pins (read-only).
 #define MCP_INTFB     0x0F
-#define MCP_INTCAPA   0x10    // Interupt capture. Copy of GPIO when interups occurred. 
+#define MCP_INTCAPA   0x10    // Interupt capture. Copy of GPIO when interups occurred.
 #define MCP_INTCAPB   0x11    // Cleared when read (or when GPIO read).
 #define MCP_GPIOA     0x12    // GPIO pins.
 #define MCP_GPIOB     0x13
@@ -77,13 +77,13 @@ uint8_t INPUT_COMMANDS[] = { MCP_IODIRA, MCP_IODIRB, MCP_GPPUA, MCP_GPPUB };
 class InputDef
 {
     private:
-    
+
     uint8_t delayMask = 0;              // Mask showing which outputs are "delay"s.
     uint8_t output[INPUT_OUTPUT_MAX];   // The outputs conrolled by this input.
 
 
     public:
-    
+
     /** Gets the nth outputNode.
      */
     uint8_t getOutputNode(uint8_t aIndex)
@@ -96,7 +96,7 @@ class InputDef
      */
     void setOutputNode(uint8_t aIndex, uint8_t aOutputNode)
     {
-        output[aIndex] = (output[aIndex] & ~(OUTPUT_NODE_MASK << OUTPUT_NODE_SHIFT)) 
+        output[aIndex] = (output[aIndex] & ~(OUTPUT_NODE_MASK << OUTPUT_NODE_SHIFT))
                        | ((aOutputNode   &  OUTPUT_NODE_MASK) << OUTPUT_NODE_SHIFT);
     }
 

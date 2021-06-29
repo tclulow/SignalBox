@@ -9,7 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
- 
+
 #ifndef ImportExport_h
 #define ImportExport_h
 
@@ -23,14 +23,14 @@
 #define EXP_OUTPUTS  3
 #define EXP_LOCKS    4
 #define EXP_MAX      5
- 
+
 
 /** An Importer/exporter.
  */
 class ImportExport
 {
     private:
-    
+
     int  lastChar;                              // Last character read.
     char wordBuffer[WORD_BUFFER_LENGTH + 1];    // Buffer to read characters with null terminator on the end.
     long messageTick = 1L;                      // Time the last message was emitted.
@@ -61,7 +61,7 @@ class ImportExport
             importError();
         }
     }
-    
+
 
     /** Import the system def.
      *  Nothing to do but report the fact.
@@ -80,7 +80,7 @@ class ImportExport
         int node = 0;
         int pin  = 0;
         int mask = 0;
-        
+
         node = readData() & INPUT_NODE_MASK;
         pin  = readData() & INPUT_PIN_MASK;
         loadInput(node, pin);
@@ -128,15 +128,15 @@ class ImportExport
             saveInput();
         }
     }
-    
-    
+
+
     /** Import an output
      */
     void importOutput()
     {
         uint8_t type  = 0;
         int     value = 0;
-        
+
         outputNode = readData() & OUTPUT_NODE_MASK;
         outputPin  = readData() & OUTPUT_PIN_MASK;
 
@@ -172,7 +172,7 @@ class ImportExport
             {
                 outputDef.setPace(OUTPUT_DEFAULT_PACE);
             }
-            
+
             // Read (optional) reset.
             value = readData();
             if (value >= 0)
@@ -188,7 +188,7 @@ class ImportExport
             disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[type], LCD_LEN_STATUS);
             disp.printHexChAt(LCD_COL_NODE,  LCD_ROW_DET, outputNode);
             disp.printHexChAt(LCD_COL_PIN ,  LCD_ROW_DET, outputPin);
-            
+
             writeOutput();
             writeSaveOutput();
         }
@@ -200,7 +200,7 @@ class ImportExport
     void importLock()
     {
         int value = 0;
-        
+
         outputNode = readData() & OUTPUT_NODE_MASK;
         outputPin  = readData() & OUTPUT_PIN_MASK;
         if (isOutputNodePresent(outputNode))
@@ -236,12 +236,12 @@ class ImportExport
                     }
                 }
             }
-        
+
             disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_LOCK, LCD_LEN_OPTION);
             disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_STATUS);
             disp.printHexChAt(LCD_COL_NODE,  LCD_ROW_DET, outputNode);
             disp.printHexChAt(LCD_COL_PIN ,  LCD_ROW_DET, outputPin);
-            
+
             writeOutput();
             writeSaveOutput();
         }
@@ -272,8 +272,8 @@ class ImportExport
 
         return Serial.read();
     }
-    
-    
+
+
     /** Read (hexadecimal) data.
      *  Special-case: letters G-V represent 0x10 to 0x1f.
      *  If dots are present, return a negative number -HEX_MAX
@@ -308,7 +308,7 @@ class ImportExport
 
         return value;
     }
-    
+
 
     /** Are we at end-of-line?
      */
@@ -327,8 +327,8 @@ class ImportExport
                || (lastChar == CHAR_TAB)
                || (isEndOfLine());
     }
-    
-    
+
+
     /** Skip rest of line
      */
     void skipLine()
@@ -341,8 +341,8 @@ class ImportExport
 
         lastChar = CHAR_SPACE;
     }
-    
-    
+
+
     /** Read a word from the Serial.
      *  Don't read beyond end-of-line
      */
@@ -368,14 +368,14 @@ class ImportExport
                     break;
                 }
             }
-                
+
             wordBuffer[index++] = lastChar;
         }
-    
+
         // Add terminator to word.
         wordBuffer[index] = CHAR_NULL;
 
-        return index; 
+        return index;
     }
 
 
@@ -425,7 +425,7 @@ class ImportExport
             dumpMemory();
         }
     }
-    
+
 
     /** Export the Inputs.
      *  Only export connected inputs, unless aAll is set.
@@ -451,7 +451,7 @@ class ImportExport
                 {
                     // Export Input defintion
                     loadInput(node, pin);
-    
+
                     Serial.print(PGMT(M_INPUT));
                     Serial.print(CHAR_TAB);
                     Serial.print(HEX_CHARS[node]);
@@ -490,8 +490,8 @@ class ImportExport
             }
         }
     }
-    
-    
+
+
     /** Export the Outputs.
      */
     void exportOutputs()
@@ -509,7 +509,7 @@ class ImportExport
                 {
                     // Export Output definition.
                     readOutput(node, pin);
-    
+
                     Serial.print(PGMT(M_OUTPUT));
                     Serial.print(CHAR_TAB);
                     Serial.print(HEX_CHARS[node]);
@@ -595,10 +595,10 @@ class ImportExport
             }
         }
     }
-    
-    
+
+
     public:
-    
+
     /** An ImportExport object.
      */
     ImportExport()
@@ -611,10 +611,10 @@ class ImportExport
     void doImport()
     {
         int len = 0;
-        
+
         messageTick = 1;            // Ensure "waiting" message appears.
         waitForButtonRelease();
-    
+
         // Clear the buffer
         while (Serial.available())
         {
@@ -636,8 +636,8 @@ class ImportExport
             skipLine();
         }
     }
-    
-    
+
+
     /** Export selected items.
      */
     void doExport(int aExport)
@@ -646,7 +646,7 @@ class ImportExport
 
         disp.printProgStrAt(-strlen_P(M_EXPORTING), LCD_ROW_DET, M_EXPORTING);
         setDebug(DEBUG_NONE);
-        
+
         switch(aExport)
         {
             case EXP_ALL:     exportSystem(debugLevel >= DEBUG_FULL);
@@ -669,7 +669,7 @@ class ImportExport
 
             default:          systemFail(M_EXPORT, aExport);
         }
-    
+
         disp.clearRow(-strlen_P(M_EXPORTING), LCD_ROW_DET);
         setDebug(debugLevel);
     }

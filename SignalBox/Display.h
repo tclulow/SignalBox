@@ -9,7 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
- 
+
 #ifndef Display_h
 #define Display_h
 
@@ -29,7 +29,7 @@
 
 
 #define LCD_ROW_TOP           0   // Rows for Display state messages.
-#define LCD_ROW_DET           1   // Detail goes on second row.  
+#define LCD_ROW_DET           1   // Detail goes on second row.
 #define LCD_ROW_EDT           2   // Edit on row 2 (if available).
 #define LCD_ROW_BOT           3   // Bottom row.
 
@@ -71,15 +71,15 @@ class Display
 
     /** An LCD attached as a shield.
      *  Typical options:
-     *  
+     *
      *  LiquidCrystal(rs,     enable,                 d4, d5, d6, d7)
      *  LiquidCrystal(rs, rw, enable,                 d4, d5, d6, d7)
      *  LiquidCrystal(rs,     enable, d0, d1, d2, d3, d4, d5, d6, d7)
-     *  LiquidCrystal(rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7) 
-     *  
+     *  LiquidCrystal(rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7)
+     *
      *  LiquidCrystal lcdShield(8,   9, 4, 5, 6, 7);
      *  LiquidCrystal lcdShield(12, 11, 5, 4, 3, 2);
-     */ 
+     */
     LiquidCrystal* lcdShield;
 
 #if LCD_I2C
@@ -89,9 +89,9 @@ class Display
 #endif
     uint8_t            lcdId = 0;   // The ID of the I2C LCD. Never set if no I2C LCD.
 
-    
+
     public:
-    
+
     /** Constructor.
      */
     Display()
@@ -108,7 +108,7 @@ class Display
         // lcdShield->noCursor();
         // lcdShield->noBlink();
         lcdShield->createChar(CHAR_LO, BYTES_LO);       // Custom character to indicate "Lo".
-        
+
 //        for (uint8_t index = 0; index < CHAR_LO; index++)
 //        {
 //            lcdShield->createChar(index, LOGO[index]);
@@ -140,7 +140,7 @@ class Display
     {
         return lcdId;
     }
-    
+
 
     /** Clears the display.
      *  Delegate to library classes.
@@ -151,7 +151,7 @@ class Display
         {
             lcdShield->clear();
         }
-        
+
         if (lcdI2C)
         {
             lcdI2C->clear();
@@ -190,7 +190,7 @@ class Display
             }
         }
     }
-    
+
 
     /** Prints a character on the LCD.
      *  Delegate to library classes.
@@ -346,13 +346,13 @@ class Display
             digits += 1;
         }
         value = aValue;
-        
+
         // Use at least the min digits requested.
         if (digits < aDigits)
         {
             digits = aDigits;
         }
-        
+
         // Calculate starting power of 10 for desired number of digits.
         for (int digit = 1; digit < digits; digit++)
         {
@@ -394,7 +394,7 @@ class Display
         {
             len = -aCol;
         }
-        
+
         setCursor(aCol, aRow);
         for (uint8_t spaces = 0; spaces < len; spaces++)
         {
@@ -426,7 +426,7 @@ class Display
 
 /** A singleton instance of the Display class.
  */
-Display disp; 
+Display disp;
 
 
 #endif

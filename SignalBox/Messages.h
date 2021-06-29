@@ -9,7 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
- 
+
 #ifndef Messages_h
 #define Messages_h
 
@@ -59,7 +59,7 @@ const char M_LO[]               PROGMEM = "Lo";
 const char M_PACE[]             PROGMEM = "Spd";
 const char M_RESET[]            PROGMEM = "Reset";
 
-const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_LED_4, M_ROAD_UK, M_ROAD_RW, M_FLASH, 
+const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_LED_4, M_ROAD_UK, M_ROAD_RW, M_FLASH,
                                          M_BLINK, M_RANDOM, M_RFU,    M_RFU, M_RFU,   M_RFU,     M_RFU,     M_RFU };
 
 
@@ -72,7 +72,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char M_CANCELLED[]        PROGMEM = "Change cancelled";
     const char M_ABANDONED[]        PROGMEM = "Abandoned";
     const char M_FAILURE[]          PROGMEM = "System error";
-    const char M_INTERRUPT[]        PROGMEM = "Interrupt"; 
+    const char M_INTERRUPT[]        PROGMEM = "Interrupt";
     const char M_RENUMBER[]         PROGMEM = "Renumber";
     const char M_SCANNING[]         PROGMEM = "Scanning inputs";
     // const char M_TODO[]          PROGMEM = "TODO";
@@ -88,19 +88,19 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char M_RIGHT[]            PROGMEM = "Right";
     const char M_SEQUENCE[]         PROGMEM = "Out of sequence";
 
-    
+
     // Start-up and first-run messages.
     const char M_INITIALISING[]     PROGMEM = "Initialising";
     const char M_EZY_FOUND[]        PROGMEM = "EzyBus  detected";
     const char M_EZY_UPDATE[]       PROGMEM = "Update?  Sel=Yes";
     const char M_EZY_UPDATING[]     PROGMEM = "EzyBus  updating";
-    
+
     const char M_NODES[]            PROGMEM = "Nodes";
     const char M_NO_INPUT[]         PROGMEM = "No input node";
     const char M_NO_OUTPUT[]        PROGMEM = "No output node";
     const char M_INIT_INPUTS[]      PROGMEM = "Init inputs";
 
-    
+
     // Import/export actions.
     const char M_EXPORTING[]        PROGMEM = "Exporting";
     const char M_WAITING[]          PROGMEM = "Waiting";
@@ -115,7 +115,7 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char M_IMPORT[]           PROGMEM = "Import";
     const char M_ALL[]              PROGMEM = "All";
 
-    
+
     // Configuration - System.
     const char M_REPORT[]           PROGMEM = "Report";
     const char M_DEBUG[]            PROGMEM = "Debug";
@@ -124,11 +124,11 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char M_SHORT[]            PROGMEM = "Short";
     const char M_LONG[]             PROGMEM = "Long";
     const char M_PAUSE[]            PROGMEM = "Pause";
-    
+
     const char M_ERRORS[]           PROGMEM = "Errors";
     const char M_BRIEF[]            PROGMEM = "Brief";
     const char M_FULL[]             PROGMEM = "Full";
-    
+
     const char M_VS[]               PROGMEM = " vs ";
 
 
@@ -137,8 +137,8 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char M_ON_OFF[]           PROGMEM = "On_Off";
     const char M_ON[]               PROGMEM = "On";
     const char M_OFF[]              PROGMEM = "Off";
-    
-    
+
+
     // Headers for the exports
     const char M_EXPORT_SYSTEM[]    PROGMEM = "#System\tVersion\tReport\tDebug";
     const char M_EXPORT_INPUT[]     PROGMEM = "#Input\tNode\tPin\tType";
@@ -156,10 +156,10 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char* const M_REPORT_PROMPTS[] = { M_NONE, M_SHORT, M_LONG, M_PAUSE };
     const char* const M_DEBUG_PROMPTS[]  = { M_NONE, M_ERRORS, M_BRIEF, M_DETAIL, M_FULL };
     const char* const M_INPUT_TYPES[]    = { M_TOGGLE, M_ON_OFF, M_ON,  M_OFF };
-    
+
 #endif
 
-    
+
 // Common debug messages.
 
 const char M_DEBUG_DEBUG[]      PROGMEM = "Debug";

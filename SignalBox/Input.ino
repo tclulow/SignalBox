@@ -86,7 +86,7 @@ void saveInput()
         uint8_t  node = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
         uint8_t  pin  = (inputNumber                    ) & INPUT_PIN_MASK;
         uint32_t mask = ((long)INPUT_TYPE_MASK) << (pin << INPUT_TYPE_SHIFT);
-        
+
         inputTypes = (inputTypes & ~mask) | ((((long)inputType) << (pin << INPUT_TYPE_SHIFT)) & mask);
         EEPROM.put(INPUT_BASE + (inputNumber * INPUT_SIZE), inputDef);
         EEPROM.put(TYPES_BASE + (node        * TYPES_SIZE), inputTypes);
@@ -113,10 +113,10 @@ void saveInput()
                 else
                 {
                     Serial.print(CHAR_SPACE);
-                }                
+                }
             }
             Serial.println();
-            
+
 //            Serial.print(millis());
 //            Serial.print("\tSave types ");
 //            Serial.print(node, HEX);

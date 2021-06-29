@@ -9,7 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
- 
+
 #ifndef System_h
 #define System_h
 
@@ -131,19 +131,19 @@ const char CHAR_LO      = (char)LOGO_LEN;
 struct SystemData
 {
     public:
-    
+
     long    magic           = MAGIC_NUMBER;                 // Magic number to identify software.
     long    version         = VERSION;                      // Software version number to identify upgrades.
 
     uint8_t rfu3[3];                                        // RFU. Was the I2C addresses.
-    
+
     uint8_t i2cModuleID     = I2C_MODULE_ID_JUMPERS;        // The module number we're using - default, use hardware.
 
     uint8_t debugLevel      = DEBUG_ERRORS;                 // Debugging level.
     uint8_t reportLevel     = REPORT_LONG;                  // Reporting level.
-    
+
     int     buttons[6];                                     // Configuration of analog buttons - BUTTON_HIGH + 1.
-    
+
     char    rfu[6];                                         // RFU. 32 bytes in all.
 };
 

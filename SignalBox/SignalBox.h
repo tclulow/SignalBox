@@ -9,7 +9,7 @@
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
- 
+
 #ifndef SignalBox_h
 #define SignalBox_h
 
@@ -31,7 +31,7 @@ void scanHardware();
 
 /** Read the pins of a InputNode.
  *  Return the state of the pins, 16 bits, both ports.
- *  Return current state if there's a communication error, 
+ *  Return current state if there's a communication error,
  *  this will prevent any actions being performed.
  */
 uint16_t readInputNode(uint8_t aNode);

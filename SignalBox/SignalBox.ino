@@ -11,41 +11,41 @@
  *
  *
  *  Libraries used:
- *  
- *  Name              | Purpose 
+ *
+ *  Name              | Purpose
  *  ----------------- | -------
  *  EEPROM            | Reading and writing to EEPROM memory.
- *  Wire              | To handle i2c communications. 
+ *  Wire              | To handle i2c communications.
  *  LiquidCrystal     | For driving an LCD shield attached to the Uno.
  *  LiquidCrystal_I2C | For driving an LCD attached by i2c. Set LCD_I2C false to disable this functionality.
- *  
+ *
  *
  *  Pin usage:
- *  
- *  D0      Serial Rx.                      
- *  D1      Serial Tx.                      
- *  D2      Alternate up button.            
- *  D3      Alternate right button.         
- *  D4      LCD shield data D4.             
- *  D5      LCD shield data D5.             
- *  D6      LCD shield data D6.             
- *  D7      LCD shield data D7.             
- *  D8      LCD shield rs.                  
- *  D9      LCD shield enable.              
- *  D10     LCD shield backlight.           
- *  D11     LCD shield detect.              
- *  D12     Interlock warning.              
- *  D13     Flash firmare version.          
- *  
- *  A0      LCD shield buttons.             
- *  A1      Alternate select button.        
- *  A2      Alternate left button.          
- *  A3      Alternate down button.          
- *  A4      I2C SDA.                        
- *  A5      I2C SCL.                        
- *  A6      Not available.                  
- *  A7      Not available. 
- *                  
+ *
+ *  D0      Serial Rx.
+ *  D1      Serial Tx.
+ *  D2      Alternate up button.
+ *  D3      Alternate right button.
+ *  D4      LCD shield data D4.
+ *  D5      LCD shield data D5.
+ *  D6      LCD shield data D6.
+ *  D7      LCD shield data D7.
+ *  D8      LCD shield rs.
+ *  D9      LCD shield enable.
+ *  D10     LCD shield backlight.
+ *  D11     LCD shield detect.
+ *  D12     Interlock warning.
+ *  D13     Flash firmare version.
+ *
+ *  A0      LCD shield buttons.
+ *  A1      Alternate select button.
+ *  A2      Alternate left button.
+ *  A3      Alternate down button.
+ *  A4      I2C SDA.
+ *  A5      I2C SCL.
+ *  A6      Not available.
+ *  A7      Not available.
+ *
  */
 
 
@@ -73,7 +73,7 @@ long    displayTimeout   = 1L;      // Timeout for the display when important me
 
 
 /** Announce ourselves.
- */ 
+ */
 void announce()
 {
     disp.clear();
@@ -111,7 +111,7 @@ void scanInputHardware()
                     {
                         i2cComms.sendData(I2C_INPUT_BASE_ID + node, INPUT_COMMANDS[command], MCP_ALL_HIGH, -1);
                     }
-        
+
                     // Record current switch state
                     currentSwitchState[node] = readInputNode(node);
                 }
@@ -139,21 +139,21 @@ void dispInputHardware()
     {
         if (disp.getLcdId() == (I2C_INPUT_BASE_ID + node))
         {
-            disp.printCh(CHAR_HASH);   
+            disp.printCh(CHAR_HASH);
         }
         else
         {
             if (isInputNodePresent(node))
-            {  
+            {
                 disp.printHexCh(node);
             }
             else
             {
-                disp.printCh(CHAR_DOT); 
+                disp.printCh(CHAR_DOT);
             }
         }
     }
-    
+
     waitForButtonClick();
 }
 
@@ -186,17 +186,17 @@ void dispOutputHardware()
         {
             disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_BOT);
         }
-        
+
         if (isOutputNodePresent(node))
         {
             disp.printHexCh(node);
         }
         else
         {
-            disp.printCh(CHAR_DOT); 
+            disp.printCh(CHAR_DOT);
         }
     }
-    
+
     waitForButtonClick();
 }
 
@@ -211,7 +211,7 @@ void scanHardware()
     // Scan for Input nodes.
     scanInputHardware();
     dispInputHardware();
-    
+
     // Scan for Output nodes.
     scanOutputHardware();
     dispOutputHardware();
@@ -259,7 +259,7 @@ void firstRun()
         if (waitForButtonPress() == BUTTON_SELECT)
         {
             ezyBusConvert();
-            waitForButtonClick();            
+            waitForButtonClick();
             defaultInputs(INPUT_TYPE_TOGGLE);
         }
         else
@@ -274,7 +274,7 @@ void firstRun()
 
     // Save all data to EEPROM.
     saveSystemData();
-    
+
     waitForButtonClick();
 }
 
@@ -290,7 +290,7 @@ void defaultInputs(uint8_t aInputType)
 
     inputNumber = 0;
     inputType   = aInputType;
-    
+
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
         disp.printHexCh(node);
@@ -320,7 +320,7 @@ void ezyBusConvert()
 {
     int     ezyBus = 0;
     uint8_t value  = 0;
-    
+
     disp.clearRow(LCD_COL_START, LCD_ROW_DET);
     disp.clearBottomRows();
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_EZY_UPDATING, LCD_COLS);
@@ -335,8 +335,8 @@ void ezyBusConvert()
             // Create an Output that reflects the Ezybus one.
             outputDef.setState(false);
             outputDef.setType((EEPROM.read(ezyBus++) + 1) & OUTPUT_TYPE_MASK);                  // Output types are 1 greater then those of Ezybus.
-            outputDef.setLo(EEPROM.read(ezyBus++));        
-            outputDef.setHi(EEPROM.read(ezyBus++));        
+            outputDef.setLo(EEPROM.read(ezyBus++));
+            outputDef.setHi(EEPROM.read(ezyBus++));
             outputDef.setPace((EEPROM.read(ezyBus++) >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK);   // Convert Ezybus pace.
             outputDef.setReset(OUTPUT_DEFAULT_RESET);
 
@@ -377,11 +377,11 @@ void sendDebugLevel()
  *  Parameter indicates if Configuration is in progress.
  */
 void scanInputs(boolean aConfiguration)
-{ 
-    // Scan all the nodes. 
+{
+    // Scan all the nodes.
     for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
     {
-        if (isInputNodePresent(node))                                        
+        if (isInputNodePresent(node))
         {
             // Read current state of pins and if there's been a change.
             uint16_t pins = readInputNode(node);
@@ -405,7 +405,7 @@ void scanInputs(boolean aConfiguration)
                         }
                     }
                 }
-            
+
                 // Record new input states.
                 currentSwitchState[node] = pins;
             }
@@ -425,7 +425,7 @@ void recordInputError(uint8_t aNode)
 
 /** Read the pins of a InputNode.
  *  Return the state of the pins, 16 bits, both ports.
- *  Return current state if there's a communication error, 
+ *  Return current state if there's a communication error,
  *  this will prevent any actions being performed.
  */
 uint16_t readInputNode(uint8_t aNode)
@@ -456,7 +456,7 @@ void processInput(boolean aState)
     uint8_t first    = 0;
     uint8_t node     = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
     uint8_t pin      = (inputNumber                    ) & INPUT_PIN_MASK;
-    
+
     // Process all input state changes for Toggles, only state going low for other Input types.
     if (   (!aState)
         || (inputType == INPUT_TYPE_TOGGLE))
@@ -490,7 +490,7 @@ void processInput(boolean aState)
             disp.setCursor(LCD_COL_START + 1,  LCD_ROW_BOT);
             setDisplayTimeout(getReportDelay());
         }
-        
+
         if (isDebug(DEBUG_BRIEF))
         {
             Serial.print(millis());
@@ -508,10 +508,10 @@ void processInput(boolean aState)
         // If not locked, process the Input's Outputs.
         if (!isLocked(newState))
         {
-            i2cComms.sendGateway((newState ? COMMS_CMD_INP_HI : COMMS_CMD_INP_LO) | pin, node, -1); 
+            i2cComms.sendGateway((newState ? COMMS_CMD_INP_HI : COMMS_CMD_INP_LO) | pin, node, -1);
             processInputOutputs(newState);
         }
-        
+
         if (isDebug(DEBUG_BRIEF))
         {
             Serial.println();
@@ -562,7 +562,7 @@ boolean isLocked(boolean aNewState)
                             readOutput(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
                             outputDef.printDef(M_VS, outputNode, outputPin);
                         }
-                        
+
 #if INTERLOCK_WARNING_PIN
                         pinMode(INTERLOCK_WARNING_PIN, OUTPUT);
                         digitalWrite(INTERLOCK_WARNING_PIN, HIGH);
@@ -587,7 +587,7 @@ boolean isLocked(boolean aNewState)
 void processInputOutputs(boolean aNewState)
 {
     uint8_t endDelay = 0;
-    
+
     // Process all the Input's outputs.
     // In reverse order if setting lo.
     if (aNewState)
@@ -639,7 +639,7 @@ uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
             disp.printCh(outputDef.getResetCh());
             disp.setCursor(-2, LCD_ROW_BOT);
             disp.printDec(aDelay, 2, CHAR_SPACE);
-            
+
 //            if (isReportEnabled(REPORT_PAUSE))
             {
                 reportPause();
@@ -694,7 +694,7 @@ void processCommand()
     uint8_t node     = 0;
     uint8_t pin      = 0;
     boolean state    = true;
-    
+
     if (isDebug(DEBUG_BRIEF))
     {
       Serial.print(millis());
@@ -709,7 +709,7 @@ void processCommand()
     {
         node = charToHex(commandBuffer[1]);
         pin  = charToHex(commandBuffer[2]);
-                      
+
         switch (commandBuffer[0] | 0x20)            // Command character converted to lower-case.
         {
             case 'i': if (   (node < INPUT_NODE_MAX)
@@ -756,7 +756,7 @@ void processCommand()
             disp.printStr(commandBuffer);
             setDisplayTimeout(getReportDelay());
         }
-    }        
+    }
 }
 
 
@@ -775,7 +775,7 @@ boolean gatewayRequest()
         uint8_t node    = i2cComms.readByte();
         uint8_t option  = command & COMMS_OPTION_MASK;
         uint8_t pin     = option & OUTPUT_PIN_MASK;
-        
+
         command &= COMMS_COMMAND_MASK;
 
         switch (command)
@@ -828,7 +828,7 @@ boolean gatewayRequest()
 //  Serial.println((int)stackPtr);
 //}
 
-    
+
 /** Setup the Arduino.
  */
 void setup()
@@ -850,7 +850,7 @@ void setup()
         announce();
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INIT_I2C, LCD_LEN_STATUS);
     }
-    
+
     // Initialise I2C.
     Wire.begin(I2C_CONTROLLER_ID);          // I2C network
     // Wire.setTimeout(25000L);             // Doesn't seem to have any effect.
@@ -859,7 +859,7 @@ void setup()
     // Scan for I2C LCD.
     for (uint8_t id = I2C_LCD_HI; id >= I2C_LCD_LO; id--)
     {
-        if (i2cComms.exists(id))   
+        if (i2cComms.exists(id))
         {
             disp.setLcd(id);
             announce();                     // Again for I2C LCD.
@@ -880,7 +880,7 @@ void setup()
     // Scan for I2C Gateway.
     for (uint8_t id = I2C_GATEWAY_LO; id <= I2C_GATEWAY_HI; id++)
     {
-        if (i2cComms.exists(id))   
+        if (i2cComms.exists(id))
         {
             i2cComms.setGateway(id);
             break;
@@ -889,7 +889,7 @@ void setup()
 
     // Initialise
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_STARTUP, LCD_LEN_STATUS);
-    
+
     initButtonPins();                                   // Initialise alternate button pins.
     flashVersion();                                     // Flash our version number on the built-in LED.
 
@@ -929,7 +929,7 @@ void setup()
 
         // Do the update here.
         waitForButtonClick();           // Nothing to do, just show it's happening.
-        
+
         systemData.version = VERSION;
         saveSystemData();
     }
@@ -950,7 +950,7 @@ void loop()
         announce();
     }
 
-    // Look for command characters    
+    // Look for command characters
     while (Serial.available() > 0)
     {
         char ch = Serial.read();
@@ -972,7 +972,7 @@ void loop()
         {
             commandBuffer[commandLen++] = ch;
         }
-    }    
+    }
 
     now = millis();
 
@@ -983,7 +983,7 @@ void loop()
         scanInputHardware();
         scanOutputHardware();
     }
-    
+
     // Process any inputs
     if (now > tickInputScan)
     {
@@ -1010,12 +1010,12 @@ void loop()
         digitalWrite(INTERLOCK_WARNING_PIN, LOW);
     }
 #endif
-    
+
     // Show heartbeat.
     if (now > tickHeartBeat)
     {
         tickHeartBeat = now + STEP_HEARTBEAT;
-        
+
         // If display timeout has expired, clear it.
         if (   (displayTimeout > 0)
             && (now > displayTimeout))
@@ -1030,7 +1030,7 @@ void loop()
             int hours = (now)                                                       / MILLIS_PER_HOUR;
             int mins  = (now - MILLIS_PER_HOUR * hours)                             / MILLIS_PER_MINUTE;
             int secs  = (now - MILLIS_PER_HOUR * hours  - MILLIS_PER_MINUTE * mins) / MILLIS_PER_SECOND;
-            
+
             disp.setCursor(LCD_COL_START, LCD_ROW_DET);
             if (hours > 0)
             {
