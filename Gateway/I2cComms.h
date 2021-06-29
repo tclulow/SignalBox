@@ -80,7 +80,7 @@
 #define I2cComms_h
 
 
-#include "Wire.h"
+#include <Wire.h>
 
 
 // Command byte.
