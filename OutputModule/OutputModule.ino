@@ -10,7 +10,7 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  *
  *
- *  Libraries used by the sketches are:
+ *  Libraries used:
  *
  *  Name              | Purpose
  *  ----------------- | -------
