@@ -10,17 +10,44 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  *
  *
- *  Libraries used by the sketches are:
+ *  Libraries used:
  *  
  *  Name              | Purpose 
  *  ----------------- | -------
  *  EEPROM            | Reading and writing to EEPROM memory.
  *  Wire              | To handle i2c communications. 
  *  LiquidCrystal     | For driving an LCD shield attached to the Uno.
- *  LiquidCrystal_I2C | For driving an LCD attached by i2c.
+ *  LiquidCrystal_I2C | For driving an LCD attached by i2c. Set LCD_I2C false to disable this functionality.
  *  
- *  The LiquidCrystal_I2C library can be removed by editing the LCD_I2C flag in the Config.h files. 
+ *
+ *  Pin usage:
+ *  
+ *  D0      Serial Rx.                      
+ *  D1      Serial Tx.                      
+ *  D2      Alternate up button.            
+ *  D3      Alternate right button.         
+ *  D4      LCD shield data D4.             
+ *  D5      LCD shield data D5.             
+ *  D6      LCD shield data D6.             
+ *  D7      LCD shield data D7.             
+ *  D8      LCD shield rs.                  
+ *  D9      LCD shield enable.              
+ *  D10     LCD shield backlight.           
+ *  D11     LCD shield detect.              
+ *  D12     Interlock warning.              
+ *  D13     Flash firmare version.          
+ *  
+ *  A0      LCD shield buttons.             
+ *  A1      Alternate select button.        
+ *  A2      Alternate left button.          
+ *  A3      Alternate down button.          
+ *  A4      I2C SDA.                        
+ *  A5      I2C SCL.                        
+ *  A6      Not available.                  
+ *  A7      Not available. 
+ *                  
  */
+
 
 #define MASTER true         // The master (Uno) device.
 

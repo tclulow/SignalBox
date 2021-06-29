@@ -18,7 +18,35 @@
  *  Wire              | To handle i2c communications. 
  *  Servo             | To control Servos. 
  * 
+ *
+ *  Pin usage:
+ *  
+ *  D0      Serial Rx.      Could be jumper J2.
+ *  D1      Serial Tx.      Could be jumper J1.
+ *  D2      IO pin 1.
+ *  D3      IO pin 0.
+ *  D4      Servo pin 0.    Alternate jumper J1.
+ *  D5      Servo pin 1.    Alternate jumper J2.
+ *  D6      Servo pin 2.    Alternate jumper J3.
+ *  D7      Servo pin 3.    Alternate jumper J4.
+ *  D8      Servo pin 4.
+ *  D9      Servo pin 5.
+ *  D10     Servo pin 6.
+ *  D11     Servo pin 7.
+ *  D12     IO pin 7.
+ *  D13     IO pin 6.       Also flash firmware version.
+ *  
+ *  A0      IO pin 5.
+ *  A1      IO pin 4.
+ *  A2      IO pin 3.
+ *  A3      IO pin 2.
+ *  A4      I2C SDA.
+ *  A5      I2C SCL.
+ *  A6      Jumper J4
+ *  A7      Jumper J3
+ * 
  */
+
 
 #define MASTER false        // The is not the master, it's a nano output module.
 
