@@ -758,6 +758,11 @@ boolean gatewayRequest()
                                        i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_OUT_STATES, getOutputStates(node), -1);
                                        workDone = true;
                                    }
+                                   else if (option == COMMS_SYS_INP_STATES)
+                                   {
+                                       i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_INP_STATES, (currentSwitchState[node] >> 8) & 0Xff, currentSwitchState[node] & 0xFF);
+                                       workDone = true;
+                                   }
                                    else
                                    {
                                        systemFail(M_GATEWAY, command | option);
