@@ -57,8 +57,8 @@ volatile uint16_t inputStates[OUTPUT_NODE_MAX];
 
 // CBUS definitions
 unsigned char moduleName[] = "SB_GW  ";   // CBUS module name, 7 characters.
-CBUS2515   cbus2515;
-CBUSConfig config;                        // Configuration object must be called "config".
+CBUS2515      cbus2515;
+CBUSConfig    config;                     // Configuration object must be called "config".
 
 
 /** Handle an incomming CBUS frame.
@@ -143,7 +143,7 @@ void setup()
 {
     Serial.begin(19200);                    // Serial IO.
 
-    i2cComms.setId(I2C_GATEWAY);            // Start I2C communications.
+    i2cComms.setId(I2C_GATEWAY_ID);         // Start I2C communications.
     i2cComms.onReceive(processReceipt);
     i2cComms.onRequest(processRequest);
 
@@ -371,8 +371,8 @@ void processStateChange(uint8_t aCommand, uint8_t aPin)
 void sendCbusMessage(uint8_t aOpCode, uint8_t aEventHi, uint8_t aEventLo)
 {
     CANFrame frame;
-    frame.id = config.CANID;
-    frame.len = 5;
+    frame.id      = config.CANID;
+    frame.len     = 5;
     frame.data[0] = aOpCode;
     frame.data[1] = highByte(config.nodeNum);
     frame.data[2] = lowByte(config.nodeNum);
