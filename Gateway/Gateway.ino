@@ -8,14 +8,39 @@
  *      http://creativecommons.org/licenses/by-nc-sa/4.0/
  *
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
+ *
+ *
+ *  Libraries used:
+ *
+ *  Name              | Purpose
+ *  ----------------- | -------
+ *  EEPROM            | Reading and writing to EEPROM memory.
+ *  Wire              | To handle i2c communications.
+ *  ACAN              | CAN BUS communications
+ *  CBUS              | CBUS protocol
+ *  CBUS2515          | CBUS 2515 interface library
+ *  CBUSconfig        | CBUS configuration
+ *  cbusdefs          | CBUS constants
+ *  CBUSParams        |
+ *
+ *
+ *  Pin usage:
+ *
+ *  D0      Serial Rx.
+ *  D1      Serial Tx.
+ *  D2      CAN interupt.
+ *  D10     CAN chip-select.
+ *  D11     CAN SI.
+ *  D12     CAN SO.
+ *  D13     CAN SCK.
+ * 
+ *  A4      I2C SDA.
+ *  A5      I2C SCL.
+ *
  */
 
 
-#include "I2cComms.h"
-
-
-#define OUTPUT_NODE_MAX      32        // Length of output node array.
-#define INPUT_NODE_MAX        8        // Length of input node array.
+#include "Gateway.h"
 
 
 // I2C request command parameters
@@ -30,19 +55,101 @@ volatile uint8_t  inputNodeCount = 0;
 volatile uint16_t inputStates[OUTPUT_NODE_MAX];
 
 
+// CBUS definitions
+unsigned char moduleName[] = "SB_GW  ";   // CBUS module name, 7 characters.
+CBUS2515   cbus2515;
+CBUSConfig config;                        // Configuration object must be called "config".
+
+
+/** Handle an incomming CBUS frame.
+ */
+void cbusFrameHandler(CANFrame *aFrame)
+{
+    debugPrint(F("Frame"));
+    debugFrame(aFrame);
+    debugPrintln();
+}
+
+
+/** Handle an incomming CBUS (learned) event.
+ */
+void cbusEventHandler(byte index, CANFrame *aFrame)
+{
+    debugPrint(F("Event, index="));
+    debugPrintHex(index);
+    debugFrame(aFrame);
+    debugPrintln();
+}
+
+
+/** Debug output of a CANFrame.
+ */
+void debugFrame(CANFrame *aFrame)
+{
+    debugPrint(F(", id="));    
+    debugPrintHex(aFrame->id);
+    debugPrint(F(", ext="));
+    debugPrintHex(aFrame->ext);
+    debugPrint(F(", rtr="));
+    debugPrintHex(aFrame->rtr);
+    debugPrint(F(", len="));
+    debugPrintHex(aFrame->len);
+    debugPrint(F(", data="));
+    for (uint8_t ind = 0; ind < sizeof(aFrame->data); ind++)
+    {
+        debugPrintHex(aFrame->data[ind]);
+        debugPrint(' ');
+    }
+}
+
+
+/** Initialise CBUS interface.
+ */
+void initCbus()
+{
+    // Configure modules config (persistence of NVs and EVs)
+    config.EE_NVS_START       = 10;
+    config.EE_NUM_NVS         = 1;
+    config.EE_EVENTS_START    = 50;
+    config.EE_MAX_EVENTS      = 64;
+    config.EE_NUM_EVS         = 0;
+    config.EE_BYTES_PER_EVENT = 0;
+
+    config.setEEPROMtype(EEPROM_INTERNAL);
+    config.begin();
+
+    // Configure CBUS interface
+    CBUSParams params(config);
+    params.setVersion(CBUS_MAJ, CBUS_MIN, CBUS_BETA);
+    params.setModuleId(CBUS_ID);
+    params.setFlags(PF_FLiM | PF_PRODUCER);
+    cbus2515.setParams(params.getParams());
+
+    cbus2515.setName(moduleName);
+    cbus2515.setNumBuffers(2);
+    cbus2515.setOscFreq(CBUS_FREQ);
+    cbus2515.setPins(CBUS_PIN_CS, CBUS_PIN_INT);    // Chip select and interupt pins.
+
+    cbus2515.setEventHandler(cbusEventHandler);     // Handlers
+    cbus2515.setFrameHandler(cbusFrameHandler);
+
+    cbus2515.begin();
+}
+
+
 /** Setup the Arduino.
  */
 void setup()
 {
-    Serial.begin(19200);     // Serial IO.
+    Serial.begin(19200);                    // Serial IO.
 
-
-    // Start I2C communications.
-    i2cComms.setId(0x11);
+    i2cComms.setId(I2C_GATEWAY);            // Start I2C communications.
     i2cComms.onReceive(processReceipt);
     i2cComms.onRequest(processRequest);
 
-    Serial.println("Gateway");
+    initCbus();                             // Start CBUS communications.
+
+    debugPrint(F("Gateway"));
 }
 
 
@@ -50,14 +157,14 @@ void setup()
  */
 void reportError(const char* aMessage, uint8_t aCommand, uint8_t aOption)
 {
-    Serial.print(millis());
-    Serial.print('\t');
-    Serial.print(aMessage);
-    Serial.print(", cmd=");
-    Serial.print(aCommand, HEX);
-    Serial.print(", opt=");
-    Serial.print(aOption);
-    Serial.println();
+    debugPrint(millis());
+    debugPrint('\t');
+    debugPrint(aMessage);
+    debugPrint(F(", cmd="));
+    debugPrintHex(aCommand);
+    debugPrint(F(", opt="));
+    debugPrint(aOption);
+    debugPrintln();
 }
 
 
@@ -89,17 +196,17 @@ void processReceipt(int aLen)
 
         command &= COMMS_COMMAND_MASK;
 
-//        Serial.println();
-//        Serial.print(millis());
-//        Serial.print('\t');
-//        Serial.print("Receipt");
-//        Serial.print(", cmd=");
-//        Serial.print(command, HEX);
-//        Serial.print(", opt=");
-//        Serial.print(option, HEX);
-//        Serial.print(", len=");
-//        Serial.print(aLen, HEX);
-//        Serial.println();
+//        debugPrintln();
+//        debugPrint(millis());
+//        debugPrint('\t');
+//        debugPrint(F("Receipt"));
+//        debugPrint(", cmd=");
+//        debugPrintHex(command);
+//        debugPrint(F(", opt="));
+//        debugPrintHex(option);
+//        debugPrint(F(", len="));
+//        debugPrintHex(aLen);
+//        debugPrintln();
 
         switch (command)
         {
@@ -119,33 +226,33 @@ void processReceipt(int aLen)
     else
     {
         // Null receipt - Just the master seeing if we exist.
-        Serial.println();
-        Serial.print(millis());
-        Serial.print('\t');
-        Serial.print("Receipt, len=");
-        Serial.print(aLen, HEX);
-        Serial.println();
+        debugPrintln();
+        debugPrint(millis());
+        debugPrint('\t');
+        debugPrint(F("Receipt, len="));
+        debugPrintHex(aLen);
+        debugPrintln();
     }
 
     // Consume unexpected data.
     if (i2cComms.available())
     {
-        Serial.println();
-        Serial.print(millis());
-        Serial.print('\t');
-        Serial.print("Unexpected, len=");
-        Serial.print(i2cComms.available(), HEX);
-        Serial.print(':');
+        debugPrintln();
+        debugPrint(millis());
+        debugPrint('\t');
+        debugPrint(F("Unexpected, len="));
+        debugPrintHex(i2cComms.available());
+        debugPrint(':');
 
         while (i2cComms.available())
         {
             uint8_t ch = i2cComms.readByte();
             {
-                Serial.print(' ');
-                Serial.print(ch, HEX);
+                debugPrint(' ');
+                debugPrintHex(ch);
             }
         }
-        Serial.println();
+        debugPrintln();
     }
 }
 
@@ -177,12 +284,12 @@ void processSystem(uint8_t aOption)
         case COMMS_SYS_OUT_STATES: if (i2cComms.available() == 1)
                                    {
                                        outputStates[outputNodeCount] = i2cComms.readByte();
-                                       Serial.print(millis());
-                                       Serial.print("\tOutput node=");
-                                       Serial.print(outputNodeCount, HEX);
-                                       Serial.print(", states=");
-                                       Serial.print(outputStates[outputNodeCount], HEX);
-                                       Serial.println();
+                                       debugPrint(millis());
+                                       debugPrint(F("\tOutput node="));
+                                       debugPrintHex(outputNodeCount);
+                                       debugPrint(F(", states="));
+                                       debugPrintHex(outputStates[outputNodeCount]);
+                                       debugPrintln();
 
                                        outputNodeCount += 1;                    // Ensure next request is for next node
                                    }
@@ -196,12 +303,12 @@ void processSystem(uint8_t aOption)
         case COMMS_SYS_INP_STATES: if (i2cComms.available() != 2)
                                    {
                                        inputStates[inputNodeCount] = (i2cComms.readByte() << 8) | i2cComms.readByte();
-                                       Serial.print(millis());
-                                       Serial.print("\tInput  node=");
-                                       Serial.print(inputNodeCount, HEX);
-                                       Serial.print(", states=");
-                                       Serial.print(inputStates[inputNodeCount], HEX);
-                                       Serial.println();
+                                       debugPrint(millis());
+                                       debugPrint(F("\tInput  node="));
+                                       debugPrintHex(inputNodeCount);
+                                       debugPrint(F(", states="));
+                                       debugPrintHex(inputStates[inputNodeCount]);
+                                       debugPrintln();
 
                                        inputNodeCount += 1;                    // Ensure next request is for next node
                                    }
@@ -238,20 +345,59 @@ void processStateChange(uint8_t aCommand, uint8_t aPin)
         delay = i2cComms.readByte();
     }
 
-    Serial.print(millis());
-    Serial.print('\t');
-    Serial.print(isOutput ? "Output " : "Input ");
-    Serial.print(isHi ? "Hi" : "Lo");
-    Serial.print(", node=");
-    Serial.print(node, HEX);
-    Serial.print(", pin=");
-    Serial.print(aPin, HEX);
+    debugPrint(millis());
+    debugPrint('\t');
+    debugPrint(isOutput ? F("Output ") : F("Input "));
+    debugPrint(isHi ? F("Hi") : F("Lo"));
+    debugPrint(F(", node="));
+    debugPrintHex(node);
+    debugPrint(F(", pin="));
+    debugPrintHex(aPin);
     if (isOutput)
     {
-        Serial.print(", delay=");
-        Serial.print(delay, HEX);
+        debugPrint(F(", delay="));
+        debugPrintHex(delay);
     }
-    Serial.println();
+    debugPrintln();
+
+    sendCbusMessage((isHi     ? OPC_ACON    : OPC_ACON), 
+                    (isOutput ? 1           : 0),
+                    (isOutput ? (node << 3) : (node << 4)) | aPin);
+}
+
+
+/** Send a CBUS message.
+ */
+void sendCbusMessage(uint8_t aOpCode, uint8_t aEventHi, uint8_t aEventLo)
+{
+    CANFrame frame;
+    frame.id = config.CANID;
+    frame.len = 5;
+    frame.data[0] = aOpCode;
+    frame.data[1] = highByte(config.nodeNum);
+    frame.data[2] = lowByte(config.nodeNum);
+    frame.data[3] = aEventHi;
+    frame.data[4] = aEventLo;
+
+    boolean sent = cbus2515.sendMessage(&frame);
+
+    debugPrint(millis());
+    debugPrint('\t');
+    debugPrint(F("CBUS, opCode="));
+    debugPrintHex(aOpCode);
+    debugPrint(F(", EventHi="));
+    debugPrintHex(aEventHi);
+    debugPrint(F(", EventLo="));
+    debugPrintHex(aEventLo);
+    if (sent)
+    {
+        debugPrint(F(" sent"));
+    }
+    else
+    {
+        debugPrint(F(" fail"));
+    }
+    debugPrintln();
 }
 
 
@@ -259,5 +405,6 @@ void processStateChange(uint8_t aCommand, uint8_t aPin)
  */
 void loop()
 {
-    // Loop code goes here.
+    // Process CBUS stuff
+    cbus2515.process();
 }
