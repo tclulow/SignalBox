@@ -85,15 +85,13 @@
 
 // I2C node numbers.
 #define I2C_CONTROLLER_ID        0x10   // Controller ID.
+#define I2C_GATEWAY              0x11   // Gateway ID (if present).
 #define I2C_INPUT_BASE_ID        0x20   // Input nodes' base ID.
 #define I2C_OUTPUT_BASE_ID       0x50   // Output nodes' base ID.
 #define I2C_MODULE_ID_JUMPERS    0xff   // Use jumpers to decide module ID.
 
 #define I2C_LCD_LO               0x27   // Range of IDs to scan for LCD I2C device.
 #define I2C_LCD_HI               0x3F
-
-#define I2C_GATEWAY_LO           0x11   // Range of IDs to scan for Gateway I2C device.
-#define I2C_GATEWAY_HI           0x1F
 
 
 // Command byte.

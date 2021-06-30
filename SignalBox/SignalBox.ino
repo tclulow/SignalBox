@@ -877,14 +877,10 @@ void setup()
         announce();
     }
 
-    // Scan for I2C Gateway.
-    for (uint8_t id = I2C_GATEWAY_LO; id <= I2C_GATEWAY_HI; id++)
+    // Check for I2C Gateway.
+    if (i2cComms.exists(I2C_GATEWAY))
     {
-        if (i2cComms.exists(id))
-        {
-            i2cComms.setGateway(id);
-            break;
-        }
+        i2cComms.setGateway(I2C_GATEWAY);
     }
 
     // Initialise
