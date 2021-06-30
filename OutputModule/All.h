@@ -14,8 +14,8 @@
 
 #include "Config.h"
 #include "Messages.h"
-#include "System.h"
 #include "I2cComms.h"
+#include "System.h"
 #include "Output.h"
 
 #if SB_CONTROLLER
