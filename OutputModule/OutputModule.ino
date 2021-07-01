@@ -48,7 +48,7 @@
  */
 
 
-#define SB_CONTROLLER false        // The is not the controller, it's a nano output module.
+#define SB_OUTPUT_MODULE true       // The is not the controller, it's an output module.
 
 
 #include <Servo.h>

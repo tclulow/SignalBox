@@ -91,7 +91,8 @@
 // Alternate pins that can be used to control the menus. First entry unused.
 const uint8_t BUTTON_PINS[] = { 0xff, A1, A2, A3, 2, 3 };
 
-#else
+
+#elif SB_OUTPUT_MODULE
 
 // The module jumper pins. 0xff means don't use.
 // const uint8_t jumperPins[JUMPER_PINS] = { 1, 0, A7, A6 };

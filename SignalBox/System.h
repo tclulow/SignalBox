@@ -16,7 +16,7 @@
 
 #if SB_CONTROLLER
     #define MAGIC_NUMBER 0x786f6253         // Magic number = "Sbox".
-#else
+#elif SB_OUTPUT_MODULE
     #define MAGIC_NUMBER 0x74756f53         // Magic number = "Sout".
 #endif
 
@@ -71,7 +71,7 @@
 
     #define EEPROM_END   INPUT_END                                      // End of EEPROM memory
 
-#else
+#elif SB_OUTPUT_MODULE
 
     // OutputData saved in EEPROM
     #define OUTPUT_BASE  SYSTEM_END                                     // EEPROM base of OutputData.
@@ -202,7 +202,7 @@ boolean ezyBusDetected();
 void ezyBusClear();
 
 
-#else
+#elif SB_OUTPUT_MODULE
 
 /** Gets the output module ID.
  *  Either by hardware jumperss of from EEPROM.

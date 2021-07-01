@@ -196,7 +196,7 @@ void ezyBusClear()
 }
 
 
-#else // Not master - Slave output module.
+#elif SB_OUTPUT_MODULE
 
 
 // The hardware module ID - read from jumperPins.

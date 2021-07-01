@@ -21,7 +21,7 @@
 // Software versioning.
 #if SB_CONTROLLER
     const char M_SOFTWARE[]     PROGMEM = "SignalBox";
-#else
+#elif SB_OUTPUT_MODULE
     const char M_SOFTWARE[]     PROGMEM = "Output module";
 #endif
 const char M_VERSION[]          PROGMEM = "v3.6.1";        // See also system.VERSION.
@@ -196,16 +196,16 @@ const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG, M_DEBU
 
 #if SB_CONTROLLER
 
-    // Master-only debug messages.
+    // Controller-only debug messages.
     const char M_DEBUG_BUTTON[]     PROGMEM = "Button";
 
     const char M_DEBUG_OUTPUTS[]    PROGMEM = ", outputs=";
     const char M_DEBUG_PIN[]        PROGMEM = ", pin=";
     const char M_DEBUG_RETURN[]     PROGMEM = ", ret=";
 
-#else
+#elif SB_OUTPUT_MODULE
 
-    // Non-master debug messages.
+    // Output module debug messages.
     const char M_DEBUG_ACTION[]     PROGMEM = "Action";
     const char M_DEBUG_INIT[]       PROGMEM = "Init";
     const char M_DEBUG_MODULE[]     PROGMEM = "Module";
