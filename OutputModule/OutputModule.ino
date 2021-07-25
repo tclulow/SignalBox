@@ -92,6 +92,11 @@ static const uint8_t ROAD_OFF  = 0x52;                      //       0 1 0 1   0
 boolean persisting = true;
 
 
+#define COMMAND_BUFFER_LEN   8                  // Serial command buffer length
+char    commandBuffer[COMMAND_BUFFER_LEN + 1];  // Buffer to read characters with null terminator on the end.
+uint8_t commandLen = 0;                         // Length of command.
+
+
 // Ticking
 long    now       = 0;  // To keep the current time (since boot).
 long    tickServo = 0;  // Ticking for Servos.
@@ -1077,6 +1082,78 @@ boolean actionFlasher(uint8_t aPin, boolean aState)
 }
 
 
+/** Process a received command.
+ *  Using the contents of the commandBuffer:
+ *      nON - Set node number from'O' to 'N'
+ */
+void processCommand()
+{
+    boolean executed = false;
+    uint8_t nodeOld     = 0;
+    uint8_t nodeNew  = 0;
+    boolean state    = true;
+
+    if (isDebug(DEBUG_BRIEF))
+    {
+      Serial.print(millis());
+      Serial.print(CHAR_TAB);
+      Serial.print(PGMT(M_INPUT));
+      Serial.print(PGMT(M_DEBUG_COMMAND));
+      Serial.println(commandBuffer);
+    }
+
+    // Expect three characters, command, nodeOld, nodeNew
+    if (strlen(commandBuffer) == 3)
+    {
+        nodeOld = charToHex(commandBuffer[1]);
+        nodeNew = charToHex(commandBuffer[2]);
+
+        switch (commandBuffer[0] | 0x20)            // Command character converted to lower-case.
+        {
+            case 'n':
+            case 'r': if (nodeOld < OUTPUT_NODE_MAX)
+                      {
+                          if (nodeOld == getModuleId(false))
+                          {
+                              systemData.i2cModuleID = nodeNew;
+                              saveSystemData();
+
+                              // Now change our module ID.
+                              i2cComms.setId(getModuleId(true));
+
+                              if (isDebug(DEBUG_ERRORS))
+                              {
+                                  Serial.print(millis());
+                                  Serial.print(CHAR_TAB);
+                                  Serial.print(PGMT(M_RENUMBER));
+                                  Serial.print(PGMT(M_DEBUG_NODE));
+                                  Serial.print(getModuleId(false));
+                                  Serial.println();
+                              }
+                              executed = true;
+                          }
+                      }
+                      break;
+
+            default:  break;
+        }
+    }
+
+    // Report error if not executed.
+    if (!executed)
+    {
+        if (isDebug(DEBUG_ERRORS))
+        {
+          Serial.print(millis());
+          Serial.print(CHAR_TAB);
+          Serial.print(PGMT(M_UNKNOWN));
+          Serial.print(PGMT(M_DEBUG_COMMAND));
+          Serial.println(commandBuffer);
+        }
+    }
+}
+
+
 /** Step all the Servos if necessary.
  */
 void stepServos()
@@ -1492,6 +1569,30 @@ void stepFlash(uint8_t aPin)
  */
 void loop()
 {
+    // Look for command characters
+    while (Serial.available() > 0)
+    {
+        char ch = Serial.read();
+        if (ch == CHAR_RETURN)
+        {
+            // Ignore carriage-return
+        }
+        else if (ch == CHAR_NEWLINE)
+        {
+            // Process the received command
+            if (commandLen > 0)
+            {
+                commandBuffer[commandLen] = CHAR_NULL;
+                processCommand();
+                commandLen = 0;
+            }
+        }
+        else if (commandLen <= COMMAND_BUFFER_LEN)
+        {
+            commandBuffer[commandLen++] = ch;
+        }
+    }
+
     // Record the time now
     now = millis();
 

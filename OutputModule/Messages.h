@@ -38,6 +38,7 @@ const char M_SYSTEM[]           PROGMEM = "System";
 const char M_INPUT[]            PROGMEM = "Input";
 const char M_OUTPUT[]           PROGMEM = "Output";
 const char M_TYPES[]            PROGMEM = "Types";
+const char M_RENUMBER[]         PROGMEM = "Renumber";
 
 
 // Configuration - Output.
@@ -73,7 +74,6 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char M_ABANDONED[]        PROGMEM = "Abandoned";
     const char M_FAILURE[]          PROGMEM = "System error";
     const char M_INTERRUPT[]        PROGMEM = "Interrupt";
-    const char M_RENUMBER[]         PROGMEM = "Renumber";
     const char M_SCANNING[]         PROGMEM = "Scanning inputs";
     // const char M_TODO[]          PROGMEM = "TODO";
 
