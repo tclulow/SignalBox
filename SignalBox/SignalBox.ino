@@ -914,7 +914,6 @@ void setup()
     // Initialise
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_STARTUP, LCD_LEN_STATUS);
 
-    buttons.initButtonPins();                           // Initialise alternate button pins.
     flashVersion();                                     // Flash our version number on the built-in LED.
 
     // Deal with first run (software has never been run before).

@@ -40,8 +40,6 @@ class Buttons
     uint8_t lastButton = 0xff;      // Keep track of last button pressed for reporting in debug messages.
     
 
-    public:
-    
     /** Initialise the alternate button pins.
      */
     void initButtonPins()
@@ -53,6 +51,16 @@ class Buttons
     }
     
     
+    public:
+
+    /** Constructor.
+     */
+    Buttons()
+    {
+        initButtonPins();           // Initialise alternate button pins.
+    }
+
+        
     /** Is button calibration required?
      */
     boolean calibrationRequired()
