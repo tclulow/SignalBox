@@ -10,11 +10,13 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
 
-
 #ifndef Config_h
 #define Config_h
 
 
+/** Configuration constants.
+ */
+ 
 // Serial IO
 #define SERIAL_SPEED            19200   // Speed of the serial port.
 

@@ -13,6 +13,7 @@
 #ifndef Configure_h
 #define Configure_h
 
+
 // Top-level menu states.
 #define TOP_SYSTEM   0
 #define TOP_INPUT    1
@@ -37,6 +38,7 @@ void displayScannedInput(uint8_t aNode, uint8_t aPin);
 
 
 /** Configure the system.
+ *  Shows menus and updates configuration as specified using shield or Uno buttons.
  */
 class Configure
 {

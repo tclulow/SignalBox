@@ -10,11 +10,13 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
 
-
 #ifndef Controller_h
 #define Controller_h
 
 
+/** Controller module.
+ *  Detects inputs and actions their outputs.
+ */
 class Controller
 {
     private:

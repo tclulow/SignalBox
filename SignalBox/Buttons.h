@@ -10,7 +10,6 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
 
-
 #ifndef Buttons_h
 #define Buttons_h
 
@@ -33,6 +32,9 @@
 #define BUTTON_THRESHHOLD   1000    // Analog limit above which no button is considered to be pressed.
 
 
+/** Class for handling controll buttons.
+ *  Both on the LCD shield and as Uno pins.
+ */
 class Buttons
 {
     private:

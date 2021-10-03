@@ -10,6 +10,8 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  *
  *
+ *  Main SignalBox module.
+ *  
  *  Libraries used:
  *
  *  Name              | Purpose
@@ -45,9 +47,7 @@
  *  A5      I2C SCL.
  *  A6      Not available.
  *  A7      Not available.
- *
  */
-
 
 #define SB_CONTROLLER true          // The controller (Uno) device.
 
