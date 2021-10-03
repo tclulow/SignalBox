@@ -49,7 +49,7 @@
  */
 
 
-#define SB_CONTROLLER true         // The controller (Uno) device.
+#define SB_CONTROLLER true          // The controller (Uno) device.
 
 
 #include "All.h"
@@ -829,6 +829,34 @@ boolean gatewayRequest()
 //}
 
 
+void handleSerialInput()
+{
+    // Look for command characters
+    while (Serial.available() > 0)
+    {
+        char ch = Serial.read();
+        if (ch == CHAR_RETURN)
+        {
+            // Ignore carriage-return
+        }
+        else if (ch == CHAR_NEWLINE)
+        {
+            // Process the received command
+            if (commandLen > 0)
+            {
+                commandBuffer[commandLen] = CHAR_NULL;
+                processCommand();
+                commandLen = 0;
+            }
+        }
+        else if (commandLen <= COMMAND_BUFFER_LEN)
+        {
+            commandBuffer[commandLen++] = ch;
+        }
+    }
+}
+
+
 /** Setup the Arduino.
  */
 void setup()
@@ -946,29 +974,7 @@ void loop()
         announce();
     }
 
-    // Look for command characters
-    while (Serial.available() > 0)
-    {
-        char ch = Serial.read();
-        if (ch == CHAR_RETURN)
-        {
-            // Ignore carriage-return
-        }
-        else if (ch == CHAR_NEWLINE)
-        {
-            // Process the received command
-            if (commandLen > 0)
-            {
-                commandBuffer[commandLen] = CHAR_NULL;
-                processCommand();
-                commandLen = 0;
-            }
-        }
-        else if (commandLen <= COMMAND_BUFFER_LEN)
-        {
-            commandBuffer[commandLen++] = ch;
-        }
-    }
+    handleSerialInput();
 
     now = millis();
 
