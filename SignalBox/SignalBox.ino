@@ -154,7 +154,7 @@ void dispInputHardware()
         }
     }
 
-    waitForButtonClick();
+    buttons.waitForButtonClick();
 }
 
 
@@ -197,7 +197,7 @@ void dispOutputHardware()
         }
     }
 
-    waitForButtonClick();
+    buttons.waitForButtonClick();
 }
 
 
@@ -206,7 +206,7 @@ void dispOutputHardware()
 void scanHardware()
 {
     uint8_t id = 0;
-    waitForButtonRelease();
+    buttons.waitForButtonRelease();
 
     // Scan for Input nodes.
     scanInputHardware();
@@ -230,7 +230,7 @@ void scanHardware()
         {
             disp.printProgStrAt(LCD_COL_START, row++, M_NO_OUTPUT);
         }
-        waitForButtonClick();
+        buttons.waitForButtonClick();
     }
 }
 
@@ -245,7 +245,7 @@ void firstRun()
     // Calibrate the LCD buttons.
     if (hasLcdShield)
     {
-        calibrateButtons();
+        buttons.calibrateButtons();
     }
 
     // Decide if EzyBus conversion required.
@@ -256,10 +256,10 @@ void firstRun()
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_EZY_UPDATE);
 
         ezyBusClear();
-        if (waitForButtonPress() == BUTTON_SELECT)
+        if (buttons.waitForButtonPress() == BUTTON_SELECT)
         {
             ezyBusConvert();
-            waitForButtonClick();
+            buttons.waitForButtonClick();
             defaultInputs(INPUT_TYPE_TOGGLE);
         }
         else
@@ -275,7 +275,7 @@ void firstRun()
     // Save all data to EEPROM.
     saveSystemData();
 
-    waitForButtonClick();
+    buttons.waitForButtonClick();
 }
 
 
@@ -914,7 +914,7 @@ void setup()
     // Initialise
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_STARTUP, LCD_LEN_STATUS);
 
-    initButtonPins();                                   // Initialise alternate button pins.
+    buttons.initButtonPins();                           // Initialise alternate button pins.
     flashVersion();                                     // Flash our version number on the built-in LED.
 
     // Deal with first run (software has never been run before).
@@ -923,10 +923,10 @@ void setup()
         firstRun();
     }
     else if (   (hasLcdShield)
-             && (   (calibrationRequired())             // Calibration required if it's never been done.
-                 || (readButton() != BUTTON_NONE)))     // or an input button is being pressed.
+             && (   (buttons.calibrationRequired())             // Calibration required if it's never been done.
+                 || (buttons.readButton() != BUTTON_NONE)))     // or an input button is being pressed.
     {
-        calibrateButtons();
+        buttons.calibrateButtons();
         saveSystemData();
     }
 
@@ -952,7 +952,7 @@ void setup()
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_UPDATE, LCD_LEN_STATUS);
 
         // Do the update here.
-        waitForButtonClick();           // Nothing to do, just show it's happening.
+        buttons.waitForButtonClick();           // Nothing to do, just show it's happening.
 
         systemData.version = VERSION;
         saveSystemData();
@@ -968,7 +968,7 @@ void setup()
 void loop()
 {
     // Press any button to configure.
-    if (readButton())
+    if (buttons.readButton())
     {
         configure.run();
         announce();

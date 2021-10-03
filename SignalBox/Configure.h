@@ -50,7 +50,7 @@ class Configure
     void configFail(PGM_P aMessage, int aValue)
     {
         systemFail(aMessage, aValue);
-        waitForButtonClick();
+        buttons.waitForButtonClick();
     }
 
 
@@ -458,7 +458,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -505,7 +505,7 @@ class Configure
         }
 
         disp.clear();
-        waitForButtonRelease();
+        buttons.waitForButtonRelease();
     }
 
 
@@ -521,7 +521,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -613,7 +613,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -652,7 +652,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -689,7 +689,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -740,7 +740,7 @@ class Configure
         {
             int adjust = 0;
 
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -844,10 +844,10 @@ class Configure
 
         // Announce we're scanning
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_SCANNING, LCD_COLS);
-        waitForButtonRelease();
+        buttons.waitForButtonRelease();
 
         // Scan all the input nodes until a button is pressed.
-        while ((button = readButton()) == BUTTON_NONE)
+        while ((button = buttons.readButton()) == BUTTON_NONE)
         {
             scanInputs(true);
             delay(DELAY_BUTTON_WAIT);
@@ -883,7 +883,7 @@ class Configure
         {
             int adjust = 0;
 
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -1029,7 +1029,7 @@ class Configure
                         }
                     }
                 }
-                waitForButtonClick();
+                buttons.waitForButtonClick();
 
                 // Show work as Output locks are updated.
                 disp.clearBottomRows();
@@ -1090,7 +1090,7 @@ class Configure
             response = aOldNode;
         }
 
-        waitForButtonClick();
+        buttons.waitForButtonClick();
         return response;
     }
 
@@ -1105,7 +1105,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -1188,7 +1188,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -1269,7 +1269,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -1313,7 +1313,7 @@ class Configure
         {
             int adjust = 0;
 
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -1362,7 +1362,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -1404,7 +1404,7 @@ class Configure
         currentState = outputDef.getState();
 
         processInputOutputs(!currentState);
-        waitForButtonRelease();
+        buttons.waitForButtonRelease();
         processInputOutputs(currentState);
     }
 
@@ -1418,7 +1418,7 @@ class Configure
         readOutput(inputDef.getOutput(aIndex));
         currentState = outputDef.getState();
         processInputOutput(aIndex, !currentState, 0);
-        waitForButtonRelease();
+        buttons.waitForButtonRelease();
         processInputOutput(aIndex,  currentState, 0);
     }
 
@@ -1432,11 +1432,11 @@ class Configure
         long    interval    = 0L;           // Interval between changes of output.
         long    finishAt    = 0L;           // Time to finish output's ident.
 
-        waitForButtonRelease();
+        buttons.waitForButtonRelease();
         if (outputNodes == 0)
         {
             disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_NO_OUTPUT);
-            waitForButtonClick();
+            buttons.waitForButtonClick();
         }
         else
         {
@@ -1523,7 +1523,7 @@ class Configure
                             }
     
                             disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INTERRUPT);
-                            waitForButtonRelease();
+                            buttons.waitForButtonRelease();
                             button = BUTTON_NONE;
                             disp.clearRow(LCD_COL_START, LCD_ROW_DET);
                         }
@@ -1547,7 +1547,7 @@ class Configure
         uint8_t button = BUTTON_NONE;
         long    endAt  = millis() + aInterval;
 
-        while (   ((button = readButton()) == BUTTON_NONE)
+        while (   ((button = buttons.readButton()) == BUTTON_NONE)
                && (millis() < endAt))
         {
             delay(DELAY_BUTTON_WAIT);
@@ -1570,7 +1570,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -1671,7 +1671,7 @@ class Configure
         while (!finished)
         {
             int autoRepeat = DELAY_BUTTON_DELAY;
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -1687,7 +1687,7 @@ class Configure
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
-                                    while (readButton() != 0);
+                                    while (buttons.readButton() != 0);
                                     changed = true;
                                     break;
 
@@ -1703,7 +1703,7 @@ class Configure
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
-                                    while (readButton() != 0);
+                                    while (buttons.readButton() != 0);
                                     changed = true;
                                     break;
 
@@ -1744,7 +1744,7 @@ class Configure
         while (!finished)
         {
             int autoRepeat = DELAY_BUTTON_DELAY;
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -1760,7 +1760,7 @@ class Configure
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
-                                    while (readButton() != 0);
+                                    while (buttons.readButton() != 0);
                                     changed = true;
                                     break;
 
@@ -1776,7 +1776,7 @@ class Configure
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
-                                    while (readButton() != 0);
+                                    while (buttons.readButton() != 0);
                                     changed = true;
                                     break;
 
@@ -1816,7 +1816,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -1865,7 +1865,7 @@ class Configure
         while (!finished)
         {
             int autoRepeat = DELAY_BUTTON_DELAY;
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -1876,7 +1876,7 @@ class Configure
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
-                                    while (readButton() != 0);
+                                    while (buttons.readButton() != 0);
                                     writeOutput();
                                     changed = true;
                                     break;
@@ -1888,7 +1888,7 @@ class Configure
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
-                                    while (readButton() != 0);
+                                    while (buttons.readButton() != 0);
                                     writeOutput();
                                     changed = true;
                                     break;
@@ -1922,7 +1922,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -2000,7 +2000,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -2046,7 +2046,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -2104,7 +2104,7 @@ class Configure
         {
             int adjust = 0;
 
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -2145,7 +2145,7 @@ class Configure
 
         while (!finished)
         {
-            switch (waitForButtonPress())
+            switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
 
@@ -2184,14 +2184,14 @@ class Configure
         if (outputDef.getType() == OUTPUT_TYPE_BLINK)
         {
             writeOutputState(outputNode, outputPin, true,  0);
-            waitForButtonRelease();
+            buttons.waitForButtonRelease();
             writeOutputState(outputNode, outputPin, false, 0);
             writeOutput();
         }
         else
         {
             writeOutputState(outputNode, outputPin, !outputDef.getState(), 0);
-            waitForButtonRelease();
+            buttons.waitForButtonRelease();
             writeOutputState(outputNode, outputPin,  outputDef.getState(), 0);
         }
     }
@@ -2203,7 +2203,7 @@ class Configure
     void testOutput(uint8_t aNode, uint8_t aPin)
     {
         writeOutputState(aNode, aPin, !getOutputState(aNode, aPin), 0);
-        waitForButtonRelease();
+        buttons.waitForButtonRelease();
         writeOutputState(aNode, aPin,  getOutputState(aNode, aPin), 0);
     }
 
@@ -2245,7 +2245,7 @@ class Configure
      */
     boolean waitForConfirm(PGM_P aMessagePtr)
     {
-        uint8_t button = waitForButtonPress();
+        uint8_t button = buttons.waitForButtonPress();
 
         if (button == BUTTON_SELECT)
         {
@@ -2256,7 +2256,7 @@ class Configure
             disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_ABANDONED, LCD_COLS);
         }
 
-        waitForButtonRelease();
+        buttons.waitForButtonRelease();
         disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
 
         return button == BUTTON_SELECT;
@@ -2291,7 +2291,7 @@ class Configure
     {
         disp.clear();
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_CONFIG);
-        waitForButtonRelease();
+        buttons.waitForButtonRelease();
 
         menuTop();
     }

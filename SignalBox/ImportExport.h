@@ -254,7 +254,7 @@ class ImportExport
      */
     int readChar()
     {
-        while (   (!readButton())
+        while (   (!buttons.readButton())
                && (!Serial.available()))
         {
             delay(DELAY_BUTTON_WAIT);
@@ -333,7 +333,7 @@ class ImportExport
      */
     void skipLine()
     {
-        while (   (!readButton())
+        while (   (!buttons.readButton())
                && (!isEndOfLine()))
         {
             lastChar = readChar();
@@ -351,7 +351,7 @@ class ImportExport
         int index = 0;
 
         // Read upto WORD_BUFFER_LENGTH characters.
-        while (   (!readButton())
+        while (   (!buttons.readButton())
                && (!isEndOfLine())
                && (index < WORD_BUFFER_LENGTH))
         {
@@ -390,10 +390,10 @@ class ImportExport
         disp.printCh(CHAR_QUERY);
 
         // Wait for user-input. BUTTON_RIGHT will continue, others will abort import.
-        if (waitForButtonPress() == BUTTON_RIGHT)
+        if (buttons.waitForButtonPress() == BUTTON_RIGHT)
         {
             disp.printProgStrAt(LCD_COL_START,  LCD_ROW_DET, M_WAITING, LCD_COLS);
-            waitForButtonRelease();
+            buttons.waitForButtonRelease();
         }
         else
         {
@@ -613,7 +613,7 @@ class ImportExport
         int len = 0;
 
         messageTick = 1;            // Ensure "waiting" message appears.
-        waitForButtonRelease();
+        buttons.waitForButtonRelease();
 
         // Clear the buffer
         while (Serial.available())
@@ -623,7 +623,7 @@ class ImportExport
 
         // Keep going until until button pressed.
         while (   ((len = readWord()) >= 0)
-               && (!readButton()))
+               && (!buttons.readButton()))
         {
             if (   (len > 0)
                 && (wordBuffer[0] != CHAR_HASH))

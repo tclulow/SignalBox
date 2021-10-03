@@ -36,7 +36,7 @@ void reportPause()
 {
     if (systemData.reportLevel >= REPORT_PAUSE)
     {
-        switch (waitForButtonPress())
+        switch (buttons.waitForButtonPress())
         {
             case BUTTON_NONE:   break;
 
@@ -63,7 +63,7 @@ void reportPause()
         disp.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_REPORT);
         disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemData.reportLevel], LCD_LEN_OPTION);
 
-        waitForButtonRelease();
+        buttons.waitForButtonRelease();
         disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
     }
 }
