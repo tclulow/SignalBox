@@ -27,6 +27,7 @@
 #include "Buttons.h"
 #include "Report.h"
 #include "ImportExport.h"
+#include "Controller.h"
 #include "Configure.h"
 
 #endif

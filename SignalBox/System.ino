@@ -173,7 +173,7 @@ void systemFail(PGM_P aMessage, int aValue)
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, aMessage);
     disp.printHexByteAt(-2, LCD_ROW_BOT, aValue);
 
-    setDisplayTimeout(DELAY_FAIL);
+    controller.setDisplayTimeout(DELAY_FAIL);
 }
 
 

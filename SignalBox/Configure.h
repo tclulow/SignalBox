@@ -30,6 +30,12 @@
 #define SYS_MAX      4
 
 
+/** Helper for use in callback to displayScannedInput().
+ *  Forward reference.
+ */
+void displayScannedInput(uint8_t aNode, uint8_t aPin);
+
+
 /** Configure the system.
  */
 class Configure
@@ -540,7 +546,7 @@ class Configure
                                             saveSystemData();
                                             if (debugLevel != getDebug())
                                             {
-                                                sendDebugLevel();
+                                                controller.sendDebugLevel();
                                             }
                                             displayDetailSystem();
                                             finished = true;
@@ -582,7 +588,7 @@ class Configure
                                     {
                                         case SYS_REPORT: changed |= menuSystemReport();
                                                          break;
-                                        case SYS_NODES:  scanHardware();
+                                        case SYS_NODES:  controller.scanHardware();
                                                          break;
                                         case SYS_IDENT:  identOutputs();
                                                          break;
@@ -849,7 +855,7 @@ class Configure
         // Scan all the input nodes until a button is pressed.
         while ((button = buttons.readButton()) == BUTTON_NONE)
         {
-            scanInputs(true);
+            controller.scanInputs(displayScannedInput);        // Calls displaySelectedInput() when an input is pressed.
             delay(DELAY_BUTTON_WAIT);
         }
 
@@ -1403,9 +1409,9 @@ class Configure
         readOutput(inputDef.getOutput(inputDef.getFirstOutput()));
         currentState = outputDef.getState();
 
-        processInputOutputs(!currentState);
+        controller.processInputOutputs(!currentState);
         buttons.waitForButtonRelease();
-        processInputOutputs(currentState);
+        controller.processInputOutputs(currentState);
     }
 
 
@@ -1417,9 +1423,9 @@ class Configure
 
         readOutput(inputDef.getOutput(aIndex));
         currentState = outputDef.getState();
-        processInputOutput(aIndex, !currentState, 0);
+        controller.processInputOutput(aIndex, !currentState, 0);
         buttons.waitForButtonRelease();
-        processInputOutput(aIndex,  currentState, 0);
+        controller.processInputOutput(aIndex,  currentState, 0);
     }
 
 
@@ -2302,5 +2308,13 @@ class Configure
  */
 Configure configure;
 
+
+/** Helper for use in callback to displayScannedInput().
+ */
+void displayScannedInput(uint8_t aNode, uint8_t aPin)
+{
+    configure.displaySelectedInput(aNode, aPin);
+}
+    
 
 #endif
