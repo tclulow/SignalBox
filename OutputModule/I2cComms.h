@@ -125,6 +125,8 @@
 #define COMMS_SYS_MOVE_LOCKS    0x04    // System - renumber lock node numbers.
 
 
+/** Class for handling i2c communications.
+ */
 class I2cComms
 {
     private:
