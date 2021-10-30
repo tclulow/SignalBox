@@ -10,6 +10,7 @@ messageFileName = "Messages.h"
 fileNames = os.listdir()
 fileNames.remove(messageFileName)
 
+used = 0
 unused = 0
 
 # Process all lines in the messageFile
@@ -20,6 +21,7 @@ with open(messageFileName) as messageFile:
         # Process all messages
         if match is not None:
             found = False
+            used += 1
             messageName = match.group(1)
 
             # Check if messageFile itself references the message
@@ -49,5 +51,8 @@ with open(messageFileName) as messageFile:
                 print("Unused", messageName)
                 unused += 1
 
-if not unused:
-    print("All messages used")
+print("Messages:", used)
+if unused:
+    print("Unused:", unused)
+else:
+    print("All used")
