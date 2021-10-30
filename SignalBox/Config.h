@@ -33,7 +33,7 @@
 #define LCD_D6                      6
 #define LCD_D7                      7
 
-#define INTERLOCK_WARNING_PIN      12   // When interlocks prevent an operation, set this pin high. If zero, no warning is made.
+#define INTERLOCK_WARNING_PIN      13   // When interlocks prevent an operation, set this pin high. If zero, no warning is made.
 #define INTERLOCK_WARNING_FREQ    440   // Frequency of warning tone (if using tone library).
 #define INTERLOCK_WARNING_TIME   2000   // Duration (msecs) of interlock warning.
 

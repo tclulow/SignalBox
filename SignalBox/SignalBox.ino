@@ -36,8 +36,8 @@
  *  D9      LCD shield enable.
  *  D10     LCD shield backlight.
  *  D11     LCD shield detect.
- *  D12     Interlock warning.
- *  D13     Flash firmare version.
+ *  D12     Unused.
+ *  D13     Flash firmare version and Interlock warning.
  *
  *  A0      LCD shield buttons.
  *  A1      Alternate select button.
