@@ -1,5 +1,5 @@
 #System	Version	Report	Debug
-System	v3.6.1	Long	Errors
+System	v4.0.0	Long	None
 
 #Input	Node	Pin	Type	OutputA	OutputB	OutputC	OutputD	OutputE	OutputF
 Input	0	0	On_Off	. .	. .	. .	. .	. .	. .
@@ -37,10 +37,10 @@ Input	1	E	On_Off	1 0	. .	. .	. .	. .	. .
 Input	1	F	On_Off	. .	. .	. .	. .	. .	. .
 
 Input	2	0	On_Off	4 4	. .	. .	. .	. .	. .
-Input	2	1	On_Off	4 5	. .	. .	. .	. .	. .
+Input	2	1	On_Off	4 5	A 0	. .	. .	. .	. .
 Input	2	2	On_Off	4 6	. .	. .	. .	. .	. .
-Input	2	3	On_Off	4 7	. .	. .	. .	. .	. .
-Input	2	4	On_Off	3 2	. .	. .	. .	. .	. .
+Input	2	3	On_Off	4 7	A 2	. .	. .	. .	. .
+Input	2	4	On_Off	3 2	A 1	. .	. .	. .	. .
 Input	2	5	On_Off	3 3	. .	. .	. .	. .	. .
 Input	2	6	On_Off	. .	. .	. .	. .	. .	. .
 Input	2	7	On_Off	. .	. .	. .	. .	. .	. .
@@ -52,6 +52,91 @@ Input	2	C	On_Off	2 2	9 3	. .	. .	. .	. .
 Input	2	D	On_Off	. .	. .	. .	. .	. .	. .
 Input	2	E	On_Off	5 6	. .	. .	. .	. .	. .
 Input	2	F	On_Off	. .	. .	. .	. .	. .	. .
+
+Input	3	0	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	1	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	2	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	3	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	4	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	5	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	6	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	7	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	8	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	9	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	A	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	B	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	C	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	D	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	E	On_Off	. .	. .	. .	. .	. .	. .
+Input	3	F	On_Off	. .	. .	. .	. .	. .	. .
+
+Input	4	0	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	1	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	2	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	3	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	4	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	5	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	6	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	7	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	8	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	9	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	A	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	B	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	C	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	D	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	E	On_Off	. .	. .	. .	. .	. .	. .
+Input	4	F	On_Off	. .	. .	. .	. .	. .	. .
+
+Input	5	0	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	1	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	2	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	3	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	4	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	5	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	6	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	7	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	8	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	9	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	A	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	B	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	C	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	D	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	E	On_Off	. .	. .	. .	. .	. .	. .
+Input	5	F	On_Off	. .	. .	. .	. .	. .	. .
+
+Input	6	0	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	1	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	2	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	3	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	4	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	5	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	6	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	7	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	8	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	9	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	A	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	B	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	C	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	D	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	E	On_Off	. .	. .	. .	. .	. .	. .
+Input	6	F	On_Off	. .	. .	. .	. .	. .	. .
+
+Input	7	0	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	1	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	2	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	3	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	4	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	5	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	6	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	7	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	8	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	9	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	A	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	B	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	C	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	D	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	E	On_Off	. .	. .	. .	. .	. .	. .
+Input	7	F	On_Off	. .	. .	. .	. .	. .	. .
 
 #Output	Node	Pin	Type	Lo	Hi	Spd	Reset
 Output	1	0	LED	5F	1F	0D	00
@@ -101,12 +186,21 @@ Output	5	7	None	5A	5A	0D	00
 
 Output	9	0	Servo	41	73	04	00
 Output	9	1	Servo	55	32	04	00
-Output	9	2	Servo	50	78	04	00
-Output	9	3	Servo	64	2D	04	00
+Output	9	2	Servo	54	78	04	00
+Output	9	3	Servo	64	28	04	00
 Output	9	4	None	00	FF	0C	00
 Output	9	5	None	5A	5A	0C	05
 Output	9	6	None	5A	5A	0F	00
 Output	9	7	None	53	6A	0F	02
+
+Output	A	0	Servo	46	78	04	00
+Output	A	1	Servo	5F	87	04	00
+Output	A	2	Servo	14	50	04	00
+Output	A	3	None	20	20	0D	00
+Output	A	4	None	5A	5A	0C	00
+Output	A	5	None	5A	5A	0C	00
+Output	A	6	None	00	B4	0D	00
+Output	A	7	None	00	B4	0D	00
 
 #Lock	Node	Pin	LockLoA	LockLoB	LockLoC	LockLoD	LockHiA	LockHiB	LockHiC	LockHiD
 Lock	1	0	.	.	.	.	.	.	.	.
@@ -162,5 +256,14 @@ Lock	9	4	.	.	.	.	.	.	.	.
 Lock	9	5	.	.	.	.	.	.	.	.
 Lock	9	6	.	.	.	.	.	.	.	.
 Lock	9	7	.	.	.	.	.	.	.	.
+
+Lock	A	0	.	.	.	.	.	.	.	.
+Lock	A	1	.	.	.	.	.	.	.	.
+Lock	A	2	.	.	.	.	.	.	.	.
+Lock	A	3	.	.	.	.	.	.	.	.
+Lock	A	4	.	.	.	.	.	.	.	.
+Lock	A	5	.	.	.	.	.	.	.	.
+Lock	A	6	.	.	.	.	.	.	.	.
+Lock	A	7	.	.	.	.	.	.	.	.
 
 
