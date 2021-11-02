@@ -44,6 +44,8 @@
  *      WRITE   <Pin>       <OutputDef>
  *      SAVE    <Pin>
  *      RESET   <Pin>
+ *      
+ *      SET     <Pin>       [Value]
  *
  *      NONE    0xf
  *
@@ -55,6 +57,7 @@
  *      Pin         The pin (0-7) to action the command against.
  *      Delay       Optional delay (in seconds, 0-255) before actioning the command.
  *      OutputDef   15 bytes defining an output. See below.
+ *      Value       Value to set output to (1-255) or, if absent, zero.
  *
  * Response bytes
  *      Request     The command (and option) requested by the gateway.
@@ -110,9 +113,10 @@
 #define COMMS_CMD_WRITE         0x50    // Write data to Output's EEPROM definition (from the I2C master).
 #define COMMS_CMD_SAVE          0x60    // Save Output's EEPROM definition (as set by a previous WRITE).
 #define COMMS_CMD_RESET         0x70    // Reset output to its saved state (from its EEPROM).
+#define COMMS_CMD_SET           0x80    // Set output to a discrete value
 
-#define COMMS_CMD_INP_LO        0x80    // Input went Lo
-#define COMMS_CMD_INP_HI        0x90    // Input went Hi
+#define COMMS_CMD_INP_LO        0x90    // Input went Lo
+#define COMMS_CMD_INP_HI        0xA0    // Input went Hi
 
 #define COMMS_CMD_NONE          0xf0    // Null command.
 

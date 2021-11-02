@@ -1691,7 +1691,8 @@ class Configure
                                             outputDef.setLo(0);
                                         }
                                         disp.printDecAt(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputDef.getLo(), OUTPUT_HI_LO_SIZE);
-                                        writeOutput();
+                                        // writeOutput();
+                                        i2cComms.sendData(I2C_OUTPUT_BASE_ID + outNode, COMMS_CMD_SET | outPin, outputDef.getLo(), -1);
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
@@ -1707,7 +1708,8 @@ class Configure
                                             outputDef.setLo(aLimit);
                                         }
                                         disp.printDecAt(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, outputDef.getLo(), OUTPUT_HI_LO_SIZE);
-                                        writeOutput();
+                                        // writeOutput();
+                                        i2cComms.sendData(I2C_OUTPUT_BASE_ID + outNode, COMMS_CMD_SET | outPin, outputDef.getLo(), -1);
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
@@ -1764,7 +1766,8 @@ class Configure
                                             outputDef.setHi(0);
                                         }
                                         disp.printDecAt(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getHi(), OUTPUT_HI_LO_SIZE);
-                                        writeOutput();
+                                        // writeOutput();
+                                        i2cComms.sendData(I2C_OUTPUT_BASE_ID + outNode, COMMS_CMD_SET | outPin, outputDef.getHi(), -1);
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
@@ -1780,7 +1783,8 @@ class Configure
                                             outputDef.setHi(aLimit);
                                         }
                                         disp.printDecAt(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, outputDef.getHi(), OUTPUT_HI_LO_SIZE);
-                                        writeOutput();
+                                        // writeOutput();
+                                        i2cComms.sendData(I2C_OUTPUT_BASE_ID + outNode, COMMS_CMD_SET | outPin, outputDef.getHi(), -1);
                                         delay(autoRepeat);
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }

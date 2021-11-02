@@ -163,6 +163,8 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
 // Common debug messages.
 
 const char M_DEBUG_DEBUG[]      PROGMEM = "Debug";
+const char M_DEBUG_INP_LO[]     PROGMEM = "InpLo";
+const char M_DEBUG_INP_HI[]     PROGMEM = "InpHi";
 const char M_DEBUG_LOAD[]       PROGMEM = "Load";
 const char M_DEBUG_MOVE[]       PROGMEM = "Move";
 const char M_DEBUG_READ[]       PROGMEM = "Read";
@@ -170,6 +172,7 @@ const char M_DEBUG_REPORT[]     PROGMEM = "Report";
 const char M_DEBUG_RESET[]      PROGMEM = "Reset";
 const char M_DEBUG_SAVE[]       PROGMEM = "Save";
 const char M_DEBUG_SEND[]       PROGMEM = "Send";
+const char M_DEBUG_SET[]        PROGMEM = "Set";
 const char M_DEBUG_SET_LO[]     PROGMEM = "SetLo";
 const char M_DEBUG_SET_HI[]     PROGMEM = "SetHi";
 const char M_DEBUG_STATES[]     PROGMEM = "States";
@@ -191,8 +194,8 @@ const char M_DEBUG_TO[]         PROGMEM = ", to=";
 const char M_DEBUG_TYPE[]       PROGMEM = ", type=";
 const char M_DEBUG_VALUE[]      PROGMEM = ", value=";
 
-const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG, M_DEBUG_SET_LO, M_DEBUG_SET_HI, M_DEBUG_READ, M_DEBUG_WRITE, M_DEBUG_SAVE, M_DEBUG_RESET,
-                                           M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_RFU, M_NONE };
+const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG,  M_DEBUG_SET_LO, M_DEBUG_SET_HI, M_DEBUG_READ, M_DEBUG_WRITE, M_DEBUG_SAVE, M_DEBUG_RESET,
+                                           M_DEBUG_SET,    M_DEBUG_INP_LO, M_DEBUG_INP_HI, M_RFU,          M_RFU,        M_RFU,         M_RFU,        M_NONE };
 
 #if SB_CONTROLLER
 

@@ -522,6 +522,7 @@ void processReceipt(int aLen)
         uint8_t option  = command & COMMS_OPTION_MASK;
         uint8_t pin     = option  & OUTPUT_PIN_MASK;
         uint8_t delay   = 0;
+        uint8_t value   = 0;
 
         command &= COMMS_COMMAND_MASK;
 
@@ -566,6 +567,13 @@ void processReceipt(int aLen)
                                    break;
 
             case COMMS_CMD_RESET:  processReset(pin);               // Reset the Output.
+                                   break;
+            
+            case COMMS_CMD_SET:    if (i2cComms.available())
+                                   {
+                                       value = i2cComms.readByte();
+                                   }
+                                   processSet(pin, value);          // Set the Output's value.
                                    break;
 
             default:               unrecognisedCommand(M_DEBUG_RECEIPT, command, option);
@@ -793,6 +801,35 @@ void processReset(uint8_t aPin)
     loadOutput(aPin);               // And recover the output's definition.
     initOutput(aPin, oldType);      // Ensure output is initialised to new state.
     initFlasher(aPin);              // Ensure flasher is operating (or not).
+}
+
+
+/** Process a set command.
+ */
+void processSet(uint8_t aPin, uint8_t aValue)
+{
+    persisting = false;
+
+    if (isDebug(DEBUG_DETAIL))
+    {
+        Serial.print(millis());
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(M_DEBUG_SET));
+        Serial.print(aPin, HEX);
+        Serial.print(PGMT(M_DEBUG_TO));
+        Serial.print(aValue, HEX);
+        Serial.println();
+    }
+
+    if (outputDefs[aPin].getState())
+    {
+        outputDefs[aPin].setHi(aValue);
+    }
+    else
+    {
+        outputDefs[aPin].setLo(aValue);
+    }
+    initOutput(aPin, outputDefs[aPin].getType());
 }
 
 
