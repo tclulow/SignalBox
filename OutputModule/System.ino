@@ -142,12 +142,12 @@ void flashVersion()
         maskLimit >>= 1;            // Don't show software jumper pin
     }
 
-    // Flash module number.
+    // Flash module number, short blink for set (one), long blink for unset (zero).
     delay(DELAY_BLINK_LONG);
     for (uint8_t mask = 1; mask <= maskLimit; mask <<= 1)
     {
         digitalWrite(LED_BUILTIN, HIGH);
-        delay((getModuleId(false) & mask) ? DELAY_BLINK_LONG : DELAY_BLINK);
+        delay((getModuleId(false) & mask) ? DELAY_BLINK : DELAY_BLINK_LONG);
         digitalWrite(LED_BUILTIN, LOW);
         delay(DELAY_BLINK);
     }
