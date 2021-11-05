@@ -45,7 +45,7 @@
  *      SAVE    <Pin>
  *      RESET   <Pin>
  *      
- *      SET     <Pin>       [Value]
+ *      SET     <Pin>       <Value>
  *      
  *      INP_LO  <Pin>       <Node>
  *      INO_HI  <Pin>       <Node>
@@ -54,13 +54,13 @@
  *
  *
  * Data bytes
- *      Node        The node being addressed.
+ *      Node        The node (0-31) being addressed.
  *      NewNode     The new number (0-31) for this output module.
  *      Level       The debug level to set (0-4). See DEBUG_... flags.
  *      Pin         The pin (0-7) to action the command against.
  *      Delay       Optional delay (in seconds, 0-255) before actioning the command.
  *      OutputDef   15 bytes defining an output. See below.
- *      Value       Value to set output to (1-255) or, if absent, zero.
+ *      Value       Value to set output to (0-255).
  *
  * Response bytes
  *      Request     The command (and option) requested by the gateway.
@@ -90,14 +90,14 @@
 
 
 // I2C node numbers.
-#define I2C_CONTROLLER_ID        0x10   // Controller ID.
-#define I2C_GATEWAY_ID           0x11   // Gateway ID (if present).
-#define I2C_INPUT_BASE_ID        0x20   // Input nodes' base ID.
-#define I2C_OUTPUT_BASE_ID       0x50   // Output nodes' base ID.
-#define I2C_MODULE_ID_JUMPERS    0xff   // Use jumpers to decide module ID.
+#define I2C_CONTROLLER_ID       0x10    // Controller ID.
+#define I2C_GATEWAY_ID          0x11    // Gateway ID (if present).
+#define I2C_INPUT_BASE_ID       0x20    // Input nodes' base ID.
+#define I2C_OUTPUT_BASE_ID      0x50    // Output nodes' base ID.
+#define I2C_MODULE_ID_JUMPERS   0xff    // Use jumpers to decide module ID.
 
-#define I2C_LCD_LO               0x27   // Range of IDs to scan for LCD I2C device.
-#define I2C_LCD_HI               0x3F
+#define I2C_LCD_LO              0x27    // Range of IDs to scan for LCD I2C device.
+#define I2C_LCD_HI              0x3F
 
 
 // Command byte.
