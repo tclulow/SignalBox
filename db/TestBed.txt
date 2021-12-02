@@ -1,0 +1,42 @@
+SignalBox v4.0.0 Nov 21
+#System	Version	Report	Debug
+System	v4.0.0	Long	None
+
+#Input	Node	Pin	Type	OutputA	OutputB	OutputC	OutputD	OutputE	OutputF
+Input	0	0	On_Off	8 0	8 6	. .	. .	. .	. .
+Input	0	1	On_Off	8 1	. .	. .	. .	. .	. .
+Input	0	2	On_Off	8 0	. 2	8 1	8 6	. .	. .
+Input	0	3	On_Off	. .	. .	. .	. .	. .	. .
+Input	0	4	On	8 3	. .	. .	. .	. .	. .
+Input	0	5	Off	8 3	. .	. .	. .	. .	. .
+Input	0	6	On_Off	8 4	. .	. .	. .	. .	. .
+Input	0	7	On_Off	. .	. .	. .	. .	. .	. .
+Input	0	8	On_Off	8 7	. .	. .	. .	. .	. .
+Input	0	9	On_Off	. .	. .	. .	. .	. .	. .
+Input	0	A	Toggle	8 5	. .	. .	. .	. .	. .
+Input	0	B	On_Off	. .	. .	. .	. .	. .	. .
+Input	0	C	On_Off	. .	. .	. .	. .	. .	. .
+Input	0	D	On_Off	. .	. .	. .	. .	. .	. .
+Input	0	E	On_Off	. .	. .	. .	. .	. .	. .
+Input	0	F	On_Off	. .	. .	. .	. .	. .	. .
+
+#Output	Node	Pin	Type	Lo	Hi	Spd	Reset
+Output	8	0	Signal	00	B4	0D	00
+Output	8	1	Servo	B4	00	0B	00
+Output	8	2	LED	C8	5A	0C	00
+Output	8	3	LED_4	FF	C8	0C	05
+Output	8	4	LED	C8	5A	0C	00
+Output	8	5	LED	14	14	0C	00
+Output	8	6	Flash	5B	5A	0D	03
+Output	8	7	Blink	5A	5A	0E	05
+
+#Lock	Node	Pin	LockLoA	LockLoB	LockLoC	LockLoD	LockHiA	LockHiB	LockHiC	LockHiD
+Lock	8	0	.	.	.	.	.	.	.	.
+Lock	8	1	Lo 8 4	.	.	.	.	.	.	.
+Lock	8	2	.	.	.	.	.	.	.	.
+Lock	8	3	.	.	.	.	.	.	.	.
+Lock	8	4	Lo 8 1	.	.	.	.	.	.	.
+Lock	8	5	.	.	.	.	.	.	.	.
+Lock	8	6	.	.	.	.	.	.	.	.
+Lock	8	7	.	.	.	.	.	.	.	.
+
