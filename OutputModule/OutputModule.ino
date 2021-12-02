@@ -709,6 +709,8 @@ void processMoveLocks()
         // Move all locks referencing the old node number to the new node number.
         for (uint8_t pin = 0; pin < OUTPUT_PIN_MAX; pin++)
         {
+            boolean changed = false;
+            
             // Process Lo and Hi lock types.
             for (uint8_t hi = 0; hi < 2; hi++)
             {
@@ -718,12 +720,20 @@ void processMoveLocks()
                     if (outputDefs[pin].getLockNode(hi, index) == oldNode)
                     {
                         outputDefs[pin].setLockNode(hi, index, newNode);
+                        changed = true;
                     }
                     else if (outputDefs[pin].getLockNode(hi, index) == newNode)
                     {
                         outputDefs[pin].setLockNode(hi, index, oldNode);
+                        changed = true;
                     }
                 }
+            }
+
+            // If a lock was changed, persist that change to EEPROM.
+            if (changed)
+            {
+                saveOutput(pin);
             }
         }
     }
