@@ -1,4 +1,5 @@
 /** ImportExport.
+ *  @file
  *
  *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
@@ -84,7 +85,7 @@ class ImportExport
 
         node = readData() & INPUT_NODE_MASK;
         pin  = readData() & INPUT_PIN_MASK;
-        loadInput(node, pin);
+        inputMgr.loadInput(node, pin);
 
         // Read the Input's type.
         readWord();
@@ -126,7 +127,7 @@ class ImportExport
             disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT_TYPES[inputType], LCD_LEN_STATUS);
             disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, node);
             disp.printHexChAt(LCD_COL_PIN , LCD_ROW_DET, pin);
-            saveInput();
+            inputMgr.saveInput();
         }
     }
 
@@ -415,16 +416,16 @@ class ImportExport
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_VERSION));
         Serial.print(CHAR_TAB);
-        Serial.print(PGMT(M_REPORT_PROMPTS[systemData.reportLevel]));
+        Serial.print(PGMT(M_REPORT_PROMPTS[systemMgr.getReportLevel()]));
         Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_PROMPTS[aDebugLevel]));
         Serial.println();
         Serial.println();
 
-        if (aDebugLevel >= DEBUG_FULL)
-        {
-            dumpMemory();
-        }
+//        if (aDebugLevel >= DEBUG_FULL)
+//        {
+//            dumpMemory();
+//        }
     }
 
 
@@ -451,7 +452,7 @@ class ImportExport
                 for (int pin = 0; pin < INPUT_PIN_MAX; pin++)
                 {
                     // Export Input defintion
-                    loadInput(node, pin);
+                    inputMgr.loadInput(node, pin);
 
                     Serial.print(PGMT(M_INPUT));
                     Serial.print(CHAR_TAB);
@@ -643,10 +644,10 @@ class ImportExport
      */
     void doExport(int aExport)
     {
-        uint8_t debugLevel = getDebug();
+        uint8_t debugLevel = systemMgr.getDebugLevel();
 
         disp.printProgStrAt(-strlen_P(M_EXPORTING), LCD_ROW_DET, M_EXPORTING);
-        setDebug(DEBUG_NONE);
+        systemMgr.setDebugLevel(DEBUG_NONE);
 
         switch(aExport)
         {
@@ -672,7 +673,7 @@ class ImportExport
         }
 
         disp.clearRow(-strlen_P(M_EXPORTING), LCD_ROW_DET);
-        setDebug(debugLevel);
+        systemMgr.setDebugLevel(debugLevel);
     }
 };
 

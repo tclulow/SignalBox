@@ -1,4 +1,5 @@
 /** Setup hardware.
+ *  @file
  *
  *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
@@ -215,7 +216,7 @@ class Configure
     void displaySystemReportParams()
     {
         disp.clearRow(LCD_COL_MARK, LCD_ROW_DET);
-        disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_DET, M_REPORT_PROMPTS[systemData.reportLevel], LCD_LEN_OPTION);
+        disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_DET, M_REPORT_PROMPTS[systemMgr.getReportLevel()], LCD_LEN_OPTION);
     }
 
 
@@ -240,7 +241,7 @@ class Configure
     void displaySystemDebugParams()
     {
         disp.clearRow(LCD_COL_MARK, LCD_ROW_DET);
-        disp.printProgStrAt(LCD_COL_DEBUG_PARAM, LCD_ROW_DET, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_LEN_OPTION);
+        disp.printProgStrAt(LCD_COL_DEBUG_PARAM, LCD_ROW_DET, M_DEBUG_PROMPTS[systemMgr.getDebugLevel()], LCD_LEN_OPTION);
     }
 
 
@@ -454,7 +455,7 @@ class Configure
         }
 
         // Ensure correct Input and Output node definitions are loaded.
-        loadInput(inpNode, inpPin);
+        inputMgr.loadInput(inpNode, inpPin);
         if (isOutputNodePresent(outNode))
         {
             readOutput(outNode, outPin);
@@ -523,7 +524,7 @@ class Configure
     {
         boolean finished   = false;
         boolean changed    = false;
-        uint8_t debugLevel = getDebug();
+        uint8_t debugLevel = systemMgr.getDebugLevel();
 
         markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, true);
 
@@ -545,8 +546,8 @@ class Configure
                                     {
                                         if (confirm())              // Ask if change should be saved.
                                         {
-                                            saveSystemData();
-                                            if (debugLevel != getDebug())
+                                            systemMgr.saveSystemData();
+                                            if (debugLevel != systemMgr.getDebugLevel())
                                             {
                                                 controller.sendDebugLevel();
                                             }
@@ -569,7 +570,7 @@ class Configure
                                     {
                                         if (cancel())               // Ask if change should be canelled.
                                         {
-                                            loadSystemData();
+                                            systemMgr.loadSystemData();
                                             displayDetailSystem();
                                             finished = true;
                                         }
@@ -616,6 +617,7 @@ class Configure
     {
         boolean finished = false;
         boolean changed  = false;
+        uint8_t reportLevel = systemMgr.getReportLevel();
 
         markField(LCD_COL_REPORT_PARAM, LCD_ROW_DET, LCD_COL_REPORT_LENGTH, true);
 
@@ -625,11 +627,11 @@ class Configure
             {
                 case BUTTON_NONE:   break;
 
-                case BUTTON_UP:     systemData.reportLevel += 2;              // Allow for decrement in BUTTON_DOWN code below.
-                case BUTTON_DOWN:   systemData.reportLevel -= 1;
-                                    systemData.reportLevel += REPORT_MAX;     // Ensure in-range.
-                                    systemData.reportLevel %= REPORT_MAX;
-                                    disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_DET, M_REPORT_PROMPTS[systemData.reportLevel], LCD_COL_REPORT_LENGTH);
+                case BUTTON_UP:     reportLevel += 2;              // Allow for decrement in BUTTON_DOWN code below.
+                case BUTTON_DOWN:   reportLevel -= 1;
+                                    reportLevel += REPORT_MAX;     // Ensure in-range.
+                                    reportLevel %= REPORT_MAX;
+                                    disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_DET, M_REPORT_PROMPTS[reportLevel], LCD_COL_REPORT_LENGTH);
                                     changed = true;
                                     break;
 
@@ -642,6 +644,7 @@ class Configure
             }
         }
 
+        systemMgr.setReportLevel(reportLevel);
         markField(LCD_COL_REPORT_PARAM, LCD_ROW_DET, LCD_COL_REPORT_LENGTH, false);
 
         return changed;
@@ -653,8 +656,9 @@ class Configure
      */
     boolean menuSystemDebug()
     {
-        boolean finished = false;
-        boolean changed  = false;
+        boolean finished   = false;
+        boolean changed    = false;
+        uint8_t debugLevel = systemMgr.getDebugLevel();
 
         markField(LCD_COL_DEBUG_PARAM, LCD_ROW_DET, LCD_COL_DEBUG_LENGTH, true);
 
@@ -664,11 +668,11 @@ class Configure
             {
                 case BUTTON_NONE:   break;
 
-                case BUTTON_UP:     systemData.debugLevel += 2;             // Allow for decrement in BUTTON_DOWN code below.
-                case BUTTON_DOWN:   systemData.debugLevel -= 1;
-                                    systemData.debugLevel += DEBUG_MAX;     // Ensure in-range.
-                                    systemData.debugLevel %= DEBUG_MAX;
-                                    disp.printProgStrAt(LCD_COL_DEBUG_PARAM, LCD_ROW_DET, M_DEBUG_PROMPTS[systemData.debugLevel], LCD_COL_DEBUG_LENGTH);
+                case BUTTON_UP:     debugLevel += 2;             // Allow for decrement in BUTTON_DOWN code below.
+                case BUTTON_DOWN:   debugLevel -= 1;
+                                    debugLevel += DEBUG_MAX;     // Ensure in-range.
+                                    debugLevel %= DEBUG_MAX;
+                                    disp.printProgStrAt(LCD_COL_DEBUG_PARAM, LCD_ROW_DET, M_DEBUG_PROMPTS[debugLevel], LCD_COL_DEBUG_LENGTH);
                                     changed = true;
                                     break;
 
@@ -681,6 +685,7 @@ class Configure
             }
         }
 
+        systemMgr.setDebugLevel(debugLevel);
         markField(LCD_COL_DEBUG_PARAM, LCD_ROW_DET, LCD_COL_DEBUG_LENGTH, false);
 
         return changed;
@@ -739,9 +744,9 @@ class Configure
     void menuNode(boolean aIsInput)
     {
         boolean finished    = false;
-        int8_t  reportLevel = systemData.reportLevel;       // Record reportLevel so we can turn it back on again.
+        int8_t  reportLevel = systemMgr.getReportLevel();       // Record reportLevel so we can turn it back on again.
 
-        systemData.reportLevel = 0;
+        systemMgr.setReportLevel(REPORT_NONE);
         markField(LCD_COL_NODE, LCD_ROW_TOP, 1, true);
 
         while (!finished)
@@ -757,7 +762,7 @@ class Configure
                                     if (aIsInput)
                                     {
                                         inpNode = nextNode(inpNode, adjust, aIsInput, true);
-                                        loadInput(inpNode, inpPin);
+                                        inputMgr.loadInput(inpNode, inpPin);
                                     }
                                     else
                                     {
@@ -800,7 +805,7 @@ class Configure
             }
         }
 
-        systemData.reportLevel = reportLevel;
+        systemMgr.setReportLevel(reportLevel);
         markField(LCD_COL_NODE, LCD_ROW_TOP, 1, false);
     }
 
@@ -869,7 +874,7 @@ class Configure
         }
 
         // Load/reload selected (or original) input and display attributes.
-        loadInput(inpNode, inpPin);
+        inputMgr.loadInput(inpNode, inpPin);
         displayInputNode();
         displayDetail();
     }
@@ -1020,7 +1025,7 @@ class Configure
                     for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
                     {
                         boolean changed = false;
-                        loadInput(node, pin);
+                        inputMgr.loadInput(node, pin);
 
                         // Adjust all the Input's Outputs if they referencethe old node number.
                         for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
@@ -1033,7 +1038,7 @@ class Configure
                         }
                         if (changed)
                         {
-                            saveInput();
+                            inputMgr.saveInput();
                         }
                     }
                 }
@@ -1120,7 +1125,7 @@ class Configure
                 case BUTTON_UP:     if (aIsInput)
                                     {
                                         inpPin = (inpPin + 1) & INPUT_PIN_MASK;
-                                        loadInput(inpNode, inpPin);
+                                        inputMgr.loadInput(inpNode, inpPin);
                                     }
                                     else
                                     {
@@ -1134,7 +1139,7 @@ class Configure
                 case BUTTON_DOWN:   if (aIsInput)
                                     {
                                         inpPin = (inpPin - 1) & INPUT_PIN_MASK;
-                                        loadInput(inpNode, inpPin);
+                                        inputMgr.loadInput(inpNode, inpPin);
                                     }
                                     else
                                     {
@@ -1212,7 +1217,7 @@ class Configure
                                     {
                                         if (confirm())              // Ask if change should be saved.
                                         {
-                                            saveInput();
+                                            inputMgr.saveInput();
                                             finished = true;
                                         }
                                         else
@@ -1231,7 +1236,7 @@ class Configure
                                     {
                                         if (cancel())               // Ask if change should be cancelled.
                                         {
-                                            loadInput(inpNode, inpPin);
+                                            inputMgr.loadInput(inpNode, inpPin);
                                             finished = true;
                                         }
                                         else

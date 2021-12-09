@@ -1,4 +1,4 @@
-/** Output
+/** Output Control.
  *  @file
  *
  *
@@ -11,7 +11,83 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
 
- #include "All.h"
+#ifndef OutputCtl_h
+#define OutputCtl_h
+
+
+/** Variables for working with an Output.
+ */
+long       outputNodes  = 0;    // Bit map of Output nodes present (as many as OUTPUT_NODE_MAX - 32 bits).
+uint8_t    outputNode   = 0;    // Current Output node.
+uint8_t    outputPin    = 0;    // Current Output pin.
+OutputDef  outputDef;           // Definition of current Output.
+
+uint8_t    outputStates[OUTPUT_NODE_MAX];   // State of all the attached output module's Outputs.
+
+
+/** Record the presence of an OutputNode in the map.
+ */
+void setOutputNodePresent(uint8_t aNode, boolean aState)
+{
+    if (aState)
+    {
+        outputNodes |= ((long)1 << aNode);
+    }
+    else
+    {
+        outputNodes &= ~((long)1 << aNode);
+    }
+}
+
+
+/** Is an Output node present?
+ *  Look for Output's node in outputNodes.
+ */
+boolean isOutputNodePresent(uint8_t aNode)
+{
+    return (aNode < OUTPUT_NODE_MAX) && (outputNodes & ((long)1 << aNode));
+}
+
+
+/** Sets the states of all the given node's Outputs.
+ */
+void setOutputStates(uint8_t aNode, uint8_t aStates)
+{
+    outputStates[aNode] = aStates;
+}
+
+
+/** Gets the states of all the given node's Outputs.
+ */
+uint8_t getOutputStates(uint8_t aNode)
+{
+    return outputStates[aNode];
+}
+
+
+/** Sets the state of the given node's Output pin.
+ */
+void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState)
+{
+    uint8_t mask = 1 << aPin;
+
+    if (aState)
+    {
+        outputStates[aNode] |= mask;
+    }
+    else
+    {
+        outputStates[aNode] &= ~mask;
+    }
+}
+
+
+/** Gets the state of the given Output's given pin.
+ */
+boolean getOutputState(uint8_t aNode, uint8_t aPin)
+{
+    return (outputStates[aNode] & (1 << aPin)) != 0;
+}
 
 
 /** Read an Output's data from an OutputModule.
@@ -195,66 +271,4 @@ void readOutputStates(uint8_t aNode)
 }
 
 
-/** Gets the states of all the given node's Outputs.
- */
-uint8_t getOutputStates(uint8_t aNode)
-{
-    return outputStates[aNode];
-}
-
-
-/** Sets the states of all the given node's Outputs.
- */
-void setOutputStates(uint8_t aNode, uint8_t aStates)
-{
-    outputStates[aNode] = aStates;
-}
-
-
-/** Gets the state of the given Output's given pin.
- */
-boolean getOutputState(uint8_t aNode, uint8_t aPin)
-{
-    return (outputStates[aNode] & (1 << aPin)) != 0;
-}
-
-
-/** Sets the state of the given node's Output pin.
- */
-void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState)
-{
-    uint8_t mask = 1 << aPin;
-
-    if (aState)
-    {
-        outputStates[aNode] |= mask;
-    }
-    else
-    {
-        outputStates[aNode] &= ~mask;
-    }
-}
-
-
-/** Record the presence of an OutputNode in the map.
- */
-void setOutputNodePresent(uint8_t aNode, boolean aState)
-{
-    if (aState)
-    {
-        outputNodes |= ((long)1 << aNode);
-    }
-    else
-    {
-        outputNodes &= ~((long)1 << aNode);
-    }
-}
-
-
-/** Is an Output node present?
- *  Look for Output's node in outputNodes.
- */
-boolean isOutputNodePresent(uint8_t aNode)
-{
-    return (aNode < OUTPUT_NODE_MAX) && (outputNodes & ((long)1 << aNode));
-}
+#endif

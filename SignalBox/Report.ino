@@ -11,14 +11,12 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
 
-#include "All.h"
-
 
 /** Is reporting enabled (at a particular level)?
  */
 boolean isReportEnabled(uint8_t aLevel)
 {
-    return aLevel <= systemData.reportLevel;
+    return aLevel <= systemMgr.getReportLevel();
 }
 
 
@@ -26,7 +24,7 @@ boolean isReportEnabled(uint8_t aLevel)
  */
 int getReportDelay()
 {
-    return DELAY_READ * systemData.reportLevel;
+    return DELAY_READ * systemMgr.getReportLevel();
 }
 
 
@@ -35,22 +33,22 @@ int getReportDelay()
  */
 void reportPause()
 {
-    if (systemData.reportLevel >= REPORT_PAUSE)
+    if (systemMgr.getReportLevel() >= REPORT_PAUSE)
     {
         switch (buttons.waitForButtonPress())
         {
             case BUTTON_NONE:   break;
 
-            case BUTTON_UP:     systemData.reportLevel = REPORT_LONG;
-                                saveSystemData();
+            case BUTTON_UP:     systemMgr.setReportLevel(REPORT_LONG);
+                                systemMgr.saveSystemData();
                                 break;
 
-            case BUTTON_DOWN:   systemData.reportLevel = REPORT_SHORT;
-                                saveSystemData();
+            case BUTTON_DOWN:   systemMgr.setReportLevel(REPORT_SHORT);
+                                systemMgr.saveSystemData();
                                 break;
 
-            case BUTTON_LEFT:   systemData.reportLevel = 0;
-                                saveSystemData();
+            case BUTTON_LEFT:   systemMgr.setReportLevel(REPORT_NONE);
+                                systemMgr.saveSystemData();
                                 break;
 
             case BUTTON_RIGHT:  configure.run();
@@ -62,7 +60,7 @@ void reportPause()
         // Show (new) report level.
         disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
         disp.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_REPORT);
-        disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemData.reportLevel], LCD_LEN_OPTION);
+        disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemMgr.getReportLevel()], LCD_LEN_OPTION);
 
         buttons.waitForButtonRelease();
         disp.clearRow(LCD_COL_START, LCD_ROW_BOT);

@@ -53,7 +53,15 @@
 
 
 #include <Servo.h>
-#include "All.h"
+
+#include "Config.h"
+#include "Messages.h"               // Common classes.
+#include "Persisted.h"
+#include "I2cComms.h"
+#include "System.h"
+#include "OutputDef.h"
+
+#include "OutputMgr.h"              // OutputModule-specific classes.
 
 
 // Definitions for paired LEDS
@@ -135,9 +143,8 @@ void setup()
     randomSeed(analogRead(0));      // Initialise random number generator.
     Serial.begin(SERIAL_SPEED);     // Serial IO.
 
-    // Read jumper pins in case they're needed.
-    readJumperPins();
-
+    systemMgr.init();               // Initialise SystemMgr.
+    
     // Configure the IO pins for output.
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
@@ -146,7 +153,7 @@ void setup()
     }
 
     // Load SystemData from EEPROM and check it's valid.
-    if (!loadSystemData())
+    if (!systemMgr.loadSystemData())
     {
         firstRun();
     }
@@ -155,14 +162,14 @@ void setup()
         // Recover state from EEPROM.
         for (uint8_t pin = 0; pin < IO_PINS; pin++)
         {
-            loadOutput(pin);
+            outputMgr.loadOutput(pin);
             initOutput(pin, OUTPUT_TYPE_NONE);
             initFlasher(pin);
         }
     }
 
     // Start I2C communications.
-    i2cComms.setId(getModuleId(true));
+    i2cComms.setId(systemMgr.getModuleId(true));
     i2cComms.onReceive(processReceipt);
     i2cComms.onRequest(processRequest);
 
@@ -170,11 +177,11 @@ void setup()
     // unless that's a Servo - don't want to mess with it's attached base pin.
     if (!outputDefs[OUTPUT_BUILTIN_PIN].isServo())
     {
-        flashVersion();
+        systemMgr.flashVersion();
     }
 
     // Show system data (depending on debug level).
-    debugSystemData();
+    systemMgr.debugSystemData();
 }
 
 
@@ -182,10 +189,10 @@ void setup()
  */
 void firstRun()
 {
-    uint8_t moduleId = getModuleId(false);
+    uint8_t moduleId = systemMgr.getModuleId(false);
 
     // Initialise SystemData.
-    systemData.magic = MAGIC_NUMBER;
+    // TODO - re-instate this?   systemData.magic = MAGIC_NUMBER;
 
     // Initialise EEPROM with suitable data.
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
@@ -209,10 +216,10 @@ void firstRun()
             outputDefs[pin].clearLocks();
         }
 
-        saveOutput(pin);
+        outputMgr.saveOutput(pin);
     }
 
-    saveSystemData();
+    systemMgr.saveSystemData();
 }
 
 
@@ -264,7 +271,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
     }
 
     // Detach servo if currently attached and no longer required.
-    if (   (isServo(aOldType))
+    if (   (outputMgr.isServo(aOldType))
         && (!outputDefs[aPin].isServo()))
     {
         // Detach servo.
@@ -274,7 +281,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
     // Establish new type.
     if (outputDefs[aPin].isServo())
     {
-        if (isServo(aOldType))
+        if (outputMgr.isServo(aOldType))
         {
             // Already attached, move (at correct pace) to new position (immediately).
             actionState(aPin, outputDefs[aPin].getState(), 0, true);
@@ -314,7 +321,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
         {
             // Handle double-LEDs as special case (if previous output is a LED).
             // See table at top of source for states and colour sequences.
-            if (isDoubleLed(aPin))
+            if (outputMgr.isDoubleLed(aPin))
             {
                 if  (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
                 {
@@ -342,7 +349,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
                 // Make sure auto-reset is actioned (unless pair of ROADs adjacent to each other).
                 if (outputDefs[aPin].getReset() > 0)
                 {
-                    if (   (!isDoubleLed(aPin - 2))
+                    if (   (!outputMgr.isDoubleLed(aPin - 2))
                         || (outputDefs[aPin    ].getType() != OUTPUT_TYPE_ROAD_UK)
                         || (outputDefs[aPin - 2].getType() != OUTPUT_TYPE_ROAD_UK))
                     {
@@ -350,7 +357,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
                     }
                 }
             }
-            else if (isDoubleLed(aPin + 1))
+            else if (outputMgr.isDoubleLed(aPin + 1))
             {
                 initOutput(aPin + 1, outputDefs[aPin + 1].getType());
             }
@@ -489,13 +496,12 @@ void returnStates()
  */
 void returnRenumber()
 {
-    systemData.i2cModuleID = requestNode;
-    saveSystemData();
+    systemMgr.setModuleId(requestNode);
 
-    i2cComms.sendByte(getModuleId(false));
+    i2cComms.sendByte(systemMgr.getModuleId(false));
 
     // Now change our module ID.
-    i2cComms.setId(getModuleId(true));
+    i2cComms.setId(systemMgr.getModuleId(true));
 }
 
 
@@ -505,7 +511,7 @@ void returnDef()
 {
     if (isDebug(DEBUG_BRIEF))
     {
-        outputDefs[requestOption].printDef(M_DEBUG_SEND, getModuleId(false), requestOption);
+        outputDefs[requestOption].printDef(M_DEBUG_SEND, systemMgr.getModuleId(false), requestOption);
     }
     outputDefs[requestOption].write();
 }
@@ -547,8 +553,7 @@ void processReceipt(int aLen)
             case COMMS_CMD_SYSTEM: processSystem(option);
                                    break;
 
-            case COMMS_CMD_DEBUG:  setDebug(option);                // Option is used for the debug level.
-                                   saveSystemData();
+            case COMMS_CMD_DEBUG:  systemMgr.setDebugLevel(option);                // Option is used for the debug level.
                                    break;
 
             case COMMS_CMD_SET_LO:
@@ -733,7 +738,7 @@ void processMoveLocks()
             // If a lock was changed, persist that change to EEPROM.
             if (changed)
             {
-                saveOutput(pin);
+                outputMgr.saveOutput(pin);
             }
         }
     }
@@ -762,7 +767,7 @@ void processWrite(uint8_t aPin)
 {
     uint8_t oldType = outputDefs[aPin].getType();       // Remember old type.
 
-    if (i2cComms.available() < OUTPUT_SIZE)
+    if (i2cComms.available() < sizeof(OutputDef))
     {
         if (isDebug(DEBUG_ERRORS))
         {
@@ -783,7 +788,7 @@ void processWrite(uint8_t aPin)
 
         if (isDebug(DEBUG_BRIEF))
         {
-            outputDefs[aPin].printDef(M_DEBUG_WRITE, getModuleId(false), aPin);
+            outputDefs[aPin].printDef(M_DEBUG_WRITE, systemMgr.getModuleId(false), aPin);
         }
     }
 }
@@ -796,7 +801,7 @@ void processSave(uint8_t aPin)
     uint8_t oldType = outputDefs[aPin].getType();
 
     persisting = true;              // Resume saving output to EEPROM.
-    saveOutput(aPin);               // And save the output.
+    outputMgr.saveOutput(aPin);     // And save the output.
     initOutput(aPin, oldType);      // Ensure output is initialised to new state.
     initFlasher(aPin);              // Ensure flasher is operating (or not).
 }
@@ -809,7 +814,7 @@ void processReset(uint8_t aPin)
     uint8_t oldType = outputDefs[aPin].getType();
 
     persisting = true;              // Resume saving output to EEPROM.
-    loadOutput(aPin);               // And recover the output's definition.
+    outputMgr.loadOutput(aPin);     // And recover the output's definition.
     initOutput(aPin, oldType);      // Ensure output is initialised to new state.
     initFlasher(aPin);              // Ensure flasher is operating (or not).
 }
@@ -871,7 +876,7 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue
         && (!aState))
     {
         outputs[aPin].delayTo = 0;
-        if (isDoubleLed(aPin))
+        if (outputMgr.isDoubleLed(aPin))
         {
             outputs[aPin - 1].delayTo = 0;
         }
@@ -916,7 +921,7 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue
         // Save the new state if persisting is enabled.
         if (persisting)
         {
-            saveOutput(aPin);
+            outputMgr.saveOutput(aPin);
         }
 
         if (isDebug(DEBUG_DETAIL))
@@ -978,7 +983,7 @@ boolean actionLed(uint8_t aPin, boolean aState)
     outputs[aPin].altStart  = outputs[aPin].altValue;
 
     // Set target intensities.
-    if (   (isDoubleLed(aPin))          // Handle LED_4/ROAD as special case (if preceding output is a LED).
+    if (   (outputMgr.isDoubleLed(aPin))          // Handle LED_4/ROAD as special case (if preceding output is a LED).
         && (persisting))
     {
         newState = actionDoubleLed(aPin, aState);
@@ -1081,7 +1086,7 @@ boolean actionDoubleLed(uint8_t aPin, boolean aState)
         // Save the new state if persisting is enabled.
         if (persisting)
         {
-            saveOutput(ledPin);
+            outputMgr.saveOutput(ledPin);
         }
     }
 
@@ -1161,13 +1166,12 @@ void processCommand()
             case 'n':
             case 'r': if (nodeOld < OUTPUT_NODE_MAX)
                       {
-                          if (nodeOld == getModuleId(false))
+                          if (nodeOld == systemMgr.getModuleId(false))
                           {
-                              systemData.i2cModuleID = nodeNew;
-                              saveSystemData();
-
+                              systemMgr.setModuleId(nodeNew);
+                              
                               // Now change our module ID.
-                              i2cComms.setId(getModuleId(true));
+                              i2cComms.setId(systemMgr.getModuleId(true));
 
                               if (isDebug(DEBUG_ERRORS))
                               {
@@ -1175,7 +1179,7 @@ void processCommand()
                                   Serial.print(CHAR_TAB);
                                   Serial.print(PGMT(M_RENUMBER));
                                   Serial.print(PGMT(M_DEBUG_NODE));
-                                  Serial.print(getModuleId(false));
+                                  Serial.print(systemMgr.getModuleId(false));
                                   Serial.println();
                               }
                               executed = true;
@@ -1390,7 +1394,7 @@ void stepLed(uint8_t aPin)
             if (   (persisting)
                 && (outputDefs[aPin].getReset() > 0))
             {
-                if (isDoubleLed(aPin))
+                if (outputMgr.isDoubleLed(aPin))
                 {
                     stepDoubleLed(aPin);
                 }
@@ -1405,7 +1409,7 @@ void stepLed(uint8_t aPin)
                 }
                 else if (outputDefs[aPin].getState())                                   // Ordinary LED, currently Hi.
                 {
-                    if (!isDoubleLed(aPin + 1))                                         // And not part of a doubleLed.
+                    if (!outputMgr.isDoubleLed(aPin + 1))                               // And not part of a doubleLed.
                     {
                         actionState(aPin, false, outputDefs[aPin].getReset(), false);   // Move to Lo.
                     }
@@ -1459,7 +1463,7 @@ void stepDoubleLed(uint8_t aPin)
         {
             // See if next pair of pins are also a ROAD, or if previous pins are ROADs.
             pin = aPin + 2;
-            if (   (!isDoubleLed(pin))
+            if (   (!outputMgr.isDoubleLed(pin))
                 || (outputDefs[pin].getType() != type))
             {
                 // Next output isn't a ROAD, look for "first" one.

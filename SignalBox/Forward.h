@@ -1,4 +1,5 @@
-/** All includes
+/** Forward references.
+ *  @file
  *
  *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
@@ -10,24 +11,13 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
 
-#include <EEPROM.h>
+#ifndef Forward_h
+#define Forward_h
 
-#include "Config.h"
-#include "Messages.h"
-#include "I2cComms.h"
-#include "System.h"
-#include "Output.h"
 
-#if SB_CONTROLLER
+/** Report a system failure.
+ */
+void systemFail(PGM_P aMessage, int aValue);
 
-#include "EzyBus.h"
-#include "Input.h"
-#include "SignalBox.h"
-#include "Display.h"
-#include "Buttons.h"
-#include "Report.h"
-#include "ImportExport.h"
-#include "Controller.h"
-#include "Configure.h"
 
 #endif

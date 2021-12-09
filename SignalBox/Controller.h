@@ -1,4 +1,5 @@
 /** Controller
+ *  @file
  *
  *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
@@ -243,7 +244,7 @@ class Controller
         {
             if (isOutputNodePresent(node))
             {
-                i2cComms.sendShort(I2C_OUTPUT_BASE_ID + node, COMMS_CMD_DEBUG | (getDebug() & COMMS_OPTION_MASK));
+                i2cComms.sendShort(I2C_OUTPUT_BASE_ID + node, COMMS_CMD_DEBUG | (systemMgr.getDebugLevel() & COMMS_OPTION_MASK));
     
                 if (isDebug(DEBUG_BRIEF))
                 {
@@ -253,7 +254,7 @@ class Controller
                     Serial.print(PGMT(M_DEBUG_NODE));
                     Serial.print(HEX_CHARS[node]);
                     Serial.print(CHAR_SPACE);
-                    Serial.print(PGMT(M_DEBUG_PROMPTS[getDebug()]));
+                    Serial.print(PGMT(M_DEBUG_PROMPTS[systemMgr.getDebugLevel()]));
                     Serial.println();
                 }
             }
@@ -282,7 +283,7 @@ class Controller
                         if (state != (currentSwitchState[node] & mask))
                         {
                             // Ensure Input is loaded and handle the action.
-                            loadInput(node, pin);
+                            inputMgr.loadInput(node, pin);
                             if (aCallback)
                             {
                                 aCallback(node, pin);           // Notify the caller via the callback function.

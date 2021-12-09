@@ -1,4 +1,5 @@
 /** Buttons
+ *  @file
  *
  *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
@@ -40,7 +41,7 @@ class Buttons
     private:
     
     uint8_t lastButton = 0xff;      // Keep track of last button pressed for reporting in debug messages.
-    
+    int *   buttonsPtr;             // Array of button definitions (in the systemMgr object).
 
     /** Initialise the alternate button pins.
      */
@@ -59,6 +60,7 @@ class Buttons
      */
     Buttons()
     {
+        buttonsPtr = systemMgr.getButtons();
         initButtonPins();           // Initialise alternate button pins.
     }
 
@@ -67,7 +69,7 @@ class Buttons
      */
     boolean calibrationRequired()
     {
-        return systemData.buttons[BUTTON_NONE] == 0;
+        return buttonsPtr[BUTTON_NONE] == 0;
     }
     
     
@@ -88,7 +90,7 @@ class Buttons
     
         // Now start calibration
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_PRESS);   // Announce we're ready to start
-        systemData.buttons[BUTTON_HIGH] = 0;                        // Marker for last button.
+        buttonsPtr[BUTTON_HIGH] = 0;                        // Marker for last button.
     
         // Request values for all buttons in turn.
         for (int button = 0; button < BUTTON_HIGH; button++)
@@ -139,7 +141,7 @@ class Buttons
             else
             {
                 // Record button barrier (half way between this button and the previous one).
-                systemData.buttons[button] = (previous + value) / 2;
+                buttonsPtr[button] = (previous + value) / 2;
                 previous = value;
             }
         }
@@ -172,7 +174,7 @@ class Buttons
             // Analog cutoff is in the previous cell in the systemData.button array, so index from BUTTON_NONE.
             for (button = BUTTON_NONE; button < BUTTON_HIGH; button++)
             {
-                if (value >= systemData.buttons[button])
+                if (value >= buttonsPtr[button])
                 {
                     break;
                 }

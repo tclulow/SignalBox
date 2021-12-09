@@ -1,4 +1,5 @@
-/** Input data.
+/** Input definition.
+ *  @file
  *
  *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
@@ -10,8 +11,8 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
 
-#ifndef Input_h
-#define Input_h
+#ifndef InputDef_h
+#define InputDef_h
 
 
 // Input nodes.
@@ -193,41 +194,6 @@ class InputDef
 //        return count;
 //    }
 };
-
-
-/** Variables for working with an Input.
- */
-uint16_t   inputNodes  = 0;                 // Bit map of Input nodes present.
-uint8_t    inputNumber = 0;                 // Current Input number.
-InputDef   inputDef;                        // Definition of the current Input.
-uint32_t   inputTypes  = 0L;                // The types of the Inputs. 2 bits per pin, 16 pins per node = 32 bits.
-uint8_t    inputType   = 0;                 // Type of the current Input (2 bits, INPUT_TYPE_MASK).
-
-
-/** Load an Input's data from EEPROM.
- */
-void loadInput(uint8_t aInput);
-
-
-/** Load an Input's data from EEPROM.
- */
-void loadInput(uint8_t aNode, uint8_t aInput);
-
-
-/** Save an Input's data to EEPROM.
- *  Data in inputNumber and inputDef.
- */
-void saveInput();
-
-
-/** Record the presence of an InputNode in the map.
- */
-void setInputNodePresent(uint8_t aNode, boolean aState);
-
-
-/** Is an Input node present?
- */
-boolean isInputNodePresent(uint8_t aNode);
 
 
 #endif

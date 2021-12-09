@@ -1,4 +1,5 @@
-/** Output data.
+/** Output definition.
+ *  @file
  *
  *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
@@ -10,8 +11,8 @@
  *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
  */
 
-#ifndef Output_h
-#define Output_h
+#ifndef OutputDef_h
+#define OutputDef_h
 
 
 // Output nodes.
@@ -59,7 +60,7 @@
 #define OUTPUT_TYPE_MAX          0x0A   // Limit of output types.
 
 
-/** Definition of an Output.
+ /** Definition of an Output.
  */
 class OutputDef
 {
@@ -471,146 +472,5 @@ class OutputDef
     }
 };
 
-
-#ifdef OUTPUT_BASE      // Methods for loading/saving outputs to/from EEPROM in the OutputModule.
-
-
-// The Outputs' data in RAM.
-OutputDef outputDefs[OUTPUT_PIN_MAX];
-
-
-/** Load an Output's definition from EEPROM.
- */
-void loadOutput(uint8_t aPin)
-{
-    EEPROM.get(OUTPUT_BASE + aPin * sizeof(OutputDef), outputDefs[aPin]);
-    if (isDebug(DEBUG_DETAIL))
-    {
-        outputDefs[aPin].printDef(M_DEBUG_LOAD, getModuleId(false), aPin);
-    }
-}
-
-
-/** Save an Output's definition to EEPROM.
- */
-void saveOutput(uint8_t aPin)
-{
-    if (aPin < OUTPUT_PIN_MAX)
-    {
-        EEPROM.put(OUTPUT_BASE + aPin * sizeof(OutputDef), outputDefs[aPin]);
-        if (isDebug(DEBUG_DETAIL))
-        {
-            outputDefs[aPin].printDef(M_DEBUG_SAVE, getModuleId(false), aPin);
-        }
-    }
-}
-
-
-/** Is the given Output type a servo type?
- *  ie: SERVO or SIGNAL.
- */
-boolean isServo(uint8_t aType)
-{
-    return    (aType == OUTPUT_TYPE_SERVO)
-           || (aType == OUTPUT_TYPE_SIGNAL);
-}
-
-
-/** Is the specified pin a double-led?
- *  The identified pin is legal, a double-led type, and the previous pin is a LED.
- */
-boolean isDoubleLed(uint8_t aPin)
-{
-    return    (aPin > 0)
-           && (aPin < OUTPUT_PIN_MAX)
-           && (outputDefs[aPin - 1].getType() == OUTPUT_TYPE_LED)
-           && (   (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
-               || (outputDefs[aPin].getType() == OUTPUT_TYPE_ROAD_UK)
-               || (outputDefs[aPin].getType() == OUTPUT_TYPE_ROAD_RW));
-}
-
-
-#else   // Methods for reading/writing outputs to/from the OutputModules.
-
-
-/** Variables for working with an Output.
- */
-long       outputNodes  = 0;    // Bit map of Output nodes present (as many as OUTPUT_NODE_MAX - 32 bits).
-uint8_t    outputNode   = 0;    // Current Output node.
-uint8_t    outputPin    = 0;    // Current Output pin.
-OutputDef  outputDef;           // Definition of current Output.
-
-uint8_t    outputStates[OUTPUT_NODE_MAX];   // State of all the attached output module's Outputs.
-
-
-/** Read an Output's data from an OutputModule.
- */
-void readOutput(uint8_t aNode, uint8_t aPin);
-
-
-/** Read an Output's data from an OutputModule.
- */
-void readOutput(uint8_t aOutputNumber);
-
-
-/** Write an Output's data to an OutputModule.
- */
-void writeOutput();
-
-
-/** Persist an Output's data to an OutputModule.
- */
-void writeSaveOutput();
-
-
-/** Write a change of state to the Output module.
- */
-void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay);
-
-
-/** Reset current Output.
- *  And then reload its definition.
- */
-void resetOutput();
-
-
-/** Read the states of the given node's Outputs.
- *  Save in OutputStates.
- */
-void readOutputStates(uint8_t aNode);
-
-
-/** Gets the states of all the given node's Outputs.
- */
-uint8_t getOutputStates(uint8_t aNode);
-
-
-/** Sets the states of all the given node's Outputs.
- */
-void setOutputStates(uint8_t aNode, uint8_t aStates);
-
-
-/** Gets the state of the given Output's given pin.
- */
-boolean getOutputState(uint8_t aNode, uint8_t aPin);
-
-
-/** Sets the state of the given node's Output pin.
- */
-void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState);
-
-
-/** Record the presence of an OutputNode in the map.
- */
-void setOutputNodePresent(uint8_t aNode, boolean aState);
-
-
-/** Is an Output node present?
- *  Look for Output's node in outputNodes.
- */
-boolean isOutputNodePresent(uint8_t aNode);
-
-
-#endif
 
 #endif

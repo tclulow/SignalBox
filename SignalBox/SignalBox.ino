@@ -53,7 +53,26 @@
 #define SB_CONTROLLER true          // The controller (Uno) device.
 
 
-#include "All.h"
+#include "Config.h"                 // Common classes
+#include "Messages.h"
+#include "Persisted.h"
+#include "I2cComms.h"
+#include "System.h"
+#include "OutputDef.h"
+
+#include "Forward.h"
+
+#include "EzyBus.h"                 // SignalBox-specific classes.
+#include "OutputCtl.h"
+#include "InputDef.h"
+#include "InputMgr.h"
+#include "SignalBox.h"
+#include "Display.h"
+#include "Buttons.h"
+#include "Report.h"
+#include "ImportExport.h"
+#include "Controller.h"
+#include "Configure.h"
 
 
 #define COMMAND_BUFFER_LEN   8                  // Serial command buffer length
@@ -69,13 +88,30 @@ long    tickGateway      = 0L;      // Time for next gateway request.
 long    tickHeartBeat    = 0L;      // Time of last heartbeat.
 
 
+/** Report a system failure.
+ */
+void systemFail(PGM_P aMessage, int aValue)
+{
+    Serial.print(PGMT(M_FAILURE));
+    Serial.print(CHAR_TAB);
+    Serial.print(PGMT(aMessage));
+    Serial.print(CHAR_SPACE);
+    Serial.print(aValue, HEX);
+    Serial.println();
+
+    disp.clear();
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_FAILURE);
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, aMessage);
+    disp.printHexByteAt(-2, LCD_ROW_BOT, aValue);
+
+    controller.setDisplayTimeout(DELAY_FAIL);
+}
+
+
 /** Software hasn't been run before.
  */
 void firstRun()
 {
-    // Initialise SystemData.
-    systemData.magic = MAGIC_NUMBER;
-
     // Calibrate the LCD buttons.
     if (hasLcdShield)
     {
@@ -107,7 +143,7 @@ void firstRun()
     }
 
     // Save all data to EEPROM.
-    saveSystemData();
+    systemMgr.saveSystemData();
 
     buttons.waitForButtonClick();
 }
@@ -140,7 +176,7 @@ void defaultInputs(uint8_t aInputType)
                 inputDef.setDelay(index, true);
             }
 
-            saveInput();
+            inputMgr.saveInput();
             inputNumber += 1;       // Input numbers map nicely to OutputNumbers.
         }
     }
@@ -215,7 +251,7 @@ void processCommand()
             case 'i': if (   (node < INPUT_NODE_MAX)
                           && (pin  < INPUT_PIN_MAX))
                       {
-                          loadInput(node, pin);
+                          inputMgr.loadInput(node, pin);
                           controller.processInput(false);
                           executed = true;
                       }
@@ -416,10 +452,10 @@ void setup()
     // Initialise
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_STARTUP, LCD_LEN_STATUS);
 
-    flashVersion();                                     // Flash our version number on the built-in LED.
+    systemMgr.flashVersion();                                             // Flash our version number on the built-in LED.
 
     // Deal with first run (software has never been run before).
-    if (!loadSystemData())
+    if (!systemMgr.loadSystemData())
     {
         firstRun();
     }
@@ -428,23 +464,23 @@ void setup()
                  || (buttons.readButton() != BUTTON_NONE)))     // or an input button is being pressed.
     {
         buttons.calibrateButtons();
-        saveSystemData();
+        systemMgr.saveSystemData();
     }
 
-    // Dump memory in raw format if debug-full.
-    if (isDebug(DEBUG_FULL))
-    {
-        dumpMemory();
-    }
+//    // Dump memory in raw format if debug-full.
+//    if (isDebug(DEBUG_FULL))
+//    {
+//        dumpMemory();
+//    }
 
     // Check if version update required.
-    if (systemData.version != VERSION)
+    if (systemMgr.isUpdateRequired())
     {
         if (isDebug(DEBUG_NONE))
         {
             Serial.print(PGMT(M_UPDATE));
             Serial.print(CHAR_SPACE);
-            Serial.print(systemData.version, HEX);
+            Serial.print(systemMgr.getVersion(), HEX);
             Serial.print(CHAR_SPACE);
             Serial.print(VERSION, HEX);
             Serial.println();
@@ -453,10 +489,9 @@ void setup()
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_UPDATE, LCD_LEN_STATUS);
 
         // Do the update here.
+        systemMgr.update();
         buttons.waitForButtonClick();           // Nothing to do, just show it's happening.
 
-        systemData.version = VERSION;
-        saveSystemData();
     }
 
     // Scan for Input and Output nodes.
