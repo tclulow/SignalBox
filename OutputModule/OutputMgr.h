@@ -88,7 +88,7 @@ class OutputMgr: public Persisted
 /** Singleton instance of the class.
  *  In EEPROM immediately after the end of SystemMgr.
  */
-OutputMgr outputMgr(systemMgr.getSize());    
+OutputMgr outputMgr(systemMgr.getEnd());    
 
 
 #endif

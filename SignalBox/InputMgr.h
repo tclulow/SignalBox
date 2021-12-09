@@ -205,7 +205,7 @@ class InputMgr: public Persisted
 /** Singleton instance of the class.
  *  In EEPROM immediately after the end of SystemMgr.
  */
-InputMgr inputMgr(systemMgr.getSize());
+InputMgr inputMgr(systemMgr.getEnd());
 
 
 #endif

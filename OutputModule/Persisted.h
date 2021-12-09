@@ -60,11 +60,11 @@ class Persisted
     }
 
     
-    /** Gets the size of the data this user stores in EEPROM.
+    /** Gets the end of the data this user stores in EEPROM.
      */
-    uint16_t getSize()
+    uint16_t getEnd()
     {
-        return size;
+        return base + size;
     }    
 };
 
