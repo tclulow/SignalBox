@@ -65,22 +65,38 @@ $(function() {
 <div class="title">EzyBus.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#ifndef EzyBus_h</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#define EzyBus_h</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<a href="_ezy_bus_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#ifndef EzyBus_h</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#define EzyBus_h</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#define EZY_BASE          0   // EEPROM address of output module definitions.</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define EZY_OUTPUT_SIZE   4   // Four bytes for an EzyBus output definition.</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#define EZY_MAGIC_ADDR  641   // EEPROM address of EzyBus magic number.</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#define EZY_MAGIC        90   // EzyBus magic number.</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#define EZY_NODE_MAX     16   // EzyBus max node number.</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#define EZY_SPEED_SHIFT   3   // EzyBus speed is shifted 3 bits.</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#define EZY_BASE          0   // EEPROM address of output module definitions.</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#define EZY_OUTPUT_SIZE   4   // Four bytes for an EzyBus output definition.</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#define EZY_MAGIC_ADDR  641   // EEPROM address of EzyBus magic number.</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#define EZY_MAGIC        90   // EzyBus magic number.</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#define EZY_NODE_MAX     16   // EzyBus max node number.</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#define EZY_SPEED_SHIFT   3   // EzyBus speed is shifted 3 bits.</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="_ezy_bus_8h.html#ad8d7e9d718757b0aa04db6c4671a11d1">   29</a></span>&#160;<span class="keywordtype">boolean</span> <a class="code" href="_ezy_bus_8h.html#ad8d7e9d718757b0aa04db6c4671a11d1">ezyBusDetected</a>()</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;{</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordflow">return</span> EEPROM.read(EZY_MAGIC_ADDR) == EZY_MAGIC;    <span class="comment">// Check for tell-tale value in EEPROM</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;}</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="_ezy_bus_8h.html#a0193dfe305141fd2d15f84bda4f76f13">   37</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="_ezy_bus_8h.html#a0193dfe305141fd2d15f84bda4f76f13">ezyBusClear</a>()</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;{</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="_ezy_bus_8h.html#ad8d7e9d718757b0aa04db6c4671a11d1">ezyBusDetected</a>())</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    {</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        EEPROM.put(EZY_MAGIC_ADDR, EZY_MAGIC + 1);      <span class="comment">// Corrupt the EzyBus magic number slightly.</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    }</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;}</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="a_ezy_bus_8h_html_ad8d7e9d718757b0aa04db6c4671a11d1"><div class="ttname"><a href="_ezy_bus_8h.html#ad8d7e9d718757b0aa04db6c4671a11d1">ezyBusDetected</a></div><div class="ttdeci">boolean ezyBusDetected()</div><div class="ttdef"><b>Definition:</b> EzyBus.h:29</div></div>
+<div class="ttc" id="a_ezy_bus_8h_html_a0193dfe305141fd2d15f84bda4f76f13"><div class="ttname"><a href="_ezy_bus_8h.html#a0193dfe305141fd2d15f84bda4f76f13">ezyBusClear</a></div><div class="ttdeci">void ezyBusClear()</div><div class="ttdef"><b>Definition:</b> EzyBus.h:37</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

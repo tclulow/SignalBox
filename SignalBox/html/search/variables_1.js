@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['haslcdshield_315',['hasLcdShield',['../_signal_box_8h.html#a8cf0451afe45abcd0d4011296fecc64c',1,'SignalBox.h']]]
+  ['disp_379',['disp',['../_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e',1,'Display.h']]]
 ];

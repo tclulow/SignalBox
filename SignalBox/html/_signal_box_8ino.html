@@ -69,7 +69,24 @@ $(function() {
 <div class="title">SignalBox.ino File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;All.h&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="_config_8h_source.html">Config.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_messages_8h_source.html">Messages.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_persisted_8h_source.html">Persisted.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_i2c_comms_8h_source.html">I2cComms.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_system_8h_source.html">System.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_output_def_8h_source.html">OutputDef.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_forward_8h_source.html">Forward.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_ezy_bus_8h_source.html">EzyBus.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_output_ctl_8h_source.html">OutputCtl.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_input_def_8h_source.html">InputDef.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_input_mgr_8h_source.html">InputMgr.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_signal_box_8h_source.html">SignalBox.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_display_8h_source.html">Display.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_buttons_8h_source.html">Buttons.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_report_8h_source.html">Report.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_import_export_8h_source.html">ImportExport.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_controller_8h_source.html">Controller.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_configure_8h_source.html">Configure.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
@@ -82,6 +99,8 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a83443f1aa10bfe618b22d83147b88da6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a83443f1aa10bfe618b22d83147b88da6">systemFail</a> (PGM_P aMessage, int aValue)</td></tr>
+<tr class="separator:a83443f1aa10bfe618b22d83147b88da6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ce56b81d6628fc2439aee08f3816ae2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a5ce56b81d6628fc2439aee08f3816ae2">firstRun</a> ()</td></tr>
 <tr class="separator:a5ce56b81d6628fc2439aee08f3816ae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95300e042d6726956172fa2748394116"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a95300e042d6726956172fa2748394116">defaultInputs</a> (uint8_t aInputType)</td></tr>
@@ -146,6 +165,35 @@ long&#160;</td><td class="memItemRight" valign="bottom"><b>tickHeartBeat</b> = 0
 <p>D0 Serial Rx. D1 Serial Tx. D2 Alternate up button. D3 Alternate right button. D4 LCD shield data D4. D5 LCD shield data D5. D6 LCD shield data D6. D7 LCD shield data D7. D8 LCD shield rs. D9 LCD shield enable. D10 LCD shield backlight. D11 LCD shield detect. D12 Unused. D13 Flash firmare version and Interlock warning.</p>
 <p>A0 LCD shield buttons. A1 Alternate select button. A2 Alternate left button. A3 Alternate down button. A4 I2C SDA. A5 I2C SCL. A6 Not available. A7 Not available. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="a83443f1aa10bfe618b22d83147b88da6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83443f1aa10bfe618b22d83147b88da6">&#9670;&nbsp;</a></span>systemFail()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void systemFail </td>
+          <td>(</td>
+          <td class="paramtype">PGM_P&#160;</td>
+          <td class="paramname"><em>aMessage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>aValue</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Report a system failure. </p>
+
+</div>
+</div>
 <a id="a5ce56b81d6628fc2439aee08f3816ae2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5ce56b81d6628fc2439aee08f3816ae2">&#9670;&nbsp;</a></span>firstRun()</h2>
 
