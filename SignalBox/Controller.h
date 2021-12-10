@@ -515,8 +515,8 @@ class Controller
         else
         {
             if (   (isReportEnabled(REPORT_PAUSE)))
-    //            || (   (isReportEnabled(REPORT_SHORT))
-    //                && (inputDef.getOutputCount() <= 1)))
+//                || (   (isReportEnabled(REPORT_SHORT))
+//                    && (inputDef.getOutputCount() <= 1)))
             {
                 readOutput(inputDef.getOutput(aIndex));
                 disp.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_COLS);
@@ -528,8 +528,8 @@ class Controller
                 disp.printCh(outputDef.getResetCh());
                 disp.setCursor(-2, LCD_ROW_BOT);
                 disp.printDec(aDelay, 2, CHAR_SPACE);
-    
-    //            if (isReportEnabled(REPORT_PAUSE))
+
+                if (isReportEnabled(REPORT_PAUSE))
                 {
                     reportPause();
                 }

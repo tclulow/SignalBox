@@ -123,19 +123,19 @@ class InputMgr: public Persisted
             }
             Serial.println();
     
-    //        Serial.print(millis());
-    //        Serial.print("\tLoad types ");
-    //        Serial.print(aNode, HEX);
-    //        Serial.print(CHAR_COMMA);
-    //        Serial.print(aPin, HEX);
-    //        Serial.print(" @");
-    //        Serial.print(TYPES_BASE + (aNode * TYPES_SIZE), HEX);
-    //        Serial.print(" = ");
-    //        Serial.print(inputTypes, HEX);
-    //        Serial.print(" (");
-    //        Serial.print(inputType, HEX);
-    //        Serial.print(")");
-    //        Serial.println();
+//            Serial.print(millis());
+//            Serial.print("\tLoad types ");
+//            Serial.print(aNode, HEX);
+//            Serial.print(CHAR_COMMA);
+//            Serial.print(aPin, HEX);
+//            Serial.print(" @");
+//            Serial.print(TYPES_BASE + (aNode * TYPES_SIZE), HEX);
+//            Serial.print(" = ");
+//            Serial.print(inputTypes, HEX);
+//            Serial.print(" (");
+//            Serial.print(inputType, HEX);
+//            Serial.print(")");
+//            Serial.println();
         }
     }
     
@@ -181,21 +181,21 @@ class InputMgr: public Persisted
                 }
                 Serial.println();
     
-    //            Serial.print(millis());
-    //            Serial.print("\tSave types ");
-    //            Serial.print(node, HEX);
-    //            Serial.print(",");
-    //            Serial.print(pin, HEX);
-    //            Serial.print("] @");
-    //            Serial.print(TYPES_BASE + (node * TYPES_SIZE), HEX);
-    //            Serial.print(", mask=");
-    //            Serial.print(mask, HEX);
-    //            Serial.print(" = ");
-    //            Serial.print(inputTypes, HEX);
-    //            Serial.print(" (");
-    //            Serial.print(inputType, HEX);
-    //            Serial.print(")");
-    //            Serial.println();
+//                Serial.print(millis());
+//                Serial.print("\tSave types ");
+//                Serial.print(node, HEX);
+//                Serial.print(",");
+//                Serial.print(pin, HEX);
+//                Serial.print("] @");
+//                Serial.print(TYPES_BASE + (node * TYPES_SIZE), HEX);
+//                Serial.print(", mask=");
+//                Serial.print(mask, HEX);
+//                Serial.print(" = ");
+//                Serial.print(inputTypes, HEX);
+//                Serial.print(" (");
+//                Serial.print(inputType, HEX);
+//                Serial.print(")");
+//                Serial.println();
             }
         }
     }

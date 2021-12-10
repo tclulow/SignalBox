@@ -159,14 +159,14 @@ class Buttons
         uint8_t button = BUTTON_NONE;
         int     value  = analogRead(BUTTON_ANALOG);
     
-    //    static int previous = 0;
-    //    if (value != previous)
-    //    {
-    //        previous = value;
-    //        Serial.print(millis());
-    //        Serial.print(" ");
-    //        Serial.println(value);
-    //    }
+//        static int previous = 0;
+//        if (value != previous)
+//        {
+//            previous = value;
+//            Serial.print(millis());
+//            Serial.print(" ");
+//            Serial.println(value);
+//        }
     
         if (hasLcdShield)
         {
