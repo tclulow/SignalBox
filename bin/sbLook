@@ -1,0 +1,9 @@
+#!/bin/bash
+# Look for a string in all the local files
+
+clear
+for PATTERN in "$@"
+do
+    egrep -n "${PATTERN}" `find . -type f`
+done
+
