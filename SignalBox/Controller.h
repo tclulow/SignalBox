@@ -452,13 +452,13 @@ class Controller
                                 outputDef.printDef(M_VS, outputNode, outputPin);
                             }
     
-    #if INTERLOCK_WARNING_PIN
+#if INTERLOCK_WARNING_PIN
                             pinMode(INTERLOCK_WARNING_PIN, OUTPUT);
                             digitalWrite(INTERLOCK_WARNING_PIN, HIGH);
                             timeoutInterlock = millis() + INTERLOCK_WARNING_TIME;
                             // Alternative using tone function (about 700+ bytes of extra code).
                             // tone(INTERLOCK_WARNING_PIN, INTERLOCK_WARNING_FREQ, INTERLOCK_WARNING_TIME);
-    #endif
+#endif
     
                             return true;            // A lock exists.
                         }
