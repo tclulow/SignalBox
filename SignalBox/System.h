@@ -243,7 +243,7 @@ class SystemMgr: public Persisted
     void flashVersion()
     {
         pinMode(LED_BUILTIN, OUTPUT);       // Configure the on-board LED pin for output
-    
+
         // Flash the digits of the version number string.
         for (uint8_t ind = 0; ind < strlen_P(M_VERSION); ind++)
         {

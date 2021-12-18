@@ -49,7 +49,7 @@
  *      SET     <Pin>       <Value>
  *      
  *      INP_LO  <Pin>       <Node>
- *      INO_HI  <Pin>       <Node>
+ *      INP_HI  <Pin>       <Node>
  *
  *      NONE    0xf
  *
