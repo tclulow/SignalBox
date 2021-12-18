@@ -497,6 +497,7 @@ void returnStates()
 void returnRenumber()
 {
     systemMgr.setModuleId(requestNode);
+    systemMgr.saveSystemData();
 
     i2cComms.sendByte(systemMgr.getModuleId(false));
 
@@ -553,33 +554,34 @@ void processReceipt(int aLen)
             case COMMS_CMD_SYSTEM: processSystem(option);
                                    break;
 
-            case COMMS_CMD_DEBUG:  systemMgr.setDebugLevel(option);                // Option is used for the debug level.
+            case COMMS_CMD_DEBUG:  systemMgr.setDebugLevel(option);     // Option is used for the debug level.
+                                   systemMgr.saveSystemData();
                                    break;
 
             case COMMS_CMD_SET_LO:
-            case COMMS_CMD_SET_HI: i2cComms.readByte();             // Dummy node number (not required).
-                                   delay = i2cComms.readByte();     // Delay value.
+            case COMMS_CMD_SET_HI: i2cComms.readByte();                 // Dummy node number (not required).
+                                   delay = i2cComms.readByte();         // Delay value.
                                    actionState(pin, command == COMMS_CMD_SET_HI, delay, false);
                                    break;
 
-            case COMMS_CMD_READ:   requestCommand = command;        // Record the command.
-                                   requestOption  = option;         // and the pin the master wants to read.
+            case COMMS_CMD_READ:   requestCommand = command;            // Record the command.
+                                   requestOption  = option;             // and the pin the master wants to read.
                                    break;
 
-            case COMMS_CMD_WRITE:  processWrite(pin);               // Process the Output's data.
+            case COMMS_CMD_WRITE:  processWrite(pin);                   // Process the Output's data.
                                    break;
 
-            case COMMS_CMD_SAVE:   processSave(pin);                // Save the Output's data.
+            case COMMS_CMD_SAVE:   processSave(pin);                    // Save the Output's data.
                                    break;
 
-            case COMMS_CMD_RESET:  processReset(pin);               // Reset the Output.
+            case COMMS_CMD_RESET:  processReset(pin);                   // Reset the Output.
                                    break;
             
             case COMMS_CMD_SET:    if (i2cComms.available())
                                    {
                                        value = i2cComms.readByte();
                                    }
-                                   processSet(pin, value);          // Set the Output's value.
+                                   processSet(pin, value);              // Set the Output's value.
                                    break;
 
             default:               unrecognisedCommand(M_DEBUG_RECEIPT, command, option);
@@ -1169,6 +1171,7 @@ void processCommand()
                           if (nodeOld == systemMgr.getModuleId(false))
                           {
                               systemMgr.setModuleId(nodeNew);
+                              systemMgr.saveSystemData();
                               
                               // Now change our module ID.
                               i2cComms.setId(systemMgr.getModuleId(true));
