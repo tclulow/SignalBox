@@ -1456,7 +1456,7 @@ class Configure
             disp.clearRow(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP);
             disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_IDENT, LCD_LEN_OPTION);
             disp.clearRow(LCD_COL_START, LCD_ROW_DET);
-    
+
             // Test all the nodes in turn.
             for (uint8_t node = 0; (node < OUTPUT_NODE_MAX) && !interrupted; node++)
             {
@@ -1466,14 +1466,14 @@ class Configure
                     for (int pin = 0; pin < OUTPUT_PIN_MAX && !interrupted; ) // pin++)
                     {
                         readOutput(node, pin);
-    
+
                         // Pin is active, test it.
                         if (outputDef.getType() != OUTPUT_TYPE_NONE)
                         {
                             disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION);
                             disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, node);
                             disp.printHexChAt(LCD_COL_PIN,  LCD_ROW_DET, pin);
-    
+
                             // Set parameters for test.
                             finishAt = millis() + DELAY_READ * 2;       // Time to see 2 states.
                             if (outputDef.isServo())
@@ -1484,7 +1484,7 @@ class Configure
                             {
                                 interval = DELAY_BLINK;
                             }
-    
+
                             // Run the test for a while.
                             while (   (millis() < finishAt)
                                    && (button == BUTTON_NONE))
@@ -1492,7 +1492,7 @@ class Configure
                                 outputDef.setState(!outputDef.getState());
                                 writeOutput();
                                 button = delayFor(interval);
-    
+
                                 outputDef.setState(!outputDef.getState());
                                 writeOutput();
                                 if (button == BUTTON_NONE)
@@ -1502,25 +1502,25 @@ class Configure
                             }
                             resetOutput();
                         }
-    
+
                         // If button pressed, handle the interuption.
                         if (button != BUTTON_NONE)
                         {
                             int adjust = 0;
-    
+
                             switch (button)
                             {
                                 case BUTTON_NONE:   break;
-    
+
                                 case BUTTON_UP:     adjust += 2;    // Use +1 to compensate for the -1 that the code below will do.
                                 case BUTTON_DOWN:   adjust -= 1;
                                                     node = nextNode(node, adjust, false, true);
                                                     pin = 0;
                                                     break;
-    
+
                                 case BUTTON_SELECT: interrupted = true;
                                                     break;
-    
+
                                 case BUTTON_LEFT:   for (pin -= 1; pin > 0; pin--)
                                                     {
                                                         readOutput(node, pin);
@@ -1530,11 +1530,11 @@ class Configure
                                                         }
                                                     }
                                                     break;
-    
+
                                 case BUTTON_RIGHT:  pin += 1;
                                                     break;
                             }
-    
+
                             disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INTERRUPT);
                             buttons.waitForButtonRelease();
                             button = BUTTON_NONE;
@@ -2325,6 +2325,6 @@ void displayScannedInput(uint8_t aNode, uint8_t aPin)
 {
     configure.displaySelectedInput(aNode, aPin);
 }
-    
+
 
 #endif

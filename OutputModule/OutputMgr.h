@@ -31,8 +31,8 @@ class OutputMgr: public Persisted
     {
         size = OUTPUT_NODE_MAX * sizeof(OutputDef);
     }
-    
-    
+
+
     /** Load an Output's definition from EEPROM.
      */
     void loadOutput(uint8_t aPin)
@@ -43,8 +43,8 @@ class OutputMgr: public Persisted
             outputDefs[aPin].printDef(M_DEBUG_LOAD, systemMgr.getModuleId(false), aPin);
         }
     }
-    
-    
+
+
     /** Save an Output's definition to EEPROM.
      */
     void saveOutput(uint8_t aPin)
@@ -58,8 +58,8 @@ class OutputMgr: public Persisted
             }
         }
     }
-    
-    
+
+
     /** Is the given Output type a servo type?
      *  ie: SERVO or SIGNAL.
      */
@@ -68,8 +68,8 @@ class OutputMgr: public Persisted
         return    (aType == OUTPUT_TYPE_SERVO)
                || (aType == OUTPUT_TYPE_SIGNAL);
     }
-    
-    
+
+
     /** Is the specified pin a double-led?
      *  The identified pin is legal, a double-led type, and the previous pin is a LED.
      */
@@ -88,7 +88,7 @@ class OutputMgr: public Persisted
 /** Singleton instance of the class.
  *  In EEPROM immediately after the end of SystemMgr.
  */
-OutputMgr outputMgr(systemMgr.getEnd());    
+OutputMgr outputMgr(systemMgr.getEnd());
 
 
 #endif

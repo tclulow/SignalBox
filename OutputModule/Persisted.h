@@ -40,7 +40,7 @@ class Persisted
         Serial.print(", size=");
         Serial.print(size, HEX);
         Serial.println();
-        
+
     };
 
 
@@ -59,13 +59,13 @@ class Persisted
         return base;
     }
 
-    
+
     /** Gets the end of the data this user stores in EEPROM.
      */
     uint16_t getEnd()
     {
         return base + size;
-    }    
+    }
 };
 
 

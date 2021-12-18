@@ -103,33 +103,33 @@ class SystemMgr: public Persisted
     private:
 
     uint8_t jumperModuleId = 0;                                 // The hardware module ID - read from jumperPins.
-    
+
     /** Data describing an Output's operation.
      */
     struct SystemData
     {
         public:
-    
+
         long    magic           = MAGIC_NUMBER;                 // Magic number to identify software.
         long    version         = VERSION;                      // Software version number to identify upgrades.
-    
+
         uint8_t rfu3[3];                                        // RFU. Was the I2C addresses.
-    
+
         uint8_t i2cModuleId     = SYS_MODULE_ID_JUMPERS;        // The module number we're using - default, use hardware.
-    
+
         uint8_t debugLevel      = DEBUG_ERRORS;                 // Debugging level.
         uint8_t reportLevel     = REPORT_LONG;                  // Reporting level.
-    
+
         int     buttons[6];                                     // Configuration of analog buttons - BUTTON_HIGH + 1.
-    
+
         char    rfu[6];                                         // RFU. 32 bytes in all.
     };
-    
+
     SystemData systemData;      // Singleton instance of the SystemData
 
-    
-    public:     
-    
+
+    public:
+
     /** A SystemMgr.
      */
     SystemMgr(uint16_t aBase) : Persisted(aBase)
@@ -185,7 +185,7 @@ class SystemMgr: public Persisted
     boolean loadSystemData()
     {
         EEPROM.get(getBase(), systemData.magic);  // Check the magic number
-    
+
         if (systemData.magic == MAGIC_NUMBER)
         {
             EEPROM.get(getBase(), systemData);
@@ -195,17 +195,17 @@ class SystemMgr: public Persisted
 //            Serial.print(jumperModuleId, HEX);
 //            Serial.println();
         }
-    
+
         return systemData.magic == MAGIC_NUMBER;
     }
-    
-    
+
+
     /** Save SystemData.
      */
     void saveSystemData()
     {
         EEPROM.put(getBase(), systemData);
-    
+
         debugSystemData();
     }
 
@@ -216,8 +216,8 @@ class SystemMgr: public Persisted
     {
         return systemData.version;
     }
-    
-    
+
+
     /** Is an update required?
      *  Version number has changed.
      */
@@ -235,7 +235,7 @@ class SystemMgr: public Persisted
         systemData.version = VERSION;
         saveSystemData();
     }
-    
+
 
     /** Show version number by flashing LED
      *  and reporting it on Serial output.
@@ -243,7 +243,7 @@ class SystemMgr: public Persisted
     void flashVersion()
     {
         pinMode(LED_BUILTIN, OUTPUT);       // Configure the on-board LED pin for output
-    
+
         // Flash the digits of the version number string.
         for (uint8_t ind = 0; ind < strlen_P(M_VERSION); ind++)
         {
@@ -270,7 +270,7 @@ class SystemMgr: public Persisted
                 delay(DELAY_BLINK_LONG);                    // Long gap for non-numeric data.
             }
         }
-    
+
         if (isDebug(DEBUG_NONE))
         {
             Serial.print(PGMT(M_SOFTWARE));
@@ -288,7 +288,7 @@ class SystemMgr: public Persisted
         {
             maskLimit >>= 1;            // Don't show software jumper pin
         }
-    
+
         // Flash module number, short blink for set (one), long blink for unset (zero).
         delay(DELAY_BLINK_LONG);
         for (uint8_t mask = 1; mask <= maskLimit; mask <<= 1)
@@ -300,10 +300,10 @@ class SystemMgr: public Persisted
         }
         delay(DELAY_BLINK_LONG);
 #endif
-    
+
     }
 
-    
+
 #if SB_OUTPUT_MODULE
     /** Is the ID set by jumpers?
      */
@@ -311,8 +311,8 @@ class SystemMgr: public Persisted
     {
         return systemData.i2cModuleId == SYS_MODULE_ID_JUMPERS;
     }
-        
-        
+
+
     /** Set the I2C module Id.
      */
     void setModuleId(uint8_t aModuleId)
@@ -320,14 +320,14 @@ class SystemMgr: public Persisted
         systemData.i2cModuleId = aModuleId;
     }
 
-    
+
     /** Gets the output module ID.
      *  Either by hardware jumpers or from EEPROM.
      */
     uint8_t getModuleId(boolean aIncludeBase)
     {
         uint8_t moduleId = isJumperId() ? jumperModuleId : systemData.i2cModuleId;
-    
+
         // Announce module ID
         if (   (isDebug(DEBUG_BRIEF))
             && (aIncludeBase))
@@ -339,7 +339,7 @@ class SystemMgr: public Persisted
             Serial.print(I2C_OUTPUT_BASE_ID + moduleId, HEX);
             Serial.println();
         }
-    
+
         return (aIncludeBase ? I2C_OUTPUT_BASE_ID : 0) + moduleId;
     }
 #endif
@@ -367,7 +367,7 @@ class SystemMgr: public Persisted
     {
         return systemData.debugLevel >= aLevel;
     }
-    
+
 
     /** Sets the report level.
      */
@@ -411,7 +411,7 @@ class SystemMgr: public Persisted
             Serial.print(CHAR_SPACE);
             Serial.print(systemData.reportLevel,     HEX);
             Serial.println();
-    
+
 //            if (isDebug(DEBUG_FULL))
 //            {
 //                dumpMemory();
@@ -425,7 +425,7 @@ class SystemMgr: public Persisted
 SystemMgr systemMgr(0);
 
 
-/** TODO - revise debugging 
+/** TODO - revise debugging
  */
 boolean isDebug(uint8_t aLevel)
 {

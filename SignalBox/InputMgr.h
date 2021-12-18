@@ -31,8 +31,8 @@ uint8_t    inputNumber = 0;                 // Current Input number.
 InputDef   inputDef;                        // Definition of the current Input.
 uint32_t   inputTypes  = 0L;                // The types of the Inputs. 2 bits per pin, 16 pins per node = 32 bits.
 uint8_t    inputType   = 0;                 // Type of the current Input (2 bits, INPUT_TYPE_MASK).
-    
-    
+
+
 /** Record the presence of an InputNode in the map.
  */
 void setInputNodePresent(uint8_t aNode, boolean aState)
@@ -46,8 +46,8 @@ void setInputNodePresent(uint8_t aNode, boolean aState)
         inputNodes &= ~(1 << aNode);
     }
 }
-    
-    
+
+
 /** Is an Input node present?
  */
 boolean isInputNodePresent(uint8_t aNode)
@@ -62,10 +62,10 @@ boolean isInputNodePresent(uint8_t aNode)
 class InputMgr: public Persisted
 {
     private:
-    
+
     uint16_t baseInputs;                    // Base of InputDefs.
 
-    
+
     public:
 
     /** An InputMgr.
@@ -73,30 +73,30 @@ class InputMgr: public Persisted
     InputMgr(uint16_t aBase) : Persisted(aBase)
     {
         baseInputs = base + TYPES_SIZE * INPUT_NODE_MAX;                // Immediately after Input types.
-        size = TYPES_SIZE * INPUT_NODE_MAX + INPUT_SIZE * INPUT_MAX;    // Types + definitions.         
+        size = TYPES_SIZE * INPUT_NODE_MAX + INPUT_SIZE * INPUT_MAX;    // Types + definitions.
     }
 
-    
+
     /** Load an Input's data from EEPROM.
      */
     void loadInput(uint8_t aInput)
     {
         loadInput((aInput >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK, aInput & INPUT_PIN_MASK);
     }
-    
-    
+
+
     /** Load an Input's data from EEPROM.
      */
     void loadInput(uint8_t aNode, uint8_t aPin)
     {
         uint32_t mask = ((long)INPUT_TYPE_MASK) << (aPin << INPUT_TYPE_SHIFT);
-    
+
         inputNumber = ((aNode & INPUT_NODE_MASK) << INPUT_NODE_SHIFT) | (aPin & INPUT_PIN_MASK);
-    
+
         EEPROM.get(base       + (aNode       * TYPES_SIZE), inputTypes);
         EEPROM.get(baseInputs + (inputNumber * INPUT_SIZE), inputDef);
         inputType = (inputTypes >> (aPin << INPUT_TYPE_SHIFT)) & INPUT_TYPE_MASK;
-    
+
         if (isDebug(DEBUG_DETAIL))
         {
             Serial.print(millis());
@@ -122,7 +122,7 @@ class InputMgr: public Persisted
                 }
             }
             Serial.println();
-    
+
 //            Serial.print(millis());
 //            Serial.print("\tLoad types ");
 //            Serial.print(aNode, HEX);
@@ -138,8 +138,8 @@ class InputMgr: public Persisted
 //            Serial.println();
         }
     }
-    
-    
+
+
     /** Save an Input's data to EEPROM.
      *  Data in inputNumber and inputDef.
      */
@@ -150,11 +150,11 @@ class InputMgr: public Persisted
             uint8_t  node = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
             uint8_t  pin  = (inputNumber                    ) & INPUT_PIN_MASK;
             uint32_t mask = ((long)INPUT_TYPE_MASK) << (pin << INPUT_TYPE_SHIFT);
-    
+
             inputTypes = (inputTypes & ~mask) | ((((long)inputType) << (pin << INPUT_TYPE_SHIFT)) & mask);
             EEPROM.put(base       + (node        * TYPES_SIZE), inputTypes);
             EEPROM.put(baseInputs + (inputNumber * INPUT_SIZE), inputDef);
-    
+
             if (isDebug(DEBUG_DETAIL))
             {
                 Serial.print(millis());
@@ -180,7 +180,7 @@ class InputMgr: public Persisted
                     }
                 }
                 Serial.println();
-    
+
 //                Serial.print(millis());
 //                Serial.print("\tSave types ");
 //                Serial.print(node, HEX);

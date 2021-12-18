@@ -64,7 +64,7 @@ class Controller
             digitalWrite(INTERLOCK_WARNING_PIN, LOW);
         }
 #endif
-        
+
         // If display timeout has expired, clear it.
         if (   (displayTimeout > 0)
             && (now > displayTimeout))
@@ -106,13 +106,13 @@ class Controller
                     if (i2cComms.exists(I2C_INPUT_BASE_ID + node))
                     {
                         setInputNodePresent(node, true);
-    
+
                         // Configure MCP for input.
                         for (uint8_t command = 0; command < INPUT_COMMANDS_LEN; command++)
                         {
                             i2cComms.sendData(I2C_INPUT_BASE_ID + node, INPUT_COMMANDS[command], MCP_ALL_HIGH, -1);
                         }
-    
+
                         // Record current switch state
                         currentSwitchState[node] = readInputNode(node);
                     }
@@ -124,8 +124,8 @@ class Controller
             }
         }
     }
-    
-    
+
+
     /** Display the Input nodes present.
      *  Show either the Input module's ID, or a dot character.
      */
@@ -135,7 +135,7 @@ class Controller
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_NODES);
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT, LCD_LEN_OPTION);
         disp.setCursor(-INPUT_NODE_MAX, LCD_ROW_TOP);
-    
+
         for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
         {
             if (disp.getLcdId() == (I2C_INPUT_BASE_ID + node))
@@ -154,11 +154,11 @@ class Controller
                 }
             }
         }
-    
+
         buttons.waitForButtonClick();
     }
-    
-    
+
+
     /** Scan for attached Output hardware.
      */
     void scanOutputHardware()
@@ -171,8 +171,8 @@ class Controller
             }
         }
     }
-    
-    
+
+
     /** Display the Output nodes present.
      *  Show either the Output module's ID, or a dot character.
      */
@@ -180,14 +180,14 @@ class Controller
     {
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT, LCD_LEN_OPTION);
         disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_EDT);
-    
+
         for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
         {
             if (node == OUTPUT_NODE_HALF)
             {
                 disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_BOT);
             }
-    
+
             if (isOutputNodePresent(node))
             {
                 disp.printHexCh(node);
@@ -197,26 +197,26 @@ class Controller
                 disp.printCh(CHAR_DOT);
             }
         }
-    
+
         buttons.waitForButtonClick();
     }
-    
-    
+
+
     /** Scan for Input and Output nodes.
      */
     void scanHardware()
     {
         uint8_t id = 0;
         buttons.waitForButtonRelease();
-    
+
         // Scan for Input nodes.
         scanInputHardware();
         dispInputHardware();
-    
+
         // Scan for Output nodes.
         scanOutputHardware();
         dispOutputHardware();
-    
+
         // Report absence of hardware.
         if (   (inputNodes  == 0)
             || (outputNodes == 0))
@@ -234,8 +234,8 @@ class Controller
             buttons.waitForButtonClick();
         }
     }
-    
-    
+
+
     /** Sends the current debug level to all the connected outputs.
      */
     void sendDebugLevel()
@@ -245,7 +245,7 @@ class Controller
             if (isOutputNodePresent(node))
             {
                 i2cComms.sendShort(I2C_OUTPUT_BASE_ID + node, COMMS_CMD_DEBUG | (systemMgr.getDebugLevel() & COMMS_OPTION_MASK));
-    
+
                 if (isDebug(DEBUG_BRIEF))
                 {
                     Serial.print(millis());
@@ -294,15 +294,15 @@ class Controller
                             }
                         }
                     }
-    
+
                     // Record new input states.
                     currentSwitchState[node] = pins;
                 }
             }
         }
     }
-    
-    
+
+
     /** Record a node input error.
      */
     void recordInputError(uint8_t aNode)
@@ -310,8 +310,8 @@ class Controller
         systemFail(M_INPUT, aNode);
         setInputNodePresent(aNode, false);
     }
-    
-    
+
+
     /** Read the pins of a InputNode.
      *  Return the state of the pins, 16 bits, both ports.
      *  Return current state if there's a communication error,
@@ -320,7 +320,7 @@ class Controller
     uint16_t readInputNode(uint8_t aNode)
     {
         uint16_t value = 0;
-    
+
         if (   (i2cComms.sendShort(I2C_INPUT_BASE_ID + aNode, MCP_GPIOA))
             || (!i2cComms.requestPacket(I2C_INPUT_BASE_ID + aNode, INPUT_STATE_LEN)))
         {
@@ -331,11 +331,11 @@ class Controller
         {
             value = i2cComms.readWord();
         }
-    
+
         return value;
     }
-    
-    
+
+
     /** Process the changed input.
      *  aState is the state of the input switch.
      */
@@ -345,7 +345,7 @@ class Controller
         uint8_t first    = 0;
         uint8_t node     = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
         uint8_t pin      = (inputNumber                    ) & INPUT_PIN_MASK;
-    
+
         // Process all input state changes for Toggles, only state going low for other Input types.
         if (   (!aState)
             || (inputType == INPUT_TYPE_TOGGLE))
@@ -355,19 +355,19 @@ class Controller
             {
                 case INPUT_TYPE_TOGGLE: // newState = aState;      // Set state to that of the Toggle.
                                         break;
-    
+
                 case INPUT_TYPE_ON_OFF: // Find first real output (not a delay) to determine new state.
                                         first = inputDef.getFirstOutput();
                                         newState = !getOutputState(inputDef.getOutputNode(first), inputDef.getOutputPin(first));
                                         break;
-    
+
                 case INPUT_TYPE_ON:     newState = true;            // Set the state.
                                         break;
-    
+
                 case INPUT_TYPE_OFF:    newState = false;           // Clear the state.
                                         break;
             }
-    
+
             // Report state change if reporting enabled.
             if (isReportEnabled(REPORT_SHORT))
             {
@@ -379,7 +379,7 @@ class Controller
                 disp.setCursor(LCD_COL_START + 1,  LCD_ROW_BOT);
                 setDisplayTimeout(getReportDelay());
             }
-    
+
             if (isDebug(DEBUG_BRIEF))
             {
                 Serial.print(millis());
@@ -393,23 +393,23 @@ class Controller
                 Serial.print(pin,  HEX);
                 Serial.println();
             }
-    
+
             // If not locked, process the Input's Outputs.
             if (!isLocked(newState))
             {
                 i2cComms.sendGateway((newState ? COMMS_CMD_INP_HI : COMMS_CMD_INP_LO) | pin, node, -1);
                 processInputOutputs(newState);
             }
-    
+
             if (isDebug(DEBUG_BRIEF))
             {
                 Serial.println();
             }
         }
     }
-    
-    
-    
+
+
+
     /** Check if any of the Input's Outputs are locked.
      */
     boolean isLocked(boolean aNewState)
@@ -421,7 +421,7 @@ class Controller
             if (!inputDef.isDelay(inpIndex))
             {
                 readOutput(inputDef.getOutputNode(inpIndex), inputDef.getOutputPin(inpIndex));
-    
+
                 // Check all the Output's locks.
                 for (uint8_t outIndex = 0; outIndex < OUTPUT_LOCK_MAX; outIndex++)
                 {
@@ -444,14 +444,14 @@ class Controller
                                 disp.printHexCh(outputDef.getLockPin (aNewState, outIndex));
                                 setDisplayTimeout(getReportDelay());
                             }
-    
+
                             if (isDebug(DEBUG_BRIEF))
                             {
                                 outputDef.printDef(M_LOCK, outputNode, outputPin);
                                 readOutput(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
                                 outputDef.printDef(M_VS, outputNode, outputPin);
                             }
-    
+
 #if INTERLOCK_WARNING_PIN
                             pinMode(INTERLOCK_WARNING_PIN, OUTPUT);
                             digitalWrite(INTERLOCK_WARNING_PIN, HIGH);
@@ -459,24 +459,24 @@ class Controller
                             // Alternative using tone function (about 700+ bytes of extra code).
                             // tone(INTERLOCK_WARNING_PIN, INTERLOCK_WARNING_FREQ, INTERLOCK_WARNING_TIME);
 #endif
-    
+
                             return true;            // A lock exists.
                         }
                     }
                 }
             }
         }
-    
+
         return false;
     }
-    
-    
+
+
     /** Process all the Input's Outputs.
      */
     void processInputOutputs(boolean aNewState)
     {
         uint8_t endDelay = 0;
-    
+
         // Process all the Input's outputs.
         // In reverse order if setting lo.
         if (aNewState)
@@ -494,8 +494,8 @@ class Controller
             }
         }
     }
-    
-    
+
+
     /** Process an Input's n'th Output, setting it to the given state.
      *  Accumulate delay as we go.
      *  Returns the accumulated delay.
@@ -503,10 +503,10 @@ class Controller
     uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)
     {
         uint8_t endDelay = aDelay;
-    
+
         uint8_t outNode  = inputDef.getOutputNode(aIndex);
         uint8_t outPin   = inputDef.getOutputPin(aIndex);
-    
+
         // Process the Input's Outputs.
         if (inputDef.isDelay(aIndex))
         {
@@ -541,7 +541,7 @@ class Controller
                 disp.printHexCh(outPin);
                 setDisplayTimeout(getReportDelay());
             }
-    
+
             if (isDebug(DEBUG_BRIEF))
             {
                 Serial.print(millis());
@@ -557,15 +557,15 @@ class Controller
                 Serial.print(aDelay, HEX);
                 Serial.println();
             }
-    
+
             // Action the Output state change.
             writeOutputState(outNode, outPin, aState, endDelay);
-    
+
             // Recover all states from output module (in case a double-LED has changed one).
             readOutputStates(outNode);
             // setOutputState(outNode, outPin, aState);
         }
-    
+
         return endDelay;
     }
 
