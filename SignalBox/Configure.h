@@ -1156,9 +1156,9 @@ class Configure
                                     }
                                     else
                                     {
+                                        writeOutput();                      // Ensure changes aren't persisted.
                                         testOutput();
-                                        // delay(DELAY_BUTTON_DELAY);       // A short delay to prevent over-loading output module
-                                        writeOutput();                      // Ensure output is reset.
+                                        resetOutput();                      // Ensure output is reset.
                                     }
                                     break;
 
@@ -2194,7 +2194,7 @@ class Configure
 
     /** Test the current Configuration.
      *  Most outputs change state and then change back again.
-     *  Flashers always go Hi first, then Lo.
+     *  Flashers always go Hi first, then back to current state.
      */
     void testOutput()
     {
@@ -2202,7 +2202,6 @@ class Configure
         {
             writeOutputState(outputNode, outputPin, true,  0);
             buttons.waitForButtonRelease();
-            writeOutputState(outputNode, outputPin, false, 0);
             writeOutput();
         }
         else
