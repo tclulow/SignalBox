@@ -318,7 +318,6 @@ class SystemMgr: public Persisted
     void setModuleId(uint8_t aModuleId)
     {
         systemData.i2cModuleId = aModuleId;
-        saveSystemData();
     }
 
     
