@@ -1158,7 +1158,7 @@ class Configure
                                     {
                                         testOutput();
                                         // delay(DELAY_BUTTON_DELAY);       // A short delay to prevent over-loading output module
-                                        resetOutput();                      // Ensure output is reset.
+                                        writeOutput();                      // Ensure output is reset.
                                     }
                                     break;
 
