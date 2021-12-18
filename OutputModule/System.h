@@ -37,7 +37,6 @@
 #define DEBUG_DETAIL    3
 #define DEBUG_FULL      4
 #define DEBUG_MAX       5       // Maximum debug option.
-#define DEBUG_LEVEL     DEBUG_DETAIL
 
 
 // Reporting levels.
@@ -53,24 +52,11 @@
 #define SYS_MODULE_ID_JUMPERS   0xff    // Use jumpers to decide module ID.
 
 
-//// Logo bit-map, up to seven characters (not const to avoid compiler warnings).
-//byte LOGO[][8] = { // { 0x00, 0x00, 0x0e, 0x1f, 0x0f, 0x0f, 0x0f, 0x04 },
-//                   { 0x1f, 0x09, 0x09, 0x0f, 0x0f, 0x0f, 0x0f, 0x04 },
-//                   { 0x00, 0x08, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x0e },
-//                   { 0x00, 0x0c, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x0e },
-//                   { 0x0c, 0x0c, 0x1e, 0x1e, 0x1e, 0x1e, 0x1f, 0x0a },
-//                 };
-//#define LOGO_LEN (sizeof(LOGO) / sizeof(LOGO[0]))
-#define LOGO_LEN 0
-
-
 // Custom character to indicate "Lo".
 byte BYTES_LO[]   = { 0, 0, 0, 0, 0x11, 0xa, 0x4, 0 };
 
 
 // Useful characters
-#define HEX_MAX  32
-const char HEX_CHARS[]  = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
 
 const char CHAR_SPACE   = ' ';
 const char CHAR_TAB     = '\t';
@@ -93,7 +79,12 @@ const char CHAR_ZERO    = '0';
 const char CHAR_NINE    = '9';
 const char CHAR_UPPER_A = 'A';
 const char CHAR_LOWER_A = 'a';
-const char CHAR_LO      = (char)LOGO_LEN;
+
+const char CHAR_LO      = 0;
+
+// Hex characters - they are in fact base 32.
+#define HEX_MAX 32
+const char HEX_CHARS[]  = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
 
 
 /** A System manager (extends Persisted) for persisting SystemData in EEPROM.

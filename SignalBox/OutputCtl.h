@@ -16,6 +16,7 @@
 
 
 /** Variables for working with an Output.
+ *  Global for convenience.
  */
 long       outputNodes  = 0;    // Bit map of Output nodes present (as many as OUTPUT_NODE_MAX - 32 bits).
 uint8_t    outputNode   = 0;    // Current Output node.

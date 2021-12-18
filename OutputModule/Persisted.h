@@ -34,13 +34,6 @@ class Persisted
     Persisted(uint16_t aBase)
     {
         base = aBase;
-        Serial.print("Construct Persisted");
-        Serial.print(", base=");
-        Serial.print(base, HEX);
-        Serial.print(", size=");
-        Serial.print(size, HEX);
-        Serial.println();
-
     };
 
 

@@ -66,6 +66,7 @@
 
 
 /** A Display class that can print PROGMEM messages.
+ *  Can display of LCD shield (LCD_ROWS x LCD_COLS) and/or an I2C LCD display (LCD2_ROWS x LCD2_COLS).
  */
 class Display
 {
@@ -79,7 +80,7 @@ class Display
      *  LiquidCrystal(rs,     enable, d0, d1, d2, d3, d4, d5, d6, d7)
      *  LiquidCrystal(rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7)
      *
-     *  LiquidCrystal lcdShield(8,   9, 4, 5, 6, 7);
+     *  LiquidCrystal lcdShield( 8,  9, 4, 5, 6, 7);
      *  LiquidCrystal lcdShield(12, 11, 5, 4, 3, 2);
      */
     LiquidCrystal* lcdShield;
@@ -110,11 +111,6 @@ class Display
         // lcdShield->noCursor();
         // lcdShield->noBlink();
         lcdShield->createChar(CHAR_LO, BYTES_LO);       // Custom character to indicate "Lo".
-
-//        for (uint8_t index = 0; index < CHAR_LO; index++)
-//        {
-//            lcdShield->createChar(index, LOGO[index]);
-//        }
     }
 
 

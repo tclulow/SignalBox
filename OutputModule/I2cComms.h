@@ -186,6 +186,7 @@ class I2cComms
         gatewayId = aId;       // Marks the presence of an I2C gateway module.
     }
 
+
     /** Send an I2C message with no data.
      */
     uint8_t sendShort(uint8_t aNodeId, uint8_t aCommand)

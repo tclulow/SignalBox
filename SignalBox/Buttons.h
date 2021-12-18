@@ -89,8 +89,8 @@ class Buttons
         while (analogRead(A0) < BUTTON_THRESHHOLD);
 
         // Now start calibration
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_PRESS);   // Announce we're ready to start
-        buttonsPtr[BUTTON_HIGH] = 0;                        // Marker for last button.
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_PRESS);       // Announce we're ready to start
+        buttonsPtr[BUTTON_HIGH] = 0;                                    // Marker for last button.
 
         // Request values for all buttons in turn.
         for (int button = 0; button < BUTTON_HIGH; button++)
@@ -104,17 +104,17 @@ class Buttons
                 delay(DELAY_BUTTON_WAIT);
             }
 
-            if (isDebug(DEBUG_BRIEF))
-            {
-                Serial.print(millis());
-                Serial.print(CHAR_TAB);
-                Serial.print(PGMT(M_BUTTONS[button + 1]));
-                Serial.print(PGMT(M_DEBUG_VALUE));
-                Serial.print(value, HEX);
-                Serial.print(PGMT(M_DEBUG_TARGET));
-                Serial.print(previous, HEX);
-                Serial.println();
-            }
+//            if (isDebug(DEBUG_BRIEF))
+//            {
+//                Serial.print(millis());
+//                Serial.print(CHAR_TAB);
+//                Serial.print(PGMT(M_BUTTONS[button + 1]));
+//                Serial.print(PGMT(M_DEBUG_VALUE));
+//                Serial.print(value, HEX);
+//                Serial.print(PGMT(M_DEBUG_TARGET));
+//                Serial.print(previous, HEX);
+//                Serial.println();
+//            }
 
             // Report the button's value (4 digits)
             disp.setCursor(LCD_COLS - 4, LCD_ROW_DET);
@@ -252,8 +252,8 @@ class Buttons
      */
     uint8_t waitForButtonClick()
     {
-        long delayTo = millis() + DELAY_READ;
-        uint8_t button = BUTTON_NONE;
+        long    delayTo = millis() + DELAY_READ;
+        uint8_t button  = BUTTON_NONE;
 
         waitForButtonRelease();
 
