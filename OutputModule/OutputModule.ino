@@ -1582,8 +1582,23 @@ void stepFlash(uint8_t aPin)
 
             if (doSwitch)
             {
+//                Serial.print(millis());
+//                Serial.print("\tLo=");
+//                Serial.print(outputDefs[aPin].getLo(), HEX);
+//                Serial.print(", Hi=");
+//                Serial.print(outputDefs[aPin].getHi(), HEX);
+//                Serial.print(", value=");
+//                Serial.print(outputs[aPin].value, HEX);
+//                Serial.print(", altValue=");
+//                Serial.print(outputs[aPin].altValue), HEX;
+
                 // Flash opposite way.
-                if (outputs[aPin].value)
+                // If value is non-zero we just went Hi,
+                // But if Hi is zero, then value will be zero, so use altValue == 0 to indicate we just went Hi.
+                // In both cases, arrange to go Lo, otherwise, go Hi.
+                if (   (outputs[aPin].value)
+                    || (   (outputDefs[aPin].getHi() == 0)
+                        && (outputs[aPin].altValue   == 0)))
                 {
                     outputs[aPin].value    = 0;
                     outputs[aPin].altValue = outputDefs[aPin].getLo();
@@ -1593,6 +1608,12 @@ void stepFlash(uint8_t aPin)
                     outputs[aPin].value    = outputDefs[aPin].getHi();
                     outputs[aPin].altValue = 0;
                 }
+
+//                Serial.print(", after switch: value=");
+//                Serial.print(outputs[aPin].value, HEX);
+//                Serial.print(", altValue=");
+//                Serial.print(outputs[aPin].altValue), HEX;
+//                Serial.println();
             }
 
             outputs[aPin].step = 0;
