@@ -38,10 +38,10 @@ class OutputMgr: public Persisted
     void loadOutput(uint8_t aPin)
     {
         EEPROM.get(base + aPin * sizeof(OutputDef), outputDefs[aPin]);
-//        if (systemMgr.isDebug(DEBUG_DETAIL))
-//        {
-//            outputDefs[aPin].printDef(M_DEBUG_LOAD, getModuleId(false), aPin);
-//        }
+        if (systemMgr.isDebug(DEBUG_FULL))
+        {
+            outputDefs[aPin].printDef(M_DEBUG_LOAD, systemMgr.getModuleId(false), aPin);
+        }
     }
     
     
@@ -52,10 +52,10 @@ class OutputMgr: public Persisted
         if (aPin < OUTPUT_PIN_MAX)
         {
             EEPROM.put(base + aPin * sizeof(OutputDef), outputDefs[aPin]);
-//            if (systemMgr.isDebug(DEBUG_DETAIL))
-//            {
-//                outputDefs[aPin].printDef(M_DEBUG_SAVE, getModuleId(false), aPin);
-//            }
+            if (systemMgr.isDebug(DEBUG_FULL))
+            {
+                outputDefs[aPin].printDef(M_DEBUG_SAVE, systemMgr.getModuleId(false), aPin);
+            }
         }
     }
     
