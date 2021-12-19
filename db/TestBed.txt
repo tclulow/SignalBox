@@ -1,4 +1,3 @@
-SignalBox v4.0.0 Nov 21
 #System	Version	Report	Debug
 System	v4.0.0	Long	None
 
@@ -12,7 +11,7 @@ Input	0	5	Off	8 3	. .	. .	. .	. .	. .
 Input	0	6	On_Off	8 4	. .	. .	. .	. .	. .
 Input	0	7	On_Off	. .	. .	. .	. .	. .	. .
 Input	0	8	On_Off	8 7	. .	. .	. .	. .	. .
-Input	0	9	On_Off	. .	. .	. .	. .	. .	. .
+Input	0	9	On_Off	8 6	. .	. .	. .	. .	. .
 Input	0	A	Toggle	8 5	. .	. .	. .	. .	. .
 Input	0	B	On_Off	. .	. .	. .	. .	. .	. .
 Input	0	C	On_Off	. .	. .	. .	. .	. .	. .
