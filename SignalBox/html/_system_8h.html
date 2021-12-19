@@ -110,9 +110,6 @@ Macros</h2></td></tr>
 <tr class="memitem:a4077213bb86fb73653d130217d123e74"><td class="memItemLeft" align="right" valign="top"><a id="a4077213bb86fb73653d130217d123e74"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>DEBUG_MAX</b>&#160;&#160;&#160;5</td></tr>
 <tr class="separator:a4077213bb86fb73653d130217d123e74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2d33ccaf63f5d5b66552b95426c0137"><td class="memItemLeft" align="right" valign="top"><a id="ac2d33ccaf63f5d5b66552b95426c0137"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>DEBUG_LEVEL</b>&#160;&#160;&#160;DEBUG_DETAIL</td></tr>
-<tr class="separator:ac2d33ccaf63f5d5b66552b95426c0137"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4acee256fed08f8a193d77b1959c1af0"><td class="memItemLeft" align="right" valign="top"><a id="a4acee256fed08f8a193d77b1959c1af0"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>REPORT_NONE</b>&#160;&#160;&#160;0</td></tr>
 <tr class="separator:a4acee256fed08f8a193d77b1959c1af0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -134,9 +131,6 @@ Macros</h2></td></tr>
 <tr class="memitem:aa721e769f3561aa05dfe5a2e03ea0035"><td class="memItemLeft" align="right" valign="top"><a id="aa721e769f3561aa05dfe5a2e03ea0035"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>SYS_MODULE_ID_JUMPERS</b>&#160;&#160;&#160;0xff</td></tr>
 <tr class="separator:aa721e769f3561aa05dfe5a2e03ea0035"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2113f79f073206e3a8d44f11c4fb0c6"><td class="memItemLeft" align="right" valign="top"><a id="aa2113f79f073206e3a8d44f11c4fb0c6"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>LOGO_LEN</b>&#160;&#160;&#160;0</td></tr>
-<tr class="separator:aa2113f79f073206e3a8d44f11c4fb0c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a829f5bb8785fb1e024ee1c1bc166993b"><td class="memItemLeft" align="right" valign="top"><a id="a829f5bb8785fb1e024ee1c1bc166993b"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>HEX_MAX</b>&#160;&#160;&#160;32</td></tr>
 <tr class="separator:a829f5bb8785fb1e024ee1c1bc166993b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,9 +151,6 @@ Variables</h2></td></tr>
 <tr class="memitem:a44da86d229527a9f3ec369bb2c691c38"><td class="memItemLeft" align="right" valign="top"><a id="a44da86d229527a9f3ec369bb2c691c38"></a>
 byte&#160;</td><td class="memItemRight" valign="bottom"><b>BYTES_LO</b> [] = { 0, 0, 0, 0, 0x11, 0xa, 0x4, 0 }</td></tr>
 <tr class="separator:a44da86d229527a9f3ec369bb2c691c38"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1506ebb566ff4a7539f99bd63c46d032"><td class="memItemLeft" align="right" valign="top"><a id="a1506ebb566ff4a7539f99bd63c46d032"></a>
-const char&#160;</td><td class="memItemRight" valign="bottom"><b>HEX_CHARS</b> [] = &quot;0123456789ABCDEFGHIJKLMNOPQRSTUV&quot;</td></tr>
-<tr class="separator:a1506ebb566ff4a7539f99bd63c46d032"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34042c5a1539a1b8bccbcf35f8916de0"><td class="memItemLeft" align="right" valign="top"><a id="a34042c5a1539a1b8bccbcf35f8916de0"></a>
 const char&#160;</td><td class="memItemRight" valign="bottom"><b>CHAR_SPACE</b> = ' '</td></tr>
 <tr class="separator:a34042c5a1539a1b8bccbcf35f8916de0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -215,8 +206,11 @@ const char&#160;</td><td class="memItemRight" valign="bottom"><b>CHAR_UPPER_A</b
 const char&#160;</td><td class="memItemRight" valign="bottom"><b>CHAR_LOWER_A</b> = 'a'</td></tr>
 <tr class="separator:a8234dc4c8539208b259dfb686f2f1f04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab36579f4d5ef11aa2ede4744b9f429d2"><td class="memItemLeft" align="right" valign="top"><a id="ab36579f4d5ef11aa2ede4744b9f429d2"></a>
-const char&#160;</td><td class="memItemRight" valign="bottom"><b>CHAR_LO</b> = (char)LOGO_LEN</td></tr>
+const char&#160;</td><td class="memItemRight" valign="bottom"><b>CHAR_LO</b> = 0</td></tr>
 <tr class="separator:ab36579f4d5ef11aa2ede4744b9f429d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1506ebb566ff4a7539f99bd63c46d032"><td class="memItemLeft" align="right" valign="top"><a id="a1506ebb566ff4a7539f99bd63c46d032"></a>
+const char&#160;</td><td class="memItemRight" valign="bottom"><b>HEX_CHARS</b> [] = &quot;0123456789ABCDEFGHIJKLMNOPQRSTUV&quot;</td></tr>
+<tr class="separator:a1506ebb566ff4a7539f99bd63c46d032"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>System data.</p>

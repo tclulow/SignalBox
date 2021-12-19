@@ -84,42 +84,35 @@ $(function() {
 <div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="class_persisted.html#a774c71e47b3b4b8818da8f5474719e4f">   34</a></span>&#160;    <a class="code" href="class_persisted.html#a774c71e47b3b4b8818da8f5474719e4f">Persisted</a>(uint16_t aBase)</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    {</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        base = aBase;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        Serial.print(<span class="stringliteral">&quot;Construct Persisted&quot;</span>);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        Serial.print(<span class="stringliteral">&quot;, base=&quot;</span>);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        Serial.print(base, HEX);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        Serial.print(<span class="stringliteral">&quot;, size=&quot;</span>);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        Serial.print(size, HEX);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        Serial.println();</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    };</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    };</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">//    /** Sets the base offset (in EEPROM) where this user stores data.</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">//     */</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">//    void setBase(uint16_t aBase)</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">//    {</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">//        base = aBase;</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">//    }</span></div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">//    /** Sets the base offset (in EEPROM) where this user stores data.</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">//     */</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">//    void setBase(uint16_t aBase)</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">//    {</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">//        base = aBase;</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">//    }</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="class_persisted.html#a1c50ec2fb7a9b1b21ad4dfb5220c716d">   50</a></span>&#160;    uint16_t <a class="code" href="class_persisted.html#a1c50ec2fb7a9b1b21ad4dfb5220c716d">getBase</a>()</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keywordflow">return</span> base;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="class_persisted.html#a1c50ec2fb7a9b1b21ad4dfb5220c716d">   57</a></span>&#160;    uint16_t <a class="code" href="class_persisted.html#a1c50ec2fb7a9b1b21ad4dfb5220c716d">getBase</a>()</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    {</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keywordflow">return</span> base;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    }</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    </div>
-<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="class_persisted.html#acde0ff335f6a8e69f3cf666b25937ce6">   65</a></span>&#160;    uint16_t <a class="code" href="class_persisted.html#acde0ff335f6a8e69f3cf666b25937ce6">getSize</a>()</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    {</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keywordflow">return</span> size;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    }    </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;};</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="class_persisted.html#a4bb20376c3c656c36746caed61ec1664">   58</a></span>&#160;    uint16_t <a class="code" href="class_persisted.html#a4bb20376c3c656c36746caed61ec1664">getEnd</a>()</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    {</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="keywordflow">return</span> base + size;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    }</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;};</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclass_persisted_html_acde0ff335f6a8e69f3cf666b25937ce6"><div class="ttname"><a href="class_persisted.html#acde0ff335f6a8e69f3cf666b25937ce6">Persisted::getSize</a></div><div class="ttdeci">uint16_t getSize()</div><div class="ttdef"><b>Definition:</b> Persisted.h:65</div></div>
 <div class="ttc" id="aclass_persisted_html"><div class="ttname"><a href="class_persisted.html">Persisted</a></div><div class="ttdef"><b>Definition:</b> Persisted.h:23</div></div>
-<div class="ttc" id="aclass_persisted_html_a1c50ec2fb7a9b1b21ad4dfb5220c716d"><div class="ttname"><a href="class_persisted.html#a1c50ec2fb7a9b1b21ad4dfb5220c716d">Persisted::getBase</a></div><div class="ttdeci">uint16_t getBase()</div><div class="ttdef"><b>Definition:</b> Persisted.h:57</div></div>
+<div class="ttc" id="aclass_persisted_html_a4bb20376c3c656c36746caed61ec1664"><div class="ttname"><a href="class_persisted.html#a4bb20376c3c656c36746caed61ec1664">Persisted::getEnd</a></div><div class="ttdeci">uint16_t getEnd()</div><div class="ttdef"><b>Definition:</b> Persisted.h:58</div></div>
+<div class="ttc" id="aclass_persisted_html_a1c50ec2fb7a9b1b21ad4dfb5220c716d"><div class="ttname"><a href="class_persisted.html#a1c50ec2fb7a9b1b21ad4dfb5220c716d">Persisted::getBase</a></div><div class="ttdeci">uint16_t getBase()</div><div class="ttdef"><b>Definition:</b> Persisted.h:50</div></div>
 <div class="ttc" id="aclass_persisted_html_a774c71e47b3b4b8818da8f5474719e4f"><div class="ttname"><a href="class_persisted.html#a774c71e47b3b4b8818da8f5474719e4f">Persisted::Persisted</a></div><div class="ttdeci">Persisted(uint16_t aBase)</div><div class="ttdef"><b>Definition:</b> Persisted.h:34</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
