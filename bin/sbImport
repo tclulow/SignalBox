@@ -11,7 +11,7 @@ PORT=${DEVICES}${2:-0}
 
 if [ -z "$1" ]
 then
-    echo "Usage $0 <file to import>"
+    echo "Usage $0 <file to import> [port]"
     exit
 fi
 
