@@ -43,6 +43,7 @@ class Buttons
     uint8_t lastButton = 0xff;      // Keep track of last button pressed for reporting in debug messages.
     int *   buttonsPtr;             // Array of button definitions (in the systemMgr object).
 
+
     /** Initialise the alternate button pins.
      */
     void initButtonPins()

@@ -310,6 +310,9 @@ class Configure
                 }
             }
         }
+
+        // Ensure original output is loaded.
+        readOutput(outNode, outPin);
     }
 
 
