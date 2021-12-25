@@ -63,62 +63,12 @@ class Configure
     }
 
 
-    /** Display all current data.
-     */
-    void displayAll()
-    {
-        disp.clear();
-        displayTop();
-        displayDetail();
-    }
-
-
-    /** Display the top row of data.
-     */
-    void displayTop()
-    {
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_TOP_MENU[topMenu], LCD_LEN_OPTION);
-        switch (topMenu)
-        {
-            case TOP_SYSTEM: displaySystem();
-                             break;
-
-            case TOP_INPUT:  displayInputNode();
-                             break;
-
-            case TOP_OUTPUT:
-            case TOP_LOCKS:  displayOutputNode();
-                             break;
-
-            case TOP_EXPORT:
-            case TOP_IMPORT: displaySystem();
-                             break;
-
-            default:         configFail(M_ALL, topMenu);
-                             break;
-        }
-    }
-
-
     /** Display Sysyem information.
      */
     void displaySystem()
     {
         disp.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
         disp.printProgStrAt(-strlen_P(M_VERSION), LCD_ROW_TOP, M_VERSION);
-    }
-
-
-    /** Display the output node/pin selection line of the menu.
-     */
-    void displayOutputNode()
-    {
-        disp.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
-        if (isOutputNodePresent(outNode))
-        {
-            disp.printHexChAt(LCD_COL_NODE, LCD_ROW_TOP, outNode);
-            disp.printHexChAt(LCD_COL_PIN,  LCD_ROW_TOP, outPin);
-        }
     }
 
 
@@ -132,81 +82,15 @@ class Configure
     }
 
 
-    /** Display move node ID.
+    /** Display the output node/pin selection line of the menu.
      */
-    void displayNewNode(boolean aJumpers, uint8_t aNode)
+    void displayOutputNode()
     {
-        disp.clearRow      (LCD_COL_START, LCD_ROW_DET);
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_NEW_NODE_NO);
-        if (aJumpers)
+        disp.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
+        if (isOutputNodePresent(outNode))
         {
-            disp.printChAt(LCD_COL_NODE, LCD_ROW_DET, CHAR_DOT);
-        }
-        else
-        {
-            disp.printHexChAt  (LCD_COL_NODE,  LCD_ROW_DET, aNode);
-        }
-    }
-
-
-    /** Display the detail line of the menu.
-     */
-    void displayDetail()
-    {
-        disp.clearRow(LCD_COL_START, LCD_ROW_DET);
-        switch (topMenu)
-        {
-            case TOP_SYSTEM: displayDetailSystem();
-                             break;
-
-            case TOP_INPUT:  displayDetailInput();
-                             break;
-
-            case TOP_OUTPUT:
-            case TOP_LOCKS:  displayDetailOutput();
-                             break;
-
-            case TOP_EXPORT: displayDetailExport();
-                             break;
-
-            case TOP_IMPORT: displayDetailImport();
-                             break;
-
-            default:         configFail(M_DETAIL, topMenu);
-                             break;
-        }
-    }
-
-
-    /** Display detail for System menu.
-     */
-    void displayDetailSystem()
-    {
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_SYS_TYPES[sysMenu], LCD_LEN_OPTION);
-        displaySystemParams();
-    }
-
-
-    /** Display parameters for System menu.
-     */
-    void displaySystemParams()
-    {
-        switch (sysMenu)
-        {
-            case SYS_REPORT: displaySystemReportParams();
-                             break;
-
-            case SYS_NODES:  displaySystemNodesParams();
-                             break;
-
-            case SYS_IDENT:  displaySystemIdentParams();
-                             break;
-
-            case SYS_DEBUG:  displaySystemDebugParams();
-                             break;
-
-            default:         configFail(M_PARAMS, sysMenu);
-                             break;
+            disp.printHexChAt(LCD_COL_NODE, LCD_ROW_TOP, outNode);
+            disp.printHexChAt(LCD_COL_PIN,  LCD_ROW_TOP, outPin);
         }
     }
 
@@ -245,28 +129,27 @@ class Configure
     }
 
 
-    /** Display Export detail menu.
+    /** Display parameters for System menu.
      */
-    void displayDetailExport()
+    void displaySystemParams()
     {
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_EXPORT_TYPES[expMenu], LCD_LEN_OPTION);
-    }
+        switch (sysMenu)
+        {
+            case SYS_REPORT: displaySystemReportParams();
+                             break;
 
+            case SYS_NODES:  displaySystemNodesParams();
+                             break;
 
-    /** Display Import detail menu.
-     */
-    void displayDetailImport()
-    {
-        disp.clearRow(LCD_COL_START, LCD_ROW_DET);
-    }
+            case SYS_IDENT:  displaySystemIdentParams();
+                             break;
 
+            case SYS_DEBUG:  displaySystemDebugParams();
+                             break;
 
-    /** Display Input details.
-     */
-    void displayDetailInput()
-    {
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT_TYPES[inputType], LCD_LEN_OPTION);
-        displayDetailInputOutput();
+            default:         configFail(M_PARAMS, sysMenu);
+                             break;
+        }
     }
 
 
@@ -298,46 +181,6 @@ class Configure
                 disp.printHexCh(inputDef.getOutputPin(index));
             }
             disp.printCh(CHAR_SPACE);
-        }
-    }
-
-
-    /** Display an Input's output settings, node and pin.
-     */
-    void displayInputEdit(uint8_t aIndex)
-    {
-        if (inputDef.isDelay(aIndex))
-        {
-            disp.printChAt(LCD_COL_NODE, LCD_ROW_DET, CHAR_DOT);
-            if (inputDef.getOutputPin(aIndex) == 0)
-            {
-                disp.printChAt(LCD_COL_PIN,  LCD_ROW_DET, CHAR_DOT);
-            }
-            else
-            {
-                disp.printHexChAt(LCD_COL_PIN,  LCD_ROW_DET, inputDef.getOutputPin(aIndex));
-            }
-        }
-        else
-        {
-            disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, inputDef.getOutputNode(aIndex));
-            disp.printHexChAt(LCD_COL_PIN,  LCD_ROW_DET, inputDef.getOutputPin(aIndex));
-        }
-    }
-
-
-    /** Display Output details.
-     */
-    void displayDetailOutput()
-    {
-        if (isOutputNodePresent(outNode))
-        {
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION + 1);
-            displayOutputParams(outputDef.getType());
-        }
-        else
-        {
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_NO_OUTPUT, LCD_COLS);
         }
     }
 
@@ -375,6 +218,163 @@ class Configure
             {
                 configFail(M_DETAIL, topMenu);
             }
+        }
+    }
+
+
+    /** Display detail for System menu.
+     */
+    void displayDetailSystem()
+    {
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_SYS_TYPES[sysMenu], LCD_LEN_OPTION);
+        displaySystemParams();
+    }
+
+
+    /** Display Input details.
+     */
+    void displayDetailInput()
+    {
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT_TYPES[inputType], LCD_LEN_OPTION);
+        displayDetailInputOutput();
+    }
+
+
+    /** Display Output details.
+     */
+    void displayDetailOutput()
+    {
+        if (isOutputNodePresent(outNode))
+        {
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION + 1);
+            displayOutputParams(outputDef.getType());
+        }
+        else
+        {
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_NO_OUTPUT, LCD_COLS);
+        }
+    }
+
+
+    /** Display Export detail menu.
+     */
+    void displayDetailExport()
+    {
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_EXPORT_TYPES[expMenu], LCD_LEN_OPTION);
+    }
+
+
+    /** Display Import detail menu.
+     */
+    void displayDetailImport()
+    {
+        disp.clearRow(LCD_COL_START, LCD_ROW_DET);
+    }
+
+
+    /** Display the top row of data.
+     */
+    void displayTop()
+    {
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_TOP_MENU[topMenu], LCD_LEN_OPTION);
+        switch (topMenu)
+        {
+            case TOP_SYSTEM: displaySystem();
+                             break;
+
+            case TOP_INPUT:  displayInputNode();
+                             break;
+
+            case TOP_OUTPUT:
+            case TOP_LOCKS:  displayOutputNode();
+                             break;
+
+            case TOP_EXPORT:
+            case TOP_IMPORT: displaySystem();
+                             break;
+
+            default:         configFail(M_ALL, topMenu);
+                             break;
+        }
+    }
+
+
+    /** Display the detail line of the menu.
+     */
+    void displayDetail()
+    {
+        disp.clearRow(LCD_COL_START, LCD_ROW_DET);
+        switch (topMenu)
+        {
+            case TOP_SYSTEM: displayDetailSystem();
+                             break;
+
+            case TOP_INPUT:  displayDetailInput();
+                             break;
+
+            case TOP_OUTPUT:
+            case TOP_LOCKS:  displayDetailOutput();
+                             break;
+
+            case TOP_EXPORT: displayDetailExport();
+                             break;
+
+            case TOP_IMPORT: displayDetailImport();
+                             break;
+
+            default:         configFail(M_DETAIL, topMenu);
+                             break;
+        }
+    }
+
+
+    /** Display all current data.
+     */
+    void displayAll()
+    {
+        disp.clear();
+        displayTop();
+        displayDetail();
+    }
+
+
+    /** Display move node ID.
+     */
+    void displayNewNode(boolean aJumpers, uint8_t aNode)
+    {
+        disp.clearRow      (LCD_COL_START, LCD_ROW_DET);
+        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_NEW_NODE_NO);
+        if (aJumpers)
+        {
+            disp.printChAt(LCD_COL_NODE, LCD_ROW_DET, CHAR_DOT);
+        }
+        else
+        {
+            disp.printHexChAt  (LCD_COL_NODE,  LCD_ROW_DET, aNode);
+        }
+    }
+
+
+    /** Display an Input's output settings, node and pin.
+     */
+    void displayInputEdit(uint8_t aIndex)
+    {
+        if (inputDef.isDelay(aIndex))
+        {
+            disp.printChAt(LCD_COL_NODE, LCD_ROW_DET, CHAR_DOT);
+            if (inputDef.getOutputPin(aIndex) == 0)
+            {
+                disp.printChAt(LCD_COL_PIN,  LCD_ROW_DET, CHAR_DOT);
+            }
+            else
+            {
+                disp.printHexChAt(LCD_COL_PIN,  LCD_ROW_DET, inputDef.getOutputPin(aIndex));
+            }
+        }
+        else
+        {
+            disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, inputDef.getOutputNode(aIndex));
+            disp.printHexChAt(LCD_COL_PIN,  LCD_ROW_DET, inputDef.getOutputPin(aIndex));
         }
     }
 
