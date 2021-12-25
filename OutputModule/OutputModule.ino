@@ -54,8 +54,8 @@
 
 #include <Servo.h>
 
-#include "Config.h"
-#include "Messages.h"               // Common classes.
+#include "Config.h"                 // Common classes.
+#include "Messages.h"
 #include "Persisted.h"
 #include "I2cComms.h"
 #include "System.h"
