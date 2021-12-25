@@ -1,2 +1,7 @@
+# IDE controll data
 /.metadata/
-/indefined/
+/undefined/
+
+# Projects not ready for GIT yet.
+wip
+Remote
