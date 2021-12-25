@@ -32,27 +32,6 @@ class Controller
     long    timeoutBuzzer    = 0L;      // Time at which buzzer2 sound should be made.
 
 
-    public:
-
-    /** Set the display timeout for an important message.
-     */
-    void setDisplayTimeout(long aTimeout)
-    {
-        displayTimeout = millis() + aTimeout;
-    }
-
-
-    /** Announce ourselves.
-     */
-    void announce()
-    {
-        disp.clear();
-        disp.printProgStrAt(LCD_COL_START,             LCD_ROW_TOP, M_SOFTWARE);
-        disp.printProgStrAt(-strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
-        disp.printProgStrAt(-strlen_P(M_VERSION_DATE), LCD_ROW_DET, M_VERSION_DATE);
-    }
-
-
     /** Scan for attached Input hardware.
      */
     void scanInputHardware()
@@ -163,107 +142,6 @@ class Controller
     }
 
 
-    /** Scan for Input and Output nodes.
-     */
-    void scanHardware()
-    {
-        uint8_t id = 0;
-        buttons.waitForButtonRelease();
-
-        // Scan for Input nodes.
-        scanInputHardware();
-        dispInputHardware();
-
-        // Scan for Output nodes.
-        scanOutputHardware();
-        dispOutputHardware();
-
-        // Report absence of hardware.
-        if (   (inputNodes  == 0)
-            || (outputNodes == 0))
-        {
-            uint8_t row = LCD_ROW_TOP;
-            disp.clear();
-            if (inputNodes == 0)
-            {
-                disp.printProgStrAt(LCD_COL_START, row++, M_NO_INPUT);
-            }
-            if (outputNodes == 0)
-            {
-                disp.printProgStrAt(LCD_COL_START, row++, M_NO_OUTPUT);
-            }
-            buttons.waitForButtonClick();
-        }
-    }
-
-
-    /** Sends the current debug level to all the connected outputs.
-     */
-    void sendDebugLevel()
-    {
-        for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
-        {
-            if (isOutputNodePresent(node))
-            {
-                i2cComms.sendShort(I2C_OUTPUT_BASE_ID + node, COMMS_CMD_DEBUG | (systemMgr.getDebugLevel() & COMMS_OPTION_MASK));
-
-                if (isDebug(DEBUG_BRIEF))
-                {
-                    Serial.print(millis());
-                    Serial.print(CHAR_TAB);
-                    Serial.print(PGMT(M_DEBUG_DEBUG));
-                    Serial.print(PGMT(M_DEBUG_NODE));
-                    Serial.print(HEX_CHARS[node]);
-                    Serial.print(CHAR_SPACE);
-                    Serial.print(PGMT(M_DEBUG_PROMPTS[systemMgr.getDebugLevel()]));
-                    Serial.println();
-                }
-            }
-        }
-    }
-
-
-    /** Scan all the Inputs.
-     *  Parameter indicates if Configuration is in progress.
-     */
-    void scanInputs(void aCallback(uint8_t, uint8_t))
-    {
-        // Scan all the nodes.
-        for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
-        {
-            if (isInputNodePresent(node))
-            {
-                // Read current state of pins and if there's been a change.
-                uint16_t pins = readInputNode(node);
-                if (pins != currentSwitchState[node])
-                {
-                    // Process all the changed pins.
-                    for (uint16_t pin = 0, mask = 1; pin < INPUT_PIN_MAX; pin++, mask <<= 1)
-                    {
-                        uint16_t state = pins & mask;
-                        if (state != (currentSwitchState[node] & mask))
-                        {
-                            // Ensure Input is loaded and handle the action.
-                            inputMgr.loadInput(node, pin);
-                            if (aCallback)
-                            {
-                                aCallback(node, pin);           // Notify the caller via the callback function.
-                            }
-                            else
-                            {
-                                processInput(state != 0);       // Normal processing, action the input.
-                            }
-                        }
-                    }
-
-                    // Record new input states.
-                    currentSwitchState[node] = pins;
-                }
-            }
-        }
-    }
-
-
     /** Record a node input error.
      */
     void recordInputError(uint8_t aNode)
@@ -295,80 +173,6 @@ class Controller
 
         return value;
     }
-
-
-    /** Process the changed input.
-     *  aState is the state of the input switch.
-     */
-    void processInput(boolean aState)
-    {
-        boolean newState = aState;
-        uint8_t first    = 0;
-        uint8_t node     = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
-        uint8_t pin      = (inputNumber                    ) & INPUT_PIN_MASK;
-
-        // Process all input state changes for Toggles, only state going low for other Input types.
-        if (   (!aState)
-            || (inputType == INPUT_TYPE_TOGGLE))
-        {
-            // Set desired new state based on Input's type/state and Output's state.
-            switch (inputType)
-            {
-                case INPUT_TYPE_TOGGLE: // newState = aState;      // Set state to that of the Toggle.
-                                        break;
-
-                case INPUT_TYPE_ON_OFF: // Find first real output (not a delay) to determine new state.
-                                        first = inputDef.getFirstOutput();
-                                        newState = !getOutputState(inputDef.getOutputNode(first), inputDef.getOutputPin(first));
-                                        break;
-
-                case INPUT_TYPE_ON:     newState = true;            // Set the state.
-                                        break;
-
-                case INPUT_TYPE_OFF:    newState = false;           // Clear the state.
-                                        break;
-            }
-
-            // Report state change if reporting enabled.
-            if (isReportEnabled(REPORT_SHORT))
-            {
-                disp.clearBottomRows();
-                disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
-                disp.printProgStrAt(LCD_COL_STATE, LCD_ROW_EDT, (newState ? M_HI : M_LO));
-                disp.printHexChAt(LCD_COL_NODE,    LCD_ROW_EDT, node);
-                disp.printHexChAt(LCD_COL_PIN,     LCD_ROW_EDT, pin);
-                disp.setCursor(LCD_COL_START + 1,  LCD_ROW_BOT);
-                setDisplayTimeout(getReportDelay());
-            }
-
-            if (isDebug(DEBUG_BRIEF))
-            {
-                Serial.print(millis());
-                Serial.print(CHAR_TAB);
-                Serial.print(PGMT(M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]));
-                Serial.print(PGMT(M_DEBUG_STATE));
-                Serial.print(PGMT(newState ? M_HI : M_LO));
-                Serial.print(PGMT(M_DEBUG_NODE));
-                Serial.print(node, HEX);
-                Serial.print(PGMT(M_DEBUG_PIN));
-                Serial.print(pin,  HEX);
-                Serial.println();
-            }
-
-            // If not locked, process the Input's Outputs.
-            if (!isLocked(newState))
-            {
-                i2cComms.sendGateway((newState ? COMMS_CMD_INP_HI : COMMS_CMD_INP_LO) | pin, node, -1);
-                processInputOutputs(newState);
-            }
-
-            if (isDebug(DEBUG_BRIEF))
-            {
-                Serial.println();
-            }
-        }
-    }
-
 
 
     /** Check if any of the Input's Outputs are locked.
@@ -423,7 +227,6 @@ class Controller
                             tone(INTERLOCK_BUZZER_PIN, INTERLOCK_BUZZER_FREQ1, INTERLOCK_BUZZER_TIME1);
                             timeoutBuzzer = millis() + INTERLOCK_BUZZER_TIME1;
 #endif
-
                             return true;            // A lock exists.
                         }
                     }
@@ -435,26 +238,48 @@ class Controller
     }
 
 
-    /** Process all the Input's Outputs.
+    public:
+    
+    /** Set the display timeout for an important message.
      */
-    void processInputOutputs(boolean aNewState)
+    void setDisplayTimeout(long aTimeout)
     {
-        uint8_t endDelay = 0;
+        displayTimeout = millis() + aTimeout;
+    }
 
-        // Process all the Input's outputs.
-        // In reverse order if setting lo.
-        if (aNewState)
+
+    /** Announce ourselves.
+     */
+    void announce()
+    {
+        disp.clear();
+        disp.printProgStrAt(LCD_COL_START,             LCD_ROW_TOP, M_SOFTWARE);
+        disp.printProgStrAt(-strlen_P(M_VERSION),      LCD_ROW_TOP, M_VERSION);
+        disp.printProgStrAt(-strlen_P(M_VERSION_DATE), LCD_ROW_DET, M_VERSION_DATE);
+    }
+
+
+    /** Sends the current debug level to all the connected outputs.
+     */
+    void sendDebugLevel()
+    {
+        for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
         {
-            for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
+            if (isOutputNodePresent(node))
             {
-                endDelay = processInputOutput(index, aNewState, endDelay);
-            }
-        }
-        else
-        {
-            for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
-            {
-                endDelay = processInputOutput(index, aNewState, endDelay);
+                i2cComms.sendShort(I2C_OUTPUT_BASE_ID + node, COMMS_CMD_DEBUG | (systemMgr.getDebugLevel() & COMMS_OPTION_MASK));
+
+                if (isDebug(DEBUG_BRIEF))
+                {
+                    Serial.print(millis());
+                    Serial.print(CHAR_TAB);
+                    Serial.print(PGMT(M_DEBUG_DEBUG));
+                    Serial.print(PGMT(M_DEBUG_NODE));
+                    Serial.print(HEX_CHARS[node]);
+                    Serial.print(CHAR_SPACE);
+                    Serial.print(PGMT(M_DEBUG_PROMPTS[systemMgr.getDebugLevel()]));
+                    Serial.println();
+                }
             }
         }
     }
@@ -534,6 +359,179 @@ class Controller
     }
 
 
+    /** Process all the Input's Outputs.
+     */
+    void processInputOutputs(boolean aNewState)
+    {
+        uint8_t endDelay = 0;
+
+        // Process all the Input's outputs.
+        // In reverse order if setting lo.
+        if (aNewState)
+        {
+            for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
+            {
+                endDelay = processInputOutput(index, aNewState, endDelay);
+            }
+        }
+        else
+        {
+            for (int index = INPUT_OUTPUT_MAX - 1; index >= 0; index--)
+            {
+                endDelay = processInputOutput(index, aNewState, endDelay);
+            }
+        }
+    }
+
+
+    /** Process the changed input.
+     *  aState is the state of the input switch.
+     */
+    void processInput(boolean aState)
+    {
+        boolean newState = aState;
+        uint8_t first    = 0;
+        uint8_t node     = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
+        uint8_t pin      = (inputNumber                    ) & INPUT_PIN_MASK;
+
+        // Process all input state changes for Toggles, only state going low for other Input types.
+        if (   (!aState)
+            || (inputType == INPUT_TYPE_TOGGLE))
+        {
+            // Set desired new state based on Input's type/state and Output's state.
+            switch (inputType)
+            {
+                case INPUT_TYPE_TOGGLE: // newState = aState;      // Set state to that of the Toggle.
+                                        break;
+
+                case INPUT_TYPE_ON_OFF: // Find first real output (not a delay) to determine new state.
+                                        first = inputDef.getFirstOutput();
+                                        newState = !getOutputState(inputDef.getOutputNode(first), inputDef.getOutputPin(first));
+                                        break;
+
+                case INPUT_TYPE_ON:     newState = true;            // Set the state.
+                                        break;
+
+                case INPUT_TYPE_OFF:    newState = false;           // Clear the state.
+                                        break;
+            }
+
+            // Report state change if reporting enabled.
+            if (isReportEnabled(REPORT_SHORT))
+            {
+                disp.clearBottomRows();
+                disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
+                disp.printProgStrAt(LCD_COL_STATE, LCD_ROW_EDT, (newState ? M_HI : M_LO));
+                disp.printHexChAt(LCD_COL_NODE,    LCD_ROW_EDT, node);
+                disp.printHexChAt(LCD_COL_PIN,     LCD_ROW_EDT, pin);
+                disp.setCursor(LCD_COL_START + 1,  LCD_ROW_BOT);
+                setDisplayTimeout(getReportDelay());
+            }
+
+            if (isDebug(DEBUG_BRIEF))
+            {
+                Serial.print(millis());
+                Serial.print(CHAR_TAB);
+                Serial.print(PGMT(M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]));
+                Serial.print(PGMT(M_DEBUG_STATE));
+                Serial.print(PGMT(newState ? M_HI : M_LO));
+                Serial.print(PGMT(M_DEBUG_NODE));
+                Serial.print(node, HEX);
+                Serial.print(PGMT(M_DEBUG_PIN));
+                Serial.print(pin,  HEX);
+                Serial.println();
+            }
+
+            // If not locked, process the Input's Outputs.
+            if (!isLocked(newState))
+            {
+                i2cComms.sendGateway((newState ? COMMS_CMD_INP_HI : COMMS_CMD_INP_LO) | pin, node, -1);
+                processInputOutputs(newState);
+            }
+
+            if (isDebug(DEBUG_BRIEF))
+            {
+                Serial.println();
+            }
+        }
+    }
+
+
+    /** Scan all the Inputs.
+     *  Parameter indicates if Configuration is in progress.
+     */
+    void scanInputs(void aCallback(uint8_t, uint8_t))
+    {
+        // Scan all the nodes.
+        for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
+        {
+            if (isInputNodePresent(node))
+            {
+                // Read current state of pins and if there's been a change.
+                uint16_t pins = readInputNode(node);
+                if (pins != currentSwitchState[node])
+                {
+                    // Process all the changed pins.
+                    for (uint16_t pin = 0, mask = 1; pin < INPUT_PIN_MAX; pin++, mask <<= 1)
+                    {
+                        uint16_t state = pins & mask;
+                        if (state != (currentSwitchState[node] & mask))
+                        {
+                            // Ensure Input is loaded and handle the action.
+                            inputMgr.loadInput(node, pin);
+                            if (aCallback)
+                            {
+                                aCallback(node, pin);           // Notify the caller via the callback function.
+                            }
+                            else
+                            {
+                                processInput(state != 0);       // Normal processing, action the input.
+                            }
+                        }
+                    }
+
+                    // Record new input states.
+                    currentSwitchState[node] = pins;
+                }
+            }
+        }
+    }
+
+
+    /** Scan for Input and Output nodes.
+     */
+    void scanHardware()
+    {
+        uint8_t id = 0;
+        buttons.waitForButtonRelease();
+
+        // Scan for Input nodes.
+        scanInputHardware();
+        dispInputHardware();
+
+        // Scan for Output nodes.
+        scanOutputHardware();
+        dispOutputHardware();
+
+        // Report absence of hardware.
+        if (   (inputNodes  == 0)
+            || (outputNodes == 0))
+        {
+            uint8_t row = LCD_ROW_TOP;
+            disp.clear();
+            if (inputNodes == 0)
+            {
+                disp.printProgStrAt(LCD_COL_START, row++, M_NO_INPUT);
+            }
+            if (outputNodes == 0)
+            {
+                disp.printProgStrAt(LCD_COL_START, row++, M_NO_OUTPUT);
+            }
+            buttons.waitForButtonClick();
+        }
+    }
+
+
     /** Run all update tasks.
      *  Turn off interlock warning pin if it's set.
      *  Play second buzzer sound if it's due.
@@ -605,6 +603,9 @@ class Controller
             disp.printDec(secs, 2, CHAR_ZERO);
         }
     }
+
+
+
 };
 
 
