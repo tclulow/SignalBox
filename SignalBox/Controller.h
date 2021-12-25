@@ -22,7 +22,10 @@ class Controller
 {
     private:
 
+    long    tickHardwareScan = 0L;      // Time for next scan for hardware.
+    long    tickInputScan    = 0L;      // Time for next scan of input switches.
     long    tickHeartBeat    = 0L;      // Time of last heartbeat.
+
     long    displayTimeout   = 1L;      // Timeout for the display when important messages are showing.
                                         // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
     long    timeoutInterlock = 0L;      // Timeout for interlock warning to be reset.
@@ -50,63 +53,6 @@ class Controller
     }
 
 
-    /** Run all update tasks.
-     *  Turn off interlock warning pin if it's set.
-     *  Play second buzzer sound if it's due.
-     *  Show the heartbeat (unless there's a display timeout pending).
-     */
-    void update()
-    {
-        long now = millis();
-
-#if INTERLOCK_WARNING_PIN
-        // Check for interlock warning expired
-        if (   (timeoutInterlock > 0)
-            && (timeoutInterlock < now))
-        {
-            timeoutInterlock = 0L;
-            digitalWrite(INTERLOCK_WARNING_PIN, LOW);
-        }
-#endif
-
-#if INTERLOCK_BUZZER_PIN
-        if (   (timeoutBuzzer > 0)
-            && (timeoutBuzzer < now))
-        {
-            timeoutBuzzer = 0;
-            tone(INTERLOCK_BUZZER_PIN, INTERLOCK_BUZZER_FREQ2, INTERLOCK_BUZZER_TIME2);
-        }
-#endif
-
-        // If display timeout has expired, clear it.
-        if (   (displayTimeout > 0)
-            && (now > displayTimeout))
-        {
-            displayTimeout = 0L;
-            announce();
-        }
-
-        // Show heartbeat if no display timeout is pending.
-        if (   (displayTimeout == 0)
-            && (now > tickHeartBeat))
-        {
-            int hours = (now)                                                       / MILLIS_PER_HOUR;
-            int mins  = (now - MILLIS_PER_HOUR * hours)                             / MILLIS_PER_MINUTE;
-            int secs  = (now - MILLIS_PER_HOUR * hours  - MILLIS_PER_MINUTE * mins) / MILLIS_PER_SECOND;
-
-            disp.setCursor(LCD_COL_START, LCD_ROW_DET);
-            if (hours > 0)
-            {
-                disp.printDec(hours, 1, CHAR_ZERO);
-                disp.printCh(CHAR_COLON);
-            }
-            disp.printDec(mins, 2, CHAR_ZERO);
-            disp.printCh(CHAR_COLON);
-            disp.printDec(secs, 2, CHAR_ZERO);
-        }
-    }
-
-    
     /** Scan for attached Input hardware.
      */
     void scanInputHardware()
@@ -588,6 +534,77 @@ class Controller
     }
 
 
+    /** Run all update tasks.
+     *  Turn off interlock warning pin if it's set.
+     *  Play second buzzer sound if it's due.
+     *  Show the heartbeat (unless there's a display timeout pending).
+     */
+    void update()
+    {
+        long now = millis();
+
+#if INTERLOCK_WARNING_PIN
+        // Check for interlock warning expired
+        if (   (timeoutInterlock > 0)
+            && (timeoutInterlock < now))
+        {
+            timeoutInterlock = 0L;
+            digitalWrite(INTERLOCK_WARNING_PIN, LOW);
+        }
+#endif
+
+#if INTERLOCK_BUZZER_PIN
+        if (   (timeoutBuzzer > 0)
+            && (timeoutBuzzer < now))
+        {
+            timeoutBuzzer = 0;
+            tone(INTERLOCK_BUZZER_PIN, INTERLOCK_BUZZER_FREQ2, INTERLOCK_BUZZER_TIME2);
+        }
+#endif
+
+        // Rescan for new hardware
+        if (now > tickHardwareScan)
+        {
+            tickHardwareScan = now + STEP_HARDWARE_SCAN;
+            scanInputHardware();
+            scanOutputHardware();
+        }
+    
+        // Process any inputs
+        if (now > tickInputScan)
+        {
+            tickInputScan = now + STEP_INPUT_SCAN;
+            // scanOutputs();
+            scanInputs(NULL);
+        }
+    
+        // If display timeout has expired, clear it.
+        if (   (displayTimeout > 0)
+            && (now > displayTimeout))
+        {
+            displayTimeout = 0L;
+            announce();
+        }
+
+        // Show heartbeat if no display timeout is pending.
+        if (   (displayTimeout == 0)
+            && (now > tickHeartBeat))
+        {
+            int hours = (now)                                                       / MILLIS_PER_HOUR;
+            int mins  = (now - MILLIS_PER_HOUR * hours)                             / MILLIS_PER_MINUTE;
+            int secs  = (now - MILLIS_PER_HOUR * hours  - MILLIS_PER_MINUTE * mins) / MILLIS_PER_SECOND;
+
+            disp.setCursor(LCD_COL_START, LCD_ROW_DET);
+            if (hours > 0)
+            {
+                disp.printDec(hours, 1, CHAR_ZERO);
+                disp.printCh(CHAR_COLON);
+            }
+            disp.printDec(mins, 2, CHAR_ZERO);
+            disp.printCh(CHAR_COLON);
+            disp.printDec(secs, 2, CHAR_ZERO);
+        }
+    }
 };
 
 

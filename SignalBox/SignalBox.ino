@@ -79,13 +79,6 @@ char    commandBuffer[COMMAND_BUFFER_LEN + 1];  // Buffer to read characters wit
 uint8_t commandLen = 0;                         // Length of command.
 
 
-// Ticking
-long    now              = 0L;      // Current time in millisecs.
-long    tickHardwareScan = 0L;      // Time for next scan for hardware.
-long    tickInputScan    = 0L;      // Time for next scan of input switches.
-long    tickGateway      = 0L;      // Time for next gateway request.
-
-
 /** Report a system failure.
  */
 void systemFail(PGM_P aMessage, int aValue)
@@ -497,10 +490,15 @@ void setup()
 }
 
 
+// Ticking
+long tickGateway = 0L;      // Time for next gateway request.
+
 /** Main loop.
  */
 void loop()
 {
+    long now = 0L;      // Current time in millisecs.
+    
     // Press any button to configure.
     if (buttons.readButton())
     {
@@ -511,22 +509,6 @@ void loop()
     handleSerialInput();
 
     now = millis();
-
-    // Rescan for new hardware
-    if (now > tickHardwareScan)
-    {
-        tickHardwareScan = now + STEP_HARDWARE_SCAN;
-        controller.scanInputHardware();
-        controller.scanOutputHardware();
-    }
-
-    // Process any inputs
-    if (now > tickInputScan)
-    {
-        tickInputScan = now + STEP_INPUT_SCAN;
-        // scanOutputs();
-        controller.scanInputs(NULL);
-    }
 
     // See if there are any Gateway requests
     if (now > tickGateway)
