@@ -84,7 +84,6 @@ long    now              = 0L;      // Current time in millisecs.
 long    tickHardwareScan = 0L;      // Time for next scan for hardware.
 long    tickInputScan    = 0L;      // Time for next scan of input switches.
 long    tickGateway      = 0L;      // Time for next gateway request.
-long    tickHeartBeat    = 0L;      // Time of last heartbeat.
 
 
 /** Report a system failure.
@@ -538,10 +537,6 @@ void loop()
         }
     }
 
-    // Show heartbeat.
-    if (now > tickHeartBeat)
-    {
-        tickHeartBeat = now + STEP_HEARTBEAT;
-        controller.showHeartBeat();
-    }
+    // Show heartbeat, sound buzzer, etc.
+    controller.update();
 }

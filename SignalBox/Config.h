@@ -34,9 +34,13 @@
 #define LCD_D6                      6
 #define LCD_D7                      7
 
-#define INTERLOCK_WARNING_PIN      13   // When interlocks prevent an operation, set this pin high. If zero, no warning is made.
-#define INTERLOCK_WARNING_FREQ    440   // Frequency of warning tone (if using tone library).
+#define INTERLOCK_WARNING_PIN      13   // When interlocks prevent an operation, set this pin high. If zero, no warning is shown.
 #define INTERLOCK_WARNING_TIME   2000   // Duration (msecs) of interlock warning.
+#define INTERLOCK_BUZZER_PIN       12   // Buzzer pin to sound interlock warning on (about 900+ bytes of extra code). Zero disables buzzer tones.
+#define INTERLOCK_BUZZER_FREQ1    196   // Frequency of warning first tone.
+#define INTERLOCK_BUZZER_FREQ2    131   // Frequency of warning first tone.
+#define INTERLOCK_BUZZER_TIME1    200   // Duration (msecs) of interlock warning first tone.
+#define INTERLOCK_BUZZER_TIME2    300   // Duration (msecs) of interlock warning second tone.
 
 
 // Delays

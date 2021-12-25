@@ -22,9 +22,11 @@ class Controller
 {
     private:
 
+    long    tickHeartBeat    = 0L;      // Time of last heartbeat.
     long    displayTimeout   = 1L;      // Timeout for the display when important messages are showing.
                                         // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
     long    timeoutInterlock = 0L;      // Timeout for interlock warning to be reset.
+    long    timeoutBuzzer    = 0L;      // Time at which buzzer2 sound should be made.
 
 
     public:
@@ -48,20 +50,31 @@ class Controller
     }
 
 
-    /** Show the heartbeat.
-     *  Supress if there's a display timeout pending.
+    /** Run all update tasks.
+     *  Turn off interlock warning pin if it's set.
+     *  Play second buzzer sound if it's due.
+     *  Show the heartbeat (unless there's a display timeout pending).
      */
-    void showHeartBeat()
+    void update()
     {
         long now = millis();
 
 #if INTERLOCK_WARNING_PIN
         // Check for interlock warning expired
         if (   (timeoutInterlock > 0)
-            && (now > timeoutInterlock))
+            && (timeoutInterlock < now))
         {
             timeoutInterlock = 0L;
             digitalWrite(INTERLOCK_WARNING_PIN, LOW);
+        }
+#endif
+
+#if INTERLOCK_BUZZER_PIN
+        if (   (timeoutBuzzer > 0)
+            && (timeoutBuzzer < now))
+        {
+            timeoutBuzzer = 0;
+            tone(INTERLOCK_BUZZER_PIN, INTERLOCK_BUZZER_FREQ2, INTERLOCK_BUZZER_TIME2);
         }
 #endif
 
@@ -74,7 +87,8 @@ class Controller
         }
 
         // Show heartbeat if no display timeout is pending.
-        if (displayTimeout == 0)
+        if (   (displayTimeout == 0)
+            && (now > tickHeartBeat))
         {
             int hours = (now)                                                       / MILLIS_PER_HOUR;
             int mins  = (now - MILLIS_PER_HOUR * hours)                             / MILLIS_PER_MINUTE;
@@ -92,6 +106,7 @@ class Controller
         }
     }
 
+    
     /** Scan for attached Input hardware.
      */
     void scanInputHardware()
@@ -456,8 +471,11 @@ class Controller
                             pinMode(INTERLOCK_WARNING_PIN, OUTPUT);
                             digitalWrite(INTERLOCK_WARNING_PIN, HIGH);
                             timeoutInterlock = millis() + INTERLOCK_WARNING_TIME;
-                            // Alternative using tone function (about 700+ bytes of extra code).
-                            // tone(INTERLOCK_WARNING_PIN, INTERLOCK_WARNING_FREQ, INTERLOCK_WARNING_TIME);
+#endif
+#if INTERLOCK_BUZZER_PIN                            
+                            pinMode(INTERLOCK_BUZZER_PIN, OUTPUT);
+                            tone(INTERLOCK_BUZZER_PIN, INTERLOCK_BUZZER_FREQ1, INTERLOCK_BUZZER_TIME1);
+                            timeoutBuzzer = millis() + INTERLOCK_BUZZER_TIME1;
 #endif
 
                             return true;            // A lock exists.
