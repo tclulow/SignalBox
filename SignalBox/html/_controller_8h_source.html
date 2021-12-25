@@ -109,7 +109,7 @@ $(function() {
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            digitalWrite(INTERLOCK_WARNING_PIN, LOW);</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        }</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="comment">// If display timeout has expired, clear it.</span></div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">if</span> (   (displayTimeout &gt; 0)</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            &amp;&amp; (now &gt; displayTimeout))</div>
@@ -149,13 +149,13 @@ $(function() {
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;                    <span class="keywordflow">if</span> (<a class="code" href="_i2c_comms_8h.html#a586da29a9e64c8c479f57f882dd85859">i2cComms</a>.<a class="code" href="class_i2c_comms.html#aa7acfa7f4e664b96f38563edb38bca14">exists</a>(I2C_INPUT_BASE_ID + node))</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                    {</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                        <a class="code" href="_input_mgr_8h.html#a37b72efbf384f48f922d3324f2eca036">setInputNodePresent</a>(node, <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    </div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                        <span class="comment">// Configure MCP for input.</span></div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                        <span class="keywordflow">for</span> (uint8_t command = 0; command &lt; INPUT_COMMANDS_LEN; command++)</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                        {</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                            <a class="code" href="_i2c_comms_8h.html#a586da29a9e64c8c479f57f882dd85859">i2cComms</a>.<a class="code" href="class_i2c_comms.html#aa76b2ecf68b0f09849c4f91948b6881e">sendData</a>(I2C_INPUT_BASE_ID + node, INPUT_COMMANDS[command], MCP_ALL_HIGH, -1);</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                        }</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                        <span class="comment">// Record current switch state</span></div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                        <a class="code" href="_signal_box_8h.html#ad2f88ef4e70d649774ea77b3380b378f">currentSwitchState</a>[node] = <a class="code" href="class_controller.html#a29f60fd9385ad925a59600002c0ef68b">readInputNode</a>(node);</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                    }</div>
@@ -167,15 +167,15 @@ $(function() {
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            }</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        }</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    }</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    </div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    </div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
 <div class="line"><a name="l00132"></a><span class="lineno"><a class="line" href="class_controller.html#a739a6de08fbd549754f3e9814cf5bfa4">  132</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_controller.html#a739a6de08fbd549754f3e9814cf5bfa4">dispInputHardware</a>()</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    {</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#a14242933dd00fc1d50f9ae70d5121d14">clear</a>();</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#abd7925e2a505d35f8a0f891f5cff59a8">printProgStrAt</a>(LCD_COL_START, LCD_ROW_TOP, M_NODES);</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#abd7925e2a505d35f8a0f891f5cff59a8">printProgStrAt</a>(LCD_COL_START, LCD_ROW_DET, M_INPUT, LCD_LEN_OPTION);</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#a46c9cb7aeb2bd6ac0a3b1a3ba99f4c99">setCursor</a>(-INPUT_NODE_MAX, LCD_ROW_TOP);</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    </div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="keywordflow">for</span> (uint8_t node = 0; node &lt; INPUT_NODE_MAX; node++)</div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        {</div>
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#a6c2315739084015dbffe3ff94b01d4da">getLcdId</a>() == (I2C_INPUT_BASE_ID + node))</div>
@@ -194,11 +194,11 @@ $(function() {
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                }</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            }</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        }</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    </div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        buttons.<a class="code" href="class_buttons.html#aa680696417b94069c8a9b091aa03fad7">waitForButtonClick</a>();</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    }</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    </div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    </div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
 <div class="line"><a name="l00164"></a><span class="lineno"><a class="line" href="class_controller.html#a3dd509cb3912fe84377480cb2a0693b1">  164</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_controller.html#a3dd509cb3912fe84377480cb2a0693b1">scanOutputHardware</a>()</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    {</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        <span class="keywordflow">for</span> (uint8_t node = 0; node &lt; OUTPUT_NODE_MAX; node++)</div>
@@ -209,20 +209,20 @@ $(function() {
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;            }</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        }</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    }</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    </div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    </div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160; </div>
 <div class="line"><a name="l00179"></a><span class="lineno"><a class="line" href="class_controller.html#ae9e7e3de7515b8135ae2d1cb29ebddfd">  179</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_controller.html#ae9e7e3de7515b8135ae2d1cb29ebddfd">dispOutputHardware</a>()</div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    {</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#abd7925e2a505d35f8a0f891f5cff59a8">printProgStrAt</a>(LCD_COL_START, LCD_ROW_DET, M_OUTPUT, LCD_LEN_OPTION);</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#a46c9cb7aeb2bd6ac0a3b1a3ba99f4c99">setCursor</a>(-OUTPUT_NODE_HALF, LCD_ROW_EDT);</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    </div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160; </div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        <span class="keywordflow">for</span> (uint8_t node = 0; node &lt; OUTPUT_NODE_MAX; node++)</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        {</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;            <span class="keywordflow">if</span> (node == OUTPUT_NODE_HALF)</div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;            {</div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#a46c9cb7aeb2bd6ac0a3b1a3ba99f4c99">setCursor</a>(-OUTPUT_NODE_HALF, LCD_ROW_BOT);</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            }</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    </div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160; </div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="_output_ctl_8h.html#af924b307e662a56ae7c2588a2ba92fbf">isOutputNodePresent</a>(node))</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;            {</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#a1638d4b8b233dc541da490f1461f35da">printHexCh</a>(node);</div>
@@ -232,24 +232,24 @@ $(function() {
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#ac7be39e90cdccfa884c26453b951d7de">printCh</a>(CHAR_DOT);</div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;            }</div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        }</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    </div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160; </div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        buttons.<a class="code" href="class_buttons.html#aa680696417b94069c8a9b091aa03fad7">waitForButtonClick</a>();</div>
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    }</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    </div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    </div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160; </div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160; </div>
 <div class="line"><a name="l00207"></a><span class="lineno"><a class="line" href="class_controller.html#a7ab0694fe984dd2c04d23f8547740544">  207</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_controller.html#a7ab0694fe984dd2c04d23f8547740544">scanHardware</a>()</div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    {</div>
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        uint8_t <span class="keywordtype">id</span> = 0;</div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        buttons.<a class="code" href="class_buttons.html#ab7128f045ac0a23d66f784a9a5defbdb">waitForButtonRelease</a>();</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    </div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        <span class="comment">// Scan for Input nodes.</span></div>
 <div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        <a class="code" href="class_controller.html#a3393760999b7a11a02a7500f755c3049">scanInputHardware</a>();</div>
 <div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        <a class="code" href="class_controller.html#a739a6de08fbd549754f3e9814cf5bfa4">dispInputHardware</a>();</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    </div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        <span class="comment">// Scan for Output nodes.</span></div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        <a class="code" href="class_controller.html#a3dd509cb3912fe84377480cb2a0693b1">scanOutputHardware</a>();</div>
 <div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        <a class="code" href="class_controller.html#ae9e7e3de7515b8135ae2d1cb29ebddfd">dispOutputHardware</a>();</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    </div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160; </div>
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        <span class="comment">// Report absence of hardware.</span></div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        <span class="keywordflow">if</span> (   (<a class="code" href="_input_mgr_8h.html#a170f52d7f3607c16c86a40f05e5b6ad3">inputNodes</a>  == 0)</div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;            || (<a class="code" href="_output_ctl_8h.html#a7741b2be777fd97c3a45d3d5d06bd8f6">outputNodes</a> == 0))</div>
@@ -267,8 +267,8 @@ $(function() {
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;            buttons.<a class="code" href="class_buttons.html#aa680696417b94069c8a9b091aa03fad7">waitForButtonClick</a>();</div>
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        }</div>
 <div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    }</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    </div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    </div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160; </div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
 <div class="line"><a name="l00241"></a><span class="lineno"><a class="line" href="class_controller.html#ad7a0186a1ff4d1a3f4f1b6e0b1b6e583">  241</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_controller.html#ad7a0186a1ff4d1a3f4f1b6e0b1b6e583">sendDebugLevel</a>()</div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    {</div>
 <div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        <span class="keywordflow">for</span> (uint8_t node = 0; node &lt; OUTPUT_NODE_MAX; node++)</div>
@@ -276,7 +276,7 @@ $(function() {
 <div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="_output_ctl_8h.html#af924b307e662a56ae7c2588a2ba92fbf">isOutputNodePresent</a>(node))</div>
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;            {</div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                <a class="code" href="_i2c_comms_8h.html#a586da29a9e64c8c479f57f882dd85859">i2cComms</a>.<a class="code" href="class_i2c_comms.html#ab10f593cbab79dee947d165e17222433">sendShort</a>(I2C_OUTPUT_BASE_ID + node, COMMS_CMD_DEBUG | (<a class="code" href="_system_8h.html#a6cf32207f79e3e10b7404ddab2282ea2">systemMgr</a>.<a class="code" href="class_system_mgr.html#abd010bd604ed2fd67ac743ea0d19e15c">getDebugLevel</a>() &amp; COMMS_OPTION_MASK));</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    </div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;                <span class="keywordflow">if</span> (<a class="code" href="_system_8h.html#ab1fbd99aa26b8fca29ce764d2a16ebd2">isDebug</a>(DEBUG_BRIEF))</div>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                {</div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;                    Serial.print(millis());</div>
@@ -311,7 +311,7 @@ $(function() {
 <div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                        <span class="keywordflow">if</span> (state != (<a class="code" href="_signal_box_8h.html#ad2f88ef4e70d649774ea77b3380b378f">currentSwitchState</a>[node] &amp; mask))</div>
 <div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;                        {</div>
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                            <span class="comment">// Ensure Input is loaded and handle the action.</span></div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                            <a class="code" href="_input_mgr_8h.html#a89ac8144e2df51910b74bc84cf1a2773">inputMgr</a>.<a class="code" href="class_input_mgr.html#adbcdd32f42ba5d72dd6feb490ab239f1">loadInput</a>(node, pin);</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                            <a class="code" href="_input_mgr_8h.html#ac2be8ba53873ec7655a7ca6aef3eb3f5">inputMgr</a>.<a class="code" href="class_input_mgr.html#adbcdd32f42ba5d72dd6feb490ab239f1">loadInput</a>(node, pin);</div>
 <div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                            <span class="keywordflow">if</span> (aCallback)</div>
 <div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                            {</div>
 <div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                                aCallback(node, pin);           <span class="comment">// Notify the caller via the callback function.</span></div>
@@ -322,26 +322,26 @@ $(function() {
 <div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                            }</div>
 <div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                        }</div>
 <div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                    }</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    </div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
 <div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                    <span class="comment">// Record new input states.</span></div>
 <div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                    <a class="code" href="_signal_box_8h.html#ad2f88ef4e70d649774ea77b3380b378f">currentSwitchState</a>[node] = pins;</div>
 <div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                }</div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;            }</div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        }</div>
 <div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    }</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    </div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    </div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160; </div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160; </div>
 <div class="line"><a name="l00308"></a><span class="lineno"><a class="line" href="class_controller.html#a2d81e2fde95a270d3750b318b6a6b991">  308</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_controller.html#a2d81e2fde95a270d3750b318b6a6b991">recordInputError</a>(uint8_t aNode)</div>
 <div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    {</div>
 <div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;        <a class="code" href="_forward_8h.html#a83443f1aa10bfe618b22d83147b88da6">systemFail</a>(M_INPUT, aNode);</div>
 <div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;        <a class="code" href="_input_mgr_8h.html#a37b72efbf384f48f922d3324f2eca036">setInputNodePresent</a>(aNode, <span class="keyword">false</span>);</div>
 <div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    }</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    </div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    </div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160; </div>
 <div class="line"><a name="l00320"></a><span class="lineno"><a class="line" href="class_controller.html#a29f60fd9385ad925a59600002c0ef68b">  320</a></span>&#160;    uint16_t <a class="code" href="class_controller.html#a29f60fd9385ad925a59600002c0ef68b">readInputNode</a>(uint8_t aNode)</div>
 <div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    {</div>
 <div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        uint16_t value = 0;</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    </div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
 <div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        <span class="keywordflow">if</span> (   (<a class="code" href="_i2c_comms_8h.html#a586da29a9e64c8c479f57f882dd85859">i2cComms</a>.<a class="code" href="class_i2c_comms.html#ab10f593cbab79dee947d165e17222433">sendShort</a>(I2C_INPUT_BASE_ID + aNode, MCP_GPIOA))</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;            || (!<a class="code" href="_i2c_comms_8h.html#a586da29a9e64c8c479f57f882dd85859">i2cComms</a>.<a class="code" href="class_i2c_comms.html#acde1ba726e3826250ba05ef60a73c493">requestPacket</a>(I2C_INPUT_BASE_ID + aNode, INPUT_STATE_LEN)))</div>
 <div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        {</div>
@@ -352,18 +352,18 @@ $(function() {
 <div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        {</div>
 <div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;            value = <a class="code" href="_i2c_comms_8h.html#a586da29a9e64c8c479f57f882dd85859">i2cComms</a>.<a class="code" href="class_i2c_comms.html#aff399dba4b44bb42f354eba73431e080">readWord</a>();</div>
 <div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        }</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    </div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160; </div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;        <span class="keywordflow">return</span> value;</div>
 <div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    }</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    </div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    </div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160; </div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160; </div>
 <div class="line"><a name="l00342"></a><span class="lineno"><a class="line" href="class_controller.html#a4c74ce916350194ca6dc1fd9c9469a65">  342</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_controller.html#a4c74ce916350194ca6dc1fd9c9469a65">processInput</a>(<span class="keywordtype">boolean</span> aState)</div>
 <div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    {</div>
 <div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;        <span class="keywordtype">boolean</span> newState = aState;</div>
 <div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;        uint8_t first    = 0;</div>
 <div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;        uint8_t node     = (inputNumber &gt;&gt; INPUT_NODE_SHIFT) &amp; INPUT_NODE_MASK;</div>
 <div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;        uint8_t pin      = (inputNumber                    ) &amp; INPUT_PIN_MASK;</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    </div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160; </div>
 <div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        <span class="comment">// Process all input state changes for Toggles, only state going low for other Input types.</span></div>
 <div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;        <span class="keywordflow">if</span> (   (!aState)</div>
 <div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;            || (inputType == INPUT_TYPE_TOGGLE))</div>
@@ -373,19 +373,19 @@ $(function() {
 <div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;            {</div>
 <div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;                <span class="keywordflow">case</span> INPUT_TYPE_TOGGLE: <span class="comment">// newState = aState;      // Set state to that of the Toggle.</span></div>
 <div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;                                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    </div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160; </div>
 <div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;                <span class="keywordflow">case</span> INPUT_TYPE_ON_OFF: <span class="comment">// Find first real output (not a delay) to determine new state.</span></div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;                                        first = inputDef.<a class="code" href="class_input_def.html#a0e5d4900f6e43f0dc1c4267ff2b5e945">getFirstOutput</a>();</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;                                        newState = !<a class="code" href="_output_ctl_8h.html#a1589368b1e5d2524ccbdbb8494de7acc">getOutputState</a>(inputDef.<a class="code" href="class_input_def.html#aabce198526418b6da61756a794edf198">getOutputNode</a>(first), inputDef.<a class="code" href="class_input_def.html#a4c6c444b6f5ce3cf15b96f94dfe75cac">getOutputPin</a>(first));</div>
 <div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;                                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    </div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160; </div>
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;                <span class="keywordflow">case</span> INPUT_TYPE_ON:     newState = <span class="keyword">true</span>;            <span class="comment">// Set the state.</span></div>
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;                                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    </div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160; </div>
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;                <span class="keywordflow">case</span> INPUT_TYPE_OFF:    newState = <span class="keyword">false</span>;           <span class="comment">// Clear the state.</span></div>
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                                        <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;            }</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    </div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160; </div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;            <span class="comment">// Report state change if reporting enabled.</span></div>
 <div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="_report_8h.html#abc4eec1657a950a5ade78b57a693945f">isReportEnabled</a>(REPORT_SHORT))</div>
 <div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;            {</div>
@@ -397,7 +397,7 @@ $(function() {
 <div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;                <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#a46c9cb7aeb2bd6ac0a3b1a3ba99f4c99">setCursor</a>(LCD_COL_START + 1,  LCD_ROW_BOT);</div>
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;                <a class="code" href="class_controller.html#a7d68ea4549032c98ab7930af36c5ead4">setDisplayTimeout</a>(<a class="code" href="_report_8h.html#a32e4d3dbfbf89dbc56a20d962eefbc52">getReportDelay</a>());</div>
 <div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;            }</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    </div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160; </div>
 <div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="_system_8h.html#ab1fbd99aa26b8fca29ce764d2a16ebd2">isDebug</a>(DEBUG_BRIEF))</div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;            {</div>
 <div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;                Serial.print(millis());</div>
@@ -411,23 +411,23 @@ $(function() {
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;                Serial.print(pin,  HEX);</div>
 <div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;                Serial.println();</div>
 <div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;            }</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    </div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160; </div>
 <div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;            <span class="comment">// If not locked, process the Input&#39;s Outputs.</span></div>
 <div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;            <span class="keywordflow">if</span> (!<a class="code" href="class_controller.html#ab37d299166f591fc798b713d42677442">isLocked</a>(newState))</div>
 <div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;            {</div>
 <div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;                <a class="code" href="_i2c_comms_8h.html#a586da29a9e64c8c479f57f882dd85859">i2cComms</a>.<a class="code" href="class_i2c_comms.html#a5cf1f689d24c216b2125918a78711842">sendGateway</a>((newState ? COMMS_CMD_INP_HI : COMMS_CMD_INP_LO) | pin, node, -1);</div>
 <div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;                <a class="code" href="class_controller.html#a0a5d6da1700893fda12ca3c8aa3b74bd">processInputOutputs</a>(newState);</div>
 <div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;            }</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    </div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160; </div>
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="_system_8h.html#ab1fbd99aa26b8fca29ce764d2a16ebd2">isDebug</a>(DEBUG_BRIEF))</div>
 <div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;            {</div>
 <div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;                Serial.println();</div>
 <div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;            }</div>
 <div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;        }</div>
 <div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    }</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    </div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;    </div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    </div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160; </div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160; </div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160; </div>
 <div class="line"><a name="l00415"></a><span class="lineno"><a class="line" href="class_controller.html#ab37d299166f591fc798b713d42677442">  415</a></span>&#160;    <span class="keywordtype">boolean</span> <a class="code" href="class_controller.html#ab37d299166f591fc798b713d42677442">isLocked</a>(<span class="keywordtype">boolean</span> aNewState)</div>
 <div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;    {</div>
 <div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;        <span class="comment">// Check all the Input&#39;s Outputs.</span></div>
@@ -437,7 +437,7 @@ $(function() {
 <div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;            <span class="keywordflow">if</span> (!inputDef.<a class="code" href="class_input_def.html#a5a14613382b0d5b8fdd65436259f75a2">isDelay</a>(inpIndex))</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;            {</div>
 <div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;                <a class="code" href="_output_ctl_8h.html#ac0db31e359865de84a8f35aa0c2a20d5">readOutput</a>(inputDef.<a class="code" href="class_input_def.html#aabce198526418b6da61756a794edf198">getOutputNode</a>(inpIndex), inputDef.<a class="code" href="class_input_def.html#a4c6c444b6f5ce3cf15b96f94dfe75cac">getOutputPin</a>(inpIndex));</div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;    </div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160; </div>
 <div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;                <span class="comment">// Check all the Output&#39;s locks.</span></div>
 <div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;                <span class="keywordflow">for</span> (uint8_t outIndex = 0; outIndex &lt; OUTPUT_LOCK_MAX; outIndex++)</div>
 <div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;                {</div>
@@ -460,37 +460,37 @@ $(function() {
 <div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;                                <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#a1638d4b8b233dc541da490f1461f35da">printHexCh</a>(outputDef.<a class="code" href="class_output_def.html#a10da32d3863db13b01b8ca7468116251">getLockPin</a> (aNewState, outIndex));</div>
 <div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;                                <a class="code" href="class_controller.html#a7d68ea4549032c98ab7930af36c5ead4">setDisplayTimeout</a>(<a class="code" href="_report_8h.html#a32e4d3dbfbf89dbc56a20d962eefbc52">getReportDelay</a>());</div>
 <div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;                            }</div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;    </div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160; </div>
 <div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;                            <span class="keywordflow">if</span> (<a class="code" href="_system_8h.html#ab1fbd99aa26b8fca29ce764d2a16ebd2">isDebug</a>(DEBUG_BRIEF))</div>
 <div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;                            {</div>
 <div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;                                outputDef.<a class="code" href="class_output_def.html#a96844208b3fa82545340597d23b8d8d7">printDef</a>(M_LOCK, outputNode, outputPin);</div>
 <div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;                                <a class="code" href="_output_ctl_8h.html#ac0db31e359865de84a8f35aa0c2a20d5">readOutput</a>(outputDef.<a class="code" href="class_output_def.html#ab9d94e7aefb33be248161b9d17efc525">getLockNode</a>(aNewState, outIndex), outputDef.<a class="code" href="class_output_def.html#a10da32d3863db13b01b8ca7468116251">getLockPin</a>(aNewState, outIndex));</div>
 <div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;                                outputDef.<a class="code" href="class_output_def.html#a96844208b3fa82545340597d23b8d8d7">printDef</a>(M_VS, outputNode, outputPin);</div>
 <div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;                            }</div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;    </div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;<span class="preprocessor">    #if INTERLOCK_WARNING_PIN</span></div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160; </div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;<span class="preprocessor">#if INTERLOCK_WARNING_PIN</span></div>
 <div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;                            pinMode(INTERLOCK_WARNING_PIN, OUTPUT);</div>
 <div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;                            digitalWrite(INTERLOCK_WARNING_PIN, HIGH);</div>
 <div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;                            timeoutInterlock = millis() + INTERLOCK_WARNING_TIME;</div>
 <div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;                            <span class="comment">// Alternative using tone function (about 700+ bytes of extra code).</span></div>
 <div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;                            <span class="comment">// tone(INTERLOCK_WARNING_PIN, INTERLOCK_WARNING_FREQ, INTERLOCK_WARNING_TIME);</span></div>
-<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;<span class="preprocessor">    #endif</span></div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;    </div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160; </div>
 <div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;                            <span class="keywordflow">return</span> <span class="keyword">true</span>;            <span class="comment">// A lock exists.</span></div>
 <div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;                        }</div>
 <div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;                    }</div>
 <div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;                }</div>
 <div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;            }</div>
 <div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;        }</div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    </div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160; </div>
 <div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    }</div>
-<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;    </div>
-<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;    </div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160; </div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160; </div>
 <div class="line"><a name="l00476"></a><span class="lineno"><a class="line" href="class_controller.html#a0a5d6da1700893fda12ca3c8aa3b74bd">  476</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_controller.html#a0a5d6da1700893fda12ca3c8aa3b74bd">processInputOutputs</a>(<span class="keywordtype">boolean</span> aNewState)</div>
 <div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;    {</div>
 <div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;        uint8_t endDelay = 0;</div>
-<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;    </div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160; </div>
 <div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;        <span class="comment">// Process all the Input&#39;s outputs.</span></div>
 <div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;        <span class="comment">// In reverse order if setting lo.</span></div>
 <div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;        <span class="keywordflow">if</span> (aNewState)</div>
@@ -508,15 +508,15 @@ $(function() {
 <div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;            }</div>
 <div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;        }</div>
 <div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;    }</div>
-<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;    </div>
-<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;    </div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160; </div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160; </div>
 <div class="line"><a name="l00503"></a><span class="lineno"><a class="line" href="class_controller.html#afb841ac0e7d295f55f41362ad2157f31">  503</a></span>&#160;    uint8_t <a class="code" href="class_controller.html#afb841ac0e7d295f55f41362ad2157f31">processInputOutput</a>(uint8_t aIndex, uint8_t aState, uint8_t aDelay)</div>
 <div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;    {</div>
 <div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;        uint8_t endDelay = aDelay;</div>
-<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;    </div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160; </div>
 <div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;        uint8_t outNode  = inputDef.<a class="code" href="class_input_def.html#aabce198526418b6da61756a794edf198">getOutputNode</a>(aIndex);</div>
 <div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;        uint8_t outPin   = inputDef.<a class="code" href="class_input_def.html#a4c6c444b6f5ce3cf15b96f94dfe75cac">getOutputPin</a>(aIndex);</div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    </div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160; </div>
 <div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;        <span class="comment">// Process the Input&#39;s Outputs.</span></div>
 <div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;        <span class="keywordflow">if</span> (inputDef.<a class="code" href="class_input_def.html#a5a14613382b0d5b8fdd65436259f75a2">isDelay</a>(aIndex))</div>
 <div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;        {</div>
@@ -525,8 +525,8 @@ $(function() {
 <div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;        <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;        {</div>
 <div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;            <span class="keywordflow">if</span> (   (<a class="code" href="_report_8h.html#abc4eec1657a950a5ade78b57a693945f">isReportEnabled</a>(REPORT_PAUSE)))</div>
-<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;    <span class="comment">//            || (   (isReportEnabled(REPORT_SHORT))</span></div>
-<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;    <span class="comment">//                &amp;&amp; (inputDef.getOutputCount() &lt;= 1)))</span></div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;<span class="comment">//                || (   (isReportEnabled(REPORT_SHORT))</span></div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;<span class="comment">//                    &amp;&amp; (inputDef.getOutputCount() &lt;= 1)))</span></div>
 <div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;            {</div>
 <div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;                <a class="code" href="_output_ctl_8h.html#ac0db31e359865de84a8f35aa0c2a20d5">readOutput</a>(inputDef.<a class="code" href="class_input_def.html#a1fceca2cc9f9fb8c766f2c5f13e16a1a">getOutput</a>(aIndex));</div>
 <div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;                <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#abd7925e2a505d35f8a0f891f5cff59a8">printProgStrAt</a>(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.<a class="code" href="class_output_def.html#ad855c7ffc3e0854e0b08bfe40495f539">getType</a>()], LCD_COLS);</div>
@@ -538,8 +538,8 @@ $(function() {
 <div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;                <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#ac7be39e90cdccfa884c26453b951d7de">printCh</a>(outputDef.<a class="code" href="class_output_def.html#a7982bd9c42988cce375f096d94060f2a">getResetCh</a>());</div>
 <div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;                <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#a46c9cb7aeb2bd6ac0a3b1a3ba99f4c99">setCursor</a>(-2, LCD_ROW_BOT);</div>
 <div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;                <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#a21a64c38434027792e3744ee23fcaebe">printDec</a>(aDelay, 2, CHAR_SPACE);</div>
-<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;    </div>
-<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;    <span class="comment">//            if (isReportEnabled(REPORT_PAUSE))</span></div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160; </div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;                <span class="keywordflow">if</span> (<a class="code" href="_report_8h.html#abc4eec1657a950a5ade78b57a693945f">isReportEnabled</a>(REPORT_PAUSE))</div>
 <div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;                {</div>
 <div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;                    <a class="code" href="_report_8h.html#a354d29b1fc2a51cf8850c3390be33f0c">reportPause</a>();</div>
 <div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;                }</div>
@@ -551,7 +551,7 @@ $(function() {
 <div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;                <a class="code" href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a>.<a class="code" href="class_display.html#a1638d4b8b233dc541da490f1461f35da">printHexCh</a>(outPin);</div>
 <div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;                <a class="code" href="class_controller.html#a7d68ea4549032c98ab7930af36c5ead4">setDisplayTimeout</a>(<a class="code" href="_report_8h.html#a32e4d3dbfbf89dbc56a20d962eefbc52">getReportDelay</a>());</div>
 <div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;            }</div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;    </div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160; </div>
 <div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="_system_8h.html#ab1fbd99aa26b8fca29ce764d2a16ebd2">isDebug</a>(DEBUG_BRIEF))</div>
 <div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;            {</div>
 <div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;                Serial.print(millis());</div>
@@ -567,15 +567,15 @@ $(function() {
 <div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;                Serial.print(aDelay, HEX);</div>
 <div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;                Serial.println();</div>
 <div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;            }</div>
-<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;    </div>
+<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160; </div>
 <div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;            <span class="comment">// Action the Output state change.</span></div>
 <div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;            <a class="code" href="_output_ctl_8h.html#ac84966c72234398d99f01db278bdc56d">writeOutputState</a>(outNode, outPin, aState, endDelay);</div>
-<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;    </div>
+<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160; </div>
 <div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;            <span class="comment">// Recover all states from output module (in case a double-LED has changed one).</span></div>
 <div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;            <a class="code" href="_output_ctl_8h.html#ada74e9fe891f3f4c0a7cd7f573069d5c">readOutputStates</a>(outNode);</div>
 <div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;            <span class="comment">// setOutputState(outNode, outPin, aState);</span></div>
 <div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;        }</div>
-<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;    </div>
+<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160; </div>
 <div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;        <span class="keywordflow">return</span> endDelay;</div>
 <div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;    }</div>
 <div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160; </div>
@@ -589,59 +589,59 @@ $(function() {
 <div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160; </div>
 <div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="a_output_ctl_8h_html_a1589368b1e5d2524ccbdbb8494de7acc"><div class="ttname"><a href="_output_ctl_8h.html#a1589368b1e5d2524ccbdbb8494de7acc">getOutputState</a></div><div class="ttdeci">boolean getOutputState(uint8_t aNode, uint8_t aPin)</div><div class="ttdef"><b>Definition:</b> OutputCtl.h:87</div></div>
+<div class="ttc" id="a_output_ctl_8h_html_a1589368b1e5d2524ccbdbb8494de7acc"><div class="ttname"><a href="_output_ctl_8h.html#a1589368b1e5d2524ccbdbb8494de7acc">getOutputState</a></div><div class="ttdeci">boolean getOutputState(uint8_t aNode, uint8_t aPin)</div><div class="ttdef"><b>Definition:</b> OutputCtl.h:88</div></div>
 <div class="ttc" id="aclass_controller_html_a29f60fd9385ad925a59600002c0ef68b"><div class="ttname"><a href="class_controller.html#a29f60fd9385ad925a59600002c0ef68b">Controller::readInputNode</a></div><div class="ttdeci">uint16_t readInputNode(uint8_t aNode)</div><div class="ttdef"><b>Definition:</b> Controller.h:320</div></div>
 <div class="ttc" id="a_report_8h_html_abc4eec1657a950a5ade78b57a693945f"><div class="ttname"><a href="_report_8h.html#abc4eec1657a950a5ade78b57a693945f">isReportEnabled</a></div><div class="ttdeci">boolean isReportEnabled(uint8_t aLevel)</div><div class="ttdef"><b>Definition:</b> Report.ino:17</div></div>
 <div class="ttc" id="a_signal_box_8h_html_ad2f88ef4e70d649774ea77b3380b378f"><div class="ttname"><a href="_signal_box_8h.html#ad2f88ef4e70d649774ea77b3380b378f">currentSwitchState</a></div><div class="ttdeci">uint16_t currentSwitchState[INPUT_NODE_MAX]</div><div class="ttdef"><b>Definition:</b> SignalBox.h:20</div></div>
-<div class="ttc" id="aclass_display_html_a1638d4b8b233dc541da490f1461f35da"><div class="ttname"><a href="class_display.html#a1638d4b8b233dc541da490f1461f35da">Display::printHexCh</a></div><div class="ttdeci">void printHexCh(uint8_t aHexValue)</div><div class="ttdef"><b>Definition:</b> Display.h:308</div></div>
+<div class="ttc" id="aclass_display_html_a1638d4b8b233dc541da490f1461f35da"><div class="ttname"><a href="class_display.html#a1638d4b8b233dc541da490f1461f35da">Display::printHexCh</a></div><div class="ttdeci">void printHexCh(uint8_t aHexValue)</div><div class="ttdef"><b>Definition:</b> Display.h:304</div></div>
 <div class="ttc" id="aclass_output_def_html_a9aa958128b647fdd44ad333da04f2bd9"><div class="ttname"><a href="class_output_def.html#a9aa958128b647fdd44ad333da04f2bd9">OutputDef::getPace</a></div><div class="ttdeci">uint8_t getPace()</div><div class="ttdef"><b>Definition:</b> OutputDef.h:420</div></div>
-<div class="ttc" id="aclass_system_mgr_html_abd010bd604ed2fd67ac743ea0d19e15c"><div class="ttname"><a href="class_system_mgr.html#abd010bd604ed2fd67ac743ea0d19e15c">SystemMgr::getDebugLevel</a></div><div class="ttdeci">uint8_t getDebugLevel()</div><div class="ttdef"><b>Definition:</b> System.h:359</div></div>
-<div class="ttc" id="a_output_ctl_8h_html_ac84966c72234398d99f01db278bdc56d"><div class="ttname"><a href="_output_ctl_8h.html#ac84966c72234398d99f01db278bdc56d">writeOutputState</a></div><div class="ttdeci">void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay)</div><div class="ttdef"><b>Definition:</b> OutputCtl.h:197</div></div>
+<div class="ttc" id="aclass_system_mgr_html_abd010bd604ed2fd67ac743ea0d19e15c"><div class="ttname"><a href="class_system_mgr.html#abd010bd604ed2fd67ac743ea0d19e15c">SystemMgr::getDebugLevel</a></div><div class="ttdeci">uint8_t getDebugLevel()</div><div class="ttdef"><b>Definition:</b> System.h:349</div></div>
+<div class="ttc" id="a_output_ctl_8h_html_ac84966c72234398d99f01db278bdc56d"><div class="ttname"><a href="_output_ctl_8h.html#ac84966c72234398d99f01db278bdc56d">writeOutputState</a></div><div class="ttdeci">void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay)</div><div class="ttdef"><b>Definition:</b> OutputCtl.h:198</div></div>
 <div class="ttc" id="aclass_input_def_html_a4c6c444b6f5ce3cf15b96f94dfe75cac"><div class="ttname"><a href="class_input_def.html#a4c6c444b6f5ce3cf15b96f94dfe75cac">InputDef::getOutputPin</a></div><div class="ttdeci">uint8_t getOutputPin(uint8_t aIndex)</div><div class="ttdef"><b>Definition:</b> InputDef.h:107</div></div>
-<div class="ttc" id="a_output_ctl_8h_html_ac0db31e359865de84a8f35aa0c2a20d5"><div class="ttname"><a href="_output_ctl_8h.html#ac0db31e359865de84a8f35aa0c2a20d5">readOutput</a></div><div class="ttdeci">void readOutput(uint8_t aNode, uint8_t aPin)</div><div class="ttdef"><b>Definition:</b> OutputCtl.h:95</div></div>
+<div class="ttc" id="a_output_ctl_8h_html_ac0db31e359865de84a8f35aa0c2a20d5"><div class="ttname"><a href="_output_ctl_8h.html#ac0db31e359865de84a8f35aa0c2a20d5">readOutput</a></div><div class="ttdeci">void readOutput(uint8_t aNode, uint8_t aPin)</div><div class="ttdef"><b>Definition:</b> OutputCtl.h:96</div></div>
 <div class="ttc" id="aclass_controller_html_a3393760999b7a11a02a7500f755c3049"><div class="ttname"><a href="class_controller.html#a3393760999b7a11a02a7500f755c3049">Controller::scanInputHardware</a></div><div class="ttdeci">void scanInputHardware()</div><div class="ttdef"><b>Definition:</b> Controller.h:97</div></div>
 <div class="ttc" id="a_system_8h_html_a6cf32207f79e3e10b7404ddab2282ea2"><div class="ttname"><a href="_system_8h.html#a6cf32207f79e3e10b7404ddab2282ea2">systemMgr</a></div><div class="ttdeci">SystemMgr systemMgr(0)</div></div>
-<div class="ttc" id="a_forward_8h_html_a83443f1aa10bfe618b22d83147b88da6"><div class="ttname"><a href="_forward_8h.html#a83443f1aa10bfe618b22d83147b88da6">systemFail</a></div><div class="ttdeci">void systemFail(PGM_P aMessage, int aValue)</div><div class="ttdef"><b>Definition:</b> SignalBox.ino:93</div></div>
+<div class="ttc" id="a_forward_8h_html_a83443f1aa10bfe618b22d83147b88da6"><div class="ttname"><a href="_forward_8h.html#a83443f1aa10bfe618b22d83147b88da6">systemFail</a></div><div class="ttdeci">void systemFail(PGM_P aMessage, int aValue)</div><div class="ttdef"><b>Definition:</b> SignalBox.ino:92</div></div>
 <div class="ttc" id="a_input_mgr_8h_html_a170f52d7f3607c16c86a40f05e5b6ad3"><div class="ttname"><a href="_input_mgr_8h.html#a170f52d7f3607c16c86a40f05e5b6ad3">inputNodes</a></div><div class="ttdeci">uint16_t inputNodes</div><div class="ttdef"><b>Definition:</b> InputMgr.h:29</div></div>
 <div class="ttc" id="aclass_input_def_html_a1fceca2cc9f9fb8c766f2c5f13e16a1a"><div class="ttname"><a href="class_input_def.html#a1fceca2cc9f9fb8c766f2c5f13e16a1a">InputDef::getOutput</a></div><div class="ttdeci">uint8_t getOutput(uint8_t aIndex)</div><div class="ttdef"><b>Definition:</b> InputDef.h:124</div></div>
-<div class="ttc" id="aclass_display_html_a138f8bfe156b2336894a80ed5cacc53f"><div class="ttname"><a href="class_display.html#a138f8bfe156b2336894a80ed5cacc53f">Display::clearBottomRows</a></div><div class="ttdeci">void clearBottomRows()</div><div class="ttdef"><b>Definition:</b> Display.h:421</div></div>
+<div class="ttc" id="aclass_display_html_a138f8bfe156b2336894a80ed5cacc53f"><div class="ttname"><a href="class_display.html#a138f8bfe156b2336894a80ed5cacc53f">Display::clearBottomRows</a></div><div class="ttdeci">void clearBottomRows()</div><div class="ttdef"><b>Definition:</b> Display.h:417</div></div>
 <div class="ttc" id="aclass_controller_html_a0a5d6da1700893fda12ca3c8aa3b74bd"><div class="ttname"><a href="class_controller.html#a0a5d6da1700893fda12ca3c8aa3b74bd">Controller::processInputOutputs</a></div><div class="ttdeci">void processInputOutputs(boolean aNewState)</div><div class="ttdef"><b>Definition:</b> Controller.h:476</div></div>
-<div class="ttc" id="aclass_display_html_a5ebd34e553276f18fd7db92358ecd838"><div class="ttname"><a href="class_display.html#a5ebd34e553276f18fd7db92358ecd838">Display::printHexChAt</a></div><div class="ttdeci">void printHexChAt(int aCol, uint8_t aRow, uint8_t aHexValue)</div><div class="ttdef"><b>Definition:</b> Display.h:317</div></div>
-<div class="ttc" id="aclass_display_html_abd7925e2a505d35f8a0f891f5cff59a8"><div class="ttname"><a href="class_display.html#abd7925e2a505d35f8a0f891f5cff59a8">Display::printProgStrAt</a></div><div class="ttdeci">void printProgStrAt(int aCol, uint8_t aRow, PGM_P aMessagePtr, uint8_t aSize)</div><div class="ttdef"><b>Definition:</b> Display.h:271</div></div>
+<div class="ttc" id="aclass_display_html_a5ebd34e553276f18fd7db92358ecd838"><div class="ttname"><a href="class_display.html#a5ebd34e553276f18fd7db92358ecd838">Display::printHexChAt</a></div><div class="ttdeci">void printHexChAt(int aCol, uint8_t aRow, uint8_t aHexValue)</div><div class="ttdef"><b>Definition:</b> Display.h:313</div></div>
+<div class="ttc" id="aclass_display_html_abd7925e2a505d35f8a0f891f5cff59a8"><div class="ttname"><a href="class_display.html#abd7925e2a505d35f8a0f891f5cff59a8">Display::printProgStrAt</a></div><div class="ttdeci">void printProgStrAt(int aCol, uint8_t aRow, PGM_P aMessagePtr, uint8_t aSize)</div><div class="ttdef"><b>Definition:</b> Display.h:267</div></div>
 <div class="ttc" id="aclass_controller_html_a2d81e2fde95a270d3750b318b6a6b991"><div class="ttname"><a href="class_controller.html#a2d81e2fde95a270d3750b318b6a6b991">Controller::recordInputError</a></div><div class="ttdeci">void recordInputError(uint8_t aNode)</div><div class="ttdef"><b>Definition:</b> Controller.h:308</div></div>
-<div class="ttc" id="a_output_ctl_8h_html_af924b307e662a56ae7c2588a2ba92fbf"><div class="ttname"><a href="_output_ctl_8h.html#af924b307e662a56ae7c2588a2ba92fbf">isOutputNodePresent</a></div><div class="ttdeci">boolean isOutputNodePresent(uint8_t aNode)</div><div class="ttdef"><b>Definition:</b> OutputCtl.h:46</div></div>
+<div class="ttc" id="a_output_ctl_8h_html_af924b307e662a56ae7c2588a2ba92fbf"><div class="ttname"><a href="_output_ctl_8h.html#af924b307e662a56ae7c2588a2ba92fbf">isOutputNodePresent</a></div><div class="ttdeci">boolean isOutputNodePresent(uint8_t aNode)</div><div class="ttdef"><b>Definition:</b> OutputCtl.h:47</div></div>
 <div class="ttc" id="aclass_output_def_html_a96844208b3fa82545340597d23b8d8d7"><div class="ttname"><a href="class_output_def.html#a96844208b3fa82545340597d23b8d8d7">OutputDef::printDef</a></div><div class="ttdeci">void printDef(PGM_P aHeader, uint8_t aNode, uint8_t aPin)</div><div class="ttdef"><b>Definition:</b> OutputDef.h:305</div></div>
 <div class="ttc" id="aclass_controller_html_a0bf4d8b4c75b6cc63bee336b84746c27"><div class="ttname"><a href="class_controller.html#a0bf4d8b4c75b6cc63bee336b84746c27">Controller::scanInputs</a></div><div class="ttdeci">void scanInputs(void aCallback(uint8_t, uint8_t))</div><div class="ttdef"><b>Definition:</b> Controller.h:268</div></div>
 <div class="ttc" id="a_report_8h_html_a354d29b1fc2a51cf8850c3390be33f0c"><div class="ttname"><a href="_report_8h.html#a354d29b1fc2a51cf8850c3390be33f0c">reportPause</a></div><div class="ttdeci">void reportPause()</div><div class="ttdef"><b>Definition:</b> Report.ino:34</div></div>
 <div class="ttc" id="aclass_input_def_html_a0e5d4900f6e43f0dc1c4267ff2b5e945"><div class="ttname"><a href="class_input_def.html#a0e5d4900f6e43f0dc1c4267ff2b5e945">InputDef::getFirstOutput</a></div><div class="ttdeci">uint8_t getFirstOutput()</div><div class="ttdef"><b>Definition:</b> InputDef.h:165</div></div>
 <div class="ttc" id="aclass_controller_html_ae9e7e3de7515b8135ae2d1cb29ebddfd"><div class="ttname"><a href="class_controller.html#ae9e7e3de7515b8135ae2d1cb29ebddfd">Controller::dispOutputHardware</a></div><div class="ttdeci">void dispOutputHardware()</div><div class="ttdef"><b>Definition:</b> Controller.h:179</div></div>
-<div class="ttc" id="a_input_mgr_8h_html_a89ac8144e2df51910b74bc84cf1a2773"><div class="ttname"><a href="_input_mgr_8h.html#a89ac8144e2df51910b74bc84cf1a2773">inputMgr</a></div><div class="ttdeci">InputMgr inputMgr(systemMgr.getSize())</div></div>
-<div class="ttc" id="aclass_display_html_a6c2315739084015dbffe3ff94b01d4da"><div class="ttname"><a href="class_display.html#a6c2315739084015dbffe3ff94b01d4da">Display::getLcdId</a></div><div class="ttdeci">uint8_t getLcdId()</div><div class="ttdef"><b>Definition:</b> Display.h:141</div></div>
-<div class="ttc" id="aclass_display_html_a14242933dd00fc1d50f9ae70d5121d14"><div class="ttname"><a href="class_display.html#a14242933dd00fc1d50f9ae70d5121d14">Display::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdef"><b>Definition:</b> Display.h:150</div></div>
-<div class="ttc" id="aclass_display_html_ad9812b94e74f53b6ee4a2d673fbf7881"><div class="ttname"><a href="class_display.html#ad9812b94e74f53b6ee4a2d673fbf7881">Display::printProgStr</a></div><div class="ttdeci">void printProgStr(PGM_P aMessagePtr)</div><div class="ttdef"><b>Definition:</b> Display.h:241</div></div>
+<div class="ttc" id="aclass_display_html_a6c2315739084015dbffe3ff94b01d4da"><div class="ttname"><a href="class_display.html#a6c2315739084015dbffe3ff94b01d4da">Display::getLcdId</a></div><div class="ttdeci">uint8_t getLcdId()</div><div class="ttdef"><b>Definition:</b> Display.h:137</div></div>
+<div class="ttc" id="aclass_display_html_a14242933dd00fc1d50f9ae70d5121d14"><div class="ttname"><a href="class_display.html#a14242933dd00fc1d50f9ae70d5121d14">Display::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdef"><b>Definition:</b> Display.h:146</div></div>
+<div class="ttc" id="a_input_mgr_8h_html_ac2be8ba53873ec7655a7ca6aef3eb3f5"><div class="ttname"><a href="_input_mgr_8h.html#ac2be8ba53873ec7655a7ca6aef3eb3f5">inputMgr</a></div><div class="ttdeci">InputMgr inputMgr(systemMgr.getEnd())</div></div>
+<div class="ttc" id="aclass_display_html_ad9812b94e74f53b6ee4a2d673fbf7881"><div class="ttname"><a href="class_display.html#ad9812b94e74f53b6ee4a2d673fbf7881">Display::printProgStr</a></div><div class="ttdeci">void printProgStr(PGM_P aMessagePtr)</div><div class="ttdef"><b>Definition:</b> Display.h:237</div></div>
 <div class="ttc" id="aclass_buttons_html_aa680696417b94069c8a9b091aa03fad7"><div class="ttname"><a href="class_buttons.html#aa680696417b94069c8a9b091aa03fad7">Buttons::waitForButtonClick</a></div><div class="ttdeci">uint8_t waitForButtonClick()</div><div class="ttdef"><b>Definition:</b> Buttons.h:253</div></div>
 <div class="ttc" id="aclass_controller_html"><div class="ttname"><a href="class_controller.html">Controller</a></div><div class="ttdef"><b>Definition:</b> Controller.h:21</div></div>
 <div class="ttc" id="aclass_controller_html_a50f74136248b5654ba7c4b580bc55776"><div class="ttname"><a href="class_controller.html#a50f74136248b5654ba7c4b580bc55776">Controller::showHeartBeat</a></div><div class="ttdeci">void showHeartBeat()</div><div class="ttdef"><b>Definition:</b> Controller.h:54</div></div>
-<div class="ttc" id="aclass_i2c_comms_html_aa76b2ecf68b0f09849c4f91948b6881e"><div class="ttname"><a href="class_i2c_comms.html#aa76b2ecf68b0f09849c4f91948b6881e">I2cComms::sendData</a></div><div class="ttdeci">uint8_t sendData(uint8_t aNodeId, uint8_t aCommand, int aDataByte1, int aDataByte2)</div><div class="ttdef"><b>Definition:</b> I2cComms.h:201</div></div>
+<div class="ttc" id="aclass_i2c_comms_html_aa76b2ecf68b0f09849c4f91948b6881e"><div class="ttname"><a href="class_i2c_comms.html#aa76b2ecf68b0f09849c4f91948b6881e">I2cComms::sendData</a></div><div class="ttdeci">uint8_t sendData(uint8_t aNodeId, uint8_t aCommand, int aDataByte1, int aDataByte2)</div><div class="ttdef"><b>Definition:</b> I2cComms.h:202</div></div>
 <div class="ttc" id="aclass_controller_html_a7ab0694fe984dd2c04d23f8547740544"><div class="ttname"><a href="class_controller.html#a7ab0694fe984dd2c04d23f8547740544">Controller::scanHardware</a></div><div class="ttdeci">void scanHardware()</div><div class="ttdef"><b>Definition:</b> Controller.h:207</div></div>
-<div class="ttc" id="aclass_display_html_a46c9cb7aeb2bd6ac0a3b1a3ba99f4c99"><div class="ttname"><a href="class_display.html#a46c9cb7aeb2bd6ac0a3b1a3ba99f4c99">Display::setCursor</a></div><div class="ttdeci">void setCursor(int aCol, int aRow)</div><div class="ttdef"><b>Definition:</b> Display.h:168</div></div>
+<div class="ttc" id="aclass_display_html_a46c9cb7aeb2bd6ac0a3b1a3ba99f4c99"><div class="ttname"><a href="class_display.html#a46c9cb7aeb2bd6ac0a3b1a3ba99f4c99">Display::setCursor</a></div><div class="ttdeci">void setCursor(int aCol, int aRow)</div><div class="ttdef"><b>Definition:</b> Display.h:164</div></div>
 <div class="ttc" id="aclass_output_def_html_a10da32d3863db13b01b8ca7468116251"><div class="ttname"><a href="class_output_def.html#a10da32d3863db13b01b8ca7468116251">OutputDef::getLockPin</a></div><div class="ttdeci">uint8_t getLockPin(boolean aHi, uint8_t aIndex)</div><div class="ttdef"><b>Definition:</b> OutputDef.h:193</div></div>
 <div class="ttc" id="aclass_controller_html_a7d68ea4549032c98ab7930af36c5ead4"><div class="ttname"><a href="class_controller.html#a7d68ea4549032c98ab7930af36c5ead4">Controller::setDisplayTimeout</a></div><div class="ttdeci">void setDisplayTimeout(long aTimeout)</div><div class="ttdef"><b>Definition:</b> Controller.h:34</div></div>
 <div class="ttc" id="aclass_i2c_comms_html_aa7acfa7f4e664b96f38563edb38bca14"><div class="ttname"><a href="class_i2c_comms.html#aa7acfa7f4e664b96f38563edb38bca14">I2cComms::exists</a></div><div class="ttdeci">boolean exists(uint8_t aNodeId)</div><div class="ttdef"><b>Definition:</b> I2cComms.h:174</div></div>
 <div class="ttc" id="aclass_controller_html_a84f7549eb79a5c320f0b5e1ef40ff3d6"><div class="ttname"><a href="class_controller.html#a84f7549eb79a5c320f0b5e1ef40ff3d6">Controller::announce</a></div><div class="ttdeci">void announce()</div><div class="ttdef"><b>Definition:</b> Controller.h:42</div></div>
 <div class="ttc" id="aclass_controller_html_a3dd509cb3912fe84377480cb2a0693b1"><div class="ttname"><a href="class_controller.html#a3dd509cb3912fe84377480cb2a0693b1">Controller::scanOutputHardware</a></div><div class="ttdeci">void scanOutputHardware()</div><div class="ttdef"><b>Definition:</b> Controller.h:164</div></div>
 <div class="ttc" id="aclass_buttons_html_ab7128f045ac0a23d66f784a9a5defbdb"><div class="ttname"><a href="class_buttons.html#ab7128f045ac0a23d66f784a9a5defbdb">Buttons::waitForButtonRelease</a></div><div class="ttdeci">void waitForButtonRelease()</div><div class="ttdef"><b>Definition:</b> Buttons.h:218</div></div>
-<div class="ttc" id="aclass_display_html_a21a64c38434027792e3744ee23fcaebe"><div class="ttname"><a href="class_display.html#a21a64c38434027792e3744ee23fcaebe">Display::printDec</a></div><div class="ttdeci">void printDec(int aValue, int aDigits, char aPad)</div><div class="ttdef"><b>Definition:</b> Display.h:337</div></div>
-<div class="ttc" id="aclass_i2c_comms_html_aff399dba4b44bb42f354eba73431e080"><div class="ttname"><a href="class_i2c_comms.html#aff399dba4b44bb42f354eba73431e080">I2cComms::readWord</a></div><div class="ttdeci">int readWord()</div><div class="ttdef"><b>Definition:</b> I2cComms.h:297</div></div>
+<div class="ttc" id="aclass_display_html_a21a64c38434027792e3744ee23fcaebe"><div class="ttname"><a href="class_display.html#a21a64c38434027792e3744ee23fcaebe">Display::printDec</a></div><div class="ttdeci">void printDec(int aValue, int aDigits, char aPad)</div><div class="ttdef"><b>Definition:</b> Display.h:333</div></div>
+<div class="ttc" id="aclass_i2c_comms_html_aff399dba4b44bb42f354eba73431e080"><div class="ttname"><a href="class_i2c_comms.html#aff399dba4b44bb42f354eba73431e080">I2cComms::readWord</a></div><div class="ttdeci">int readWord()</div><div class="ttdef"><b>Definition:</b> I2cComms.h:298</div></div>
 <div class="ttc" id="aclass_controller_html_a4c74ce916350194ca6dc1fd9c9469a65"><div class="ttname"><a href="class_controller.html#a4c74ce916350194ca6dc1fd9c9469a65">Controller::processInput</a></div><div class="ttdeci">void processInput(boolean aState)</div><div class="ttdef"><b>Definition:</b> Controller.h:342</div></div>
-<div class="ttc" id="a_output_ctl_8h_html_a7741b2be777fd97c3a45d3d5d06bd8f6"><div class="ttname"><a href="_output_ctl_8h.html#a7741b2be777fd97c3a45d3d5d06bd8f6">outputNodes</a></div><div class="ttdeci">long outputNodes</div><div class="ttdef"><b>Definition:</b> OutputCtl.h:20</div></div>
-<div class="ttc" id="aclass_i2c_comms_html_acde1ba726e3826250ba05ef60a73c493"><div class="ttname"><a href="class_i2c_comms.html#acde1ba726e3826250ba05ef60a73c493">I2cComms::requestPacket</a></div><div class="ttdeci">boolean requestPacket(uint8_t aNodeId, uint8_t aLength)</div><div class="ttdef"><b>Definition:</b> I2cComms.h:262</div></div>
+<div class="ttc" id="a_output_ctl_8h_html_a7741b2be777fd97c3a45d3d5d06bd8f6"><div class="ttname"><a href="_output_ctl_8h.html#a7741b2be777fd97c3a45d3d5d06bd8f6">outputNodes</a></div><div class="ttdeci">long outputNodes</div><div class="ttdef"><b>Definition:</b> OutputCtl.h:21</div></div>
+<div class="ttc" id="aclass_i2c_comms_html_acde1ba726e3826250ba05ef60a73c493"><div class="ttname"><a href="class_i2c_comms.html#acde1ba726e3826250ba05ef60a73c493">I2cComms::requestPacket</a></div><div class="ttdeci">boolean requestPacket(uint8_t aNodeId, uint8_t aLength)</div><div class="ttdef"><b>Definition:</b> I2cComms.h:263</div></div>
 <div class="ttc" id="a_input_mgr_8h_html_a37b72efbf384f48f922d3324f2eca036"><div class="ttname"><a href="_input_mgr_8h.html#a37b72efbf384f48f922d3324f2eca036">setInputNodePresent</a></div><div class="ttdeci">void setInputNodePresent(uint8_t aNode, boolean aState)</div><div class="ttdef"><b>Definition:</b> InputMgr.h:38</div></div>
 <div class="ttc" id="aclass_output_def_html_a8c37d5aa42432e56683868516991db94"><div class="ttname"><a href="class_output_def.html#a8c37d5aa42432e56683868516991db94">OutputDef::isLock</a></div><div class="ttdeci">boolean isLock(boolean aHi, uint8_t aIndex)</div><div class="ttdef"><b>Definition:</b> OutputDef.h:160</div></div>
 <div class="ttc" id="aclass_output_def_html_ad64366e1eb91d87e3d3f2a10b2e0a355"><div class="ttname"><a href="class_output_def.html#ad64366e1eb91d87e3d3f2a10b2e0a355">OutputDef::getLockState</a></div><div class="ttdeci">boolean getLockState(boolean aHi, uint8_t aIndex)</div><div class="ttdef"><b>Definition:</b> OutputDef.h:220</div></div>
-<div class="ttc" id="a_output_ctl_8h_html_ada74e9fe891f3f4c0a7cd7f573069d5c"><div class="ttname"><a href="_output_ctl_8h.html#ada74e9fe891f3f4c0a7cd7f573069d5c">readOutputStates</a></div><div class="ttdeci">void readOutputStates(uint8_t aNode)</div><div class="ttdef"><b>Definition:</b> OutputCtl.h:246</div></div>
-<div class="ttc" id="aclass_i2c_comms_html_a5cf1f689d24c216b2125918a78711842"><div class="ttname"><a href="class_i2c_comms.html#a5cf1f689d24c216b2125918a78711842">I2cComms::sendGateway</a></div><div class="ttdeci">uint8_t sendGateway(uint8_t aCommand, int aDataByte1, int aDataByte2)</div><div class="ttdef"><b>Definition:</b> I2cComms.h:219</div></div>
-<div class="ttc" id="aclass_display_html_ac7be39e90cdccfa884c26453b951d7de"><div class="ttname"><a href="class_display.html#ac7be39e90cdccfa884c26453b951d7de">Display::printCh</a></div><div class="ttdeci">void printCh(char aChar)</div><div class="ttdef"><b>Definition:</b> Display.h:200</div></div>
+<div class="ttc" id="a_output_ctl_8h_html_ada74e9fe891f3f4c0a7cd7f573069d5c"><div class="ttname"><a href="_output_ctl_8h.html#ada74e9fe891f3f4c0a7cd7f573069d5c">readOutputStates</a></div><div class="ttdeci">void readOutputStates(uint8_t aNode)</div><div class="ttdef"><b>Definition:</b> OutputCtl.h:247</div></div>
+<div class="ttc" id="aclass_i2c_comms_html_a5cf1f689d24c216b2125918a78711842"><div class="ttname"><a href="class_i2c_comms.html#a5cf1f689d24c216b2125918a78711842">I2cComms::sendGateway</a></div><div class="ttdeci">uint8_t sendGateway(uint8_t aCommand, int aDataByte1, int aDataByte2)</div><div class="ttdef"><b>Definition:</b> I2cComms.h:220</div></div>
+<div class="ttc" id="aclass_display_html_ac7be39e90cdccfa884c26453b951d7de"><div class="ttname"><a href="class_display.html#ac7be39e90cdccfa884c26453b951d7de">Display::printCh</a></div><div class="ttdeci">void printCh(char aChar)</div><div class="ttdef"><b>Definition:</b> Display.h:196</div></div>
 <div class="ttc" id="aclass_output_def_html_ab9d94e7aefb33be248161b9d17efc525"><div class="ttname"><a href="class_output_def.html#ab9d94e7aefb33be248161b9d17efc525">OutputDef::getLockNode</a></div><div class="ttdeci">uint8_t getLockNode(boolean aHi, uint8_t aIndex)</div><div class="ttdef"><b>Definition:</b> OutputDef.h:168</div></div>
 <div class="ttc" id="a_report_8h_html_a32e4d3dbfbf89dbc56a20d962eefbc52"><div class="ttname"><a href="_report_8h.html#a32e4d3dbfbf89dbc56a20d962eefbc52">getReportDelay</a></div><div class="ttdeci">int getReportDelay()</div><div class="ttdef"><b>Definition:</b> Report.ino:25</div></div>
 <div class="ttc" id="aclass_controller_html_afb841ac0e7d295f55f41362ad2157f31"><div class="ttname"><a href="class_controller.html#afb841ac0e7d295f55f41362ad2157f31">Controller::processInputOutput</a></div><div class="ttdeci">uint8_t processInputOutput(uint8_t aIndex, uint8_t aState, uint8_t aDelay)</div><div class="ttdef"><b>Definition:</b> Controller.h:503</div></div>
@@ -650,14 +650,14 @@ $(function() {
 <div class="ttc" id="aclass_input_mgr_html_adbcdd32f42ba5d72dd6feb490ab239f1"><div class="ttname"><a href="class_input_mgr.html#adbcdd32f42ba5d72dd6feb490ab239f1">InputMgr::loadInput</a></div><div class="ttdeci">void loadInput(uint8_t aInput)</div><div class="ttdef"><b>Definition:</b> InputMgr.h:82</div></div>
 <div class="ttc" id="aclass_controller_html_ab37d299166f591fc798b713d42677442"><div class="ttname"><a href="class_controller.html#ab37d299166f591fc798b713d42677442">Controller::isLocked</a></div><div class="ttdeci">boolean isLocked(boolean aNewState)</div><div class="ttdef"><b>Definition:</b> Controller.h:415</div></div>
 <div class="ttc" id="aclass_output_def_html_ad855c7ffc3e0854e0b08bfe40495f539"><div class="ttname"><a href="class_output_def.html#ad855c7ffc3e0854e0b08bfe40495f539">OutputDef::getType</a></div><div class="ttdeci">uint8_t getType()</div><div class="ttdef"><b>Definition:</b> OutputDef.h:352</div></div>
-<div class="ttc" id="aclass_i2c_comms_html_ab10f593cbab79dee947d165e17222433"><div class="ttname"><a href="class_i2c_comms.html#ab10f593cbab79dee947d165e17222433">I2cComms::sendShort</a></div><div class="ttdeci">uint8_t sendShort(uint8_t aNodeId, uint8_t aCommand)</div><div class="ttdef"><b>Definition:</b> I2cComms.h:191</div></div>
-<div class="ttc" id="a_display_8h_html_a8fa66a83e80a07b980fa16422317bf3e"><div class="ttname"><a href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a></div><div class="ttdeci">Display disp</div><div class="ttdef"><b>Definition:</b> Display.h:431</div></div>
+<div class="ttc" id="aclass_i2c_comms_html_ab10f593cbab79dee947d165e17222433"><div class="ttname"><a href="class_i2c_comms.html#ab10f593cbab79dee947d165e17222433">I2cComms::sendShort</a></div><div class="ttdeci">uint8_t sendShort(uint8_t aNodeId, uint8_t aCommand)</div><div class="ttdef"><b>Definition:</b> I2cComms.h:192</div></div>
+<div class="ttc" id="a_display_8h_html_a8fa66a83e80a07b980fa16422317bf3e"><div class="ttname"><a href="_display_8h.html#a8fa66a83e80a07b980fa16422317bf3e">disp</a></div><div class="ttdeci">Display disp</div><div class="ttdef"><b>Definition:</b> Display.h:427</div></div>
 <div class="ttc" id="aclass_input_def_html_aabce198526418b6da61756a794edf198"><div class="ttname"><a href="class_input_def.html#aabce198526418b6da61756a794edf198">InputDef::getOutputNode</a></div><div class="ttdeci">uint8_t getOutputNode(uint8_t aIndex)</div><div class="ttdef"><b>Definition:</b> InputDef.h:90</div></div>
 <div class="ttc" id="aclass_controller_html_ad7a0186a1ff4d1a3f4f1b6e0b1b6e583"><div class="ttname"><a href="class_controller.html#ad7a0186a1ff4d1a3f4f1b6e0b1b6e583">Controller::sendDebugLevel</a></div><div class="ttdeci">void sendDebugLevel()</div><div class="ttdef"><b>Definition:</b> Controller.h:241</div></div>
-<div class="ttc" id="a_system_8h_html_ab1fbd99aa26b8fca29ce764d2a16ebd2"><div class="ttname"><a href="_system_8h.html#ab1fbd99aa26b8fca29ce764d2a16ebd2">isDebug</a></div><div class="ttdeci">boolean isDebug(uint8_t aLevel)</div><div class="ttdef"><b>Definition:</b> System.h:431</div></div>
+<div class="ttc" id="a_system_8h_html_ab1fbd99aa26b8fca29ce764d2a16ebd2"><div class="ttname"><a href="_system_8h.html#ab1fbd99aa26b8fca29ce764d2a16ebd2">isDebug</a></div><div class="ttdeci">boolean isDebug(uint8_t aLevel)</div><div class="ttdef"><b>Definition:</b> System.h:421</div></div>
 <div class="ttc" id="aclass_output_def_html_a7982bd9c42988cce375f096d94060f2a"><div class="ttname"><a href="class_output_def.html#a7982bd9c42988cce375f096d94060f2a">OutputDef::getResetCh</a></div><div class="ttdeci">char getResetCh()</div><div class="ttdef"><b>Definition:</b> OutputDef.h:455</div></div>
 <div class="ttc" id="aclass_controller_html_a739a6de08fbd549754f3e9814cf5bfa4"><div class="ttname"><a href="class_controller.html#a739a6de08fbd549754f3e9814cf5bfa4">Controller::dispInputHardware</a></div><div class="ttdeci">void dispInputHardware()</div><div class="ttdef"><b>Definition:</b> Controller.h:132</div></div>
-<div class="ttc" id="a_i2c_comms_8h_html_a586da29a9e64c8c479f57f882dd85859"><div class="ttname"><a href="_i2c_comms_8h.html#a586da29a9e64c8c479f57f882dd85859">i2cComms</a></div><div class="ttdeci">I2cComms i2cComms</div><div class="ttdef"><b>Definition:</b> I2cComms.h:319</div></div>
+<div class="ttc" id="a_i2c_comms_8h_html_a586da29a9e64c8c479f57f882dd85859"><div class="ttname"><a href="_i2c_comms_8h.html#a586da29a9e64c8c479f57f882dd85859">i2cComms</a></div><div class="ttdeci">I2cComms i2cComms</div><div class="ttdef"><b>Definition:</b> I2cComms.h:320</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">
