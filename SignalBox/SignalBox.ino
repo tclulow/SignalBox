@@ -37,8 +37,8 @@
  *  D9      LCD shield enable.
  *  D10     LCD shield backlight.
  *  D11     LCD shield detect.
- *  D12     Unused.
- *  D13     Flash firmare version and Interlock warning.
+ *  D12     Interlock warning buzzer (see Config INTERLOCK_BUZZER_PIN).
+ *  D13     Flash firmare version and Interlock warning LED (see INTERLOCK_WARNING_PIN).
  *
  *  A0      LCD shield buttons.
  *  A1      Alternate select button.
