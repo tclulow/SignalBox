@@ -61,11 +61,12 @@
 #include "OutputDef.h"
 
 #include "Forward.h"                // SignalBox-specific classes.
+#include "Display.h"
 #include "EzyBus.h"
-#include "OutputCtl.h"
 #include "InputDef.h"
 #include "InputMgr.h"
-#include "Display.h"
+#include "OutputCtl.h"
+
 #include "Buttons.h"
 #include "Report.h"
 #include "ImportExport.h"
