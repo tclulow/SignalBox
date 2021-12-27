@@ -15,12 +15,10 @@
 #define InputMgr_h
 
 
-// Input types saved in EEPROM
-#define TYPES_SIZE   sizeof(uint32_t)                       // Size of Input types.
-
-// InputDef saved in EEPROM
-#define INPUT_SIZE   (sizeof(InputDef))                     // Size of an InputDef.
-#define INPUT_MAX    (INPUT_NODE_MAX * INPUT_PIN_MAX)       // Maximum inputs.
+// Input types and definitions saved in EEPROM
+#define INPUT_TYPES_SIZE    sizeof(uint32_t)                    // Size of Input types.
+#define INPUT_SIZE          (sizeof(InputDef))                  // Size of an InputDef.
+#define INPUT_MAX           (INPUT_NODE_MAX * INPUT_PIN_MAX)    // Maximum inputs.
 
 
 /** Variables for working with an Input.
@@ -72,8 +70,8 @@ class InputMgr: public Persisted
      */
     InputMgr(uint16_t aBase) : Persisted(aBase)
     {
-        baseInputs = base + TYPES_SIZE * INPUT_NODE_MAX;                // Immediately after Input types.
-        size = TYPES_SIZE * INPUT_NODE_MAX + INPUT_SIZE * INPUT_MAX;    // Types + definitions.
+        baseInputs = base + INPUT_TYPES_SIZE * INPUT_NODE_MAX;                // Immediately after Input types.
+        size = INPUT_TYPES_SIZE * INPUT_NODE_MAX + INPUT_SIZE * INPUT_MAX;    // Types + definitions.
     }
 
 
@@ -93,7 +91,7 @@ class InputMgr: public Persisted
 
         inputNumber = ((aNode & INPUT_NODE_MASK) << INPUT_NODE_SHIFT) | (aPin & INPUT_PIN_MASK);
 
-        EEPROM.get(base       + (aNode       * TYPES_SIZE), inputTypes);
+        EEPROM.get(base       + (aNode       * INPUT_TYPES_SIZE), inputTypes);
         EEPROM.get(baseInputs + (inputNumber * INPUT_SIZE), inputDef);
         inputType = (inputTypes >> (aPin << INPUT_TYPE_SHIFT)) & INPUT_TYPE_MASK;
 
@@ -129,7 +127,7 @@ class InputMgr: public Persisted
 //            Serial.print(CHAR_COMMA);
 //            Serial.print(aPin, HEX);
 //            Serial.print(" @");
-//            Serial.print(TYPES_BASE + (aNode * TYPES_SIZE), HEX);
+//            Serial.print(TYPES_BASE + (aNode * INPUT_TYPES_SIZE), HEX);
 //            Serial.print(" = ");
 //            Serial.print(inputTypes, HEX);
 //            Serial.print(" (");
@@ -152,7 +150,7 @@ class InputMgr: public Persisted
             uint32_t mask = ((long)INPUT_TYPE_MASK) << (pin << INPUT_TYPE_SHIFT);
 
             inputTypes = (inputTypes & ~mask) | ((((long)inputType) << (pin << INPUT_TYPE_SHIFT)) & mask);
-            EEPROM.put(base       + (node        * TYPES_SIZE), inputTypes);
+            EEPROM.put(base       + (node        * INPUT_TYPES_SIZE), inputTypes);
             EEPROM.put(baseInputs + (inputNumber * INPUT_SIZE), inputDef);
 
             if (isDebug(DEBUG_DETAIL))
@@ -187,7 +185,7 @@ class InputMgr: public Persisted
 //                Serial.print(",");
 //                Serial.print(pin, HEX);
 //                Serial.print("] @");
-//                Serial.print(TYPES_BASE + (node * TYPES_SIZE), HEX);
+//                Serial.print(TYPES_BASE + (node * INPUT_TYPES_SIZE), HEX);
 //                Serial.print(", mask=");
 //                Serial.print(mask, HEX);
 //                Serial.print(" = ");
