@@ -114,6 +114,14 @@ class Display
     }
 
 
+    /** Is an LCD shield attached?
+     */
+    boolean hasShield()
+    {
+        return lcdShield != 0;
+    }
+
+
 #if LCD_I2C
     /** Creates the I2C LCD object and sets its I2C ID.
      */

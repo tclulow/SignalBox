@@ -172,7 +172,7 @@ void defaultInputs(uint8_t aInputType)
 void firstRun()
 {
     // Calibrate the LCD buttons.
-    if (hasLcdShield)
+    if (disp.hasShield())
     {
         buttons.calibrateButtons();
     }
@@ -390,6 +390,8 @@ boolean gatewayRequest()
  */
 void setup()
 {
+    boolean hasLcdShield = LCD_SHIELD;              // An LCD shield is present.
+
     // Start Serial IO first - needed if there's any debug output.
     Serial.begin(SERIAL_SPEED);
 
@@ -443,7 +445,7 @@ void setup()
     // Initialise
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_STARTUP, LCD_LEN_STATUS);
 
-    systemMgr.flashVersion();                                             // Flash our version number on the built-in LED.
+    systemMgr.flashVersion();                                   // Flash our version number on the built-in LED.
 
     // Deal with first run (software has never been run before).
     if (!systemMgr.loadSystemData())

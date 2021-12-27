@@ -169,7 +169,7 @@ class Buttons
 //            Serial.println(value);
 //        }
 
-        if (hasLcdShield)
+        if (disp.hasShield())
         {
             // See if BUTTON_ANALOG is pressed.
             // Analog cutoff is in the previous cell in the systemData.button array, so index from BUTTON_NONE.

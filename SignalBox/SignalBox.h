@@ -20,9 +20,6 @@
 uint16_t currentSwitchState[INPUT_NODE_MAX];    // Current state of inputs.
 
 
-/** Is an LCD shield present?
- */
-boolean hasLcdShield = LCD_SHIELD;              // An LCD shield is present.
 
 
 #endif
