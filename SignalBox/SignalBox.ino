@@ -540,8 +540,6 @@ long tickGateway = 0L;      // Time for next gateway request.
  */
 void loop()
 {
-    long now = 0L;      // Current time in millisecs.
-    
     // Press any button to configure.
     if (buttons.readButton())
     {
@@ -551,14 +549,12 @@ void loop()
 
     handleSerialInput();
 
-    now = millis();
-
     // See if there are any Gateway requests
-    if (now > tickGateway)
+    if (millis() > tickGateway)
     {
         if (!gatewayRequest())
         {
-            tickGateway = now + STEP_GATEWAY;
+            tickGateway = millis() + STEP_GATEWAY;
         }
     }
 
