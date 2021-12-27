@@ -4,6 +4,6 @@
 clear
 for PATTERN in "$@"
 do
-    egrep -n "${PATTERN}" `find . -type f`
+    egrep -n "${PATTERN}" `find . -type f | grep -v './html/'`
 done
 
