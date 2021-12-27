@@ -99,6 +99,74 @@ void systemFail(PGM_P aMessage, int aValue)
 }
 
 
+/** Convert EzyBus configuration.
+ *  One-one mapping with EzyBus modules, and their inputs.
+ */
+void ezyBusConvert()
+{
+    int     ezyBus = 0;
+    uint8_t value  = 0;
+
+    disp.clearRow(LCD_COL_START, LCD_ROW_DET);
+    disp.clearBottomRows();
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_EZY_UPDATING, LCD_COLS);
+    disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
+
+    for (outputNode = 0; outputNode < EZY_NODE_MAX; outputNode++)
+    {
+        disp.printHexCh(outputNode);
+
+        for (outputPin = 0; outputPin < OUTPUT_PIN_MAX; outputPin++)
+        {
+            // Create an Output that reflects the Ezybus one.
+            outputDef.setState(false);
+            outputDef.setType((EEPROM.read(ezyBus++) + 1) & OUTPUT_TYPE_MASK);                  // Output types are 1 greater then those of Ezybus.
+            outputDef.setLo(EEPROM.read(ezyBus++));
+            outputDef.setHi(EEPROM.read(ezyBus++));
+            outputDef.setPace((EEPROM.read(ezyBus++) >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK);   // Convert Ezybus pace.
+            outputDef.setReset(OUTPUT_DEFAULT_RESET);
+
+            writeOutput();
+            writeSaveOutput();
+        }
+    }
+}
+
+
+/** Set the default initial setup
+ *  1-1 mapping, inputs to outputs.
+ */
+void defaultInputs(uint8_t aInputType)
+{
+    disp.clear();
+    disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_INITIALISING);
+    disp.setCursor(LCD_COL_START, LCD_ROW_DET);
+
+    inputNumber = 0;
+    inputType   = aInputType;
+
+    for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
+    {
+        disp.printHexCh(node);
+
+        for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
+        {
+            // Create an input.
+            inputDef.setOutput(0, inputNumber);     // Map 1-1 inputs to outputs.
+            inputDef.setDelay(0, false);
+            for (uint8_t index = 1; index < INPUT_OUTPUT_MAX; index++)
+            {
+                inputDef.setOutput(index, 0);       // Zero-length delay.
+                inputDef.setDelay(index, true);
+            }
+
+            inputMgr.saveInput();
+            inputNumber += 1;       // Input numbers map nicely to OutputNumbers.
+        }
+    }
+}
+
+
 /** Software hasn't been run before.
  */
 void firstRun()
@@ -137,74 +205,6 @@ void firstRun()
     systemMgr.saveSystemData();
 
     buttons.waitForButtonClick();
-}
-
-
-/** Set the default initial setup
- *  1-1 mapping, inputs to outputs.
- */
-void defaultInputs(uint8_t aInputType)
-{
-    disp.clear();
-    disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_INITIALISING);
-    disp.setCursor(LCD_COL_START, LCD_ROW_DET);
-
-    inputNumber = 0;
-    inputType   = aInputType;
-
-    for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
-    {
-        disp.printHexCh(node);
-
-        for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
-        {
-            // Create an input.
-            inputDef.setOutput(0, inputNumber);     // Map 1-1 inputs to outputs.
-            inputDef.setDelay(0, false);
-            for (uint8_t index = 1; index < INPUT_OUTPUT_MAX; index++)
-            {
-                inputDef.setOutput(index, 0);       // Zero-length delay.
-                inputDef.setDelay(index, true);
-            }
-
-            inputMgr.saveInput();
-            inputNumber += 1;       // Input numbers map nicely to OutputNumbers.
-        }
-    }
-}
-
-
-/** Convert EzyBus configuration.
- *  One-one mapping with EzyBus modules, and their inputs.
- */
-void ezyBusConvert()
-{
-    int     ezyBus = 0;
-    uint8_t value  = 0;
-
-    disp.clearRow(LCD_COL_START, LCD_ROW_DET);
-    disp.clearBottomRows();
-    disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_EZY_UPDATING, LCD_COLS);
-    disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
-
-    for (outputNode = 0; outputNode < EZY_NODE_MAX; outputNode++)
-    {
-        disp.printHexCh(outputNode);
-
-        for (outputPin = 0; outputPin < OUTPUT_PIN_MAX; outputPin++)
-        {
-            // Create an Output that reflects the Ezybus one.
-            outputDef.setState(false);
-            outputDef.setType((EEPROM.read(ezyBus++) + 1) & OUTPUT_TYPE_MASK);                  // Output types are 1 greater then those of Ezybus.
-            outputDef.setLo(EEPROM.read(ezyBus++));
-            outputDef.setHi(EEPROM.read(ezyBus++));
-            outputDef.setPace((EEPROM.read(ezyBus++) >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK);   // Convert Ezybus pace.
-            outputDef.setReset(OUTPUT_DEFAULT_RESET);
-
-            writeOutput();
-            writeSaveOutput();
-        }
-    }
 }
 
 
