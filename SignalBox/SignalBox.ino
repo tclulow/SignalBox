@@ -65,7 +65,6 @@
 #include "OutputCtl.h"
 #include "InputDef.h"
 #include "InputMgr.h"
-#include "SignalBox.h"
 #include "Display.h"
 #include "Buttons.h"
 #include "Report.h"
@@ -344,7 +343,9 @@ boolean gatewayRequest()
                                    }
                                    else if (option == COMMS_SYS_INP_STATES)
                                    {
-                                       i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_INP_STATES, (currentSwitchState[node] >> 8) & 0Xff, currentSwitchState[node] & 0xFF);
+                                       i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_INP_STATES,
+                                                            (controller.getInputState(node) >> 8) & 0xFF,
+                                                            (controller.getInputState(node)     ) & 0xFF);
                                        workDone = true;
                                    }
                                    else

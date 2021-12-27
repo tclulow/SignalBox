@@ -22,15 +22,16 @@ class Controller
 {
     private:
 
-    long    tickHardwareScan = 0L;      // Time for next scan for hardware.
-    long    tickInputScan    = 0L;      // Time for next scan of input switches.
-    long    tickHeartBeat    = 0L;      // Time of last heartbeat.
+    long     tickHardwareScan = 0L;         // Time for next scan for hardware.
+    long     tickInputScan    = 0L;         // Time for next scan of input switches.
+    long     tickHeartBeat    = 0L;         // Time of last heartbeat.
 
-    long    displayTimeout   = 1L;      // Timeout for the display when important messages are showing.
-                                        // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
-    long    timeoutInterlock = 0L;      // Timeout for interlock warning to be reset.
-    long    timeoutBuzzer    = 0L;      // Time at which buzzer2 sound should be made.
+    long     displayTimeout   = 1L;         // Timeout for the display when important messages are showing.
+                                            // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
+    long     timeoutInterlock = 0L;         // Timeout for interlock warning to be reset.
+    long     timeoutBuzzer    = 0L;         // Time at which buzzer2 sound should be made.
 
+    uint16_t inputState[INPUT_NODE_MAX];    // Current state of inputs.
 
     public:
     
@@ -118,6 +119,14 @@ class Controller
     }
 
 
+    /** Gets the current state of all the inputs on one input node.
+     */
+    uint16_t getInputState(uint8_t aInputNode)
+    {
+        return inputState[aInputNode];
+    }
+
+
     /** Scan for Input and Output nodes.
      */
     void scanHardware()
@@ -164,13 +173,13 @@ class Controller
             {
                 // Read current state of pins and if there's been a change.
                 uint16_t pins = readInputNode(node);
-                if (pins != currentSwitchState[node])
+                if (pins != inputState[node])
                 {
                     // Process all the changed pins.
                     for (uint16_t pin = 0, mask = 1; pin < INPUT_PIN_MAX; pin++, mask <<= 1)
                     {
                         uint16_t state = pins & mask;
-                        if (state != (currentSwitchState[node] & mask))
+                        if (state != (inputState[node] & mask))
                         {
                             // Ensure Input is loaded and handle the action.
                             inputMgr.loadInput(node, pin);
@@ -186,7 +195,7 @@ class Controller
                     }
 
                     // Record new input states.
-                    currentSwitchState[node] = pins;
+                    inputState[node] = pins;
                 }
             }
         }
@@ -423,11 +432,11 @@ class Controller
                         }
 
                         // Record current switch state
-                        currentSwitchState[node] = readInputNode(node);
+                        inputState[node] = readInputNode(node);
                     }
                     else
                     {
-                        currentSwitchState[node] = 0xffff;
+                        inputState[node] = 0xffff;
                     }
                 }
             }
@@ -533,7 +542,7 @@ class Controller
             || (!i2cComms.requestPacket(I2C_INPUT_BASE_ID + aNode, INPUT_STATE_LEN)))
         {
             recordInputError(aNode);
-            value = currentSwitchState[aNode];  // Pretend no change if comms error.
+            value = inputState[aNode];  // Pretend no change if comms error.
         }
         else
         {
