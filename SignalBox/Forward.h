@@ -20,4 +20,9 @@
 void systemFail(PGM_P aMessage, int aValue);
 
 
+/** Pause for user-input if so configured.
+ */
+void reportPause();
+
+
 #endif

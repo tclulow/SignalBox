@@ -376,6 +376,22 @@ class SystemMgr: public Persisted
     }
 
 
+    /** Is reporting enabled (at a particular level)?
+     */
+    boolean isReportEnabled(uint8_t aLevel)
+    {
+        return aLevel <= getReportLevel();
+    }
+
+
+    /** Length of time to wait for depending on the reporting level.
+     */
+    int getReportDelay()
+    {
+        return DELAY_READ * getReportLevel();
+    }
+
+
     /** Gets (a pointer to) the button definitions.
      */
     int* getButtons()

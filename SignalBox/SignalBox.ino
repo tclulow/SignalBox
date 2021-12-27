@@ -68,7 +68,6 @@
 #include "OutputCtl.h"
 
 #include "Buttons.h"
-#include "Report.h"
 #include "ImportExport.h"
 #include "Controller.h"
 #include "Configure.h"
@@ -274,14 +273,14 @@ void processCommand()
           Serial.println(commandBuffer);
         }
 
-        if (isReportEnabled(REPORT_SHORT))
+        if (systemMgr.isReportEnabled(REPORT_SHORT))
         {
             disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
             disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
             disp.printProgStr(M_UNKNOWN);
             disp.printCh(CHAR_SPACE);
             disp.printStr(commandBuffer);
-            controller.setDisplayTimeout(getReportDelay());
+            controller.setDisplayTimeout(systemMgr.getReportDelay());
         }
     }
 }
@@ -369,6 +368,46 @@ boolean gatewayRequest()
     i2cComms.readAll();
 
     return workDone;
+}
+
+
+/** Pause for user-input if so configured.
+ *  Use buttons to adjust report level.
+ */
+void reportPause()
+{
+    if (systemMgr.getReportLevel() >= REPORT_PAUSE)
+    {
+        switch (buttons.waitForButtonPress())
+        {
+            case BUTTON_NONE:   break;
+
+            case BUTTON_UP:     systemMgr.setReportLevel(REPORT_LONG);
+                                systemMgr.saveSystemData();
+                                break;
+
+            case BUTTON_DOWN:   systemMgr.setReportLevel(REPORT_SHORT);
+                                systemMgr.saveSystemData();
+                                break;
+
+            case BUTTON_LEFT:   systemMgr.setReportLevel(REPORT_NONE);
+                                systemMgr.saveSystemData();
+                                break;
+
+            case BUTTON_RIGHT:  configure.run();
+                                break;
+
+            case BUTTON_SELECT: break;
+        }
+
+        // Show (new) report level.
+        disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+        disp.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_REPORT);
+        disp.printProgStrAt(LCD_COL_REPORT_PARAM, LCD_ROW_BOT, M_REPORT_PROMPTS[systemMgr.getReportLevel()], LCD_LEN_OPTION);
+
+        buttons.waitForButtonRelease();
+        disp.clearRow(LCD_COL_START, LCD_ROW_BOT);
+    }
 }
 
 

@@ -235,7 +235,7 @@ class Controller
             }
 
             // Report state change if reporting enabled.
-            if (isReportEnabled(REPORT_SHORT))
+            if (systemMgr.isReportEnabled(REPORT_SHORT))
             {
                 disp.clearBottomRows();
                 disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
@@ -243,7 +243,7 @@ class Controller
                 disp.printHexChAt(LCD_COL_NODE,    LCD_ROW_EDT, node);
                 disp.printHexChAt(LCD_COL_PIN,     LCD_ROW_EDT, pin);
                 disp.setCursor(LCD_COL_START + 1,  LCD_ROW_BOT);
-                setDisplayTimeout(getReportDelay());
+                setDisplayTimeout(systemMgr.getReportDelay());
             }
 
             if (isDebug(DEBUG_BRIEF))
@@ -318,7 +318,7 @@ class Controller
         }
         else
         {
-            if (   (isReportEnabled(REPORT_PAUSE)))
+            if (   (systemMgr.isReportEnabled(REPORT_PAUSE)))
 //                || (   (isReportEnabled(REPORT_SHORT))
 //                    && (inputDef.getOutputCount() <= 1)))
             {
@@ -333,17 +333,17 @@ class Controller
                 disp.setCursor(-2, LCD_ROW_BOT);
                 disp.printDec(aDelay, 2, CHAR_SPACE);
 
-                if (isReportEnabled(REPORT_PAUSE))
+                if (systemMgr.isReportEnabled(REPORT_PAUSE))
                 {
                     reportPause();
                 }
             }
-            else if (isReportEnabled(REPORT_SHORT))
+            else if (systemMgr.isReportEnabled(REPORT_SHORT))
             {
                 disp.printCh(CHAR_SPACE);
                 disp.printHexCh(outNode);
                 disp.printHexCh(outPin);
-                setDisplayTimeout(getReportDelay());
+                setDisplayTimeout(systemMgr.getReportDelay());
             }
 
             if (isDebug(DEBUG_BRIEF))
@@ -575,7 +575,7 @@ class Controller
                         boolean state = getOutputState(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
                         if (outputDef.getLockState(aNewState, outIndex) == state)
                         {
-                            if (isReportEnabled(REPORT_SHORT))
+                            if (systemMgr.isReportEnabled(REPORT_SHORT))
                             {
                                 disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_LOCK, LCD_LEN_OPTION);
                                 disp.printCh(aNewState ? CHAR_HI : CHAR_LO);
@@ -585,7 +585,7 @@ class Controller
                                 disp.printCh(state ? CHAR_HI : CHAR_LO);
                                 disp.printHexCh(outputDef.getLockNode(aNewState, outIndex));
                                 disp.printHexCh(outputDef.getLockPin (aNewState, outIndex));
-                                setDisplayTimeout(getReportDelay());
+                                setDisplayTimeout(systemMgr.getReportDelay());
                             }
 
                             if (isDebug(DEBUG_BRIEF))
