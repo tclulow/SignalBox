@@ -256,6 +256,7 @@ void processCommand()
                           readOutputStates(node);                   // Recover states in case LED_4 has moved one.
                           executed = true;
                       }
+                      break;
 
             default:  break;
         }
