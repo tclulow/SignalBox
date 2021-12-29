@@ -104,7 +104,6 @@ void systemFail(PGM_P aMessage, int aValue)
 void ezyBusConvert()
 {
     int     ezyBus = 0;
-    uint8_t value  = 0;
 
     disp.clearRow(LCD_COL_START, LCD_ROW_DET);
     disp.clearBottomRows();
@@ -248,7 +247,9 @@ void processCommand()
                       break;
 
             case 'o': state = getOutputState(node, pin);
+                      [[fallthrough]];
             case 'l': state = !state;
+                      [[fallthrough]];
             case 'h': if (   (node < OUTPUT_NODE_MAX)
                           && (pin  < OUTPUT_PIN_MAX))
                       {
@@ -331,7 +332,7 @@ boolean gatewayRequest()
         uint8_t command = i2cComms.readByte();
         uint8_t node    = i2cComms.readByte();
         uint8_t option  = command & COMMS_OPTION_MASK;
-        uint8_t pin     = option & OUTPUT_PIN_MASK;
+        // uint8_t pin     = option & OUTPUT_PIN_MASK;
 
         command &= COMMS_COMMAND_MASK;
 
@@ -535,7 +536,7 @@ void setup()
 
 
 // Ticking
-long tickGateway = 0L;      // Time for next gateway request.
+unsigned long tickGateway = 0L;      // Time for next gateway request.
 
 /** Main loop.
  */

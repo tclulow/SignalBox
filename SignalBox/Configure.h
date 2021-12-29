@@ -124,6 +124,7 @@ class Configure
                 case BUTTON_NONE:   break;
 
                 case BUTTON_UP:     topMenu += 2;           // Use +1 to compensate for the -1 that the code below will do.
+                                    [[fallthrough]];
                 case BUTTON_DOWN:   topMenu -= 1;
                                     topMenu += TOP_MAX;     // Ensure in-range.
                                     topMenu %= TOP_MAX;
@@ -141,22 +142,27 @@ class Configure
                                     {
                                         case TOP_SYSTEM: menuSystem();
                                                          break;
+                                                         
                                         case TOP_INPUT:  menuNode(true);
                                                          if (isOutputNodePresent(outNode))  // The outNode may have been corrupted by input node processing.
                                                          {
                                                             readOutput(outNode, outPin);    // So reload it.
                                                          }
                                                          break;
+                                                         
                                         case TOP_OUTPUT:
                                         case TOP_LOCKS:  if (isOutputNodePresent(outNode))  // Only if the output node is present
                                                          {
                                                             menuNode(false);                // Process the Output node.
                                                          }
                                                          break;
+                                                         
                                         case TOP_EXPORT: menuExport();
                                                          break;
+                                                         
                                         case TOP_IMPORT: menuImport();
                                                          break;
+                                                         
                                         default:         configFail(M_CONFIG, topMenu);
                                     }
 
@@ -187,6 +193,7 @@ class Configure
                 case BUTTON_NONE:   break;
 
                 case BUTTON_UP:     sysMenu += 2;                   // Use +1 to compensate for the -1 that the code below will do.
+                                    [[fallthrough]];
                 case BUTTON_DOWN:   sysMenu -= 1;
                                     sysMenu += SYS_MAX;             // Ensure in-range.
                                     sysMenu %= SYS_MAX;
@@ -280,6 +287,7 @@ class Configure
                 case BUTTON_NONE:   break;
 
                 case BUTTON_UP:     reportLevel += 2;              // Allow for decrement in BUTTON_DOWN code below.
+                                    [[fallthrough]];
                 case BUTTON_DOWN:   reportLevel -= 1;
                                     reportLevel += REPORT_MAX;     // Ensure in-range.
                                     reportLevel %= REPORT_MAX;
@@ -321,6 +329,7 @@ class Configure
                 case BUTTON_NONE:   break;
 
                 case BUTTON_UP:     debugLevel += 2;             // Allow for decrement in BUTTON_DOWN code below.
+                                    [[fallthrough]];
                 case BUTTON_DOWN:   debugLevel -= 1;
                                     debugLevel += DEBUG_MAX;     // Ensure in-range.
                                     debugLevel %= DEBUG_MAX;
@@ -363,6 +372,7 @@ class Configure
                 case BUTTON_NONE:   break;
 
                 case BUTTON_UP:     adjust += 2;            // Use +1 to compensate for the -1 that the code below will do.
+                                    [[fallthrough]];
                 case BUTTON_DOWN:   adjust -= 1;
                                     if (aIsInput)
                                     {
@@ -469,6 +479,7 @@ class Configure
                 case BUTTON_NONE:   break;
 
                 case BUTTON_UP:     adjust += 2;        // Use +1 to compensate for the -1 that the code below will do.
+                                    [[fallthrough]];
                 case BUTTON_DOWN:   adjust -= 1;
                                     if (jumpers)
                                     {
@@ -774,6 +785,7 @@ class Configure
                 case BUTTON_NONE:   break;
 
                 case BUTTON_UP:     inputType += 2;                 // Use +1 to compensate for the -1 that the code below will do.
+                                    [[fallthrough]];
                 case BUTTON_DOWN:   inputType -= 1;
                                     inputType += INPUT_TYPE_MAX;    // Ensure in-range.
                                     inputType %= INPUT_TYPE_MAX;
@@ -855,6 +867,7 @@ class Configure
                 case BUTTON_NONE:   break;
 
                 case BUTTON_UP:     index += 2;                     // Use +1 to compensate for the -1 that the code below will do.
+                                    [[fallthrough]];
                 case BUTTON_DOWN:   index -= 1;
                                     index += INPUT_OUTPUT_MAX;      // Ensure in-range.
                                     index %= INPUT_OUTPUT_MAX;
@@ -899,6 +912,7 @@ class Configure
                 case BUTTON_NONE:   break;
 
                 case BUTTON_UP:     adjust += 2;        // Use +1 to compensate for the -1 that the code below will do.
+                                    [[fallthrough]];
                 case BUTTON_DOWN:   adjust -= 1;
                                     if (inputDef.isDelay(aIndex))
                                     {
@@ -973,7 +987,7 @@ class Configure
 
         markField(LCD_COL_PIN, LCD_ROW_DET, 1, false);
 
-        return finished;
+        return changed;
     }
 
 
@@ -995,6 +1009,7 @@ class Configure
                 case BUTTON_NONE:   break;
 
                 case BUTTON_UP:     outputType += 2;                    // Use +1 to compensate for the -1 that the code below will do.
+                                    [[fallthrough]];
                 case BUTTON_DOWN:   outputType -= 1;
                                     outputType += OUTPUT_TYPE_MAX;      // Ensure in-range.
                                     outputType %= OUTPUT_TYPE_MAX;
@@ -1429,6 +1444,7 @@ class Configure
                 case BUTTON_NONE:   break;
 
                 case BUTTON_UP:     index += 2;                     // Use +1 to compensate for the -1 that the code below will do.
+                                    [[fallthrough]];
                 case BUTTON_DOWN:   index -= 1;
                                     index += OUTPUT_LOCK_MAX;       // Ensure in-range.
                                     index %= OUTPUT_LOCK_MAX;
@@ -1554,6 +1570,7 @@ class Configure
                 case BUTTON_NONE:   break;
 
                 case BUTTON_UP:     adjust += 2;    // Use +1 to compensate for the -1 that the code below will do.
+                                    [[fallthrough]];
                 case BUTTON_DOWN:   adjust -= 1;
                                     outputDef.setLockNode(aHi, aIndex, nextNode(outputDef.getLockNode(aHi, aIndex), adjust, false, true));
                                     disp.printHexChAt(LCD_COL_NODE, LCD_ROW_DET, outputDef.getLockNode(aHi, aIndex));
@@ -1635,6 +1652,7 @@ class Configure
                 case BUTTON_NONE:   break;
 
                 case BUTTON_UP:     expMenu += 2;           // Use +1 to compensate for the -1 that the code below will do.
+                                    [[fallthrough]];
                 case BUTTON_DOWN:   expMenu -= 1;
                                     expMenu += EXP_MAX;     // Ensure in-range.
                                     expMenu %= EXP_MAX;
@@ -2068,10 +2086,10 @@ class Configure
      */
     void identOutputs()
     {
-        boolean interrupted = false;
-        uint8_t button      = BUTTON_NONE;
-        long    interval    = 0L;           // Interval between changes of output.
-        long    finishAt    = 0L;           // Time to finish output's ident.
+        boolean       interrupted = false;
+        uint8_t       button      = BUTTON_NONE;
+        unsigned long interval    = 0L;           // Interval between changes of output.
+        unsigned long finishAt    = 0L;           // Time to finish output's ident.
 
         buttons.waitForButtonRelease();
         if (outputNodes == 0)
@@ -2141,6 +2159,7 @@ class Configure
                                 case BUTTON_NONE:   break;
 
                                 case BUTTON_UP:     adjust += 2;    // Use +1 to compensate for the -1 that the code below will do.
+                                                    [[fallthrough]];
                                 case BUTTON_DOWN:   adjust -= 1;
                                                     node = nextNode(node, adjust, false, true);
                                                     pin = 0;
@@ -2186,10 +2205,10 @@ class Configure
      *  or until a button is pressed.
      *  Return the button pressed (if any).
      */
-    uint8_t delayFor(long aInterval)
+    uint8_t delayFor(unsigned long aInterval)
     {
-        uint8_t button = BUTTON_NONE;
-        long    endAt  = millis() + aInterval;
+        uint8_t       button = BUTTON_NONE;
+        unsigned long endAt  = millis() + aInterval;
 
         while (   ((button = buttons.readButton()) == BUTTON_NONE)
                && (millis() < endAt))
