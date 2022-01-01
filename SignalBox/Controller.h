@@ -24,7 +24,7 @@ class Controller
 
     long     tickHardwareScan = 0L;         // Time for next scan for hardware.
     long     tickInputScan    = 0L;         // Time for next scan of input switches.
-    long     tickHeartBeat    = 0L;         // Time of last heartbeat.
+    long     tickHeartBeat    = 0L;         // Time for next heartbeat.
 
     long     displayTimeout   = 1L;         // Timeout for the display when important messages are showing.
                                             // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
@@ -106,6 +106,7 @@ class Controller
             int mins  = (now - MILLIS_PER_HOUR * hours)                             / MILLIS_PER_MINUTE;
             int secs  = (now - MILLIS_PER_HOUR * hours  - MILLIS_PER_MINUTE * mins) / MILLIS_PER_SECOND;
 
+            tickHeartBeat = now + STEP_HEARTBEAT;
             disp.setCursor(LCD_COL_START, LCD_ROW_DET);
             if (hours > 0)
             {
