@@ -525,7 +525,6 @@ void setup()
         // Do the update here.
         systemMgr.update();
         buttons.waitForButtonClick();           // Nothing to do, just show it's happening.
-
     }
 
     // Scan for Input and Output nodes.
