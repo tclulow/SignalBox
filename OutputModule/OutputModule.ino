@@ -892,8 +892,8 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue
         switch(outputDefs[aPin].getType())
         {
             case OUTPUT_TYPE_SERVO:
-            case OUTPUT_TYPE_SIGNAL: actionServo(aPin, aState, aUseValue);
-                                     break;
+            case OUTPUT_TYPE_SIGNAL:  actionServo(aPin, aState, aUseValue);
+                                      break;
 
             case OUTPUT_TYPE_LED:
             case OUTPUT_TYPE_LED_4:
