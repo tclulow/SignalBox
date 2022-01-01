@@ -96,8 +96,7 @@ class OutputDef
         return    getType() == OUTPUT_TYPE_LED
                || getType() == OUTPUT_TYPE_LED_4
                || getType() == OUTPUT_TYPE_ROAD_UK
-               || getType() == OUTPUT_TYPE_ROAD_RW
-               || getType() == OUTPUT_TYPE_RANDOM;
+               || getType() == OUTPUT_TYPE_ROAD_RW;
     }
 
 
@@ -107,6 +106,25 @@ class OutputDef
     {
         return    (getType() == OUTPUT_TYPE_FLASH)
                || (getType() == OUTPUT_TYPE_BLINK);
+    }
+
+
+    /** Is the output the RANDOM type
+     */
+    boolean isRandom()
+    {
+        return getType() == OUTPUT_TYPE_RANDOM;
+    }
+
+
+    /** Is the output a PWM type?
+     *  ie it uses PWM to control its intensity.
+     */
+    boolean isPwm()
+    {
+        return    isLed()
+               || isFlasher()
+               || isRandom();
     }
 
 

@@ -307,8 +307,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
         // Ensure random LEDs are initialised correctly.
         actionState(aPin, outputDefs[aPin].getState(), 0, false);
     }
-    else if (   (outputDefs[aPin].isLed())
-             || (outputDefs[aPin].isFlasher()))
+    else if (outputDefs[aPin].isPwm())
     {
         // Ensure LEDs glow with correct intensity.
         outputs[aPin].value    = outputDefs[aPin].getState() ? outputDefs[aPin].getHi() : 0;
@@ -903,6 +902,10 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue
         {
             newState = actionFlasher(aPin, aState);
         }
+        else if (outputDefs[aPin].isRandom())
+        {
+            newState = actionRandom(aPin, aState);
+        }
         else
         {
             if (isDebug(DEBUG_ERRORS))
@@ -989,21 +992,6 @@ boolean actionLed(uint8_t aPin, boolean aState)
         && (persisting))
     {
         newState = actionDoubleLed(aPin, aState);
-    }
-    else if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_RANDOM)
-             && (persisting))
-    {
-        if (aState)
-        {
-            // Set outputs on randomly.
-            outputs[aPin].target    = (random(100) < RANDOM_HI_CHANCE) ? outputDefs[aPin].getHi() : 0;
-            outputs[aPin].altTarget = (random(100) < RANDOM_LO_CHANCE) ? outputDefs[aPin].getLo() : 0;
-        }
-        else
-        {
-            outputs[aPin].target    = 0;
-            outputs[aPin].altTarget = 0;
-        }
     }
     else
     {
@@ -1134,6 +1122,33 @@ boolean actionFlasher(uint8_t aPin, boolean aState)
     }
 
     return newState;
+}
+
+
+/** Action a Random state change.
+ */
+boolean actionRandom(uint8_t aPin, boolean aState)
+{
+    // Start from current values.
+    outputs[aPin].start     = outputs[aPin].value;
+    outputs[aPin].altStart  = outputs[aPin].altValue;
+
+    if (persisting)
+    {
+        if (aState)
+        {
+            // Set outputs on randomly.
+            outputs[aPin].target    = (random(100) < RANDOM_HI_CHANCE) ? outputDefs[aPin].getHi() : 0;
+            outputs[aPin].altTarget = (random(100) < RANDOM_LO_CHANCE) ? outputDefs[aPin].getLo() : 0;
+        }
+        else
+        {
+            outputs[aPin].target    = 0;
+            outputs[aPin].altTarget = 0;
+        }
+    }
+
+    return aState;
 }
 
 
@@ -1365,7 +1380,8 @@ void stepLeds()
     // Move any Leds that need moving.
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
-        if (outputDefs[pin].isLed())
+        if (   (outputDefs[pin].isLed())
+            || (outputDefs[pin].isRandom()))
         {
             if (   (outputs[pin].delayTo == 0)
                 || (outputs[pin].delayTo <= now))
@@ -1400,7 +1416,7 @@ void stepLed(uint8_t aPin)
                 {
                     stepDoubleLed(aPin);
                 }
-                else if (outputDefs[aPin].getType() == OUTPUT_TYPE_RANDOM)              // Random.
+                else if (outputDefs[aPin].isRandom())
                 {
                     if (outputDefs[aPin].getState())                                    // If Hi, set Hi again (which may or may not illuminate LEDs).
                     {
@@ -1725,8 +1741,7 @@ void loop()
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
         tickPwm += PWM_INC;
-        if (   (outputDefs[pin].isLed())
-            || (outputDefs[pin].isFlasher()))
+        if (outputDefs[pin].isPwm())
         {
             // Use compliment of tickPwm for alt pin to remove the chance of both being on at once.
             digitalWrite(sigPins[pin],    (outputs[pin].value    >  0)
