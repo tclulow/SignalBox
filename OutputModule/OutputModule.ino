@@ -904,7 +904,14 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue
         }
         else if (outputDefs[aPin].isRandom())
         {
-            newState = actionRandom(aPin, aState);
+            if (persisting)
+            {
+                newState = actionRandom(aPin, aState);
+            }
+            else
+            {
+                newState = actionLed(aPin, aState);     // When not persisting (ie testing) treat as a LED.
+            }
         }
         else
         {
@@ -1133,19 +1140,16 @@ boolean actionRandom(uint8_t aPin, boolean aState)
     outputs[aPin].start     = outputs[aPin].value;
     outputs[aPin].altStart  = outputs[aPin].altValue;
 
-    if (persisting)
+    if (aState)
     {
-        if (aState)
-        {
-            // Set outputs on randomly.
-            outputs[aPin].target    = (random(100) < RANDOM_HI_CHANCE) ? outputDefs[aPin].getHi() : 0;
-            outputs[aPin].altTarget = (random(100) < RANDOM_LO_CHANCE) ? outputDefs[aPin].getLo() : 0;
-        }
-        else
-        {
-            outputs[aPin].target    = 0;
-            outputs[aPin].altTarget = 0;
-        }
+        // Set outputs on randomly.
+        outputs[aPin].target    = (random(100) < RANDOM_HI_CHANCE) ? outputDefs[aPin].getHi() : 0;
+        outputs[aPin].altTarget = (random(100) < RANDOM_LO_CHANCE) ? outputDefs[aPin].getLo() : 0;
+    }
+    else
+    {
+        outputs[aPin].target    = 0;
+        outputs[aPin].altTarget = 0;
     }
 
     return aState;
