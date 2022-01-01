@@ -107,11 +107,11 @@ uint8_t commandLen = 0;                         // Length of command.
 
 
 // Ticking
-long    now       = 0;  // To keep the current time (since boot).
-long    tickServo = 0;  // Ticking for Servos.
-long    tickLed   = 0;  // Ticking for Leds.
-long    tickFlash = 0;  // Ticking for Flashers.
-uint8_t tickPwm   = 0;  // Ticking for PWM output of LEDs.
+unsigned long  now       = 0;   // To keep the current time (since boot).
+unsigned long  tickServo = 0;   // Ticking for Servos.
+unsigned long  tickLed   = 0;   // Ticking for Leds.
+unsigned long  tickFlash = 0;   // Ticking for Flashers.
+uint8_t        tickPwm   = 0;   // Ticking for PWM output of LEDs.
 
 
 // I2C request command parameters
@@ -123,16 +123,16 @@ volatile uint8_t requestNode    = 0;
 // An Array of Output control structures.
 struct
 {
-    Servo   servo;          // The Servo (if there is one).
-    long    delayTo   = 0;  // Start at this time.
-    uint8_t steps     = 0;  // The number of steps to take.
-    uint8_t step      = 0;  // The current step.
-    uint8_t start     = 0;  // The starting value.
-    uint8_t value     = 0;  // The value of the output.
-    uint8_t target    = 0;  // The target value to aim for.
-    uint8_t altStart  = 0;  // The alt starting value.
-    uint8_t altValue  = 0;  // The alt value of the output.
-    uint8_t altTarget = 0;  // The alt target value to aim for.
+    Servo         servo;          // The Servo (if there is one).
+    unsigned long delayTo   = 0;  // Start at this time.
+    uint8_t       steps     = 0;  // The number of steps to take.
+    uint8_t       step      = 0;  // The current step.
+    uint8_t       start     = 0;  // The starting value.
+    uint8_t       value     = 0;  // The value of the output.
+    uint8_t       target    = 0;  // The target value to aim for.
+    uint8_t       altStart  = 0;  // The alt starting value.
+    uint8_t       altValue  = 0;  // The alt value of the output.
+    uint8_t       altTarget = 0;  // The alt target value to aim for.
 } outputs[IO_PINS];
 
 
@@ -686,7 +686,7 @@ void processRenumber()
         }
 
         // Revoke the request so it can't be actioned.
-        requestCommand == COMMS_CMD_NONE;
+        requestCommand = COMMS_CMD_NONE;
     }
 }
 
@@ -769,7 +769,7 @@ void processWrite(uint8_t aPin)
 {
     uint8_t oldType = outputDefs[aPin].getType();       // Remember old type.
 
-    if (i2cComms.available() < sizeof(OutputDef))
+    if (i2cComms.available() < ((int)sizeof(OutputDef)))
     {
         if (isDebug(DEBUG_ERRORS))
         {
@@ -1144,9 +1144,8 @@ boolean actionFlasher(uint8_t aPin, boolean aState)
 void processCommand()
 {
     boolean executed = false;
-    uint8_t nodeOld     = 0;
+    uint8_t nodeOld  = 0;
     uint8_t nodeNew  = 0;
-    boolean state    = true;
 
     if (isDebug(DEBUG_BRIEF))
     {

@@ -131,7 +131,6 @@ class Controller
      */
     void scanHardware()
     {
-        uint8_t id = 0;
         buttons.waitForButtonRelease();
 
         // Scan for Input nodes.

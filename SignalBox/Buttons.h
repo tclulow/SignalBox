@@ -253,8 +253,8 @@ class Buttons
      */
     uint8_t waitForButtonClick()
     {
-        long    delayTo = millis() + DELAY_READ;
-        uint8_t button  = BUTTON_NONE;
+        unsigned long delayTo = millis() + DELAY_READ;
+        uint8_t       button  = BUTTON_NONE;
 
         waitForButtonRelease();
 

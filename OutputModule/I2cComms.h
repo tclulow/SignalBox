@@ -217,7 +217,7 @@ class I2cComms
 
     /** Send an I2C message to the Gateway (if there is one).
      */
-    uint8_t sendGateway(uint8_t aCommand, int aDataByte1, int aDataByte2)
+    void sendGateway(uint8_t aCommand, int aDataByte1, int aDataByte2)
     {
         if (gatewayId > 0)
         {

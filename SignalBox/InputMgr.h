@@ -87,8 +87,6 @@ class InputMgr: public Persisted
      */
     void loadInput(uint8_t aNode, uint8_t aPin)
     {
-        uint32_t mask = ((long)INPUT_TYPE_MASK) << (aPin << INPUT_TYPE_SHIFT);
-
         inputNumber = ((aNode & INPUT_NODE_MASK) << INPUT_NODE_SHIFT) | (aPin & INPUT_PIN_MASK);
 
         EEPROM.get(base       + (aNode       * INPUT_TYPES_SIZE), inputTypes);

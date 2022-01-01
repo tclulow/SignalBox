@@ -35,7 +35,7 @@ class ImportExport
 
     int  lastChar;                              // Last character read.
     char wordBuffer[WORD_BUFFER_LENGTH + 1];    // Buffer to read characters with null terminator on the end.
-    long messageTick = 1L;                      // Time the last message was emitted.
+    unsigned long messageTick = 1L;             // Time the last message was emitted.
 
 
     /** Import a line.
@@ -81,7 +81,6 @@ class ImportExport
     {
         int node = 0;
         int pin  = 0;
-        int mask = 0;
 
         node = readData() & INPUT_NODE_MASK;
         pin  = readData() & INPUT_PIN_MASK;
@@ -537,7 +536,7 @@ class ImportExport
 
     /** Export the defined locks.
      */
-    void exportLocks(boolean aAll)
+    void exportLocks()
     {
         // Export header comment.
         Serial.print(PGMT(M_EXPORT_LOCKS));
@@ -654,7 +653,7 @@ class ImportExport
             case EXP_ALL:     exportSystem(debugLevel >= DEBUG_FULL);
                               exportInputs(true);
                               exportOutputs();
-                              exportLocks(true);
+                              exportLocks();
                               break;
 
             case EXP_SYSTEM:  exportSystem(debugLevel);
@@ -666,7 +665,7 @@ class ImportExport
             case EXP_OUTPUTS: exportOutputs();
                               break;
 
-            case EXP_LOCKS:   exportLocks(false);
+            case EXP_LOCKS:   exportLocks();
                               break;
 
             default:          systemFail(M_EXPORT, aExport);
