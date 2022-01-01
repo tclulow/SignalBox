@@ -889,42 +889,42 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue
         outputs[aPin].steps   = outputDefs[aPin].getPaceAsSteps() + 1;
         outputs[aPin].step    = 0;
 
-        // Output type-specific parameters.
-        if (outputDefs[aPin].isServo())
+        switch(outputDefs[aPin].getType())
         {
-            newState = actionServo(aPin, aState, aUseValue);
-        }
-        else if (outputDefs[aPin].isLed())
-        {
-            newState = actionLed(aPin, aState);
-        }
-        else if (outputDefs[aPin].isFlasher())
-        {
-            newState = actionFlasher(aPin, aState);
-        }
-        else if (outputDefs[aPin].isRandom())
-        {
-            if (persisting)
-            {
-                newState = actionRandom(aPin, aState);
-            }
-            else
-            {
-                newState = actionLed(aPin, aState);     // When not persisting (ie testing) treat as a LED.
-            }
-        }
-        else
-        {
-            if (isDebug(DEBUG_ERRORS))
-            {
-                Serial.print(millis());
-                Serial.print(CHAR_TAB);
-                Serial.print(PGMT(M_UNKNOWN));
-                Serial.print(aPin);
-                Serial.print(PGMT(M_DEBUG_TYPE));
-                Serial.print(PGMT(M_OUTPUT_TYPES[outputDefs[aPin].getType() & OUTPUT_TYPE_MASK]));
-                Serial.println();
-            }
+            case OUTPUT_TYPE_SERVO:
+            case OUTPUT_TYPE_SIGNAL: actionServo(aPin, aState, aUseValue);
+                                     break;
+
+            case OUTPUT_TYPE_LED:
+            case OUTPUT_TYPE_LED_4:
+            case OUTPUT_TYPE_ROAD_UK:
+            case OUTPUT_TYPE_ROAD_RW: newState = actionLed(aPin, aState);
+                                      break;
+
+            case OUTPUT_TYPE_FLASH:
+            case OUTPUT_TYPE_BLINK:   newState = actionFlasher(aPin, aState);
+                                      break;
+
+            case OUTPUT_TYPE_RANDOM:  if (persisting)
+                                      {
+                                          newState = actionRandom(aPin, aState);
+                                      }
+                                      else
+                                      {
+                                          newState = actionLed(aPin, aState);     // When not persisting (ie testing) treat as a LED.
+                                      }
+                                      break;
+
+            default:                  if (isDebug(DEBUG_ERRORS))
+                                      {
+                                          Serial.print(millis());
+                                          Serial.print(CHAR_TAB);
+                                          Serial.print(PGMT(M_UNKNOWN));
+                                          Serial.print(aPin);
+                                          Serial.print(PGMT(M_DEBUG_TYPE));
+                                          Serial.print(PGMT(M_OUTPUT_TYPES[outputDefs[aPin].getType() & OUTPUT_TYPE_MASK]));
+                                          Serial.println();
+                                      }
         }
 
         // Set the Output to the new state.
