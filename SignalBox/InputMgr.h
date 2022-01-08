@@ -70,7 +70,7 @@ class InputMgr: public Persisted
      */
     InputMgr(uint16_t aBase) : Persisted(aBase)
     {
-        baseInputs = base + INPUT_TYPES_SIZE * INPUT_NODE_MAX;                // Immediately after Input types.
+        baseInputs = getBase() + INPUT_TYPES_SIZE * INPUT_NODE_MAX;           // Immediately after Input types.
         size = INPUT_TYPES_SIZE * INPUT_NODE_MAX + INPUT_SIZE * INPUT_MAX;    // Types + definitions.
     }
 
@@ -89,8 +89,8 @@ class InputMgr: public Persisted
     {
         inputNumber = ((aNode & INPUT_NODE_MASK) << INPUT_NODE_SHIFT) | (aPin & INPUT_PIN_MASK);
 
-        EEPROM.get(base       + (aNode       * INPUT_TYPES_SIZE), inputTypes);
-        EEPROM.get(baseInputs + (inputNumber * INPUT_SIZE), inputDef);
+        EEPROM.get(getBase()  + (aNode       * INPUT_TYPES_SIZE), inputTypes);
+        EEPROM.get(baseInputs + (inputNumber * INPUT_SIZE),       inputDef);
         inputType = (inputTypes >> (aPin << INPUT_TYPE_SHIFT)) & INPUT_TYPE_MASK;
 
         if (isDebug(DEBUG_DETAIL))
@@ -148,8 +148,8 @@ class InputMgr: public Persisted
             uint32_t mask = ((long)INPUT_TYPE_MASK) << (pin << INPUT_TYPE_SHIFT);
 
             inputTypes = (inputTypes & ~mask) | ((((long)inputType) << (pin << INPUT_TYPE_SHIFT)) & mask);
-            EEPROM.put(base       + (node        * INPUT_TYPES_SIZE), inputTypes);
-            EEPROM.put(baseInputs + (inputNumber * INPUT_SIZE), inputDef);
+            EEPROM.put(getBase()  + (node        * INPUT_TYPES_SIZE), inputTypes);
+            EEPROM.put(baseInputs + (inputNumber * INPUT_SIZE),       inputDef);
 
             if (isDebug(DEBUG_DETAIL))
             {

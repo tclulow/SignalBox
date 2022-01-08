@@ -22,9 +22,15 @@
  */
 class Persisted
 {
-    protected:
+    private:
+    
     uint16_t base = 0;
+
+
+    protected:
+
     uint16_t size = 0;
+
 
     public:
 
@@ -35,14 +41,6 @@ class Persisted
     {
         base = aBase;
     };
-
-
-//    /** Sets the base offset (in EEPROM) where this user stores data.
-//     */
-//    void setBase(uint16_t aBase)
-//    {
-//        base = aBase;
-//    }
 
 
     /** Gets the base offset (in EEPROM) where this user stores data.

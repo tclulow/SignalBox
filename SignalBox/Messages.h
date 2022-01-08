@@ -16,6 +16,7 @@
 
 
 // Incantation to convert a PROGMEM string to something usable by other functions.
+// eg: Serial.print(PGMT(M_VERSION));
 #define PGMT(pgm_ptr) ( reinterpret_cast< const __FlashStringHelper * >( pgm_ptr ) )
 
 
@@ -25,7 +26,7 @@
 #elif SB_OUTPUT_MODULE
     const char M_SOFTWARE[]     PROGMEM = "Output module";
 #endif
-const char M_VERSION[]          PROGMEM = "v4.1.1";        // See also system.VERSION.
+const char M_VERSION[]          PROGMEM = "v4.1.1";        // See also System.VERSION.
 const char M_VERSION_DATE[]     PROGMEM = "Dec 21";
 const char M_INIT_I2C[]         PROGMEM = "Init I2C";
 const char M_STARTUP[]          PROGMEM = "Startup";

@@ -428,7 +428,7 @@ class SystemMgr: public Persisted
 };
 
 
-/** Singleton SystemMgr at offset 0. */
+/** Singleton SystemMgr at EEPROM offset 0. */
 SystemMgr systemMgr(0);
 
 
