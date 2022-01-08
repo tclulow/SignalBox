@@ -58,7 +58,7 @@
 #include "Messages.h"
 #include "Persisted.h"
 #include "I2cComms.h"
-#include "System.h"
+#include "SystemMgr.h"
 #include "OutputDef.h"
 
 #include "OutputMgr.h"              // OutputModule-specific classes.
