@@ -548,6 +548,7 @@ void loop()
         controller.announce();
     }
 
+    // Check for input on the Serial line, and handle it.
     handleSerialInput();
 
     // See if there are any Gateway requests
