@@ -5,7 +5,7 @@ cd ~/JavaDev/Pentad/Arduino/SignalBox/SignalBox
 
 DIR=OutputModule
 echo
-for FILE in Config.h I2cComms.h Messages.h OutputDef.h Persisted.h System.h
+for FILE in Config.h I2cComms.h Messages.h OutputDef.h Persisted.h SystemMgr.h
 do
     echo $DIR/$FILE
     diff $FILE ../$DIR
