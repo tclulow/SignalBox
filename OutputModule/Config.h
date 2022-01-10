@@ -96,6 +96,7 @@
 #if SB_CONTROLLER
 
 // Alternate pins that can be used to control the menus. First entry unused.
+// Unused, Select, Left, Down, Up, right.
 const uint8_t BUTTON_PINS[] = { 0xff, A1, A2, A3, 2, 3 };
 
 
