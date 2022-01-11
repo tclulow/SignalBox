@@ -1,7 +1,6 @@
 /** Encapsulate Wire library for communications between the modules.
  *  @file
  *
- *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
  *
  *  This work is licensed under the:

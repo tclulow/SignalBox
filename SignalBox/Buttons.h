@@ -1,7 +1,6 @@
 /** Buttons
  *  @file
  *
- *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
  *
  *  This work is licensed under the:
@@ -33,7 +32,7 @@
 #define BUTTON_THRESHHOLD   1000    // Analog limit above which no button is considered to be pressed.
 
 
-/** Class for handling controll buttons.
+/** Class for handling control buttons.
  *  Both on the LCD shield and as Uno pins.
  */
 class Buttons
