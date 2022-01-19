@@ -1,7 +1,6 @@
 /** Encapsulate Wire library for communications between the modules.
  *  @file
  *
- *
  *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
  *
  *  This work is licensed under the:
@@ -171,7 +170,7 @@ class I2cComms
 
     /** Is a particular node ID connected to the I2C bus?
      */
-    boolean exists(uint8_t aNodeId)
+    bool exists(uint8_t aNodeId)
     {
         Wire.beginTransmission(aNodeId);
         return Wire.endTransmission() == 0;
@@ -260,7 +259,7 @@ class I2cComms
     /** Request a packet (of aLength).
      *  Return true if correct packet-length arrives, else false.
      */
-    boolean requestPacket(uint8_t aNodeId, uint8_t aLength)
+    bool requestPacket(uint8_t aNodeId, uint8_t aLength)
     {
         return    (Wire.requestFrom(aNodeId, aLength) == aLength)
                && (Wire.available() == aLength);
@@ -270,7 +269,7 @@ class I2cComms
     /** Request a Gateway command.
      *  Return true if command received.
      */
-    boolean requestGateway()
+    bool requestGateway()
     {
         return    (gatewayId > 0)
                && (requestPacket(gatewayId, 2));
