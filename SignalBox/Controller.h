@@ -204,9 +204,9 @@ class Controller
     /** Process the changed input.
      *  aState is the state of the input switch.
      */
-    void processInput(boolean aState)
+    void processInput(bool aState)
     {
-        boolean newState = aState;
+        bool newState = aState;
         uint8_t first    = 0;
         uint8_t node     = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
         uint8_t pin      = (inputNumber                    ) & INPUT_PIN_MASK;
@@ -276,7 +276,7 @@ class Controller
 
     /** Process all the Input's Outputs.
      */
-    void processInputOutputs(boolean aNewState)
+    void processInputOutputs(bool aNewState)
     {
         uint8_t endDelay = 0;
 
@@ -554,7 +554,7 @@ class Controller
 
     /** Check if any of the Input's Outputs are locked.
      */
-    boolean isLocked(boolean aNewState)
+    bool isLocked(bool aNewState)
     {
         // Check all the Input's Outputs.
         for (uint8_t inpIndex = 0; inpIndex < INPUT_OUTPUT_MAX; inpIndex++)
@@ -571,7 +571,7 @@ class Controller
                     if (outputDef.isLock(aNewState, outIndex))
                     {
                         // And the state change is prohibited.
-                        boolean state = getOutputState(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
+                        bool state = getOutputState(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
                         if (outputDef.getLockState(aNewState, outIndex) == state)
                         {
                             if (systemMgr.isReportEnabled(REPORT_SHORT))

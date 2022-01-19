@@ -7,7 +7,7 @@
  *      Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
  *      http://creativecommons.org/licenses/by-nc-sa/4.0/
  *
- *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.
+ *  For commercial use, please contact the original copyright holder(s) to agree licensing terms.b
  */
 
 #ifndef OutputDef_h
@@ -81,7 +81,7 @@ class OutputDef
 
     /** Is the Output one of the servo type?
      */
-    boolean isServo()
+    bool isServo()
     {
         return    (getType() == OUTPUT_TYPE_SERVO)
                || (getType() == OUTPUT_TYPE_SIGNAL);
@@ -90,7 +90,7 @@ class OutputDef
 
     /** Is the Output one of the LED types?
      */
-    boolean isLed()
+    bool isLed()
     {
         return    getType() == OUTPUT_TYPE_LED
                || getType() == OUTPUT_TYPE_LED_4
@@ -101,7 +101,7 @@ class OutputDef
 
     /** Is the Output one of the flashing types?
      */
-    boolean isFlasher()
+    bool isFlasher()
     {
         return    (getType() == OUTPUT_TYPE_FLASH)
                || (getType() == OUTPUT_TYPE_BLINK);
@@ -110,7 +110,7 @@ class OutputDef
 
     /** Is the output the RANDOM type
      */
-    boolean isRandom()
+    bool isRandom()
     {
         return getType() == OUTPUT_TYPE_RANDOM;
     }
@@ -119,7 +119,7 @@ class OutputDef
     /** Is the output a PWM type?
      *  ie it uses PWM to control its intensity.
      */
-    boolean isPwm()
+    bool isPwm()
     {
         return    isLed()
                || isFlasher()
@@ -138,7 +138,7 @@ class OutputDef
 
     /** Set all an Output's data.
      */
-    void set(uint8_t aType, boolean aState, uint8_t aLo, uint8_t aHi, uint8_t aPace, uint8_t aReset)
+    void set(uint8_t aType, bool aState, uint8_t aLo, uint8_t aHi, uint8_t aPace, uint8_t aReset)
     {
         setType(aType);
         setState(aState);
@@ -159,7 +159,7 @@ class OutputDef
 
     /** Set the indicated lock active (or not).
      */
-    void setLock(boolean aHi, uint8_t aIndex, boolean aState)
+    void setLock(bool aHi, uint8_t aIndex, bool aState)
     {
         if (aState)
         {
@@ -174,7 +174,7 @@ class OutputDef
 
     /** Is the given lock defined?
      */
-    boolean isLock(boolean aHi, uint8_t aIndex)
+    bool isLock(bool aHi, uint8_t aIndex)
     {
         return (locks & (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)))) != 0;
     }
@@ -182,7 +182,7 @@ class OutputDef
 
     /** Get the selected lock's node.
      */
-    uint8_t getLockNode(boolean aHi, uint8_t aIndex)
+    uint8_t getLockNode(bool aHi, uint8_t aIndex)
     {
         uint8_t node = aHi ? lockHi[aIndex] : lockLo[aIndex];
 
@@ -192,7 +192,7 @@ class OutputDef
 
     /** Set the selected lock's node.
      */
-    void setLockNode(boolean aHi, uint8_t aIndex, uint8_t aNode)
+    void setLockNode(bool aHi, uint8_t aIndex, uint8_t aNode)
     {
         if (aHi)
         {
@@ -207,7 +207,7 @@ class OutputDef
 
     /** Get the selected lock's pin.
      */
-    uint8_t getLockPin(boolean aHi, uint8_t aIndex)
+    uint8_t getLockPin(bool aHi, uint8_t aIndex)
     {
         uint8_t pin = aHi ? lockHi[aIndex] : lockLo[aIndex];
 
@@ -217,7 +217,7 @@ class OutputDef
 
     /** Set the selected lock's pin.
      */
-    void setLockPin(boolean aHi, uint8_t aIndex, uint8_t aPin)
+    void setLockPin(bool aHi, uint8_t aIndex, uint8_t aPin)
     {
         if (aHi)
         {
@@ -234,7 +234,7 @@ class OutputDef
      *  That's the state the other output must be in to enforce this lock.
      *  return true = Hi, false = Lo.
      */
-    boolean getLockState(boolean aHi, uint8_t aIndex)
+    bool getLockState(bool aHi, uint8_t aIndex)
     {
         return (lockState & (1 << (aIndex + (aHi ? OUTPUT_LOCK_MAX : 0)))) != 0;
     }
@@ -243,7 +243,7 @@ class OutputDef
     /** Get the selected locks lock state.
      *  That's the state the other output must be in to enforce this lock.
      */
-    void setLockState(boolean aHi, uint8_t aIndex, boolean aState)
+    void setLockState(bool aHi, uint8_t aIndex, bool aState)
     {
         if (aState)
         {
@@ -258,7 +258,7 @@ class OutputDef
 
     /** How many locks are defined for the output.
      */
-    uint8_t getLockCount(boolean aHi)
+    uint8_t getLockCount(bool aHi)
     {
         uint8_t count = 0;
 
@@ -384,7 +384,7 @@ class OutputDef
      *  Hi - true.
      *  Lo - false.
      */
-    boolean getState()
+    bool getState()
     {
         return (type & OUTPUT_STATE_MASK) != 0;
     }
@@ -394,7 +394,7 @@ class OutputDef
      *  Hi - Non zero.
      *  Lo - zero.
      */
-    void setState(boolean aState)
+    void setState(bool aState)
     {
         type = (aState ? OUTPUT_STATE_MASK : 0) | (type & OUTPUT_TYPE_MASK);
     }

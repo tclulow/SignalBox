@@ -32,7 +32,7 @@ uint8_t    inputType   = 0;                 // Type of the current Input (2 bits
 
 /** Record the presence of an InputNode in the map.
  */
-void setInputNodePresent(uint8_t aNode, boolean aState)
+void setInputNodePresent(uint8_t aNode, bool aState)
 {
     if (aState)
     {
@@ -47,7 +47,7 @@ void setInputNodePresent(uint8_t aNode, boolean aState)
 
 /** Is an Input node present?
  */
-boolean isInputNodePresent(uint8_t aNode)
+bool isInputNodePresent(uint8_t aNode)
 {
     // Look for input's node in inputNodes flags.
     return (aNode < INPUT_NODE_MAX) && (inputNodes & (1 << aNode));

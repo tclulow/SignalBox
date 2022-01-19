@@ -27,7 +27,7 @@ uint8_t    outputStates[OUTPUT_NODE_MAX];   // State of all the attached output 
 
 /** Record the presence of an OutputNode in the map.
  */
-void setOutputNodePresent(uint8_t aNode, boolean aState)
+void setOutputNodePresent(uint8_t aNode, bool aState)
 {
     if (aState)
     {
@@ -43,7 +43,7 @@ void setOutputNodePresent(uint8_t aNode, boolean aState)
 /** Is an Output node present?
  *  Look for Output's node in outputNodes.
  */
-boolean isOutputNodePresent(uint8_t aNode)
+bool isOutputNodePresent(uint8_t aNode)
 {
     return (aNode < OUTPUT_NODE_MAX) && (outputNodes & ((long)1 << aNode));
 }
@@ -67,7 +67,7 @@ uint8_t getOutputStates(uint8_t aNode)
 
 /** Sets the state of the given node's Output pin.
  */
-void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState)
+void setOutputState(uint8_t aNode, uint8_t aPin, bool aState)
 {
     uint8_t mask = 1 << aPin;
 
@@ -84,7 +84,7 @@ void setOutputState(uint8_t aNode, uint8_t aPin, boolean aState)
 
 /** Gets the state of the given Output's given pin.
  */
-boolean getOutputState(uint8_t aNode, uint8_t aPin)
+bool getOutputState(uint8_t aNode, uint8_t aPin)
 {
     return (outputStates[aNode] & (1 << aPin)) != 0;
 }
@@ -194,7 +194,7 @@ void writeSaveOutput()
 
 /** Write a change of state to the Output module.
  */
-void writeOutputState(uint8_t aNode, uint8_t aPin, boolean aState, uint8_t aDelay)
+void writeOutputState(uint8_t aNode, uint8_t aPin, bool aState, uint8_t aDelay)
 {
     uint8_t command = (aState ? COMMS_CMD_SET_HI : COMMS_CMD_SET_LO) | aPin;
 

@@ -136,7 +136,7 @@ class InputDef
 
     /** Is the nth output a delay?
      */
-    boolean isDelay(uint8_t aIndex)
+    bool isDelay(uint8_t aIndex)
     {
         return (delayMask & (1 << aIndex)) != 0;
     }
@@ -144,7 +144,7 @@ class InputDef
 
     /** Sets the nth output delay (or not).
      */
-    void setDelay(uint8_t aIndex, boolean aDelay)
+    void setDelay(uint8_t aIndex, bool aDelay)
     {
         uint8_t mask = 1 << aIndex;
         if (aDelay)

@@ -97,7 +97,7 @@ static const uint8_t ROAD_OFF  = 0x52;                      //       0 1 0 1   0
 
 
 // Should changes be persisted?
-boolean persisting = true;
+bool persisting = true;
 
 
 #define COMMAND_BUFFER_LEN   8                  // Serial command buffer length
@@ -714,7 +714,7 @@ void processMoveLocks()
         // Move all locks referencing the old node number to the new node number.
         for (uint8_t pin = 0; pin < OUTPUT_PIN_MAX; pin++)
         {
-            boolean changed = false;
+            bool changed = false;
             
             // Process Lo and Hi lock types.
             for (uint8_t hi = 0; hi < 2; hi++)
@@ -853,9 +853,9 @@ void processSet(uint8_t aPin, uint8_t aValue)
  *  Delay for aDelay seconds.
  *  If a Servo, and aUseValue is set, use its current position rather than Lo-Hi when calculating range of movement.
  */
-void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue)
+void actionState(uint8_t aPin, bool aState, uint8_t aDelay, bool aUseValue)
 {
-    boolean newState = aState;      // Might want to change the state (some LED_4 and FLASHERS).
+    bool newState = aState;      // Might want to change the state (some LED_4 and FLASHERS).
 
     if (isDebug(DEBUG_BRIEF))
     {
@@ -946,7 +946,7 @@ void actionState(uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue
 /** Action a Servo state change.
  *  If aUseValue is set, use Servo's current position rather than Lo-Hi when calculating range of movement.
  */
-boolean actionServo(uint8_t aPin, boolean aState, boolean aUseValue)
+bool actionServo(uint8_t aPin, bool aState, bool aUseValue)
 {
     // Set movement range.
     outputs[aPin].value    = outputs[aPin].servo.read();
@@ -985,9 +985,9 @@ boolean actionServo(uint8_t aPin, boolean aState, boolean aUseValue)
 
 /** Action a Led state change.
  */
-boolean actionLed(uint8_t aPin, boolean aState)
+bool actionLed(uint8_t aPin, bool aState)
 {
-    boolean newState = aState;      // Might want to change the state.
+    bool newState = aState;      // Might want to change the state.
 
     // Start from current values.
     outputs[aPin].start     = outputs[aPin].value;
@@ -1012,10 +1012,10 @@ boolean actionLed(uint8_t aPin, boolean aState)
 
 /** Action a DoubleLed state change.
  */
-boolean actionDoubleLed(uint8_t aPin, boolean aState)
+bool actionDoubleLed(uint8_t aPin, bool aState)
 {
-    boolean newState = aState;      // Might want to change the state.
-    boolean ledState = false;
+    bool newState = aState;      // Might want to change the state.
+    bool ledState = false;
     uint8_t ledPin   = aPin - 1;
     uint8_t offFlag  = (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4) ? LED_4_OFF : ROAD_OFF;
     uint8_t oldPhase = (outputDefs[ledPin].getState()     )     // Convert state of both outputs to a phase.
@@ -1092,9 +1092,9 @@ boolean actionDoubleLed(uint8_t aPin, boolean aState)
 
 /** Action a Flasher state change.
  */
-boolean actionFlasher(uint8_t aPin, boolean aState)
+bool actionFlasher(uint8_t aPin, bool aState)
 {
-    boolean newState = aState;      // Might want to change the state.
+    bool newState = aState;      // Might want to change the state.
 
     // For a BLINK that's not running, force state on.
     if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_BLINK)
@@ -1133,7 +1133,7 @@ boolean actionFlasher(uint8_t aPin, boolean aState)
 
 /** Action a Random state change.
  */
-boolean actionRandom(uint8_t aPin, boolean aState)
+bool actionRandom(uint8_t aPin, bool aState)
 {
     // Start from current values.
     outputs[aPin].start     = outputs[aPin].value;
@@ -1161,7 +1161,7 @@ boolean actionRandom(uint8_t aPin, boolean aState)
  */
 void processCommand()
 {
-    boolean executed = false;
+    bool executed = false;
     uint8_t nodeOld  = 0;
     uint8_t nodeNew  = 0;
 
@@ -1585,7 +1585,7 @@ void stepFlash(uint8_t aPin)
         }
         else
         {
-            boolean doSwitch = true;
+            bool doSwitch = true;
             if (outputs[aPin].steps == 1)               // Fastest possible flash = flicker.
             {
                 doSwitch = random(100) < LED_FLICKER_CHANCE;

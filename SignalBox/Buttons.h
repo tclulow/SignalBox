@@ -67,7 +67,7 @@ class Buttons
 
     /** Is button calibration required?
      */
-    boolean calibrationRequired()
+    bool calibrationRequired()
     {
         return buttonsPtr[BUTTON_NONE] == 0;
     }

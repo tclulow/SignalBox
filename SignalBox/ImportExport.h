@@ -312,7 +312,7 @@ class ImportExport
 
     /** Are we at end-of-line?
      */
-    boolean isEndOfLine()
+    bool isEndOfLine()
     {
         return    lastChar == CHAR_NEWLINE
                || lastChar == CHAR_RETURN;
@@ -321,7 +321,7 @@ class ImportExport
 
     /** Is latest character white-space?
      */
-    boolean isWhiteSpace()
+    bool isWhiteSpace()
     {
         return    (lastChar == CHAR_SPACE)
                || (lastChar == CHAR_TAB)
@@ -430,7 +430,7 @@ class ImportExport
     /** Export the Inputs.
      *  Only export connected inputs, unless aAll is set.
      */
-    void exportInputs(boolean aAll)
+    void exportInputs(bool aAll)
     {
         // Export header comment
         Serial.print(PGMT(M_EXPORT_INPUT));

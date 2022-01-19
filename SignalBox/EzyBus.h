@@ -25,7 +25,7 @@
 
 /** Is an EzyBus setup detected?
  */
-boolean ezyBusDetected()
+bool ezyBusDetected()
 {
     return EEPROM.read(EZY_MAGIC_ADDR) == EZY_MAGIC;    // Check for tell-tale value in EEPROM
 }

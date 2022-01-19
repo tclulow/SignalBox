@@ -115,7 +115,7 @@ class Display
 
     /** Is an LCD shield attached?
      */
-    boolean hasShield()
+    bool hasShield()
     {
         return lcdShield != 0;
     }
@@ -342,7 +342,7 @@ class Display
         int value   = aValue;
         int digits  = 1;
         int divisor = 1;
-        boolean leadingBlanks = true;
+        bool leadingBlanks = true;
 
         // Calculate min digits required
         while (value >= 10)

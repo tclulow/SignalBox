@@ -215,10 +215,10 @@ void firstRun()
  */
 void processCommand()
 {
-    boolean executed = false;
+    bool executed = false;
     uint8_t node     = 0;
     uint8_t pin      = 0;
-    boolean state    = true;
+    bool state    = true;
 
     if (isDebug(DEBUG_BRIEF))
     {
@@ -322,9 +322,9 @@ void handleSerialInput()
  *  Process the request.
  *  Return true if work done.
  */
-boolean gatewayRequest()
+bool gatewayRequest()
 {
-    boolean workDone = false;
+    bool workDone = false;
 
     i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_GATEWAY, -1, -1);
     if (i2cComms.requestGateway())
@@ -433,7 +433,7 @@ void reportPause()
  */
 void setup()
 {
-    boolean hasLcdShield = LCD_SHIELD;              // An LCD shield is present.
+    bool hasLcdShield = LCD_SHIELD;              // An LCD shield is present.
 
     // Start Serial IO first - needed if there's any debug output.
     Serial.begin(SERIAL_SPEED);

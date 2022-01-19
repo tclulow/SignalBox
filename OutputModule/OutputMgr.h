@@ -63,7 +63,7 @@ class OutputMgr: public Persisted
     /** Is the given Output type a servo type?
      *  ie: SERVO or SIGNAL.
      */
-    boolean isServo(uint8_t aType)
+    bool isServo(uint8_t aType)
     {
         return    (aType == OUTPUT_TYPE_SERVO)
                || (aType == OUTPUT_TYPE_SIGNAL);
@@ -73,7 +73,7 @@ class OutputMgr: public Persisted
     /** Is the specified pin a double-led?
      *  The identified pin is legal, a double-led type, and the previous pin is a LED.
      */
-    boolean isDoubleLed(uint8_t aPin)
+    bool isDoubleLed(uint8_t aPin)
     {
         return    (aPin > 0)
                && (aPin < OUTPUT_PIN_MAX)

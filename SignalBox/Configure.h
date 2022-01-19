@@ -93,7 +93,7 @@ class Configure
      */
     void menuTop()
     {
-        boolean finished = false;
+        bool finished = false;
 
         // Ensure node numbers are legitimate.
         if (!isInputNodePresent(inpNode))
@@ -179,8 +179,8 @@ class Configure
      */
     void menuSystem()
     {
-        boolean finished   = false;
-        boolean changed    = false;
+        bool finished   = false;
+        bool changed    = false;
         uint8_t debugLevel = systemMgr.getDebugLevel();
 
         markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, true);
@@ -271,10 +271,10 @@ class Configure
     /** Process System report menu.
      *  Reurn true if changes made.
      */
-    boolean menuSystemReport()
+    bool menuSystemReport()
     {
-        boolean finished = false;
-        boolean changed  = false;
+        bool finished = false;
+        bool changed  = false;
         uint8_t reportLevel = systemMgr.getReportLevel();
 
         markField(LCD_COL_REPORT_PARAM, LCD_ROW_DET, LCD_COL_REPORT_LENGTH, true);
@@ -313,10 +313,10 @@ class Configure
     /** Process System redebug menu.
      *  Reurn true if changes made.
      */
-    boolean menuSystemDebug()
+    bool menuSystemDebug()
     {
-        boolean finished   = false;
-        boolean changed    = false;
+        bool finished   = false;
+        bool changed    = false;
         uint8_t debugLevel = systemMgr.getDebugLevel();
 
         markField(LCD_COL_DEBUG_PARAM, LCD_ROW_DET, LCD_COL_DEBUG_LENGTH, true);
@@ -354,9 +354,9 @@ class Configure
 
     /** Process Node menu for Input or Output.
      */
-    void menuNode(boolean aIsInput)
+    void menuNode(bool aIsInput)
     {
-        boolean finished    = false;
+        bool finished    = false;
         int8_t  reportLevel = systemMgr.getReportLevel();       // Record reportLevel so we can turn it back on again.
 
         systemMgr.setReportLevel(REPORT_NONE);
@@ -461,9 +461,9 @@ class Configure
      */
     void menuNewNode()
     {
-        boolean finished = false;       // Set when done.
-        boolean changed  = false;       // Set if a new node number has been chosen.
-        boolean jumpers  = false;       // Set to reset node to its jumper setting.
+        bool finished = false;       // Set when done.
+        bool changed  = false;       // Set if a new node number has been chosen.
+        bool jumpers  = false;       // Set to reset node to its jumper setting.
         uint8_t newNode  = outNode;     // The new node number to renumber to.
 
         displayNewNode(jumpers, newNode);
@@ -602,7 +602,7 @@ class Configure
                     // For all the Input's pins.
                     for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
                     {
-                        boolean changed = false;
+                        bool changed = false;
                         inputMgr.loadInput(node, pin);
 
                         // Adjust all the Input's Outputs if they referencethe old node number.
@@ -688,9 +688,9 @@ class Configure
 
     /** Process Pin menu.
      */
-    void menuPin(boolean aIsInput)
+    void menuPin(bool aIsInput)
     {
-        boolean finished = false;
+        bool finished = false;
 
         markField(LCD_COL_PIN, LCD_ROW_TOP, 1, true);
 
@@ -772,8 +772,8 @@ class Configure
      */
     void menuInput()
     {
-        boolean finished = false;
-        boolean changed  = false;
+        bool finished = false;
+        bool changed  = false;
 
         markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, true);
 
@@ -847,10 +847,10 @@ class Configure
 
     /** Select the Input Output to edit.
      */
-    boolean menuInputSelect()
+    bool menuInputSelect()
     {
-        boolean finished = false;
-        boolean changed  = false;
+        bool finished = false;
+        bool changed  = false;
 
         uint8_t index    = 0;
 
@@ -895,10 +895,10 @@ class Configure
 
     /** Process an Input's Output node (at the given index).
      */
-    boolean menuInputOutputNode(uint8_t aIndex)
+    bool menuInputOutputNode(uint8_t aIndex)
     {
-        boolean changed  = false;
-        boolean finished = false;
+        bool changed  = false;
+        bool finished = false;
 
         markField(LCD_COL_NODE, LCD_ROW_DET, 1, true);
 
@@ -949,10 +949,10 @@ class Configure
 
     /** Process an input's output pin.
      */
-    boolean menuInputOutputPin(uint8_t aIndex)
+    bool menuInputOutputPin(uint8_t aIndex)
     {
-        boolean finished = false;
-        boolean changed  = false;
+        bool finished = false;
+        bool changed  = false;
 
         markField(LCD_COL_PIN, LCD_ROW_DET, 1, true);
 
@@ -994,8 +994,8 @@ class Configure
      */
     void menuOutput()
     {
-        boolean finished   = false;
-        boolean changed    = false;
+        bool finished   = false;
+        bool changed    = false;
         uint8_t outputType = outputDef.getType();       // Retrieve type
 
         // Mark the field.
@@ -1090,11 +1090,11 @@ class Configure
 
     /** Process Output's Lo parameter (0-180) menu.
      */
-    boolean menuOutputLo(uint8_t aLimit)
+    bool menuOutputLo(uint8_t aLimit)
     {
-        boolean finished = false;
-        boolean changed  = false;
-        boolean state    = outputDef.getState();
+        bool finished = false;
+        bool changed  = false;
+        bool state    = outputDef.getState();
 
         displayOutputAngles();
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
@@ -1167,10 +1167,10 @@ class Configure
 
     /** Process the Output Hi parameter.
      */
-    boolean menuOutputHi(uint8_t aLimit)
+    bool menuOutputHi(uint8_t aLimit)
     {
-        boolean finished = false;
-        boolean changed  = false;
+        bool finished = false;
+        bool changed  = false;
 
         markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
 
@@ -1243,10 +1243,10 @@ class Configure
 
     /** Process the Output's Pace parameter.
      */
-    boolean menuOutputPace()
+    bool menuOutputPace()
     {
-        boolean finished = false;
-        boolean changed  = false;
+        bool finished = false;
+        bool changed  = false;
         uint8_t value    = outputDef.getPace();
 
         displayOutputDelayPace();
@@ -1293,10 +1293,10 @@ class Configure
 
     /** Process the Output's Reset parameter.
      */
-    boolean menuOutputReset()
+    bool menuOutputReset()
     {
-        boolean finished = false;
-        boolean changed  = false;
+        bool finished = false;
+        bool changed  = false;
 
         markField(LCD_COL_OUTPUT_RESET, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
 
@@ -1349,11 +1349,11 @@ class Configure
 
     /** Process Output locks.
      */
-    boolean menuLocks()
+    bool menuLocks()
     {
-        boolean finished = false;
-        boolean changed  = false;
-        boolean hi       = false;
+        bool finished = false;
+        bool changed  = false;
+        bool hi       = false;
 
         displayLockDetail(hi);
         markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_LOCK_MARK, true);
@@ -1425,10 +1425,10 @@ class Configure
 
     /** Process the lock selection.
      */
-    boolean menuLockSelect(boolean aHi)
+    bool menuLockSelect(bool aHi)
     {
-        boolean finished = false;
-        boolean changed  = false;
+        bool finished = false;
+        bool changed  = false;
 
         uint8_t index    = 0;
 
@@ -1476,7 +1476,7 @@ class Configure
 
     /** Display Lock parameters for edit.
      */
-    void displayLockEdit(boolean aHi, uint8_t aIndex)
+    void displayLockEdit(bool aHi, uint8_t aIndex)
     {
         disp.printChAt(LCD_COL_LOCK_SELECT, LCD_ROW_DET, OPTION_ID(aIndex));
         if (outputDef.isLock(aHi, aIndex))
@@ -1497,10 +1497,10 @@ class Configure
 
     /** Process the lock state.
      */
-    boolean menuLockState(boolean aHi, uint8_t aIndex)
+    bool menuLockState(bool aHi, uint8_t aIndex)
     {
-        boolean finished = false;
-        boolean changed  = false;
+        bool finished = false;
+        bool changed  = false;
 
         markField(LCD_COL_LOCK_STATE, LCD_ROW_DET, LCD_COL_LOCK_MARK, true);
 
@@ -1553,10 +1553,10 @@ class Configure
 
     /** Process the lock node.
      */
-    boolean menuLockNode(boolean aHi, uint8_t aIndex)
+    bool menuLockNode(bool aHi, uint8_t aIndex)
     {
-        boolean changed  = false;
-        boolean finished = false;
+        bool changed  = false;
+        bool finished = false;
 
         markField(LCD_COL_NODE, LCD_ROW_DET, 1, true);
 
@@ -1597,10 +1597,10 @@ class Configure
 
     /** Process the lock node.
      */
-    boolean menuLockPin(boolean aHi, uint8_t aIndex)
+    bool menuLockPin(bool aHi, uint8_t aIndex)
     {
-        boolean changed  = false;
-        boolean finished = false;
+        bool changed  = false;
+        bool finished = false;
 
         markField(LCD_COL_PIN, LCD_ROW_DET, 1, true);
 
@@ -1640,7 +1640,7 @@ class Configure
      */
     void menuExport()
     {
-        boolean finished = false;
+        bool finished = false;
 
         markField(LCD_COL_START, LCD_ROW_DET, LCD_COL_MARK, true);
 
@@ -2013,7 +2013,7 @@ class Configure
 
     /** Display move node ID.
      */
-    void displayNewNode(boolean aJumpers, uint8_t aNode)
+    void displayNewNode(bool aJumpers, uint8_t aNode)
     {
         disp.clearRow      (LCD_COL_START, LCD_ROW_DET);
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_NEW_NODE_NO);
@@ -2030,7 +2030,7 @@ class Configure
 
     /** Display the lock detail.
      */
-    void displayLockDetail(boolean aHi)
+    void displayLockDetail(bool aHi)
     {
         disp.clearRow(LCD_COL_START, LCD_ROW_DET);
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, aHi ? M_HI : M_LO);
@@ -2041,7 +2041,7 @@ class Configure
     /** Output confirmation message.
      *  Wait for response.
      */
-    boolean confirm()
+    bool confirm()
     {
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_CONFIRM);
         return waitForConfirm(M_CONFIRMED);
@@ -2051,7 +2051,7 @@ class Configure
     /** Output cancellation message.
      *  Wait for response.
      */
-    boolean cancel()
+    bool cancel()
     {
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_CANCEL);
         return waitForConfirm(M_CANCELLED);
@@ -2061,7 +2061,7 @@ class Configure
     /** Wait for confirmation of confirm/cancel.
      *  Return true if confirmed.
      */
-    boolean waitForConfirm(PGM_P aMessagePtr)
+    bool waitForConfirm(PGM_P aMessagePtr)
     {
         uint8_t button = buttons.waitForButtonPress();
 
@@ -2085,7 +2085,7 @@ class Configure
      */
     void identOutputs()
     {
-        boolean       interrupted = false;
+        bool       interrupted = false;
         uint8_t       button      = BUTTON_NONE;
         unsigned long interval    = 0L;           // Interval between changes of output.
         unsigned long finishAt    = 0L;           // Time to finish output's ident.
@@ -2224,7 +2224,7 @@ class Configure
      *  Start at aStart and increment/decrement by aAdjust (ie search up or down).
      *  aIsInput indicates if looking for an Input or an Output node number.
      */
-    uint8_t nextNode(uint8_t aStart, int aAdjust, boolean aIsInput, boolean aInUse)
+    uint8_t nextNode(uint8_t aStart, int aAdjust, bool aIsInput, bool aInUse)
     {
         uint8_t next = aStart & (aIsInput ? INPUT_NODE_MASK : OUTPUT_NODE_MASK);
 
@@ -2260,7 +2260,7 @@ class Configure
      */
     void testInput()
     {
-        boolean currentState = false;
+        bool currentState = false;
 
         readOutput(inputDef.getOutput(inputDef.getFirstOutput()));
         currentState = outputDef.getState();
@@ -2275,7 +2275,7 @@ class Configure
      */
     void testInputOutput(uint8_t aIndex)
     {
-        boolean currentState = false;
+        bool currentState = false;
 
         readOutput(inputDef.getOutput(aIndex));
         currentState = outputDef.getState();
@@ -2319,7 +2319,7 @@ class Configure
 
     /** Mark a variable with field markers.
      */
-    void markField(int aCol, int aRow, int aLen, boolean aShow)
+    void markField(int aCol, int aRow, int aLen, bool aShow)
     {
         if (aCol > 0)
         {

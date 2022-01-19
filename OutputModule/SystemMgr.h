@@ -172,7 +172,7 @@ class SystemMgr: public Persisted
     /** Load SystemData from EEPROM.
      *  Return true if valid, else don't load and return false.
      */
-    boolean loadSystemData()
+    bool loadSystemData()
     {
         EEPROM.get(getBase(), systemData.magic);  // Check the magic number
 
@@ -211,7 +211,7 @@ class SystemMgr: public Persisted
     /** Is an update required?
      *  Version number has changed.
      */
-    boolean isUpdateRequired()
+    bool isUpdateRequired()
     {
         return systemData.version != VERSION;
     }
@@ -297,7 +297,7 @@ class SystemMgr: public Persisted
 #if SB_OUTPUT_MODULE
     /** Is the ID set by jumpers?
      */
-    boolean isJumperId()
+    bool isJumperId()
     {
         return systemData.i2cModuleId == SYS_MODULE_ID_JUMPERS;
     }
@@ -314,7 +314,7 @@ class SystemMgr: public Persisted
     /** Gets the output module ID.
      *  Either by hardware jumpers or from EEPROM.
      */
-    uint8_t getModuleId(boolean aIncludeBase)
+    uint8_t getModuleId(bool aIncludeBase)
     {
         uint8_t moduleId = isJumperId() ? jumperModuleId : systemData.i2cModuleId;
 
@@ -353,7 +353,7 @@ class SystemMgr: public Persisted
 
     /** Is debugging enabled at this level?
      */
-    boolean isDebug(uint8_t aLevel)
+    bool isDebug(uint8_t aLevel)
     {
         return systemData.debugLevel >= aLevel;
     }
@@ -377,7 +377,7 @@ class SystemMgr: public Persisted
 
     /** Is reporting enabled (at a particular level)?
      */
-    boolean isReportEnabled(uint8_t aLevel)
+    bool isReportEnabled(uint8_t aLevel)
     {
         return aLevel <= getReportLevel();
     }
@@ -433,7 +433,7 @@ SystemMgr systemMgr(0);
 
 /** TODO - revise debugging
  */
-boolean isDebug(uint8_t aLevel)
+bool isDebug(uint8_t aLevel)
 {
     return systemMgr.isDebug(aLevel);
 }
