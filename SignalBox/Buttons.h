@@ -30,6 +30,7 @@
 #define BUTTON_HIGH   5
 
 #define BUTTON_THRESHHOLD   1000    // Analog limit above which no button is considered to be pressed.
+#define BUTTON_MARGIN        100    // Analog buttons must be this far from each other to avoid possible confusion.
 
 
 /** Class for handling control buttons.
@@ -127,7 +128,7 @@ class Buttons
             }
 
             // Check for buttons out-of-sequence
-            if (previous < value)
+            if (value > (previous - BUTTON_MARGIN))
             {
                 disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_SEQUENCE, LCD_COLS);
                 delay(DELAY_READ);
@@ -157,7 +158,7 @@ class Buttons
     uint8_t readButton()
     {
         uint8_t button = BUTTON_NONE;
-        int     value  = analogRead(BUTTON_ANALOG);
+        int     analog = analogRead(BUTTON_ANALOG);
 
 //        static int previous = 0;
 //        if (value != previous)
@@ -174,7 +175,7 @@ class Buttons
             // Analog cutoff is in the previous cell in the systemData.button array, so index from BUTTON_NONE.
             for (button = BUTTON_NONE; button < BUTTON_HIGH; button++)
             {
-                if (value >= buttonsPtr[button])
+                if (analog >= buttonsPtr[button])
                 {
                     break;
                 }
@@ -203,9 +204,10 @@ class Buttons
             Serial.print(CHAR_SPACE);
             Serial.print(PGMT(M_BUTTONS[button]));
             Serial.print(PGMT(M_DEBUG_VALUE));
-            Serial.print(value, HEX);
+            Serial.print(analog, HEX);
             Serial.println();
         }
+        
         lastButton = button;
 
         return button;
