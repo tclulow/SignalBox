@@ -28,7 +28,13 @@
 #define SYS_NODES    1
 #define SYS_IDENT    2
 #define SYS_DEBUG    3
+
+// Don't include DEBUG state if it's disabled.
+#ifndef isDebug
 #define SYS_MAX      4
+#else
+#define SYS_MAX      3
+#endif
 
 
 /** Helper for use in callback to displayScannedInput().

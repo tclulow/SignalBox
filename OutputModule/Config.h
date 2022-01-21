@@ -14,6 +14,10 @@
 #define Config_h
 
 
+// Remove all debug code using this definition.
+// #define isDebug(x) (false)
+
+
 /** Configuration constants.
  */
  

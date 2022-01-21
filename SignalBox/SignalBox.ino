@@ -82,12 +82,15 @@ uint8_t commandLen = 0;                         // Length of command.
  */
 void systemFail(PGM_P aMessage, int aValue)
 {
-    Serial.print(PGMT(M_FAILURE));
-    Serial.print(CHAR_TAB);
-    Serial.print(PGMT(aMessage));
-    Serial.print(CHAR_SPACE);
-    Serial.print(aValue, HEX);
-    Serial.println();
+    if (isDebug(DEBUG_ERRORS))
+    {
+        Serial.print(PGMT(M_FAILURE));
+        Serial.print(CHAR_TAB);
+        Serial.print(PGMT(aMessage));
+        Serial.print(CHAR_SPACE);
+        Serial.print(aValue, HEX);
+        Serial.println();
+    }
 
     disp.clear();
     disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_FAILURE);

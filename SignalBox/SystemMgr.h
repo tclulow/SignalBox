@@ -351,12 +351,14 @@ class SystemMgr: public Persisted
     }
 
 
+#ifndef isDebug
     /** Is debugging enabled at this level?
      */
     bool isDebug(uint8_t aLevel)
     {
         return systemData.debugLevel >= aLevel;
     }
+#endif
 
 
     /** Sets the report level.
@@ -433,10 +435,12 @@ SystemMgr systemMgr(0);
 
 /** TODO - revise debugging
  */
+# ifndef isDebug
 bool isDebug(uint8_t aLevel)
 {
     return systemMgr.isDebug(aLevel);
 }
+#endif
 
 
 // Global helper methods.

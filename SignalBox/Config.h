@@ -14,6 +14,10 @@
 #define Config_h
 
 
+// Remove all debug code using this definition.
+// #define isDebug(x) (false)
+
+
 /** Configuration constants.
  */
  
@@ -81,7 +85,7 @@
 #define RANDOM_HI_CHANCE           60   // Chance that a RANDOM Hi output illuminates its LED.
 #define RANDOM_LO_CHANCE           40   // Chance that a RANDOM Lo output illuminates its LED.
 
-#define PWM_TICK                   -1   // PWM tick adjustment to give maximum frequency to PWM signal.
+#define PWM_TICK                    1   // PWM tick adjustment to give maximum frequency to PWM signal.
 #define PWM_INC                  0x10   // Increment between pins to ensure even distribution.
 
 #define JUMPER_PINS                 4   // Four jumpers.
