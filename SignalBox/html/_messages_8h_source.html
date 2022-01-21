@@ -66,11 +66,12 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <a href="_messages_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#ifndef Messages_h</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#define Messages_h</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#ifndef Messages_h</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#define Messages_h</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment">// Incantation to convert a PROGMEM string to something usable by other functions.</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">// Incantation to convert a PROGMEM string to something usable by other functions.</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment">// eg: Serial.print(PGMT(M_VERSION));</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#define PGMT(pgm_ptr) ( reinterpret_cast&lt; const __FlashStringHelper * &gt;( pgm_ptr ) )</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
@@ -80,8 +81,8 @@ $(function() {
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#elif SB_OUTPUT_MODULE</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> M_SOFTWARE[]     PROGMEM = <span class="stringliteral">&quot;Output module&quot;</span>;</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> M_VERSION[]          PROGMEM = <span class="stringliteral">&quot;v4.1.0&quot;</span>;        <span class="comment">// See also system.VERSION.</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> M_VERSION_DATE[]     PROGMEM = <span class="stringliteral">&quot;Dec 21&quot;</span>;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> M_VERSION[]          PROGMEM = <span class="stringliteral">&quot;v4.1.2&quot;</span>;        <span class="comment">// See also SystemMgr.VERSION.</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> M_VERSION_DATE[]     PROGMEM = <span class="stringliteral">&quot;Jan 22&quot;</span>;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> M_INIT_I2C[]         PROGMEM = <span class="stringliteral">&quot;Init I2C&quot;</span>;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> M_STARTUP[]          PROGMEM = <span class="stringliteral">&quot;Startup&quot;</span>;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span> M_UPDATE[]           PROGMEM = <span class="stringliteral">&quot;Update&quot;</span>;</div>

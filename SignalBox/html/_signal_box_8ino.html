@@ -73,17 +73,15 @@ $(function() {
 <code>#include &quot;<a class="el" href="_messages_8h_source.html">Messages.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_persisted_8h_source.html">Persisted.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_i2c_comms_8h_source.html">I2cComms.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_system_8h_source.html">System.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_system_mgr_8h_source.html">SystemMgr.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_output_def_8h_source.html">OutputDef.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_forward_8h_source.html">Forward.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_display_8h_source.html">Display.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_ezy_bus_8h_source.html">EzyBus.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_output_ctl_8h_source.html">OutputCtl.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_input_def_8h_source.html">InputDef.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_input_mgr_8h_source.html">InputMgr.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_signal_box_8h_source.html">SignalBox.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_display_8h_source.html">Display.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_output_ctl_8h_source.html">OutputCtl.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_buttons_8h_source.html">Buttons.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_report_8h_source.html">Report.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_import_export_8h_source.html">ImportExport.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_controller_8h_source.html">Controller.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_configure_8h_source.html">Configure.h</a>&quot;</code><br />
@@ -101,18 +99,20 @@ Macros</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a83443f1aa10bfe618b22d83147b88da6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a83443f1aa10bfe618b22d83147b88da6">systemFail</a> (PGM_P aMessage, int aValue)</td></tr>
 <tr class="separator:a83443f1aa10bfe618b22d83147b88da6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ce56b81d6628fc2439aee08f3816ae2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a5ce56b81d6628fc2439aee08f3816ae2">firstRun</a> ()</td></tr>
-<tr class="separator:a5ce56b81d6628fc2439aee08f3816ae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95300e042d6726956172fa2748394116"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a95300e042d6726956172fa2748394116">defaultInputs</a> (uint8_t aInputType)</td></tr>
-<tr class="separator:a95300e042d6726956172fa2748394116"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48150363f244f7864b1f4c2c8d5548a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a48150363f244f7864b1f4c2c8d5548a7">ezyBusConvert</a> ()</td></tr>
 <tr class="separator:a48150363f244f7864b1f4c2c8d5548a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95300e042d6726956172fa2748394116"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a95300e042d6726956172fa2748394116">defaultInputs</a> (uint8_t aInputType)</td></tr>
+<tr class="separator:a95300e042d6726956172fa2748394116"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ce56b81d6628fc2439aee08f3816ae2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a5ce56b81d6628fc2439aee08f3816ae2">firstRun</a> ()</td></tr>
+<tr class="separator:a5ce56b81d6628fc2439aee08f3816ae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71b08acccdb6e080e6531b44c196fb01"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a71b08acccdb6e080e6531b44c196fb01">processCommand</a> ()</td></tr>
 <tr class="separator:a71b08acccdb6e080e6531b44c196fb01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a793eb0c9e2cf49be0fa78f3f430a9081"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a793eb0c9e2cf49be0fa78f3f430a9081">handleSerialInput</a> ()</td></tr>
 <tr class="separator:a793eb0c9e2cf49be0fa78f3f430a9081"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b198aa6beabb002340f9f67e03717a5"><td class="memItemLeft" align="right" valign="top">boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a4b198aa6beabb002340f9f67e03717a5">gatewayRequest</a> ()</td></tr>
-<tr class="separator:a4b198aa6beabb002340f9f67e03717a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc333581bbc90130589dfb79042b40e2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#acc333581bbc90130589dfb79042b40e2">gatewayRequest</a> ()</td></tr>
+<tr class="separator:acc333581bbc90130589dfb79042b40e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a354d29b1fc2a51cf8850c3390be33f0c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a354d29b1fc2a51cf8850c3390be33f0c">reportPause</a> ()</td></tr>
+<tr class="separator:a354d29b1fc2a51cf8850c3390be33f0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fc01d736fe50cf5b977f755b675f11d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#a4fc01d736fe50cf5b977f755b675f11d">setup</a> ()</td></tr>
 <tr class="separator:a4fc01d736fe50cf5b977f755b675f11d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe461d27b9c48d5921c00d521181f12f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_signal_box_8ino.html#afe461d27b9c48d5921c00d521181f12f">loop</a> ()</td></tr>
@@ -126,21 +126,9 @@ char&#160;</td><td class="memItemRight" valign="bottom"><b>commandBuffer</b> [CO
 <tr class="memitem:acc8da2a9de68120622e044a7241a51ef"><td class="memItemLeft" align="right" valign="top"><a id="acc8da2a9de68120622e044a7241a51ef"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>commandLen</b> = 0</td></tr>
 <tr class="separator:acc8da2a9de68120622e044a7241a51ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ef90926c9a05dcb1b2fac4a9655e546"><td class="memItemLeft" align="right" valign="top"><a id="a0ef90926c9a05dcb1b2fac4a9655e546"></a>
-long&#160;</td><td class="memItemRight" valign="bottom"><b>now</b> = 0L</td></tr>
-<tr class="separator:a0ef90926c9a05dcb1b2fac4a9655e546"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3641954fbc4048691928d0b053ff044a"><td class="memItemLeft" align="right" valign="top"><a id="a3641954fbc4048691928d0b053ff044a"></a>
-long&#160;</td><td class="memItemRight" valign="bottom"><b>tickHardwareScan</b> = 0L</td></tr>
-<tr class="separator:a3641954fbc4048691928d0b053ff044a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70151607b020f6c8c81e5ec35b667887"><td class="memItemLeft" align="right" valign="top"><a id="a70151607b020f6c8c81e5ec35b667887"></a>
-long&#160;</td><td class="memItemRight" valign="bottom"><b>tickInputScan</b> = 0L</td></tr>
-<tr class="separator:a70151607b020f6c8c81e5ec35b667887"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ba33fd84d98d761a598ba4b88274ab9"><td class="memItemLeft" align="right" valign="top"><a id="a8ba33fd84d98d761a598ba4b88274ab9"></a>
-long&#160;</td><td class="memItemRight" valign="bottom"><b>tickGateway</b> = 0L</td></tr>
-<tr class="separator:a8ba33fd84d98d761a598ba4b88274ab9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedceaaa958b9b3affaacb24f74a47e0f"><td class="memItemLeft" align="right" valign="top"><a id="aedceaaa958b9b3affaacb24f74a47e0f"></a>
-long&#160;</td><td class="memItemRight" valign="bottom"><b>tickHeartBeat</b> = 0L</td></tr>
-<tr class="separator:aedceaaa958b9b3affaacb24f74a47e0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61afe0b29300514c1df92a227d73bfe2"><td class="memItemLeft" align="right" valign="top"><a id="a61afe0b29300514c1df92a227d73bfe2"></a>
+unsigned long&#160;</td><td class="memItemRight" valign="bottom"><b>tickGateway</b> = 0L</td></tr>
+<tr class="separator:a61afe0b29300514c1df92a227d73bfe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>SignalBox.</p>
@@ -162,7 +150,7 @@ long&#160;</td><td class="memItemRight" valign="bottom"><b>tickHeartBeat</b> = 0
 <td class="markdownTableBodyNone">LiquidCrystal_I2C </td><td class="markdownTableBodyNone">For driving an LCD attached by i2c. Set LCD_I2C false to disable this functionality.  </td></tr>
 </table>
 <p>Pin usage:</p>
-<p>D0 Serial Rx. D1 Serial Tx. D2 Alternate up button. D3 Alternate right button. D4 LCD shield data D4. D5 LCD shield data D5. D6 LCD shield data D6. D7 LCD shield data D7. D8 LCD shield rs. D9 LCD shield enable. D10 LCD shield backlight. D11 LCD shield detect. D12 Unused. D13 Flash firmare version and Interlock warning.</p>
+<p>D0 Serial Rx. D1 Serial Tx. D2 Alternate up button. D3 Alternate right button. D4 LCD shield data D4. D5 LCD shield data D5. D6 LCD shield data D6. D7 LCD shield data D7. D8 LCD shield rs. D9 LCD shield enable. D10 LCD shield backlight. D11 LCD shield detect. D12 Interlock warning buzzer (see Config INTERLOCK_BUZZER_PIN). D13 Flash firmare version and Interlock warning LED (see INTERLOCK_WARNING_PIN).</p>
 <p>A0 LCD shield buttons. A1 Alternate select button. A2 Alternate left button. A3 Alternate down button. A4 I2C SDA. A5 I2C SCL. A6 Not available. A7 Not available. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a83443f1aa10bfe618b22d83147b88da6"></a>
@@ -194,21 +182,21 @@ long&#160;</td><td class="memItemRight" valign="bottom"><b>tickHeartBeat</b> = 0
 
 </div>
 </div>
-<a id="a5ce56b81d6628fc2439aee08f3816ae2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ce56b81d6628fc2439aee08f3816ae2">&#9670;&nbsp;</a></span>firstRun()</h2>
+<a id="a48150363f244f7864b1f4c2c8d5548a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48150363f244f7864b1f4c2c8d5548a7">&#9670;&nbsp;</a></span>ezyBusConvert()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void firstRun </td>
+          <td class="memname">void ezyBusConvert </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Software hasn't been run before. </p>
+<p>Convert EzyBus configuration. One-one mapping with EzyBus modules, and their inputs. </p>
 
 </div>
 </div>
@@ -231,21 +219,21 @@ long&#160;</td><td class="memItemRight" valign="bottom"><b>tickHeartBeat</b> = 0
 
 </div>
 </div>
-<a id="a48150363f244f7864b1f4c2c8d5548a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48150363f244f7864b1f4c2c8d5548a7">&#9670;&nbsp;</a></span>ezyBusConvert()</h2>
+<a id="a5ce56b81d6628fc2439aee08f3816ae2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ce56b81d6628fc2439aee08f3816ae2">&#9670;&nbsp;</a></span>firstRun()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void ezyBusConvert </td>
+          <td class="memname">void firstRun </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Convert EzyBus configuration. One-one mapping with EzyBus modules, and their inputs. </p>
+<p>Software hasn't been run before. </p>
 
 </div>
 </div>
@@ -285,14 +273,14 @@ long&#160;</td><td class="memItemRight" valign="bottom"><b>tickHeartBeat</b> = 0
 
 </div>
 </div>
-<a id="a4b198aa6beabb002340f9f67e03717a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b198aa6beabb002340f9f67e03717a5">&#9670;&nbsp;</a></span>gatewayRequest()</h2>
+<a id="acc333581bbc90130589dfb79042b40e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc333581bbc90130589dfb79042b40e2">&#9670;&nbsp;</a></span>gatewayRequest()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">boolean gatewayRequest </td>
+          <td class="memname">bool gatewayRequest </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -300,6 +288,24 @@ long&#160;</td><td class="memItemRight" valign="bottom"><b>tickHeartBeat</b> = 0
       </table>
 </div><div class="memdoc">
 <p>See if there's a Gateway request. Process the request. Return true if work done. </p>
+
+</div>
+</div>
+<a id="a354d29b1fc2a51cf8850c3390be33f0c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a354d29b1fc2a51cf8850c3390be33f0c">&#9670;&nbsp;</a></span>reportPause()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void reportPause </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Pause for user-input if so configured. Use buttons to adjust report level. </p>
 
 </div>
 </div>

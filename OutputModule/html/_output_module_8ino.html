@@ -74,7 +74,7 @@ $(function() {
 <code>#include &quot;<a class="el" href="_messages_8h_source.html">Messages.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_persisted_8h_source.html">Persisted.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_i2c_comms_8h_source.html">I2cComms.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_system_8h_source.html">System.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_system_mgr_8h_source.html">SystemMgr.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_output_def_8h_source.html">OutputDef.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="_output_mgr_8h_source.html">OutputMgr.h</a>&quot;</code><br />
 </div><table class="memberdecls">
@@ -127,16 +127,18 @@ Functions</h2></td></tr>
 <tr class="separator:a8e6be432b42579936944f1c8b76b38ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa628e2a215506494a116669ed882a000"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#aa628e2a215506494a116669ed882a000">processSet</a> (uint8_t aPin, uint8_t aValue)</td></tr>
 <tr class="separator:aa628e2a215506494a116669ed882a000"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a188b6535494c94edb5469142734a11eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#a188b6535494c94edb5469142734a11eb">actionState</a> (uint8_t aPin, boolean aState, uint8_t aDelay, boolean aUseValue)</td></tr>
-<tr class="separator:a188b6535494c94edb5469142734a11eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e330a3fae5548fa660bee75940f31de"><td class="memItemLeft" align="right" valign="top">boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#a5e330a3fae5548fa660bee75940f31de">actionServo</a> (uint8_t aPin, boolean aState, boolean aUseValue)</td></tr>
-<tr class="separator:a5e330a3fae5548fa660bee75940f31de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21e3eb554b6c9ee316bc9f65d0e3b5cb"><td class="memItemLeft" align="right" valign="top">boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#a21e3eb554b6c9ee316bc9f65d0e3b5cb">actionLed</a> (uint8_t aPin, boolean aState)</td></tr>
-<tr class="separator:a21e3eb554b6c9ee316bc9f65d0e3b5cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad592f8aec6485679977e4094f3541367"><td class="memItemLeft" align="right" valign="top">boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#ad592f8aec6485679977e4094f3541367">actionDoubleLed</a> (uint8_t aPin, boolean aState)</td></tr>
-<tr class="separator:ad592f8aec6485679977e4094f3541367"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9047915c6d25b7289079d00d3738f6b6"><td class="memItemLeft" align="right" valign="top">boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#a9047915c6d25b7289079d00d3738f6b6">actionFlasher</a> (uint8_t aPin, boolean aState)</td></tr>
-<tr class="separator:a9047915c6d25b7289079d00d3738f6b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7d66ae57e8684aa5d3bf1a29b62981e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#aa7d66ae57e8684aa5d3bf1a29b62981e">actionState</a> (uint8_t aPin, bool aState, uint8_t aDelay, bool aUseValue)</td></tr>
+<tr class="separator:aa7d66ae57e8684aa5d3bf1a29b62981e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb071ac264452edf89ad057893ab089e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#adb071ac264452edf89ad057893ab089e">actionServo</a> (uint8_t aPin, bool aState, bool aUseValue)</td></tr>
+<tr class="separator:adb071ac264452edf89ad057893ab089e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55579d0752f487d0114be3eba7c87400"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#a55579d0752f487d0114be3eba7c87400">actionLed</a> (uint8_t aPin, bool aState)</td></tr>
+<tr class="separator:a55579d0752f487d0114be3eba7c87400"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9711496e20c786b710da0459effc7f6a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#a9711496e20c786b710da0459effc7f6a">actionDoubleLed</a> (uint8_t aPin, bool aState)</td></tr>
+<tr class="separator:a9711496e20c786b710da0459effc7f6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ab6ed59902225b9c3952b6efc29e93e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#a3ab6ed59902225b9c3952b6efc29e93e">actionFlasher</a> (uint8_t aPin, bool aState)</td></tr>
+<tr class="separator:a3ab6ed59902225b9c3952b6efc29e93e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7198e4aab2dd8a94f738f93654b5f7d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#ae7198e4aab2dd8a94f738f93654b5f7d">actionRandom</a> (uint8_t aPin, bool aState)</td></tr>
+<tr class="separator:ae7198e4aab2dd8a94f738f93654b5f7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71b08acccdb6e080e6531b44c196fb01"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#a71b08acccdb6e080e6531b44c196fb01">processCommand</a> ()</td></tr>
 <tr class="separator:a71b08acccdb6e080e6531b44c196fb01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6043976c793904a3f606633dadb650b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_output_module_8ino.html#a6043976c793904a3f606633dadb650b7">stepServos</a> ()</td></tr>
@@ -158,27 +160,27 @@ Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a1f7da7d52c0d050e562ff52b4c42fc98"><td class="memItemLeft" align="right" valign="top"><a id="a1f7da7d52c0d050e562ff52b4c42fc98"></a>
-boolean&#160;</td><td class="memItemRight" valign="bottom"><b>persisting</b> = true</td></tr>
-<tr class="separator:a1f7da7d52c0d050e562ff52b4c42fc98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef7dfc234f7489de3666845a54d0b440"><td class="memItemLeft" align="right" valign="top"><a id="aef7dfc234f7489de3666845a54d0b440"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>persisting</b> = true</td></tr>
+<tr class="separator:aef7dfc234f7489de3666845a54d0b440"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf3c70591b993dceed8c6d038cd4aa19"><td class="memItemLeft" align="right" valign="top"><a id="abf3c70591b993dceed8c6d038cd4aa19"></a>
 char&#160;</td><td class="memItemRight" valign="bottom"><b>commandBuffer</b> [COMMAND_BUFFER_LEN+1]</td></tr>
 <tr class="separator:abf3c70591b993dceed8c6d038cd4aa19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc8da2a9de68120622e044a7241a51ef"><td class="memItemLeft" align="right" valign="top"><a id="acc8da2a9de68120622e044a7241a51ef"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>commandLen</b> = 0</td></tr>
 <tr class="separator:acc8da2a9de68120622e044a7241a51ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ef90926c9a05dcb1b2fac4a9655e546"><td class="memItemLeft" align="right" valign="top"><a id="a0ef90926c9a05dcb1b2fac4a9655e546"></a>
-long&#160;</td><td class="memItemRight" valign="bottom"><b>now</b> = 0</td></tr>
-<tr class="separator:a0ef90926c9a05dcb1b2fac4a9655e546"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58054375b859a6e0b2cd875665928e19"><td class="memItemLeft" align="right" valign="top"><a id="a58054375b859a6e0b2cd875665928e19"></a>
-long&#160;</td><td class="memItemRight" valign="bottom"><b>tickServo</b> = 0</td></tr>
-<tr class="separator:a58054375b859a6e0b2cd875665928e19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5aff5f5cbe12d80e8ad3bea40fc0531d"><td class="memItemLeft" align="right" valign="top"><a id="a5aff5f5cbe12d80e8ad3bea40fc0531d"></a>
-long&#160;</td><td class="memItemRight" valign="bottom"><b>tickLed</b> = 0</td></tr>
-<tr class="separator:a5aff5f5cbe12d80e8ad3bea40fc0531d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed5bf715e7b1e314d6715bc2b1434792"><td class="memItemLeft" align="right" valign="top"><a id="aed5bf715e7b1e314d6715bc2b1434792"></a>
-long&#160;</td><td class="memItemRight" valign="bottom"><b>tickFlash</b> = 0</td></tr>
-<tr class="separator:aed5bf715e7b1e314d6715bc2b1434792"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a398e545edbb7126eb4c219453a8ce64d"><td class="memItemLeft" align="right" valign="top"><a id="a398e545edbb7126eb4c219453a8ce64d"></a>
+unsigned long&#160;</td><td class="memItemRight" valign="bottom"><b>now</b> = 0</td></tr>
+<tr class="separator:a398e545edbb7126eb4c219453a8ce64d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0271f5b6ac039affb3780beba71b6a7c"><td class="memItemLeft" align="right" valign="top"><a id="a0271f5b6ac039affb3780beba71b6a7c"></a>
+unsigned long&#160;</td><td class="memItemRight" valign="bottom"><b>tickServo</b> = 0</td></tr>
+<tr class="separator:a0271f5b6ac039affb3780beba71b6a7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9ff8f41c2c09b6528986bd6fa4327c3"><td class="memItemLeft" align="right" valign="top"><a id="aa9ff8f41c2c09b6528986bd6fa4327c3"></a>
+unsigned long&#160;</td><td class="memItemRight" valign="bottom"><b>tickLed</b> = 0</td></tr>
+<tr class="separator:aa9ff8f41c2c09b6528986bd6fa4327c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57184f91a5712a0baaf8163c32c17a0a"><td class="memItemLeft" align="right" valign="top"><a id="a57184f91a5712a0baaf8163c32c17a0a"></a>
+unsigned long&#160;</td><td class="memItemRight" valign="bottom"><b>tickFlash</b> = 0</td></tr>
+<tr class="separator:a57184f91a5712a0baaf8163c32c17a0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3447e4a8ae2dff571fb9c271a4b2aff1"><td class="memItemLeft" align="right" valign="top"><a id="a3447e4a8ae2dff571fb9c271a4b2aff1"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>tickPwm</b> = 0</td></tr>
 <tr class="separator:a3447e4a8ae2dff571fb9c271a4b2aff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -196,9 +198,9 @@ struct {</td></tr>
 <tr class="memitem:a341b506d884ca3c0fb0b05d0635f5a80"><td class="memItemLeft" >
 &#160;&#160;&#160;Servo&#160;&#160;&#160;<b>servo</b></td></tr>
 <tr class="separator:a341b506d884ca3c0fb0b05d0635f5a80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeed9875d181e07519304c57fd8a7cb46"><td class="memItemLeft" >
-&#160;&#160;&#160;long&#160;&#160;&#160;<b>delayTo</b> = 0</td></tr>
-<tr class="separator:aeed9875d181e07519304c57fd8a7cb46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35c37fad1a7abb9b6beb97aed1845c50"><td class="memItemLeft" >
+&#160;&#160;&#160;unsigned long&#160;&#160;&#160;<b>delayTo</b> = 0</td></tr>
+<tr class="separator:a35c37fad1a7abb9b6beb97aed1845c50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a598105fd3d0c23e1e207dc4c29d1f4c8"><td class="memItemLeft" >
 &#160;&#160;&#160;uint8_t&#160;&#160;&#160;<b>steps</b> = 0</td></tr>
 <tr class="separator:a598105fd3d0c23e1e207dc4c29d1f4c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -644,8 +646,8 @@ struct {</td></tr>
 
 </div>
 </div>
-<a id="a188b6535494c94edb5469142734a11eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a188b6535494c94edb5469142734a11eb">&#9670;&nbsp;</a></span>actionState()</h2>
+<a id="aa7d66ae57e8684aa5d3bf1a29b62981e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7d66ae57e8684aa5d3bf1a29b62981e">&#9670;&nbsp;</a></span>actionState()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -659,7 +661,7 @@ struct {</td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">boolean&#160;</td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>aState</em>, </td>
         </tr>
         <tr>
@@ -671,7 +673,7 @@ struct {</td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">boolean&#160;</td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>aUseValue</em>&#160;</td>
         </tr>
         <tr>
@@ -685,14 +687,14 @@ struct {</td></tr>
 
 </div>
 </div>
-<a id="a5e330a3fae5548fa660bee75940f31de"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5e330a3fae5548fa660bee75940f31de">&#9670;&nbsp;</a></span>actionServo()</h2>
+<a id="adb071ac264452edf89ad057893ab089e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb071ac264452edf89ad057893ab089e">&#9670;&nbsp;</a></span>actionServo()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">boolean actionServo </td>
+          <td class="memname">bool actionServo </td>
           <td>(</td>
           <td class="paramtype">uint8_t&#160;</td>
           <td class="paramname"><em>aPin</em>, </td>
@@ -700,13 +702,13 @@ struct {</td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">boolean&#160;</td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>aState</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">boolean&#160;</td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>aUseValue</em>&#160;</td>
         </tr>
         <tr>
@@ -720,14 +722,14 @@ struct {</td></tr>
 
 </div>
 </div>
-<a id="a21e3eb554b6c9ee316bc9f65d0e3b5cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a21e3eb554b6c9ee316bc9f65d0e3b5cb">&#9670;&nbsp;</a></span>actionLed()</h2>
+<a id="a55579d0752f487d0114be3eba7c87400"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55579d0752f487d0114be3eba7c87400">&#9670;&nbsp;</a></span>actionLed()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">boolean actionLed </td>
+          <td class="memname">bool actionLed </td>
           <td>(</td>
           <td class="paramtype">uint8_t&#160;</td>
           <td class="paramname"><em>aPin</em>, </td>
@@ -735,7 +737,7 @@ struct {</td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">boolean&#160;</td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>aState</em>&#160;</td>
         </tr>
         <tr>
@@ -749,14 +751,14 @@ struct {</td></tr>
 
 </div>
 </div>
-<a id="ad592f8aec6485679977e4094f3541367"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad592f8aec6485679977e4094f3541367">&#9670;&nbsp;</a></span>actionDoubleLed()</h2>
+<a id="a9711496e20c786b710da0459effc7f6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9711496e20c786b710da0459effc7f6a">&#9670;&nbsp;</a></span>actionDoubleLed()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">boolean actionDoubleLed </td>
+          <td class="memname">bool actionDoubleLed </td>
           <td>(</td>
           <td class="paramtype">uint8_t&#160;</td>
           <td class="paramname"><em>aPin</em>, </td>
@@ -764,7 +766,7 @@ struct {</td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">boolean&#160;</td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>aState</em>&#160;</td>
         </tr>
         <tr>
@@ -778,14 +780,14 @@ struct {</td></tr>
 
 </div>
 </div>
-<a id="a9047915c6d25b7289079d00d3738f6b6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9047915c6d25b7289079d00d3738f6b6">&#9670;&nbsp;</a></span>actionFlasher()</h2>
+<a id="a3ab6ed59902225b9c3952b6efc29e93e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ab6ed59902225b9c3952b6efc29e93e">&#9670;&nbsp;</a></span>actionFlasher()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">boolean actionFlasher </td>
+          <td class="memname">bool actionFlasher </td>
           <td>(</td>
           <td class="paramtype">uint8_t&#160;</td>
           <td class="paramname"><em>aPin</em>, </td>
@@ -793,7 +795,7 @@ struct {</td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">boolean&#160;</td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>aState</em>&#160;</td>
         </tr>
         <tr>
@@ -804,6 +806,35 @@ struct {</td></tr>
       </table>
 </div><div class="memdoc">
 <p>Action a Flasher state change. </p>
+
+</div>
+</div>
+<a id="ae7198e4aab2dd8a94f738f93654b5f7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7198e4aab2dd8a94f738f93654b5f7d">&#9670;&nbsp;</a></span>actionRandom()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool actionRandom </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>aPin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>aState</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Action a Random state change. </p>
 
 </div>
 </div>
