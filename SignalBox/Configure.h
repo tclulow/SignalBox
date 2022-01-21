@@ -439,7 +439,7 @@ class Configure
         // Scan all the input nodes until a button is pressed.
         while ((button = buttons.readButton()) == BUTTON_NONE)
         {
-            controller.scanInputs(displayScannedInput);        // Calls displaySelectedInput() when an input is pressed.
+            controller.scanInputs(displayScannedInput);        // Calls displayScannedInput() when an input is pressed.
             delay(DELAY_BUTTON_WAIT);
         }
 
