@@ -30,7 +30,7 @@
 #define BUTTON_HIGH   5
 
 #define BUTTON_THRESHHOLD   1000    // Analog limit above which no button is considered to be pressed.
-#define BUTTON_MARGIN        100    // Analog buttons must be this far from each other to avoid possible confusion.
+#define BUTTON_MARGIN         50    // Analog buttons must be this far from each other to avoid possible confusion.
 
 
 /** Class for handling control buttons.
