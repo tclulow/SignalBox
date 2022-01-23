@@ -39,7 +39,7 @@ class Persisted
     Persisted(uint16_t aBase)
     {
         base = aBase;
-    };
+    }
 
 
     /** Gets the base offset (in EEPROM) where this user stores data.
