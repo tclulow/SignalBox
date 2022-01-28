@@ -40,12 +40,13 @@ with open(messageFileName) as messageFile:
                     # print("Found", messageName)
                     break
 
-                with open(fileName) as sourceFile:
-                    for sourceLine in sourceFile:
-                        if messageName in sourceLine:
-                            found = True
-                            # print("Found", messageName, "in", fileName)
-                            break
+                if os.path.isfile(fileName):
+                    with open(fileName) as sourceFile:
+                        for sourceLine in sourceFile:
+                            if messageName in sourceLine:
+                                found = True
+                                # print("Found", messageName, "in", fileName)
+                                break
 
             if not found:
                 print("Unused", messageName)
