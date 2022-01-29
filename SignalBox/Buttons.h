@@ -19,18 +19,18 @@
 
 
 // Button values.
-#define BUTTON_NONE   0
-#define BUTTON_SELECT 1
-#define BUTTON_LEFT   2
-#define BUTTON_DOWN   3
-#define BUTTON_UP     4
-#define BUTTON_RIGHT  5
+const uint8_t BUTTON_NONE       = 0;        // Button enums.
+const uint8_t BUTTON_SELECT     = 1;
+const uint8_t BUTTON_LEFT       = 2;
+const uint8_t BUTTON_DOWN       = 3;
+const uint8_t BUTTON_UP         = 4;
+const uint8_t BUTTON_RIGHT      = 5;
 
-#define BUTTON_LOW    1             // Button range, 1 to 5
-#define BUTTON_HIGH   5
+const uint8_t BUTTON_LOW        = 1;        // Button range, 1 to 5
+const uint8_t BUTTON_HIGH       = 5;  
 
-#define BUTTON_THRESHHOLD   1000    // Analog limit above which no button is considered to be pressed.
-#define BUTTON_MARGIN         50    // Analog buttons must be this far from each other to avoid possible confusion.
+const int     BUTTON_THRESHHOLD = 1000;     // Analog limit above which no button is considered to be pressed.
+const uint8_t BUTTON_MARGIN     =   50;     // Analog buttons must be this far from each other to avoid possible confusion.
 
 
 /** Class for handling control buttons.

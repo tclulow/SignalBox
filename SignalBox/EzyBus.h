@@ -14,13 +14,13 @@
 #define EzyBus_h
 
 
-#define EZY_BASE          0   // EEPROM address of output module definitions.
-#define EZY_OUTPUT_SIZE   4   // Four bytes for an EzyBus output definition.
+const int     EZY_BASE        =   0;    // EEPROM address of output module definitions.
+const uint8_t EZY_OUTPUT_SIZE =   4;    // Four bytes for an EzyBus output definition.
 
-#define EZY_MAGIC_ADDR  641   // EEPROM address of EzyBus magic number.
-#define EZY_MAGIC        90   // EzyBus magic number.
-#define EZY_NODE_MAX     16   // EzyBus max node number.
-#define EZY_SPEED_SHIFT   3   // EzyBus speed is shifted 3 bits.
+const int     EZY_MAGIC_ADDR  = 641;    // EEPROM address of EzyBus magic number.
+const uint8_t EZY_MAGIC       =  90;    // EzyBus magic number.
+const uint8_t EZY_NODE_MAX    =  16;    // EzyBus max node number.
+const uint8_t EZY_SPEED_SHIFT =   3;    // EzyBus speed is shifted 3 bits.
 
 
 /** Is an EzyBus setup detected?

@@ -24,66 +24,64 @@
 
 
 // Timing constants
-#define MILLIS_PER_SECOND   (1000L)                     // Millisecs in a second.
-#define MILLIS_PER_MINUTE   (MILLIS_PER_SECOND * 60L)   // Millisecs in a minute.
-#define MILLIS_PER_HOUR     (MILLIS_PER_MINUTE * 60L)   // Millisecs per hour.
+const long    MILLIS_PER_SECOND = (1000L);                      // Millisecs in a second.
+const long    MILLIS_PER_MINUTE = (MILLIS_PER_SECOND * 60L);    // Millisecs in a minute.
+const long    MILLIS_PER_HOUR   = (MILLIS_PER_MINUTE * 60L);    // Millisecs per hour.
 
 
 // Debug levels.
-#define DEBUG_NONE      0       // See also M_DEBUG_PROMPTS.
-#define DEBUG_ERRORS    1
-#define DEBUG_BRIEF     2
-#define DEBUG_DETAIL    3
-#define DEBUG_FULL      4
-#define DEBUG_MAX       5       // Maximum debug option.
+const uint8_t DEBUG_NONE        = 0;    // See also M_DEBUG_PROMPTS.
+const uint8_t DEBUG_ERRORS      = 1;
+const uint8_t DEBUG_BRIEF       = 2;
+const uint8_t DEBUG_DETAIL      = 3;
+const uint8_t DEBUG_FULL        = 4;
+const uint8_t DEBUG_MAX         = 5;    // Maximum debug option.
 
 
 // Reporting levels.
-#define REPORT_NONE     0       // See also M_REPORT_PROMPTS.
-#define REPORT_SHORT    1
-#define REPORT_LONG     2
-#define REPORT_PAUSE    3
-#define REPORT_MAX      4       // Maximum report option.
+const uint8_t REPORT_NONE       = 0;    // See also M_REPORT_PROMPTS.
+const uint8_t REPORT_SHORT      = 1;
+const uint8_t REPORT_LONG       = 2;
+const uint8_t REPORT_PAUSE      = 3;
+const uint8_t REPORT_MAX        = 4;    // Maximum report option.
 
 
 // Options identified by a character.
-#define OPTION_ID(index)  ((char)(CHAR_UPPER_A + index))
-#define SYS_MODULE_ID_JUMPERS   0xff    // Use jumpers to decide module ID.
+#define OPTION_ID(index) ((char)(CHAR_UPPER_A + index))
+const uint8_t SYS_MODULE_ID_JUMPERS = 0xff;     // Use jumpers to decide module ID.
 
 
 // Custom character to indicate "Lo".
-byte BYTES_LO[]   = { 0, 0, 0, 0, 0x11, 0xa, 0x4, 0 };
+byte BYTES_LO[] = { 0, 0, 0, 0, 0x11, 0xa, 0x4, 0 };
 
 
 // Useful characters
 
-const char CHAR_SPACE   = ' ';
-const char CHAR_TAB     = '\t';
-const char CHAR_NEWLINE = '\n';
-const char CHAR_RETURN  = '\r';
-const char CHAR_NULL    = 0;
+const char    CHAR_SPACE   = ' ';
+const char    CHAR_TAB     = '\t';
+const char    CHAR_NEWLINE = '\n';
+const char    CHAR_RETURN  = '\r';
+const char    CHAR_NULL    = 0;
 
-const char CHAR_HASH    = '#';
-const char CHAR_STAR    = '*';
-//const char CHAR_COMMA   = ',';
-//const char CHAR_DASH    = '-';
-const char CHAR_DOT     = '.';
-const char CHAR_COLON   = ':';
-const char CHAR_LEFT    = '<';
-const char CHAR_RIGHT   = '>';
-const char CHAR_QUERY   = '?';
-const char CHAR_HI      = '^';
-const char CHAR_TILDE   = '~';
-const char CHAR_ZERO    = '0';
-const char CHAR_NINE    = '9';
-const char CHAR_UPPER_A = 'A';
-const char CHAR_LOWER_A = 'a';
+const char    CHAR_HASH    = '#';
+const char    CHAR_STAR    = '*';
+const char    CHAR_DOT     = '.';
+const char    CHAR_COLON   = ':';
+const char    CHAR_LEFT    = '<';
+const char    CHAR_RIGHT   = '>';
+const char    CHAR_QUERY   = '?';
+const char    CHAR_HI      = '^';
+const char    CHAR_TILDE   = '~';
+const char    CHAR_ZERO    = '0';
+const char    CHAR_NINE    = '9';
+const char    CHAR_UPPER_A = 'A';
+const char    CHAR_LOWER_A = 'a';
 
-const char CHAR_LO      = 0;
+const char    CHAR_LO      = 0;
 
 // Hex characters - they are in fact base 32.
-#define HEX_MAX 32
-const char HEX_CHARS[]  = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
+const uint8_t HEX_MAX      = 32;
+const char    HEX_CHARS[]  = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
 
 
 /** A System manager (extends Persisted) for persisting SystemData in EEPROM.

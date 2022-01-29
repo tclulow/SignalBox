@@ -15,25 +15,25 @@
 
 
 // Top-level menu states.
-#define TOP_SYSTEM   0
-#define TOP_INPUT    1
-#define TOP_OUTPUT   2
-#define TOP_LOCKS    3
-#define TOP_EXPORT   4
-#define TOP_IMPORT   5
-#define TOP_MAX      6
+const uint8_t TOP_SYSTEM = 0;
+const uint8_t TOP_INPUT  = 1;
+const uint8_t TOP_OUTPUT = 2;
+const uint8_t TOP_LOCKS  = 3;
+const uint8_t TOP_EXPORT = 4;
+const uint8_t TOP_IMPORT = 5;
+const uint8_t TOP_MAX    = 6;
 
 // Sys menu states.
-#define SYS_REPORT   0
-#define SYS_NODES    1
-#define SYS_IDENT    2
-#define SYS_DEBUG    3
+const uint8_t SYS_REPORT = 0;
+const uint8_t SYS_NODES  = 1;
+const uint8_t SYS_IDENT  = 2;
+const uint8_t SYS_DEBUG  = 3;
 
 // Don't include DEBUG state if it's disabled.
 #ifndef isDebug
-#define SYS_MAX      4
+const uint8_t SYS_MAX    = 4;
 #else
-#define SYS_MAX      3
+const uint8_t SYS_MAX    = 3;
 #endif
 
 

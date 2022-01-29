@@ -15,48 +15,48 @@
 
 
 // Output nodes.
-#define OUTPUT_PIN_MAX              8   // 8 outputs to each node.
-#define OUTPUT_PIN_MASK             7   // 3 bits for 8 pins withing an output node.
-#define OUTPUT_NODE_MAX            32   // Maximum nodes.
-#define OUTPUT_NODE_HALF           16   // Half the maximum nodes.
-#define OUTPUT_NODE_MASK         0x1f   // 5 bits for 32 nodes.
-#define OUTPUT_NODE_SHIFT           3   // Shift output number this amount to get a node number.
+const uint8_t OUTPUT_PIN_MAX       =    8;  // 8 outputs to each node.
+const uint8_t OUTPUT_PIN_MASK      =    7;  // 3 bits for 8 pins withing an output node.
+const uint8_t OUTPUT_NODE_MAX      =   32;  // Maximum nodes.
+const uint8_t OUTPUT_NODE_HALF     =   16;  // Half the maximum nodes.
+const uint8_t OUTPUT_NODE_MASK     = 0x1f;  // 5 bits for 32 nodes.
+const uint8_t OUTPUT_NODE_SHIFT    =    3;  // Shift output number this amount to get a node number.
 
 // Output options maxima.
-#define OUTPUT_SERVO_MAX          180   // Maximum value an angle output parameter can take.
-#define OUTPUT_LED_MAX            255   // Maximum value a LED can take.
-#define OUTPUT_HI_LO_SIZE           3   // Maximum digits in a Hi/Lo display.
+const uint8_t OUTPUT_SERVO_MAX     =  180;  // Maximum value an angle output parameter can take.
+const uint8_t OUTPUT_LED_MAX       =  255;  // Maximum value a LED can take.
+const uint8_t OUTPUT_HI_LO_SIZE    =    3;  // Maximum digits in a Hi/Lo display.
 
 // Masks for type, state and pace options within the outputDef.
-#define OUTPUT_STATE_MASK        0x80   // On or off, switched or not switched, 0 = lo, 1 = hi.
-#define OUTPUT_TYPE_MASK         0x0f   // Output type mask (4 bits).
-#define OUTPUT_PACE_MASK         0x0f   // Pace is 4 bits.
-#define OUTPUT_PACE_SHIFT           4   // Pace is multiplied by 16 (shifted left 4 bits).
+const uint8_t OUTPUT_STATE_MASK    = 0x80;  // On or off, switched or not switched, 0 = lo, 1 = hi.
+const uint8_t OUTPUT_TYPE_MASK     = 0x0f;  // Output type mask (4 bits).
+const uint8_t OUTPUT_PACE_MASK     = 0x0f;  // Pace is 4 bits.
+const uint8_t OUTPUT_PACE_SHIFT    =    4;  // Pace is multiplied by 16 (shifted left 4 bits).
 
 // Masks for locks.
-#define OUTPUT_LOCK_MAX             4   // Four locks of each type (Hi/Lo).
+const uint8_t OUTPUT_LOCK_MAX      =    4;  // Four locks of each type (Hi/Lo).
 
 // Wire response message lengths.
-#define OUTPUT_MOVE_LOCK_LEN        2   // Two bytes used to move a node's locks.
+const uint8_t OUTPUT_MOVE_LOCK_LEN =    2;  // Two bytes used to move a node's locks.
 
 // Defaults when initialising.
-#define OUTPUT_DEFAULT_LO          90   // Default low  position is 90 degrees.
-#define OUTPUT_DEFAULT_HI          90   // Default high position is 90 degrees.
-#define OUTPUT_DEFAULT_PACE       0xc   // Default pace is mid-range.
-#define OUTPUT_DEFAULT_RESET      0x0   // Default reset is none.
+const uint8_t OUTPUT_DEFAULT_LO    =   90;  // Default low  position is 90 degrees.
+const uint8_t OUTPUT_DEFAULT_HI    =   90;  // Default high position is 90 degrees.
+const uint8_t OUTPUT_DEFAULT_PACE  =  0xc;  // Default pace is mid-range.
+const uint8_t OUTPUT_DEFAULT_RESET =  0x0;  // Default reset is none.
 
 // Output types.
-#define OUTPUT_TYPE_NONE         0x00   // Placeholder to mark "no type".
-#define OUTPUT_TYPE_SERVO        0x01   // Output is a servo.
-#define OUTPUT_TYPE_SIGNAL       0x02   // Output is a signal.
-#define OUTPUT_TYPE_LED          0x03   // Output is a LED or other IO device.
-#define OUTPUT_TYPE_LED_4        0x04   // Output is a LED 4-aspect paired with next output.
-#define OUTPUT_TYPE_ROAD_UK      0x05   // Output is a LED 3-aspect UK road signal.
-#define OUTPUT_TYPE_ROAD_RW      0x06   // Output is a LED 3-aspect (Rest of World) road signal.
-#define OUTPUT_TYPE_FLASH        0x07   // Output is a flashing LED.
-#define OUTPUT_TYPE_BLINK        0x08   // Output is a blinking LED.
-#define OUTPUT_TYPE_RANDOM       0x09   // Output is a random LED.
-#define OUTPUT_TYPE_MAX          0x0A   // Limit of output types.
+const uint8_t OUTPUT_TYPE_NONE     = 0x00;  // Placeholder to mark "no type".
+const uint8_t OUTPUT_TYPE_SERVO    = 0x01;  // Output is a servo.
+const uint8_t OUTPUT_TYPE_SIGNAL   = 0x02;  // Output is a signal.
+const uint8_t OUTPUT_TYPE_LED      = 0x03;  // Output is a LED or other IO device.
+const uint8_t OUTPUT_TYPE_LED_4    = 0x04;  // Output is a LED 4-aspect paired with next output.
+const uint8_t OUTPUT_TYPE_ROAD_UK  = 0x05;  // Output is a LED 3-aspect UK road signal.
+const uint8_t OUTPUT_TYPE_ROAD_RW  = 0x06;  // Output is a LED 3-aspect (Rest of World) road signal.
+const uint8_t OUTPUT_TYPE_FLASH    = 0x07;  // Output is a flashing LED.
+const uint8_t OUTPUT_TYPE_BLINK    = 0x08;  // Output is a blinking LED.
+const uint8_t OUTPUT_TYPE_RANDOM   = 0x09;  // Output is a random LED.
+const uint8_t OUTPUT_TYPE_MAX      = 0x0A;  // Limit of output types.
 
 
  /** Definition of an Output.

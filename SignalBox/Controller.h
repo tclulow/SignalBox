@@ -54,24 +54,26 @@ class Controller
     {
         long now = millis();
 
-#if INTERLOCK_WARNING_PIN
-        // Check for interlock warning expired
-        if (   (timeoutInterlock > 0)
-            && (timeoutInterlock < now))
+        if (INTERLOCK_WARNING_PIN > 0)
         {
-            timeoutInterlock = 0L;
-            digitalWrite(INTERLOCK_WARNING_PIN, LOW);
+            // Check for interlock warning expired
+            if (   (timeoutInterlock > 0)
+                && (timeoutInterlock < now))
+            {
+                timeoutInterlock = 0L;
+                digitalWrite(INTERLOCK_WARNING_PIN, LOW);
+            }
         }
-#endif
 
-#if INTERLOCK_BUZZER_PIN
-        if (   (timeoutBuzzer > 0)
-            && (timeoutBuzzer < now))
+        if (INTERLOCK_BUZZER_PIN > 0)
         {
-            timeoutBuzzer = 0;
-            tone(INTERLOCK_BUZZER_PIN, INTERLOCK_BUZZER_FREQ2, INTERLOCK_BUZZER_TIME2);
+            if (   (timeoutBuzzer > 0)
+                && (timeoutBuzzer < now))
+            {
+                timeoutBuzzer = 0;
+                tone(INTERLOCK_BUZZER_PIN, INTERLOCK_BUZZER_FREQ2, INTERLOCK_BUZZER_TIME2);
+            }
         }
-#endif
 
         // Rescan for new hardware
         if (now > tickHardwareScan)
@@ -594,16 +596,20 @@ class Controller
                                 outputDef.printDef(M_VS, outputNode, outputPin);
                             }
 
-#if INTERLOCK_WARNING_PIN
-                            pinMode(INTERLOCK_WARNING_PIN, OUTPUT);
-                            digitalWrite(INTERLOCK_WARNING_PIN, HIGH);
-                            timeoutInterlock = millis() + INTERLOCK_WARNING_TIME;
-#endif
-#if INTERLOCK_BUZZER_PIN                            
-                            pinMode(INTERLOCK_BUZZER_PIN, OUTPUT);
-                            tone(INTERLOCK_BUZZER_PIN, INTERLOCK_BUZZER_FREQ1, INTERLOCK_BUZZER_TIME1);
-                            timeoutBuzzer = millis() + INTERLOCK_BUZZER_TIME1;
-#endif
+                            if (INTERLOCK_WARNING_PIN)
+                            {
+                                pinMode(INTERLOCK_WARNING_PIN, OUTPUT);
+                                digitalWrite(INTERLOCK_WARNING_PIN, HIGH);
+                                timeoutInterlock = millis() + INTERLOCK_WARNING_TIME;
+                            }
+
+                            if (INTERLOCK_BUZZER_PIN)
+                            {
+                                pinMode(INTERLOCK_BUZZER_PIN, OUTPUT);
+                                tone(INTERLOCK_BUZZER_PIN, INTERLOCK_BUZZER_FREQ1, INTERLOCK_BUZZER_TIME1);
+                                timeoutBuzzer = millis() + INTERLOCK_BUZZER_TIME1;
+                            }
+                            
                             return true;            // A lock exists.
                         }
                     }

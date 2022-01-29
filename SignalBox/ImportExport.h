@@ -15,15 +15,15 @@
 
 
 // Import word buffer.
-#define WORD_BUFFER_LENGTH  32
+const uint8_t WORD_BUFFER_LENGTH = 32;
 
 // Export menu states.
-#define EXP_ALL      0
-#define EXP_SYSTEM   1
-#define EXP_INPUTS   2
-#define EXP_OUTPUTS  3
-#define EXP_LOCKS    4
-#define EXP_MAX      5
+const uint8_t EXP_ALL            =  0;
+const uint8_t EXP_SYSTEM         =  1;
+const uint8_t EXP_INPUTS         =  2;
+const uint8_t EXP_OUTPUTS        =  3;
+const uint8_t EXP_LOCKS          =  4;
+const uint8_t EXP_MAX            =  5;
 
 
 /** An Importer/exporter.

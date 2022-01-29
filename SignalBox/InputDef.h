@@ -15,60 +15,59 @@
 
 
 // Input nodes.
-#define INPUT_NODE_MAX            8     // Maximum nodes.
-#define INPUT_NODE_MASK        0x07     // 3 bits for 8 nodes.
-#define INPUT_NODE_SHIFT          4     // Shift input number this amount to get a node number.
-#define INPUT_PIN_MAX            16     // 16 inputs to each node.
-#define INPUT_PIN_MASK         0x0f     // Mask to get input pin within a node.
+const uint8_t INPUT_NODE_MAX    =    8;     // Maximum nodes.
+const uint8_t INPUT_NODE_MASK   = 0x07;     // 3 bits for 8 nodes.
+const uint8_t INPUT_NODE_SHIFT  =    4;     // Shift input number this amount to get a node number.
+const uint8_t INPUT_PIN_MAX     =   16;     // 16 inputs to each node.
+const uint8_t INPUT_PIN_MASK    = 0x0f;     // Mask to get input pin within a node.
 
 // Mask for Input options
-#define INPUT_OUTPUT_MAX          6     // Number of outputs each input can control. See also EEPROM in System.h
-#define INPUT_OUTPUT_DISP         3     // Number of outputs each input can display.
-// #define INPUT_DELAY_MASK             // Use the OUTPUT_PIN_MASK which is re-purposed for delay entries.
+const uint8_t INPUT_OUTPUT_MAX  =    6;     // Number of outputs each input can control. See also EEPROM in System.h
+const uint8_t INPUT_OUTPUT_DISP =    3;     // Number of outputs each input can display.
 
 // Input types
-#define INPUT_TYPE_MASK        0x03     // Input types take 2 bits each.
-#define INPUT_TYPE_SHIFT          1     // Input type shifted by 1 bit = multiplied by 2.
+const uint8_t INPUT_TYPE_MASK   = 0x03;     // Input types take 2 bits each.
+const uint8_t INPUT_TYPE_SHIFT  =    1;     // Input type shifted by 1 bit = multiplied by 2.
 
-#define INPUT_TYPE_TOGGLE         0     // A Toggle Input.
-#define INPUT_TYPE_ON_OFF         1     // An on/off Input.
-#define INPUT_TYPE_ON             2     // An on Input.
-#define INPUT_TYPE_OFF            3     // An off Input.
-#define INPUT_TYPE_MAX            4     // Limit of Input types.
+const uint8_t INPUT_TYPE_TOGGLE =    0;     // A Toggle Input.
+const uint8_t INPUT_TYPE_ON_OFF =    1;     // An on/off Input.
+const uint8_t INPUT_TYPE_ON     =    2;     // An on Input.
+const uint8_t INPUT_TYPE_OFF    =    3;     // An off Input.
+const uint8_t INPUT_TYPE_MAX    =    4;     // Limit of Input types.
 
-#define INPUT_STATE_LEN           2     // Length on an Input MCP state message.
+const uint8_t INPUT_STATE_LEN   =    2;     // Length on an Input MCP state message.
 
 
 // Mask for MCP device none or all bits.
-#define MCP_ALL_LOW   0x00
-#define MCP_ALL_HIGH  0xFF
+const uint8_t MCP_ALL_LOW       = 0x00;
+const uint8_t MCP_ALL_HIGH      = 0xFF;
 
 // MCP message commands.
-#define MCP_IODIRA    0x00    // IO direction, High = input.
-#define MCP_IODIRB    0x01
-#define MCP_IPOLA     0x02    // Polarity, High = GPIO reversed.
-#define MCP_IPOLB     0x03
-#define MCP_GPINTENA  0x04    // Interupt enabled.
-#define MCP_GPINTENB  0x05
-#define MCP_DEFVALA   0x06    // Interupt compare value. Used if INTCON set.
-#define MCP_DEFVALB   0x07
-#define MCP_INTCONA   0x08    // Interup control, High = use DEFVAL, low = use previous value.
-#define MCP_INTCONB   0x09
-#define MCP_IOCON     0x0A    // Control register. Not used. See datasheet.
-#define MCP_IOCON_DUP 0x0B
-#define MCP_GPPUA     0x0C    // Pull-ups. High = pull-up resistor enabled.
-#define MCP_GPPUB     0x0D
-#define MCP_INTFA     0x0E    // Interupt occurred on these pins (read-only).
-#define MCP_INTFB     0x0F
-#define MCP_INTCAPA   0x10    // Interupt capture. Copy of GPIO when interups occurred.
-#define MCP_INTCAPB   0x11    // Cleared when read (or when GPIO read).
-#define MCP_GPIOA     0x12    // GPIO pins.
-#define MCP_GPIOB     0x13
-#define MCP_OLATA     0x14    // Output latches (connected to GPIO pins).
-#define MCP_OLATB     0x15
+const uint8_t MCP_IODIRA        = 0x00;     // IO direction, High = input.
+const uint8_t MCP_IODIRB        = 0x01;
+const uint8_t MCP_IPOLA         = 0x02;     // Polarity, High = GPIO reversed.
+const uint8_t MCP_IPOLB         = 0x03;
+const uint8_t MCP_GPINTENA      = 0x04;     // Interupt enabled.
+const uint8_t MCP_GPINTENB      = 0x05;
+const uint8_t MCP_DEFVALA       = 0x06;     // Interupt compare value. Used if INTCON set.
+const uint8_t MCP_DEFVALB       = 0x07;
+const uint8_t MCP_INTCONA       = 0x08;     // Interup control, High = use DEFVAL, low = use previous value.
+const uint8_t MCP_INTCONB       = 0x09;
+const uint8_t MCP_IOCON         = 0x0A;     // Control register. Not used. See datasheet.
+const uint8_t MCP_IOCON_DUP     = 0x0B;
+const uint8_t MCP_GPPUA         = 0x0C;     // Pull-ups. High = pull-up resistor enabled.
+const uint8_t MCP_GPPUB         = 0x0D;
+const uint8_t MCP_INTFA         = 0x0E;     // Interupt occurred on these pins (read-only).
+const uint8_t MCP_INTFB         = 0x0F;
+const uint8_t MCP_INTCAPA       = 0x10;     // Interupt capture. Copy of GPIO when interups occurred.
+const uint8_t MCP_INTCAPB       = 0x11;     // Cleared when read (or when GPIO read).
+const uint8_t MCP_GPIOA         = 0x12;     // GPIO pins.
+const uint8_t MCP_GPIOB         = 0x13;
+const uint8_t MCP_OLATA         = 0x14;     // Output latches (connected to GPIO pins).
+const uint8_t MCP_OLATB         = 0x15;
 
 // Commands required to initialise MCPs.
-#define INPUT_COMMANDS_LEN 4
+const uint8_t INPUT_COMMANDS_LEN = 4;
 uint8_t INPUT_COMMANDS[] = { MCP_IODIRA, MCP_IODIRB, MCP_GPPUA, MCP_GPPUB };
 
 

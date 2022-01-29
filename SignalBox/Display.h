@@ -20,48 +20,48 @@
 #endif
 
 
-#define LCD_COLS             16   // Display is 16 columns
-#define LCD_ROWS              2   // by 2 rows.
-#define LCD_ROW_MASK          1   // Row mask for shield LCD (1 = 2 row, 3 = 4 rows)
+const uint8_t LCD_COLS              = 16;   // Display is 16 columns
+const uint8_t LCD_ROWS              =  2;   // by 2 rows.
+const uint8_t LCD_ROW_MASK          =  1;   // Row mask for shield LCD (1 = 2 row, 3 = 4 rows)
 
-#define LCD2_COLS            20   // I2C Display is 20 columns
-#define LCD2_ROWS             4   // by 4 rows.
-#define LCD2_ROW_MASK         3   // Row mask for I2C LCD (1 = 2 row, 3 = 4 rows)
+const uint8_t LCD2_COLS             = 20;   // I2C Display is 20 columns
+const uint8_t LCD2_ROWS             =  4;   // by 4 rows.
+const uint8_t LCD2_ROW_MASK         =  3;   // Row mask for I2C LCD (1 = 2 row, 3 = 4 rows)
 
 
-#define LCD_ROW_TOP           0   // Rows for Display state messages.
-#define LCD_ROW_DET           1   // Detail goes on second row.
-#define LCD_ROW_EDT           2   // Edit on row 2 (if available).
-#define LCD_ROW_BOT           3   // Bottom row.
+const uint8_t LCD_ROW_TOP           =  0;   // Rows for Display state messages.
+const uint8_t LCD_ROW_DET           =  1;   // Detail goes on second row.
+const uint8_t LCD_ROW_EDT           =  2;   // Edit on row 2 (if available).
+const uint8_t LCD_ROW_BOT           =  3;   // Bottom row.
 
-#define LCD_LEN_OPTION        6   // Command menu options are (padded to) this length.
-#define LCD_LEN_STATUS        8   // Status messages take up to 8 characters.
+const uint8_t LCD_LEN_OPTION        =  6;   // Command menu options are (padded to) this length.
+const uint8_t LCD_LEN_STATUS        =  8;   // Status messages take up to 8 characters.
 
-#define LCD_COL_START         0   // Cols for Display state messages.
-#define LCD_COL_MARK          6   // Marker column when changing top-level option.
-#define LCD_COL_CALIBRATE     6   // Button to press.
-#define LCD_COL_STATE         7   // State of an output.
-#define LCD_COL_NODE         11   // Node number.
-#define LCD_COL_PIN          14   // Pin number.
+const uint8_t LCD_COL_START         =  0;   // Cols for Display state messages.
+const uint8_t LCD_COL_MARK          =  6;   // Marker column when changing top-level option.
+const uint8_t LCD_COL_CALIBRATE     =  6;   // Button to press.
+const uint8_t LCD_COL_STATE         =  7;   // State of an output.
+const uint8_t LCD_COL_NODE          = 11;   // Node number.
+const uint8_t LCD_COL_PIN           = 14;   // Pin number.
 
-#define LCD_COL_REPORT_PARAM  8   // Report parameter.
-#define LCD_COL_REPORT_LENGTH 5   // Report parameter length.
+const uint8_t LCD_COL_REPORT_PARAM  =  8;   // Report parameter.
+const uint8_t LCD_COL_REPORT_LENGTH =  5;   // Report parameter length.
 
-#define LCD_COL_DEBUG_PARAM   8   // Debug parameter.
-#define LCD_COL_DEBUG_LENGTH  6   // Debug parameter length.
+const uint8_t LCD_COL_DEBUG_PARAM   =  8;   // Debug parameter.
+const uint8_t LCD_COL_DEBUG_LENGTH  =  6;   // Debug parameter length.
 
-#define LCD_COL_INPUT_OUTPUT  8   // Input's outputs start at this col.
+const uint8_t LCD_COL_INPUT_OUTPUT  =  8;   // Input's outputs start at this col.
 
-#define LCD_COL_OUTPUT_PARAM  7   // Output's parameters(3) start at this col.
-#define LCD_COL_OUTPUT_STEP   3   // Three columns per parameter.
-#define LCD_COL_OUTPUT_LO     7   // Output's lo parameter at this col.
-#define LCD_COL_OUTPUT_HI    12   // Output's hi parameter at this col.
-#define LCD_COL_OUTPUT_PACE   8   // Output's pace parameter at this col.
-#define LCD_COL_OUTPUT_RESET 12   // Output's reset parameter at this col.
+const uint8_t LCD_COL_OUTPUT_PARAM  =  7;   // Output's parameters(3) start at this col.
+const uint8_t LCD_COL_OUTPUT_STEP   =  3;   // Three columns per parameter.
+const uint8_t LCD_COL_OUTPUT_LO     =  7;   // Output's lo parameter at this col.
+const uint8_t LCD_COL_OUTPUT_HI     = 12;   // Output's hi parameter at this col.
+const uint8_t LCD_COL_OUTPUT_PACE   =  8;   // Output's pace parameter at this col.
+const uint8_t LCD_COL_OUTPUT_RESET  = 12;   // Output's reset parameter at this col.
 
-#define LCD_COL_LOCK_MARK     2   // Marker column for lock options.
-#define LCD_COL_LOCK_SELECT   4   // Lock selection (A,B,C,D) at this column.
-#define LCD_COL_LOCK_STATE    7   // Lock state at this column.
+const uint8_t LCD_COL_LOCK_MARK     =  2;   // Marker column for lock options.
+const uint8_t LCD_COL_LOCK_SELECT   =  4;   // Lock selection (A,B,C,D) at this column.
+const uint8_t LCD_COL_LOCK_STATE    =  7;   // Lock state at this column.
 
 
 /** A Display class that can print PROGMEM messages.

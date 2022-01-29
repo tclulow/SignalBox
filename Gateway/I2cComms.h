@@ -90,46 +90,46 @@
 
 
 // I2C node numbers.
-#define I2C_CONTROLLER_ID       0x10    // Controller ID.
-#define I2C_GATEWAY_ID          0x11    // Gateway ID (if present).
-#define I2C_INPUT_BASE_ID       0x20    // Input nodes' base ID.
-#define I2C_OUTPUT_BASE_ID      0x50    // Output nodes' base ID.
-#define I2C_MODULE_ID_JUMPERS   0xff    // Use jumpers to decide module ID.
+const uint8_t I2C_CONTROLLER_ID     = 0x10;     // Controller ID.
+const uint8_t I2C_GATEWAY_ID        = 0x11;     // Gateway ID (if present).
+const uint8_t I2C_INPUT_BASE_ID     = 0x20;     // Input nodes' base ID.
+const uint8_t I2C_OUTPUT_BASE_ID    = 0x50;     // Output nodes' base ID.
+const uint8_t I2C_MODULE_ID_JUMPERS = 0xff;     // Use jumpers to decide module ID.
 
-#define I2C_LCD_LO              0x27    // Range of IDs to scan for LCD I2C device.
-#define I2C_LCD_HI              0x3F
+const uint8_t I2C_LCD_LO            = 0x27;     // Range of IDs to scan for LCD I2C device.
+const uint8_t I2C_LCD_HI            = 0x3F;
 
 
 // Command byte.
-#define COMMS_COMMAND_MASK      0xf0    // Top 4 bits.
-#define COMMS_OPTION_MASK       0x0f    // Bottom 4 bits.
-#define COMMS_COMMAND_SHIFT        4    // If command required as (4 bit) integer.
+const uint8_t COMMS_COMMAND_MASK    = 0xf0;     // Top 4 bits.
+const uint8_t COMMS_OPTION_MASK     = 0x0f;     // Bottom 4 bits.
+const uint8_t COMMS_COMMAND_SHIFT   =    4;     // If command required as (4 bit) integer.
 
 
 // Commands (in top nibble).
-#define COMMS_CMD_SYSTEM        0x00    // System commands.
-#define COMMS_CMD_DEBUG         0x10    // Set debug level.
-#define COMMS_CMD_SET_LO        0x20    // Set Output Lo
-#define COMMS_CMD_SET_HI        0x30    // Set Output Hi
+const uint8_t COMMS_CMD_SYSTEM      = 0x00;     // System commands.
+const uint8_t COMMS_CMD_DEBUG       = 0x10;     // Set debug level.
+const uint8_t COMMS_CMD_SET_LO      = 0x20;     // Set Output Lo
+const uint8_t COMMS_CMD_SET_HI      = 0x30;     // Set Output Hi
 
-#define COMMS_CMD_READ          0x40    // Read data from Output's EEPROM definition (to the I2C master).
-#define COMMS_CMD_WRITE         0x50    // Write data to Output's EEPROM definition (from the I2C master).
-#define COMMS_CMD_SAVE          0x60    // Save Output's EEPROM definition (as set by a previous WRITE).
-#define COMMS_CMD_RESET         0x70    // Reset output to its saved state (from its EEPROM).
-#define COMMS_CMD_SET           0x80    // Set output to a discrete value
+const uint8_t COMMS_CMD_READ        = 0x40;     // Read data from Output's EEPROM definition (to the I2C master).
+const uint8_t COMMS_CMD_WRITE       = 0x50;     // Write data to Output's EEPROM definition (from the I2C master).
+const uint8_t COMMS_CMD_SAVE        = 0x60;     // Save Output's EEPROM definition (as set by a previous WRITE).
+const uint8_t COMMS_CMD_RESET       = 0x70;     // Reset output to its saved state (from its EEPROM).
+const uint8_t COMMS_CMD_SET         = 0x80;     // Set output to a discrete value
 
-#define COMMS_CMD_INP_LO        0x90    // Input went Lo
-#define COMMS_CMD_INP_HI        0xA0    // Input went Hi
+const uint8_t COMMS_CMD_INP_LO      = 0x90;     // Input went Lo
+const uint8_t COMMS_CMD_INP_HI      = 0xA0;     // Input went Hi
 
-#define COMMS_CMD_NONE          0xf0    // Null command.
+const uint8_t COMMS_CMD_NONE        = 0xf0;     // Null command.
 
 
 // System sub-commands (in bottom nibble)
-#define COMMS_SYS_GATEWAY       0x00    // System - any gateway request?
-#define COMMS_SYS_OUT_STATES    0x01    // System - Output states sub-command.
-#define COMMS_SYS_INP_STATES    0x02    // System - Input states sub-command.
-#define COMMS_SYS_RENUMBER      0x03    // System - renumber node sub-command.
-#define COMMS_SYS_MOVE_LOCKS    0x04    // System - renumber lock node numbers.
+const uint8_t COMMS_SYS_GATEWAY     = 0x00;     // System - any gateway request?
+const uint8_t COMMS_SYS_OUT_STATES  = 0x01;     // System - Output states sub-command.
+const uint8_t COMMS_SYS_INP_STATES  = 0x02;     // System - Input states sub-command.
+const uint8_t COMMS_SYS_RENUMBER    = 0x03;     // System - renumber node sub-command.
+const uint8_t COMMS_SYS_MOVE_LOCKS  = 0x04;     // System - renumber lock node numbers.
 
 
 /** Class for handling i2c communications.
@@ -140,7 +140,6 @@ class I2cComms
 
     uint8_t gatewayId     = 0;          // Marks the presence of an I2C gateway module.
                                         // Certain messages are duplicated to this module.
-
 
     public:
 

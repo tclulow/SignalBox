@@ -15,19 +15,19 @@
 
 
 // Input types and definitions saved in EEPROM
-#define INPUT_TYPES_SIZE    sizeof(uint32_t)                    // Size of Input types.
-#define INPUT_SIZE          (sizeof(InputDef))                  // Size of an InputDef.
-#define INPUT_MAX           (INPUT_NODE_MAX * INPUT_PIN_MAX)    // Maximum inputs.
+const int  INPUT_TYPES_SIZE = sizeof(uint32_t);                     // Size of Input types.
+const int  INPUT_SIZE       = (sizeof(InputDef)) ;                  // Size of an InputDef.
+const int  INPUT_MAX        = (INPUT_NODE_MAX * INPUT_PIN_MAX);     // Maximum inputs.
 
 
 /** Variables for working with an Input.
  *  Global for convenience.
  */
-uint16_t   inputNodes  = 0;                 // Bit map of Input nodes present.
-uint8_t    inputNumber = 0;                 // Current Input number.
-InputDef   inputDef;                        // Definition of the current Input.
-uint32_t   inputTypes  = 0L;                // The types of the Inputs. 2 bits per pin, 16 pins per node = 32 bits.
-uint8_t    inputType   = 0;                 // Type of the current Input (2 bits, INPUT_TYPE_MASK).
+uint16_t   inputNodes       = 0;    // Bit map of Input nodes present.
+uint8_t    inputNumber      = 0;    // Current Input number.
+InputDef   inputDef;                // Definition of the current Input.
+uint32_t   inputTypes       = 0L;   // The types of the Inputs. 2 bits per pin, 16 pins per node = 32 bits.
+uint8_t    inputType        = 0;    // Type of the current Input (2 bits, INPUT_TYPE_MASK).
 
 
 /** Record the presence of an InputNode in the map.
