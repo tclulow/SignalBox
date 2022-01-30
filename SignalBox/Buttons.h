@@ -61,8 +61,8 @@ class Buttons
      */
     Buttons()
     {
-        buttonsPtr = systemMgr.getButtons();
-        initButtonPins();           // Initialise alternate button pins.
+        buttonsPtr = systemMgr.getButtons();    // Pointer to the button settings as held by the SystemMgr.
+        initButtonPins();                       // Initialise alternate button pins.
     }
 
 
@@ -90,13 +90,13 @@ class Buttons
         while (analogRead(A0) < BUTTON_THRESHHOLD);
 
         // Now start calibration
-        disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_PRESS);       // Announce we're ready to start
         buttonsPtr[BUTTON_HIGH] = 0;                                    // Marker for last button.
 
         // Request values for all buttons in turn.
         for (int button = 0; button < BUTTON_HIGH; button++)
         {
-            disp.clearRow(LCD_COL_CALIBRATE, LCD_ROW_DET);
+            // Announce the button to be calibrated.
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_PRESS, LCD_COLS);
             disp.printProgStrAt(LCD_COL_CALIBRATE, LCD_ROW_DET, M_BUTTONS[button + 1], LCD_LEN_OPTION);
 
             // Wait for a button to be pressed
@@ -136,8 +136,6 @@ class Buttons
                 // Force start again.
                 button = -1;
                 previous = BUTTON_THRESHHOLD;
-                disp.clearRow(LCD_COL_START, LCD_ROW_DET);
-                disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_PRESS, LCD_COLS);
             }
             else
             {

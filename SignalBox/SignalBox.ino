@@ -504,6 +504,7 @@ void setup()
     {
         buttons.calibrateButtons();
         systemMgr.saveSystemData();
+        controller.announce();                                  // Re-announce. Calibration will have overwritten the display.
     }
 
 //    // Dump memory in raw format if debug-full.
