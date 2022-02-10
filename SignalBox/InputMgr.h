@@ -15,7 +15,7 @@
 
 
 // Input types and definitions saved in EEPROM
-const int  INPUT_TYPES_SIZE = sizeof(uint32_t);                     // Size of Input types.
+const int  INPUT_TYPES_SIZE = sizeof(uint32_t);                     // Size of Input types (16 inputs, 2 bits each).
 const int  INPUT_SIZE       = (sizeof(InputDef)) ;                  // Size of an InputDef.
 const int  INPUT_MAX        = (INPUT_NODE_MAX * INPUT_PIN_MAX);     // Maximum inputs.
 

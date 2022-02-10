@@ -453,10 +453,15 @@ class Controller
         disp.clear();
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_NODES);
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_INPUT, LCD_LEN_OPTION);
-        disp.setCursor(-INPUT_NODE_MAX, LCD_ROW_TOP);
+        disp.setCursor(-8, LCD_ROW_TOP);
 
         for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
         {
+            if (node == 8)          // If there are more than 8 inputs, show them on the second row.
+            {
+                disp.setCursor(-8, LCD_ROW_DET);
+            }
+            
             if (disp.getLcdId() == (I2C_INPUT_BASE_ID + node))
             {
                 disp.printCh(CHAR_HASH);

@@ -14,12 +14,16 @@
 #define InputDef_h
 
 
-// Input nodes.
-const uint8_t INPUT_NODE_MAX    =    8;     // Maximum nodes.
-const uint8_t INPUT_NODE_MASK   = 0x07;     // 3 bits for 8 nodes.
-const uint8_t INPUT_NODE_SHIFT  =    4;     // Shift input number this amount to get a node number.
-const uint8_t INPUT_PIN_MAX     =   16;     // 16 inputs to each node.
-const uint8_t INPUT_PIN_MASK    = 0x0f;     // Mask to get input pin within a node.
+// Input nodes. If large EEPROM, have 16 input nodes, else only 8.
+#if E2END > 0x800
+const uint8_t INPUT_NODE_MAX    =                   16;     // Maximum nodes.
+#else
+const uint8_t INPUT_NODE_MAX    =                    8;     // Maximum nodes.
+#endif
+const uint8_t INPUT_NODE_MASK   = (INPUT_NODE_MAX - 1);     // Mask for node numbers.
+const uint8_t INPUT_NODE_SHIFT  =                    4;     // Shift input number this amount to get a node number.
+const uint8_t INPUT_PIN_MAX     =                   16;     // 16 inputs to each node.
+const uint8_t INPUT_PIN_MASK    = (INPUT_PIN_MAX  - 1);     // Mask to get input pin within a node.
 
 // Mask for Input options
 const uint8_t INPUT_OUTPUT_MAX  =    6;     // Number of outputs each input can control. See also EEPROM in System.h
