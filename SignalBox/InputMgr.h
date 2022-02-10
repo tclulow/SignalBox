@@ -140,7 +140,7 @@ class InputMgr: public Persisted
      */
     void saveInput()
     {
-        if (inputNumber < INPUT_MAX)
+        // if (inputNumber < INPUT_MAX)         // Can't test inputNumber (a uint8_t) against INPUT_MAX which might be 0x100.
         {
             uint8_t  node = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
             uint8_t  pin  = (inputNumber                    ) & INPUT_PIN_MASK;
