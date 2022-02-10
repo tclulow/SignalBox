@@ -27,7 +27,7 @@
  */
  
 // Serial IO
-const long    SERIAL_SPEED             = 19200;   // Speed of the serial port.
+const long    SERIAL_SPEED             = 115200;   // Speed of the serial port.
 
 
 // LCD shield pins.

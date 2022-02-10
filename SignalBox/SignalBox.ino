@@ -521,7 +521,7 @@ void setup()
             Serial.print(PGMT(M_UPDATE));
             Serial.print(CHAR_SPACE);
             Serial.print(systemMgr.getVersion(), HEX);
-            Serial.print(CHAR_SPACE);
+            Serial.print(CHAR_TILDE);
             Serial.print(VERSION, HEX);
             Serial.println();
         }
