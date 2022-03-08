@@ -32,6 +32,7 @@ class Controller
 
     uint16_t inputState[INPUT_NODE_MAX];    // Current state of inputs.
 
+
     public:
     
     /** Announce ourselves.
