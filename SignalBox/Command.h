@@ -70,18 +70,18 @@ class Command
      */
     void processCommand()
     {
-        bool executed = false;
+        bool    executed = false;
         uint8_t node     = 0;
         uint8_t pin      = 0;
-        bool state    = true;
+        bool    state    = true;
     
         if (isDebug(DEBUG_BRIEF))
         {
-          Serial.print(millis());
-          Serial.print(CHAR_TAB);
-          Serial.print(PGMT(M_INPUT));
-          Serial.print(PGMT(M_DEBUG_COMMAND));
-          Serial.println(commandBuffer);
+            Serial.print(millis());
+            Serial.print(CHAR_TAB);
+            Serial.print(PGMT(M_INPUT));
+            Serial.print(PGMT(M_DEBUG_COMMAND));
+            Serial.println(commandBuffer);
         }
     
         // Expect three characters, command, nodeId, pinId
@@ -123,11 +123,11 @@ class Command
         {
             if (isDebug(DEBUG_ERRORS))
             {
-              Serial.print(millis());
-              Serial.print(CHAR_TAB);
-              Serial.print(PGMT(M_UNKNOWN));
-              Serial.print(PGMT(M_DEBUG_COMMAND));
-              Serial.println(commandBuffer);
+                Serial.print(millis());
+                Serial.print(CHAR_TAB);
+                Serial.print(PGMT(M_UNKNOWN));
+                Serial.print(PGMT(M_DEBUG_COMMAND));
+                Serial.println(commandBuffer);
             }
     
             if (systemMgr.isReportEnabled(REPORT_SHORT))
