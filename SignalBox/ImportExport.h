@@ -203,8 +203,15 @@ class ImportExport
 
         outputNode = readData() & OUTPUT_NODE_MASK;
         outputPin  = readData() & OUTPUT_PIN_MASK;
+
+        disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_LOCK, LCD_LEN_OPTION);
+        disp.printHexChAt(LCD_COL_NODE,  LCD_ROW_DET, outputNode);
+        disp.printHexChAt(LCD_COL_PIN ,  LCD_ROW_DET, outputPin);
+
         if (isOutputNodePresent(outputNode))
         {
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_STATUS);
+            
             // Fetch the Output's definition to update its locks.
             readOutput(outputNode, outputPin);
 
@@ -237,13 +244,12 @@ class ImportExport
                 }
             }
 
-            disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_LOCK, LCD_LEN_OPTION);
-            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_STATUS);
-            disp.printHexChAt(LCD_COL_NODE,  LCD_ROW_DET, outputNode);
-            disp.printHexChAt(LCD_COL_PIN ,  LCD_ROW_DET, outputPin);
-
             writeOutput();
             writeSaveOutput();
+        }
+        else
+        {
+            disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_NONE, LCD_LEN_STATUS);
         }
     }
 
