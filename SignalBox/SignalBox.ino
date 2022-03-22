@@ -319,6 +319,8 @@ void reportPause()
 //}
 
 
+// Ticking
+unsigned long tickGateway = 0L;      // Time for next gateway request.
 
 //  /** Cmri handler using Serial. */
 //  Cmri cmri(Serial);
@@ -429,9 +431,6 @@ void setup()
     controller.scanHardware();
 }
 
-
-// Ticking
-unsigned long tickGateway = 0L;      // Time for next gateway request.
 
 /** Main loop.
  */

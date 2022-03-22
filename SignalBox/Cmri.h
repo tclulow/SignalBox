@@ -55,8 +55,7 @@ class Cmri
 
     public:
 
-
-    /** A Cmri handle using the given Stream.
+    /** A Cmri handler using the given Stream.
      */
     Cmri(Stream& aStream):
          stream(aStream)
