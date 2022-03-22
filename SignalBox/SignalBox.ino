@@ -322,8 +322,8 @@ void reportPause()
 // Ticking
 unsigned long tickGateway = 0L;      // Time for next gateway request.
 
-//  /** Cmri handler using Serial. */
-//  Cmri cmri(Serial);
+/** Cmri handler using Serial. */
+Cmri cmri(Serial);
 
 
 /** Setup the Arduino.
@@ -333,7 +333,7 @@ void setup()
     bool hasLcdShield = LCD_SHIELD;              // An LCD shield is present.
 
     // Start Serial IO first - needed if there's any debug output.
-    Serial.begin(SERIAL_SPEED, SERIAL_8N2);
+    Serial.begin(SERIAL_SPEED);
 
     // Detect presence of LCD shield using LCD_SHIELD_DETECT_PIN if necessary
 #if ! LCD_SHIELD && LCD_SHIELD_DETECT_PIN
@@ -443,8 +443,8 @@ void loop()
         controller.announce();
     }
 
-//    // Check for CMRI message.
-//    cmri.update();
+    // Check for CMRI message.
+    cmri.update();
     
     // Check for input on the Serial line, and handle it.
     command.update();

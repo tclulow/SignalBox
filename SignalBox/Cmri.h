@@ -30,10 +30,10 @@ enum CmriState
 
 
 // CMRI Message types.
-const char TYPE_INIT     = 'I';
-const char TYPE_POLL     = 'P';
-const char TYPE_RECEIVE  = 'R';
-const char TYPE_TRANSMIT = 'T';
+const uint8_t TYPE_INIT     = 'I';
+const uint8_t TYPE_POLL     = 'P';
+const uint8_t TYPE_RECEIVE  = 'R';
+const uint8_t TYPE_TRANSMIT = 'T';
 
 
 /** A CMRI interface handler using a state machine.
@@ -43,13 +43,13 @@ class Cmri
     private:
 
     Stream&   stream;                       // Stream for all the IO.
-    int       currentByte   = 0;            // The current byte being processed.
+    uint8_t   currentByte   = 0;            // The current byte being processed.
     CmriState state         = CMRI_IDLE;    // Current state of the state machine.
-    char      address       = 0;            // Address of the current message.
-    char      messageType   = 0;            // Type of the current message.
-    char      node          = 0;            // Node type.
+    uint8_t   address       = 0;            // Address of the current message.
+    uint8_t   messageType   = 0;            // Type of the current message.
+    uint8_t   node          = 0;            // Node type.
     uint16_t  transDelay    = 0;            // Delay when transmitting data.
-    char      sets          = 0;            // Number of sets.
+    uint8_t   sets          = 0;            // Number of sets.
     uint8_t   messageLength = 0;            // Length of data message (so far).
 
 
@@ -78,94 +78,93 @@ class Cmri
 
     private:
 
+    /** Process a CMRI character.
+     */
     void processChar()
     {
-        for (int i = 0; i < 5; i++)
-        {
-            digitalWrite(LED_BUILTIN, HIGH);
-            delay(500);
-            digitalWrite(LED_BUILTIN, LOW);
-            delay(500);
-        }
-        
         currentByte = stream.read();
-        if (currentByte < 0)
+
+        switch (state)
         {
-            state = CMRI_IDLE;                  // Stop processing on error.
-            systemFail(M_CMRI, currentByte);
+            case CMRI_IDLE: cmriCheck(CHAR_SYN, CMRI_SYN);      // Move to next state.
+                            address       = 0;                  // Address of the current message.
+                            messageType   = 0;                  // Type of the current message.
+                            messageLength = 0;                  // Length of data message (so far).
+                            break;
+            
+            case CMRI_SYN:  cmriCheck(CHAR_SYN, CMRI_STX);      // Move to next state.
+                            break;
+                    
+            case CMRI_STX:  cmriCheck(CHAR_STX, CMRI_ADDR);     // Move to next state.
+                            break;
+
+            case CMRI_ADDR: address = currentByte - 'A';        // Record the address the message is for.
+                            state = CMRI_TYPE;
+                            break;
+
+            case CMRI_TYPE: messageType = currentByte;          // Record the type of message.
+
+                            // Initialise if it's an INIT message.
+                            if (messageType == TYPE_INIT)
+                            {
+                                node        = 0;                // Node type.
+                                transDelay  = 0;                // Delay when transmitting data.
+                                sets        = 0;                // Number of sets.
+                            }
+                            
+                            state = CMRI_DATA;
+
+                            // Show message on display.
+                            if (systemMgr.isReportEnabled(REPORT_SHORT))
+                            {
+                                disp.clear();
+                                disp.printProgStrAt(LCD_COL_START,    LCD_ROW_TOP, M_CMRI);
+                                disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_TOP, address);
+                                disp.printChAt     (LCD_COL_CMRI + 3, LCD_ROW_TOP, messageType);
+                                delay(2000);
+                            }
+
+                            break;
+
+            case CMRI_DATA: if (currentByte == CHAR_DLE)        // Escape character.
+                            {
+                                state = CMRI_DLE;               // Treat next character as data whatever it is.
+                            }
+                            else if (currentByte == CHAR_ETX)   // End of message.
+                            {
+                                state = CMRI_IDLE;              // Finished processing.
+                            }
+                            else
+                            {
+                                processData();                  // Process a data byte.
+                            }
+                            break;
+
+            case CMRI_DLE:  processData();                      // Process escaped data byte.
+                            state = CMRI_DATA;                  // And return to normal data state.
+                            break;
+
+            case CMRI_ETX:  if (currentByte == CHAR_ETX)        // Skip till ETX.
+                            {
+                                state = CMRI_IDLE;              // Stop when found.
+                            }
+                            break;
+
+            default:        systemFail(M_CMRI, state);          // Unexpected state.
+                            state = CMRI_ETX;
+                            break;
         }
-        else
+
+        // Message is finished when we return to IDLE state.
+        if (state == CMRI_IDLE)
         {
-            switch (state)
+            // Show message on display.
+            if (systemMgr.isReportEnabled(REPORT_SHORT))
             {
-                case CMRI_IDLE: cmriCheck(CHAR_SYN, CMRI_SYN);      // Move to next state.
-                                address       = 0;                  // Address of the current message.
-                                messageType   = 0;                  // Type of the current message.
-                                messageLength = 0;                  // Length of data message (so far).
-                                break;
-                
-                case CMRI_SYN:  cmriCheck(CHAR_SYN, CMRI_STX);      // Move to next state.
-                                break;
-                        
-                case CMRI_STX:  cmriCheck(CHAR_STX, CMRI_ADDR);     // Move to next state.
-                                break;
-    
-                case CMRI_ADDR: address = currentByte;              // Record the address the message is for.
-                                state = CMRI_TYPE;
-                                break;
-    
-                case CMRI_TYPE: messageType = currentByte;          // Record the type of message.
-
-                                // Initialise if it's an INIT message.
-                                if (messageType == TYPE_INIT)
-                                {
-                                    node        = 0;                // Node type.
-                                    transDelay  = 0;                // Delay when transmitting data.
-                                    sets        = 0;                // Number of sets.
-                                }
-                                
-                                state = CMRI_DATA;
-
-                                // Show message on display.
-                                if (systemMgr.isReportEnabled(REPORT_SHORT))
-                                {
-                                    disp.clear();
-                                    disp.printProgStrAt(LCD_COL_START,    LCD_ROW_TOP, M_CMRI);
-                                    disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_TOP, address);
-                                    disp.printChAt     (LCD_COL_CMRI + 3, LCD_ROW_TOP, messageType);
-                                }
-
-                                break;
-    
-                case CMRI_DATA: if (currentByte == CHAR_DLE)        // Escape character.
-                                {
-                                    state = CMRI_DLE;               // Treat next character as data whatever it is.
-                                }
-                                else if (currentByte == CHAR_ETX)   // End of message.
-                                {
-                                    state = CMRI_IDLE;              // Finished processing.
-                                }
-                                else
-                                {
-                                    processData();                  // Process a data byte.
-                                }
-                                break;
-    
-                case CMRI_DLE:  processData();                      // Process escaped data byte.
-                                state = CMRI_DATA;                  // And return to normal data state.
-                                break;
-    
-                case CMRI_ETX:  if (currentByte == CHAR_ETX)        // Skip till ETX.
-                                {
-                                    processEndOfMessage();
-                                    state = CMRI_IDLE;              // Stop when found.
-                                }
-                                break;
-    
-                default:        systemFail(M_CMRI, state);          // Unexpected state.
-                                state = CMRI_ETX;
-                                break;
+                disp.printHexByteAt(LCD_COL_CMRI + 5, LCD_ROW_TOP, messageLength);
             }
+            
+            processEndOfMessage();
         }
 
         controller.setDisplayTimeout(systemMgr.getReportDelay());
@@ -174,7 +173,7 @@ class Cmri
 
     /** Check the expected character arrives and move to the next state.
      */
-    void cmriCheck(int aExpected, CmriState aNextState)
+    void cmriCheck(uint8_t aExpected, CmriState aNextState)
     {
         if (currentByte == aExpected)
         {
