@@ -322,8 +322,10 @@ void reportPause()
 // Ticking
 unsigned long tickGateway = 0L;      // Time for next gateway request.
 
+#if CMRI_HANDLER
 /** Cmri handler using Serial. */
 Cmri cmri(Serial);
+#endif
 
 
 /** Setup the Arduino.
@@ -443,8 +445,10 @@ void loop()
         controller.announce();
     }
 
+#if CMRI_HANDLER
     // Check for CMRI message.
     cmri.update();
+#endif
     
     // Check for input on the Serial line, and handle it.
     command.update();

@@ -22,6 +22,8 @@
 #define LCD_SHIELD             false    // Assume LCD shield present (or not). If false, use LCD_SHIELD_DETECT_PIN.
 #define LCD_SHIELD_DETECT_PIN  11       // Use this pin (must be low) to detect presence of LCD shield. If zero, don't detect.
 
+#define CMRI_HANDLER           true     // Include CMRI handling code.
+
 
 /** Configuration constants.
  */
