@@ -63,6 +63,8 @@ const uint8_t LCD_COL_LOCK_MARK     =  2;   // Marker column for lock options.
 const uint8_t LCD_COL_LOCK_SELECT   =  4;   // Lock selection (A,B,C,D) at this column.
 const uint8_t LCD_COL_LOCK_STATE    =  7;   // Lock state at this column.
 
+const uint8_t LCD_COL_CMRI          =  6;   // CMRI detail starts here.
+
 
 /** A Display class that can print PROGMEM messages.
  *  Can display of LCD shield (LCD_ROWS x LCD_COLS) and/or an I2C LCD display (LCD2_ROWS x LCD2_COLS).

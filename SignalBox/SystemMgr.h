@@ -57,6 +57,11 @@ byte BYTES_LO[] = { 0, 0, 0, 0, 0x11, 0xa, 0x4, 0 };
 
 // Useful characters
 
+const char    CHAR_STX     = 0x02;
+const char    CHAR_ETX     = 0x03;
+const char    CHAR_DLE     = 0x10;
+const char    CHAR_SYN     = 0xff;
+
 const char    CHAR_SPACE   = ' ';
 const char    CHAR_TAB     = '\t';
 const char    CHAR_NEWLINE = '\n';

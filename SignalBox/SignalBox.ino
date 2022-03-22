@@ -72,6 +72,7 @@
 #include "Controller.h"
 #include "Configure.h"
 #include "Command.h"
+#include "Cmri.h"
 
 
 /** Report a system failure.
@@ -438,6 +439,9 @@ void loop()
         controller.announce();
     }
 
+    // Check for CMRI message.
+    cmri.update();
+    
     // Check for input on the Serial line, and handle it.
     command.update();
 
