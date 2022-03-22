@@ -121,7 +121,6 @@ class Cmri
                                 disp.printProgStrAt(LCD_COL_START,    LCD_ROW_TOP, M_CMRI);
                                 disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_TOP, address);
                                 disp.printChAt     (LCD_COL_CMRI + 3, LCD_ROW_TOP, messageType);
-                                delay(2000);
                             }
 
                             break;
@@ -223,6 +222,10 @@ class Cmri
         }
         else if (messageType == TYPE_TRANSMIT)
         {
+            if (systemMgr.isReportEnabled(REPORT_SHORT))
+            {
+                disp.printHexByteAt(messageLength * 3, LCD_ROW_DET, currentByte);
+            }
             // TODO - handle incomming byte.
         }
 
