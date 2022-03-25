@@ -24,8 +24,9 @@ enum CmriState
     CMRI_ADDR,      // Expecting address.
     CMRI_TYPE,      // Expecting type byte.
     CMRI_DATA,      // Expecting data.
-    CMRI_DLE,       // Processing a DEL escape in a data stream.
-    CMRI_ETX        // Expecting an ETX character.
+    CMRI_DLE,       // Processing a DLE escape in a data stream.
+    CMRI_ETX,       // Expecting an ETX character.
+    CMRI_ETXD       // Processing a DLE escape when skipping to ETX.
 };
 
 
@@ -143,10 +144,17 @@ class Cmri
                             state = CMRI_DATA;                  // And return to normal data state.
                             break;
 
-            case CMRI_ETX:  if (currentByte == CHAR_ETX)        // Skip till ETX.
+            case CMRI_ETX:  if (currentByte == CHAR_DLE)        // Escape character.
+                            {
+                                state = CMRI_ETXD;              // Ensure escaped ETX character is ignored.
+                            }
+                            else if (currentByte == CHAR_ETX)   // Found ETX.
                             {
                                 state = CMRI_IDLE;              // Stop when found.
                             }
+                            break;
+
+            case CMRI_ETXD: state = CMRI_ETX;                   // Ignore character, resume scanning for ETX.
                             break;
 
             default:        systemFail(M_CMRI, state);          // Unexpected state.
@@ -190,43 +198,50 @@ class Cmri
      */
     void processData()
     {
-        if (messageType == TYPE_INIT)
+        switch(messageType)
         {
-            // Handle INIT message depending on how much we've received so far.
-            switch (messageLength)
-            {
-                case 0:  node = currentByte;
-                         break;
+            case TYPE_INIT:     switch (messageLength)
+                                {
+                                    case 0:  node = currentByte;
+                                             break;
+                    
+                                    case 1:  transDelay = currentByte << 8;
+                                             break;
+                    
+                                    case 2:  transDelay = transDelay | currentByte;
+                                             break;
+                    
+                                    case 3:  sets = currentByte;
+                    
+                                             // Show message on display.
+                                             if (systemMgr.isReportEnabled(REPORT_SHORT))
+                                             {
+                                                 disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_DET, node);
+                                                 disp.printHexByteAt(LCD_COL_CMRI + 3, LCD_ROW_DET, (transDelay >> 8) & 0xff);
+                                                 disp.printHexByte  (transDelay & 0xff);
+                                                 disp.printHexByteAt(LCD_COL_CMRI + 8, LCD_ROW_DET, sets);
+                                             }
+                    
+                                             break;
+                    
+                                    default: systemFail(M_CMRI, messageLength);
+                                             break;
+                                }
+                                break;
 
-                case 1:  transDelay = currentByte << 8;
-                         break;
+            case TYPE_TRANSMIT: if (systemMgr.isReportEnabled(REPORT_SHORT))
+                                {
+                                    disp.printHexByteAt(messageLength * 3, LCD_ROW_DET, currentByte);
+                                }
+                                
+                                // TODO - handle incomming byte.
+                                break;
 
-                case 2:  transDelay = transDelay | currentByte;
-                         break;
+            case TYPE_POLL:
+            case TYPE_RECEIVE:  break;
 
-                case 3:  sets = currentByte;
-
-                         // Show message on display.
-                         if (systemMgr.isReportEnabled(REPORT_SHORT))
-                         {
-                             disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_DET, node);
-                             disp.printHexByteAt(LCD_COL_CMRI + 3, LCD_ROW_DET, (transDelay >> 8) & 0xff);
-                             disp.printHexByte  (transDelay & 0xff);
-                             disp.printHexByteAt(LCD_COL_CMRI + 8, LCD_ROW_DET, sets);
-                         }
-
-                         break;
-
-                default: systemFail(M_CMRI, messageLength);
-            }
-        }
-        else if (messageType == TYPE_TRANSMIT)
-        {
-            if (systemMgr.isReportEnabled(REPORT_SHORT))
-            {
-                disp.printHexByteAt(messageLength * 3, LCD_ROW_DET, currentByte);
-            }
-            // TODO - handle incomming byte.
+            default:            systemFail(M_CMRI, messageType);
+                                break;
         }
 
         messageLength += 1;     // Record that a character has been processed.
