@@ -169,6 +169,7 @@ class Configure
                                                          break;
                                                          
                                         default:         configFail(M_CONFIG, topMenu);
+                                                         break;
                                     }
 
                                     markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
@@ -262,6 +263,7 @@ class Configure
                                         case SYS_DEBUG:  changed |= menuSystemDebug();
                                                          break;
                                         default:         configFail(M_SYSTEM, sysMenu);
+                                                         break;
                                     }
 
                                     displayAll();
@@ -1081,6 +1083,7 @@ class Configure
                                         case OUTPUT_TYPE_RANDOM:  changed |= menuOutputLo(OUTPUT_LED_MAX);
                                                                   break;
                                         default:                  configFail(M_OUTPUT, outputType);
+                                                                  break;
                                     }
 
                                     displayAll();

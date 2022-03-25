@@ -674,6 +674,7 @@ class ImportExport
                               break;
 
             default:          systemFail(M_EXPORT, aExport);
+                              break;
         }
 
         disp.clearRow(-strlen_P(M_EXPORTING), LCD_ROW_DET);

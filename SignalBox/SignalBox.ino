@@ -249,6 +249,7 @@ bool gatewayRequest()
             case COMMS_CMD_NONE:   break;
 
             default:               systemFail(M_GATEWAY, command | option);
+                                   break;
         }
     }
 //    else
