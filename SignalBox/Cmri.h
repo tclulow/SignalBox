@@ -115,14 +115,14 @@ class Cmri
                             
                             state = CMRI_DATA;
 
-                            // Show message on display.
-                            if (systemMgr.isReportEnabled(REPORT_SHORT))
-                            {
-                                disp.clear();
-                                disp.printProgStrAt(LCD_COL_START,    LCD_ROW_TOP, M_CMRI);
-                                disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_TOP, address);
-                                disp.printChAt     (LCD_COL_CMRI + 3, LCD_ROW_TOP, messageType);
-                            }
+//                            // Show message on display.
+//                            if (systemMgr.isReportEnabled(REPORT_SHORT))
+//                            {
+//                                disp.clear();
+//                                disp.printProgStrAt(LCD_COL_START,    LCD_ROW_TOP, M_CMRI);
+//                                disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_TOP, address);
+//                                disp.printChAt     (LCD_COL_CMRI + 3, LCD_ROW_TOP, messageType);
+//                            }
 
                             break;
 
@@ -213,14 +213,14 @@ class Cmri
                     
                                     case 3:  sets = currentByte;
                     
-                                             // Show message on display.
-                                             if (systemMgr.isReportEnabled(REPORT_SHORT))
-                                             {
-                                                 disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_DET, node);
-                                                 disp.printHexByteAt(LCD_COL_CMRI + 3, LCD_ROW_DET, (transDelay >> 8) & 0xff);
-                                                 disp.printHexByte  (transDelay & 0xff);
-                                                 disp.printHexByteAt(LCD_COL_CMRI + 8, LCD_ROW_DET, sets);
-                                             }
+//                                             // Show message on display.
+//                                             if (systemMgr.isReportEnabled(REPORT_SHORT))
+//                                             {
+//                                                 disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_DET, node);
+//                                                 disp.printHexByteAt(LCD_COL_CMRI + 3, LCD_ROW_DET, (transDelay >> 8) & 0xff);
+//                                                 disp.printHexByte  (transDelay & 0xff);
+//                                                 disp.printHexByteAt(LCD_COL_CMRI + 8, LCD_ROW_DET, sets);
+//                                             }
                     
                                              break;
                     
@@ -256,8 +256,36 @@ class Cmri
     {
         if (messageType == TYPE_POLL)
         {
-            // TODO - send response.
+            sendByte(CHAR_SYN, false);
+            sendByte(CHAR_SYN, false);
+            sendByte(CHAR_STX, false);
+
+            for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
+            {
+                uint16_t inputStates = controller.getInputState(node);
+                sendByte((inputStates     ) & 0xff, true);
+                sendByte((inputStates >> 8) & 0xff, true);
+            }
+
+            sendByte(CHAR_ETX, false);
         }
+    }
+
+
+    /** Send a byte (as a character).
+     *  If escape flag is set, precede special characters with CHAR_DLE.
+     */
+    void sendByte(uint8_t aByte, boolean escape)
+    {
+        if (escape)
+        {
+            if (   (aByte <= CHAR_DLE)
+                || (aByte == CHAR_ETX))
+            {
+                stream.print((char)CHAR_DLE);
+            }
+        }
+        stream.print((char)aByte);
     }
 };
 
