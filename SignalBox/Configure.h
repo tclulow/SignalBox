@@ -111,19 +111,19 @@ class Configure
             outNode = nextNode(outNode, 1, false, true);
         }
 
-        // Ensure correct Input and Output node definitions are loaded.
-        inputMgr.loadInput(inpNode, inpPin);
-        if (isOutputNodePresent(outNode))
-        {
-            readOutput(outNode, outPin);
-        }
-
         disp.clear();
         displayAll();
         markField(LCD_COL_START, LCD_ROW_TOP, LCD_COL_MARK, true);
 
         while (!finished)
         {
+            // Ensure correct Input and Output node definitions are loaded.
+            inputMgr.loadInput(inpNode, inpPin);
+            if (isOutputNodePresent(outNode))
+            {
+                readOutput(outNode, outPin);
+            }
+
             switch (buttons.waitForButtonPress())
             {
                 case BUTTON_NONE:   break;
