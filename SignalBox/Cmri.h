@@ -99,7 +99,7 @@ class Cmri
             case CMRI_STX:  cmriCheck(CHAR_STX, CMRI_ADDR);     // Move to next state.
                             break;
 
-            case CMRI_ADDR: address = currentByte - 'A';        // Record the address the message is for.
+            case CMRI_ADDR: address = currentByte;              // Record the address the message is for (starts with 'A').
                             state = CMRI_TYPE;
                             break;
 
@@ -259,6 +259,8 @@ class Cmri
             sendByte(CHAR_SYN, false);
             sendByte(CHAR_SYN, false);
             sendByte(CHAR_STX, false);
+            sendByte(node, false);
+            sendByte(TYPE_RECEIVE, false);
 
             for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
             {
@@ -268,6 +270,7 @@ class Cmri
             }
 
             sendByte(CHAR_ETX, false);
+            stream.flush();
         }
     }
 
@@ -282,10 +285,10 @@ class Cmri
             if (   (aByte <= CHAR_DLE)
                 || (aByte == CHAR_ETX))
             {
-                stream.print((char)CHAR_DLE);
+                stream.write(CHAR_DLE);
             }
         }
-        stream.print((char)aByte);
+        stream.write(aByte);
     }
 };
 
