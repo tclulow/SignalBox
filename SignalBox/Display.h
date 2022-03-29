@@ -227,7 +227,7 @@ class Display
     /** Prints a char string on the LCD.
      *  Delegate to library classes.
      */
-    void printStr(char* aString)
+    void printStr(const char* aString)
     {
         if (lcdShield)
         {
