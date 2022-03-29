@@ -35,6 +35,7 @@ const uint8_t TYPE_INIT     = 'I';
 const uint8_t TYPE_POLL     = 'P';
 const uint8_t TYPE_RECEIVE  = 'R';
 const uint8_t TYPE_TRANSMIT = 'T';
+const uint8_t TYPE_ERROR    = 'E';
 
 
 /** A CMRI interface handler using a state machine.
@@ -45,10 +46,10 @@ class Cmri
 
     Stream&   stream;                       // Stream for all the IO.
     uint8_t   currentByte   = 0;            // The current byte being processed.
-    CmriState state         = CMRI_IDLE;    // Current state of the state machine.
+    CmriState cmriState     = CMRI_IDLE;    // Current state of the state machine.
     uint8_t   address       = 0;            // Address of the current message.
     uint8_t   messageType   = 0;            // Type of the current message.
-    uint8_t   node          = 0;            // Node type.
+    uint8_t   nodeType      = 0;            // Node type.
     uint16_t  transDelay    = 0;            // Delay when transmitting data.
     uint8_t   sets          = 0;            // Number of sets.
     uint8_t   messageLength = 0;            // Length of data message (so far).
@@ -68,71 +69,87 @@ class Cmri
      */
     void update()
     {
-        while (   (stream.available() > 0)              // Serial characters to process
-               && (   (state != CMRI_IDLE)              // CMRI processing in progress
-                   || (stream.peek() == CHAR_SYN)))     // or start of CMRI message
+        if (   (stream.available() > 0)                 // Serial characters to process
+            && (   (cmriState != CMRI_IDLE)             // CMRI processing in progress
+                || (stream.peek() == CHAR_SYN)))        // or start of CMRI message
         {
-            processChar();
+            processByte();
         }
     }
 
 
     private:
 
-    /** Process a CMRI character.
+    /** Process a CMRI byte.
      */
-    void processChar()
+    void processByte()
     {
         currentByte = stream.read();
 
-        switch (state)
+        switch (cmriState)
         {
-            case CMRI_IDLE: cmriCheck(CHAR_SYN, CMRI_SYN);      // Move to next state.
-                            address       = 0;                  // Address of the current message.
-                            messageType   = 0;                  // Type of the current message.
-                            messageLength = 0;                  // Length of data message (so far).
+            case CMRI_IDLE: if (currentByte == CHAR_SYN)
+                            {
+                                cmriState = CMRI_SYN;       // Move to next state.
+                                address       = 0;          // Address of the current message.
+                                messageType   = 0;          // Type of the current message.
+                                messageLength = 0;          // Length of data message (so far).
+                            }
                             break;
             
-            case CMRI_SYN:  cmriCheck(CHAR_SYN, CMRI_STX);      // Move to next state.
+            case CMRI_SYN:  if (currentByte == CHAR_SYN)    // Move to next state.
+                            {
+                                cmriState = CMRI_STX;
+                            }
+                            else
+                            {
+                                error("Syn ", CHAR_SYN, currentByte);
+                            }
                             break;
                     
-            case CMRI_STX:  cmriCheck(CHAR_STX, CMRI_ADDR);     // Move to next state.
+            case CMRI_STX:  if (currentByte == CHAR_STX)    // Move to next state.
+                            {
+                                cmriState = CMRI_ADDR;
+                            }
+                            else
+                            {
+                                error("Stx ", CHAR_STX, currentByte);
+                            }
                             break;
 
-            case CMRI_ADDR: address = currentByte;              // Record the address the message is for (starts with 'A').
-                            state = CMRI_TYPE;
+            case CMRI_ADDR: address = currentByte;          // Record the address the message is for (starts with 'A').
+                            cmriState = CMRI_TYPE;
                             break;
 
-            case CMRI_TYPE: messageType = currentByte;          // Record the type of message.
+            case CMRI_TYPE: messageType = currentByte;      // Record the type of message.
 
                             // Initialise if it's an INIT message.
                             if (messageType == TYPE_INIT)
                             {
-                                node        = 0;                // Node type.
-                                transDelay  = 0;                // Delay when transmitting data.
-                                sets        = 0;                // Number of sets.
+                                nodeType    = 0;            // Node type.
+                                transDelay  = 0;            // Delay when transmitting data.
+                                sets        = 0;            // Number of sets.
                             }
-                            
-                            state = CMRI_DATA;
+                            cmriState = CMRI_DATA;
 
-//                            // Show message on display.
-//                            if (systemMgr.isReportEnabled(REPORT_SHORT))
-//                            {
-//                                disp.clear();
-//                                disp.printProgStrAt(LCD_COL_START,    LCD_ROW_TOP, M_CMRI);
-//                                disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_TOP, address);
-//                                disp.printChAt     (LCD_COL_CMRI + 3, LCD_ROW_TOP, messageType);
-//                            }
-
+                            // Show message on display.
+                            if (   (systemMgr.isReportEnabled(REPORT_SHORT))
+                                && (messageType != TYPE_POLL))
+                            {
+                                disp.printProgStrAt(LCD_COL_START,    LCD_ROW_EDT, M_CMRI);
+                                disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_EDT, address);
+                                disp.printHexByteAt(LCD_COL_CMRI + 3, LCD_ROW_EDT, messageType);
+                                controller.setDisplayTimeout(systemMgr.getReportDelay());
+                            }
                             break;
 
             case CMRI_DATA: if (currentByte == CHAR_DLE)        // Escape character.
                             {
-                                state = CMRI_DLE;               // Treat next character as data whatever it is.
+                                cmriState = CMRI_DLE;           // Treat next character as data whatever it is.
                             }
                             else if (currentByte == CHAR_ETX)   // End of message.
                             {
-                                state = CMRI_IDLE;              // Finished processing.
+                                cmriState = CMRI_IDLE;          // Finished processing.
                             }
                             else
                             {
@@ -141,57 +158,54 @@ class Cmri
                             break;
 
             case CMRI_DLE:  processData();                      // Process escaped data byte.
-                            state = CMRI_DATA;                  // And return to normal data state.
+                            cmriState = CMRI_DATA;              // And return to normal data state.
                             break;
 
             case CMRI_ETX:  if (currentByte == CHAR_DLE)        // Escape character.
                             {
-                                state = CMRI_ETXD;              // Ensure escaped ETX character is ignored.
+                                cmriState = CMRI_ETXD;          // Ensure escaped ETX character is ignored.
                             }
                             else if (currentByte == CHAR_ETX)   // Found ETX.
                             {
-                                state = CMRI_IDLE;              // Stop when found.
+                                cmriState = CMRI_IDLE;          // Stop when found.
                             }
                             break;
 
-            case CMRI_ETXD: state = CMRI_ETX;                   // Ignore character, resume scanning for ETX.
+            case CMRI_ETXD: cmriState = CMRI_ETX;               // Ignore character, resume scanning for ETX.
                             break;
 
-            default:        systemFail(M_CMRI, state);          // Unexpected state.
-                            state = CMRI_ETX;
+            default:        error("State", -1, cmriState);      // Unexpected state.
                             break;
         }
 
         // Message is finished when we return to IDLE state.
-        if (state == CMRI_IDLE)
+        if (cmriState == CMRI_IDLE)
         {
             // Show message on display.
-            if (systemMgr.isReportEnabled(REPORT_SHORT))
+            if (   (systemMgr.isReportEnabled(REPORT_SHORT))
+                && (messageType != TYPE_POLL))
             {
-                disp.printHexByteAt(LCD_COL_CMRI + 5, LCD_ROW_TOP, messageLength);
+                disp.printHexByteAt(-2, LCD_ROW_EDT, messageLength);
+                controller.setDisplayTimeout(systemMgr.getReportDelay());
             }
-            
             processEndOfMessage();
         }
-
-        controller.setDisplayTimeout(systemMgr.getReportDelay());
     }
 
 
-    /** Check the expected character arrives and move to the next state.
-     */
-    void cmriCheck(uint8_t aExpected, CmriState aNextState)
-    {
-        if (currentByte == aExpected)
-        {
-            state = aNextState;         // Move to next state.
-        }
-        else
-        {
-            state  = CMRI_ETX;          // Ignore everything till CHAR_ETX.
-            systemFail(M_CMRI, currentByte);
-        }
-    }
+//    /** Check the expected character arrives and move to the next state.
+//     */
+//    void cmriCheck(uint8_t aExpected, CmriState aNextState)
+//    {
+//        if (currentByte == aExpected)
+//        {
+//            state = aNextState;         // Move to next state.
+//        }
+//        else
+//        {
+//            error("Expected", aExpected, currentByte);
+//        }
+//    }
 
 
     /** Process the current byte as data.
@@ -202,7 +216,7 @@ class Cmri
         {
             case TYPE_INIT:     switch (messageLength)
                                 {
-                                    case 0:  node = currentByte;
+                                    case 0:  nodeType = currentByte;
                                              break;
                     
                                     case 1:  transDelay = currentByte << 8;
@@ -213,34 +227,37 @@ class Cmri
                     
                                     case 3:  sets = currentByte;
                     
-//                                             // Show message on display.
-//                                             if (systemMgr.isReportEnabled(REPORT_SHORT))
-//                                             {
-//                                                 disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_DET, node);
-//                                                 disp.printHexByteAt(LCD_COL_CMRI + 3, LCD_ROW_DET, (transDelay >> 8) & 0xff);
-//                                                 disp.printHexByte  (transDelay & 0xff);
-//                                                 disp.printHexByteAt(LCD_COL_CMRI + 8, LCD_ROW_DET, sets);
-//                                             }
-                    
+                                             // Show message on display.
+                                             if (systemMgr.isReportEnabled(REPORT_SHORT))
+                                             {
+                                                 disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_BOT, nodeType);
+                                                 disp.printHexByteAt(LCD_COL_CMRI + 3, LCD_ROW_BOT, (transDelay >> 8) & 0xff);
+                                                 disp.printHexByte  (transDelay & 0xff);
+                                                 disp.printHexByteAt(LCD_COL_CMRI + 8, LCD_ROW_BOT, sets);
+                                                 controller.setDisplayTimeout(systemMgr.getReportDelay());
+                                             }
                                              break;
                     
-                                    default: systemFail(M_CMRI, messageLength);
+                                    default: // Ignore any subsequent data
+                                             // error("Init len", messageLength);
                                              break;
                                 }
                                 break;
 
-            case TYPE_TRANSMIT: if (systemMgr.isReportEnabled(REPORT_SHORT))
+            case TYPE_TRANSMIT: // TODO - handle incomming byte.
+            
+                                if (systemMgr.isReportEnabled(REPORT_SHORT))
                                 {
-                                    disp.printHexByteAt(messageLength * 3, LCD_ROW_DET, currentByte);
+                                    disp.printHexByteAt(messageLength * 3, LCD_ROW_BOT, currentByte);
                                 }
-                                
-                                // TODO - handle incomming byte.
+
                                 break;
 
             case TYPE_POLL:
-            case TYPE_RECEIVE:  break;
+            case TYPE_RECEIVE:
+            case TYPE_ERROR:    break;
 
-            default:            systemFail(M_CMRI, messageType);
+            default:            error("Type", -1, messageType);
                                 break;
         }
 
@@ -254,12 +271,14 @@ class Cmri
      */
     void processEndOfMessage()
     {
+        // If message was a poll, respond with the current state.
         if (messageType == TYPE_POLL)
         {
+            delay(50);                      // tiny delay to let things recover
             sendByte(CHAR_SYN, false);
             sendByte(CHAR_SYN, false);
             sendByte(CHAR_STX, false);
-            sendByte(node, false);
+            sendByte(address,  false);
             sendByte(TYPE_RECEIVE, false);
 
             for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
@@ -270,7 +289,7 @@ class Cmri
             }
 
             sendByte(CHAR_ETX, false);
-            stream.flush();
+            //stream.flush();
         }
     }
 
@@ -289,6 +308,37 @@ class Cmri
             }
         }
         stream.write(aByte);
+    }
+
+
+    /** Report an error in the protocol.
+     */
+    void error(const char* aMessage, int aOptional, uint8_t aByte)
+    {
+        cmriState = CMRI_ETX;           // Skip till an ETX
+        nodeType  = TYPE_ERROR;         // Ensure message isn't processed
+
+        // Display the error.
+        if (   (systemMgr.isReportEnabled(REPORT_SHORT)))
+        {
+            disp.clearBottomRows();
+            disp.printProgStrAt(LCD_COL_START,    LCD_ROW_EDT, M_CMRI);
+            disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_EDT, address);
+            disp.printHexByteAt(LCD_COL_CMRI + 3, LCD_ROW_EDT, messageType);
+            disp.printHexByteAt(-2,               LCD_ROW_EDT, messageLength);
+
+            // disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_FAILURE);
+            disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
+            disp.printStr(aMessage);
+            if (aOptional >= 0)
+            {
+                disp.printHexByteAt(-5, LCD_ROW_BOT, aOptional);
+            }
+            disp.printHexByteAt(-2, LCD_ROW_BOT, aByte);
+
+            controller.setDisplayTimeout(DELAY_FAIL);
+        }
+        // delay(5000);
     }
 };
 

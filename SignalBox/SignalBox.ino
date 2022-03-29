@@ -452,7 +452,7 @@ void loop()
 #endif
     
     // Check for input on the Serial line, and handle it.
-    command.update();
+    // command.update();
 
     // See if there are any Gateway requests
     if (millis() > tickGateway)
