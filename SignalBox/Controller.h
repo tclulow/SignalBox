@@ -200,6 +200,10 @@ class Controller
                     inputState[node] = pins;
                 }
             }
+            else
+            {
+                inputState[node] = 0xffff;
+            }
         }
     }
 
