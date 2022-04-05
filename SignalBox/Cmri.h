@@ -190,13 +190,13 @@ class Cmri
         // Message is finished when we return to IDLE state.
         if (cmriState == CMRI_IDLE)
         {
-            // Show message on display.
-            if (   (systemMgr.isReportEnabled(REPORT_SHORT))
-                && (messageType != TYPE_POLL))
-            {
-                disp.printHexByteAt(-2, LCD_ROW_EDT, messageLength);
-                controller.setDisplayTimeout(systemMgr.getReportDelay());
-            }
+//            // Show message on display.
+//            if (   (systemMgr.isReportEnabled(REPORT_SHORT))
+//                && (messageType != TYPE_POLL))
+//            {
+//                disp.printHexByteAt(-2, LCD_ROW_EDT, messageLength);
+//                controller.setDisplayTimeout(systemMgr.getReportDelay());
+//            }
             processEndOfMessage();
         }
     }
