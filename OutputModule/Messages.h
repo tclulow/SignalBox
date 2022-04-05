@@ -25,14 +25,14 @@
 #elif SB_OUTPUT_MODULE
     const char M_SOFTWARE[]     PROGMEM = "Output module";
 #endif
-const char M_VERSION[]          PROGMEM = "v4.2.2";        // See also SystemMgr.VERSION.
-const char M_VERSION_DATE[]     PROGMEM = "Mar 22";
+const char M_VERSION[]          PROGMEM = "v4.2.3";        // See also SystemMgr.VERSION.
+const char M_VERSION_DATE[]     PROGMEM = "Apr 22";
 const char M_INIT_I2C[]         PROGMEM = "Init I2C";
 const char M_STARTUP[]          PROGMEM = "Startup";
 const char M_UPDATE[]           PROGMEM = "Update";
 const char M_UNKNOWN[]          PROGMEM = "Unknown";
 const char M_GATEWAY[]          PROGMEM = "Gateway";
-const char M_CMRI[]             PROGMEM = "Cmri";
+// const char M_CMRI[]             PROGMEM = "Cmri";
 
 
 // General messages (shared)
