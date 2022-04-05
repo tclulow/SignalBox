@@ -77,7 +77,6 @@ const long    STEP_FLASH               =    10;   // Step flashers (FLASH or BLI
 
 
 // Operational constants
-//const uint8_t MAX_PACE                 =   124;   // Maximum pace value.
 const uint8_t PACE_STEPS               =   128;   // Pace adjustment when converting to steps.
 
 const long    SIGNAL_PAUSE_CHANCE      =    80;   // Percentage chance a signal may pause when being raised.

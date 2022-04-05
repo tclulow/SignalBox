@@ -32,6 +32,7 @@ const char M_STARTUP[]          PROGMEM = "Startup";
 const char M_UPDATE[]           PROGMEM = "Update";
 const char M_UNKNOWN[]          PROGMEM = "Unknown";
 const char M_GATEWAY[]          PROGMEM = "Gateway";
+const char M_CMRI[]             PROGMEM = "Cmri";
 
 
 // General messages (shared)
