@@ -458,7 +458,7 @@ void loop()
 #endif
 
 #if SERIAL_COMMAND
-#if SEWRIAL_CMRI
+#if SERIAL_CMRI
     if (cmri.isIdle())      // Don't interfere with CMRI if it's busy.
 #endif
     {
