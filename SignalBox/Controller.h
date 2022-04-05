@@ -208,76 +208,13 @@ class Controller
     }
 
 
-    /** Process the changed input.
+    /** Process the changed input for the specified Input.
      *  aState is the state of the input switch.
      */
-    void processInput(bool aState)
+    void processInput(uint8_t aNode, uint8_t aPin, bool aState)
     {
-        bool newState = aState;
-        uint8_t first    = 0;
-        uint8_t node     = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
-        uint8_t pin      = (inputNumber                    ) & INPUT_PIN_MASK;
-
-        // Process all input state changes for Toggles, only state going low for other Input types.
-        if (   (!aState)
-            || (inputType == INPUT_TYPE_TOGGLE))
-        {
-            // Set desired new state based on Input's type/state and Output's state.
-            switch (inputType)
-            {
-                case INPUT_TYPE_TOGGLE: // newState = aState;      // Set state to that of the Toggle.
-                                        break;
-
-                case INPUT_TYPE_ON_OFF: // Find first real output (not a delay) to determine new state.
-                                        first = inputDef.getFirstOutput();
-                                        newState = !getOutputState(inputDef.getOutputNode(first), inputDef.getOutputPin(first));
-                                        break;
-
-                case INPUT_TYPE_ON:     newState = true;            // Set the state.
-                                        break;
-
-                case INPUT_TYPE_OFF:    newState = false;           // Clear the state.
-                                        break;
-            }
-
-            // Report state change if reporting enabled.
-            if (systemMgr.isReportEnabled(REPORT_SHORT))
-            {
-                disp.clearBottomRows();
-                disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
-                disp.printProgStrAt(LCD_COL_STATE, LCD_ROW_EDT, (newState ? M_HI : M_LO));
-                disp.printHexChAt(LCD_COL_NODE,    LCD_ROW_EDT, node);
-                disp.printHexChAt(LCD_COL_PIN,     LCD_ROW_EDT, pin);
-                disp.setCursor(LCD_COL_START + 1,  LCD_ROW_BOT);
-                setDisplayTimeout(systemMgr.getReportDelay());
-            }
-
-            if (isDebug(DEBUG_BRIEF))
-            {
-                Serial.print(millis());
-                Serial.print(CHAR_TAB);
-                Serial.print(PGMT(M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]));
-                Serial.print(PGMT(M_DEBUG_STATE));
-                Serial.print(PGMT(newState ? M_HI : M_LO));
-                Serial.print(PGMT(M_DEBUG_NODE));
-                Serial.print(node, HEX);
-                Serial.print(PGMT(M_DEBUG_PIN));
-                Serial.print(pin,  HEX);
-                Serial.println();
-            }
-
-            // If not locked, process the Input's Outputs.
-            if (!isLocked(newState))
-            {
-                i2cComms.sendGateway((newState ? COMMS_CMD_INP_HI : COMMS_CMD_INP_LO) | pin, node, -1);
-                processInputOutputs(newState);
-            }
-
-            if (isDebug(DEBUG_BRIEF))
-            {
-                Serial.println();
-            }
-        }
+        inputMgr.loadInput(aNode, aPin);
+        processInput(aState);
     }
 
 
@@ -415,6 +352,79 @@ class Controller
 
 
     private:
+
+    /** Process the changed input for the current Input.
+     *  aState is the state of the input switch.
+     */
+    void processInput(bool aState)
+    {
+        bool newState = aState;
+        uint8_t first    = 0;
+        uint8_t node     = (inputNumber >> INPUT_NODE_SHIFT) & INPUT_NODE_MASK;
+        uint8_t pin      = (inputNumber                    ) & INPUT_PIN_MASK;
+
+        // Process all input state changes for Toggles, only state going low for other Input types.
+        if (   (!aState)
+            || (inputType == INPUT_TYPE_TOGGLE))
+        {
+            // Set desired new state based on Input's type/state and Output's state.
+            switch (inputType)
+            {
+                case INPUT_TYPE_TOGGLE: // newState = aState;      // Set state to that of the Toggle.
+                                        break;
+
+                case INPUT_TYPE_ON_OFF: // Find first real output (not a delay) to determine new state.
+                                        first = inputDef.getFirstOutput();
+                                        newState = !getOutputState(inputDef.getOutputNode(first), inputDef.getOutputPin(first));
+                                        break;
+
+                case INPUT_TYPE_ON:     newState = true;            // Set the state.
+                                        break;
+
+                case INPUT_TYPE_OFF:    newState = false;           // Clear the state.
+                                        break;
+            }
+
+            // Report state change if reporting enabled.
+            if (systemMgr.isReportEnabled(REPORT_SHORT))
+            {
+                disp.clearBottomRows();
+                disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]);
+                disp.printProgStrAt(LCD_COL_STATE, LCD_ROW_EDT, (newState ? M_HI : M_LO));
+                disp.printHexChAt(LCD_COL_NODE,    LCD_ROW_EDT, node);
+                disp.printHexChAt(LCD_COL_PIN,     LCD_ROW_EDT, pin);
+                disp.setCursor(LCD_COL_START + 1,  LCD_ROW_BOT);
+                setDisplayTimeout(systemMgr.getReportDelay());
+            }
+
+            if (isDebug(DEBUG_BRIEF))
+            {
+                Serial.print(millis());
+                Serial.print(CHAR_TAB);
+                Serial.print(PGMT(M_INPUT_TYPES[inputType & INPUT_TYPE_MASK]));
+                Serial.print(PGMT(M_DEBUG_STATE));
+                Serial.print(PGMT(newState ? M_HI : M_LO));
+                Serial.print(PGMT(M_DEBUG_NODE));
+                Serial.print(node, HEX);
+                Serial.print(PGMT(M_DEBUG_PIN));
+                Serial.print(pin,  HEX);
+                Serial.println();
+            }
+
+            // If not locked, process the Input's Outputs.
+            if (!isLocked(newState))
+            {
+                i2cComms.sendGateway((newState ? COMMS_CMD_INP_HI : COMMS_CMD_INP_LO) | pin, node, -1);
+                processInputOutputs(newState);
+            }
+
+            if (isDebug(DEBUG_BRIEF))
+            {
+                Serial.println();
+            }
+        }
+    }
+
 
     /** Scan for attached Input hardware.
      */

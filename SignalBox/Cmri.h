@@ -81,7 +81,7 @@ class Cmri
     /** Is the handler idle?
      *  Not currently receiving a message.
      */
-    boolean isIdle()
+    bool isIdle()
     {
         return cmriState == CMRI_IDLE;
     }
@@ -272,6 +272,11 @@ class Cmri
      */
     void processTransByte()
     {
+//        if (systemMgr.isReportEnabled(REPORT_SHORT))
+//        {
+//            disp.printHexByteAt(messageLength * 3, LCD_ROW_BOT, currentByte);
+//        }
+
         uint8_t node = (messageLength    ) >> 1;      // Two bytes per node, so divide by 2.
         uint8_t pin  = (messageLength & 1) << 3;      // Start at pin zero, or pin 8 if second byte;
         
@@ -279,8 +284,7 @@ class Cmri
         {
             if ((currentByte & mask) != 0)          // CMRI signal high means fire the input.
             {
-                inputMgr.loadInput(node, pin);
-                controller.processInput(false);
+                controller.processInput(node, pin, false);
             }
         }
     }

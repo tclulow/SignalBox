@@ -65,7 +65,7 @@ class Command
     /** Is the handler idle?
      *  Not currently receiving a command.
      */
-    boolean isIdle()
+    bool isIdle()
     {
         return commandLen == 0;
     }
@@ -107,8 +107,7 @@ class Command
                 case 'i': if (   (node < INPUT_NODE_MAX)
                               && (pin  < INPUT_PIN_MAX))
                           {
-                              inputMgr.loadInput(node, pin);
-                              controller.processInput(false);
+                              controller.processInput(node, pin, false);
                               executed = true;
                           }
                           break;
