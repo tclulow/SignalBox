@@ -112,7 +112,8 @@ class Cmri
                             }
                             else
                             {
-                                error("Syn ", CHAR_SYN, currentByte);
+                                cmriState = CMRI_ETX;
+//                                error("Syn ", CHAR_SYN, currentByte);
                             }
                             break;
                     
@@ -122,7 +123,8 @@ class Cmri
                             }
                             else
                             {
-                                error("Stx ", CHAR_STX, currentByte);
+                                cmriState = CMRI_ETX;
+//                                error("Stx ", CHAR_STX, currentByte);
                             }
                             break;
 
@@ -183,7 +185,8 @@ class Cmri
             case CMRI_ETXD: cmriState = CMRI_ETX;               // Ignore character, resume scanning for ETX.
                             break;
 
-            default:        error("State", -1, cmriState);      // Unexpected state.
+            default:        cmriState = CMRI_ETX;
+//                            error("State", -1, cmriState);      // Unexpected state.
                             break;
         }
 
@@ -260,8 +263,8 @@ class Cmri
             case TYPE_RECEIVE:
             case TYPE_ERROR:    break;
 
-            default:            error("Type", -1, messageType);
-                                break;
+//            default:            error("Type", -1, messageType);
+//                                break;
         }
 
         messageLength += 1;     // Record that a character has been processed.
@@ -336,35 +339,35 @@ class Cmri
     }
 
 
-    /** Report an error in the protocol.
-     */
-    void error(const char* aMessage, int aOptional, uint8_t aByte)
-    {
-        cmriState = CMRI_ETX;           // Skip till an ETX
-        nodeType  = TYPE_ERROR;         // Ensure message isn't processed
-
-        // Display the error.
-        if (   (systemMgr.isReportEnabled(REPORT_SHORT)))
-        {
-            disp.clearBottomRows();
-            disp.printProgStrAt(LCD_COL_START,    LCD_ROW_EDT, M_CMRI);
-            disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_EDT, address);
-            disp.printHexByteAt(LCD_COL_CMRI + 3, LCD_ROW_EDT, messageType);
-            disp.printHexByteAt(-2,               LCD_ROW_EDT, messageLength);
-
-            // disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_FAILURE);
-            disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
-            disp.printStr(aMessage);
-            if (aOptional >= 0)
-            {
-                disp.printHexByteAt(-5, LCD_ROW_BOT, aOptional);
-            }
-            disp.printHexByteAt(-2, LCD_ROW_BOT, aByte);
-
-            controller.setDisplayTimeout(DELAY_FAIL);
-        }
-        // delay(5000);
-    }
+//    /** Report an error in the protocol.
+//     */
+//    void error(const char* aMessage, int aOptional, uint8_t aByte)
+//    {
+//        cmriState = CMRI_ETX;           // Skip till an ETX
+//        nodeType  = TYPE_ERROR;         // Ensure message isn't processed
+//
+//        // Display the error.
+//        if (   (systemMgr.isReportEnabled(REPORT_SHORT)))
+//        {
+//            disp.clearBottomRows();
+//            disp.printProgStrAt(LCD_COL_START,    LCD_ROW_EDT, M_CMRI);
+//            disp.printHexByteAt(LCD_COL_CMRI,     LCD_ROW_EDT, address);
+//            disp.printHexByteAt(LCD_COL_CMRI + 3, LCD_ROW_EDT, messageType);
+//            disp.printHexByteAt(-2,               LCD_ROW_EDT, messageLength);
+//
+//            // disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_FAILURE);
+//            disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
+//            disp.printStr(aMessage);
+//            if (aOptional >= 0)
+//            {
+//                disp.printHexByteAt(-5, LCD_ROW_BOT, aOptional);
+//            }
+//            disp.printHexByteAt(-2, LCD_ROW_BOT, aByte);
+//
+//            controller.setDisplayTimeout(DELAY_FAIL);
+//        }
+//        // delay(5000);
+//    }
 };
 
 

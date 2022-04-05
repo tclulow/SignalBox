@@ -15,7 +15,7 @@
 
 
 // Remove all debug code using this definition.
-#define isDebug(x) (false)
+// #define isDebug(x) (false)
 
 // Include serial handlers
 #define SERIAL_CMRI             true    // Include serial CMRI processing.
