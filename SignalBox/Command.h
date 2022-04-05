@@ -34,28 +34,40 @@ class Command
     void update()
     {
         // Look for command characters
-        while (Serial.available() > 0)
+        if (Serial.available() > 0)
         {
-            char ch = Serial.read();
-            if (ch == CHAR_RETURN)
+            if (   (commandLen > 0)                     // Already processing a command.
+                || (Serial.peek() != CHAR_SYN))         // Or character can't be a CMRI start-of-message
             {
-                // Ignore carriage-return
-            }
-            else if (ch == CHAR_NEWLINE)
-            {
-                // Process the received command
-                if (commandLen > 0)
+                char ch = Serial.read();
+                if (ch == CHAR_RETURN)
                 {
-                    commandBuffer[commandLen] = CHAR_NULL;
-                    processCommand();
-                    commandLen = 0;
+                    // Ignore carriage-return
+                }
+                else if (ch == CHAR_NEWLINE)
+                {
+                    if (commandLen > 0)                 // Process the received command
+                    {
+                        commandBuffer[commandLen] = CHAR_NULL;
+                        processCommand();
+                        commandLen = 0;
+                    }
+                }
+                else if (commandLen <= COMMAND_BUFFER_LEN)
+                {
+                    commandBuffer[commandLen++] = ch;   // Add the character to the command.
                 }
             }
-            else if (commandLen <= COMMAND_BUFFER_LEN)
-            {
-                commandBuffer[commandLen++] = ch;
-            }
         }
+    }
+
+
+    /** Is the handler idle?
+     *  Not currently receiving a command.
+     */
+    boolean isIdle()
+    {
+        return commandLen == 0;
     }
 
 
@@ -142,11 +154,6 @@ class Command
         }
     }
 };
-
-
-/** Singleton instance.
- */
-Command command;
 
 
 #endif

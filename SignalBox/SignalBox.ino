@@ -206,8 +206,6 @@ void firstRun()
 }
 
 
-
-
 /** See if there's a Gateway request.
  *  Process the request.
  *  Return true if work done.
@@ -321,9 +319,13 @@ void reportPause()
 
 
 // Ticking
-unsigned long tickGateway = 0L;      // Time for next gateway request.
+unsigned long tickGateway = 0L;     // Time for next gateway request.
 
-#if CMRI_HANDLER
+#if SERIAL_COMMAND
+Command command;                    // Serial command handler.
+#endif
+
+#if SERIAL_CMRI
 /** Cmri handler using Serial. */
 Cmri cmri(Serial);
 #endif
@@ -446,13 +448,23 @@ void loop()
         controller.announce();
     }
 
-#if CMRI_HANDLER
-    // Check for CMRI message.
-    cmri.update();
+#if SERIAL_CMRI
+#if SERIAL_COMMAND
+    if (command.isIdle())   // Don't interfere with command if it's busy.
 #endif
-    
-    // Check for input on the Serial line, and handle it.
-    // command.update();
+    {
+        cmri.update();      // Handle CMRI processing
+    }
+#endif
+
+#if SERIAL_COMMAND
+#if SEWRIAL_CMRI
+    if (cmri.isIdle())      // Don't interfere with CMRI if it's busy.
+#endif
+    {
+        command.update();   // Handle serial command processing.
+    }
+#endif
 
     // See if there are any Gateway requests
     if (millis() > tickGateway)

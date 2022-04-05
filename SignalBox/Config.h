@@ -17,13 +17,14 @@
 // Remove all debug code using this definition.
 // #define isDebug(x) (false)
 
-// Attached LCD displays.
-#define LCD_I2C                true     // Include code for LCD connected by I2C.
-#define LCD_SHIELD             false    // Assume LCD shield present (or not). If false, use LCD_SHIELD_DETECT_PIN.
-#define LCD_SHIELD_DETECT_PIN  11       // Use this pin (must be low) to detect presence of LCD shield. If zero, don't detect.
+// Include serial handlers
+#define SERIAL_CMRI             true    // Include serial CMRI processing.
+#define SERIAL_COMMAND          false    // Include serial command processing.
 
-// CMRI handler
-#define CMRI_HANDLER           true     // Include CMRI handling code.
+// Attached LCD displays.
+#define LCD_I2C                 true    // Include code for LCD connected by I2C.
+#define LCD_SHIELD              false   // Assume LCD shield present (or not). If false, use LCD_SHIELD_DETECT_PIN.
+#define LCD_SHIELD_DETECT_PIN   11      // Use this pin (must be low) to detect presence of LCD shield. If zero, don't detect.
 
 
 /** Configuration constants.
