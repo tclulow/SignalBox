@@ -97,7 +97,7 @@ class Command
         }
     
         // Expect three characters, command, nodeId, pinId
-        if (strlen(commandBuffer) == 3)
+        if (commandLen == 3)
         {
             node = charToHex(commandBuffer[1]);
             pin  = charToHex(commandBuffer[2]);
