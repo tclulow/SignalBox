@@ -15,11 +15,14 @@
 
 
 // Remove all debug code using this definition.
-#define isDebug(x) (false)
+// #define isDebug(x) (false)
 
 // Include serial handlers
 #define SERIAL_CMRI             true    // Include serial CMRI processing.
 #define SERIAL_COMMAND          true    // Include serial command processing.
+
+// Gateway I2C node.
+#define I2C_GATEWAY_ID          0       // Gateway ID (normally 0x11) or 0 to disable gateway code.
 
 // Attached LCD displays.
 #define LCD_I2C                 true    // Include code for LCD connected by I2C.

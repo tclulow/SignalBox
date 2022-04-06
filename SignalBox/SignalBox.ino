@@ -319,7 +319,7 @@ void reportPause()
 
 
 // Ticking
-unsigned long tickGateway = 0L;     // Time for next gateway request.
+//unsigned long tickGateway = 0L;     // Time for next gateway request.
 
 #if SERIAL_COMMAND
 Command command;                    // Serial command handler.
@@ -466,6 +466,7 @@ void loop()
     }
 #endif
 
+#if I2C_GATEWAY_ID
     // See if there are any Gateway requests
     if (millis() > tickGateway)
     {
@@ -474,6 +475,7 @@ void loop()
             tickGateway = millis() + STEP_GATEWAY;
         }
     }
+#endif
 
     // Show heartbeat, sound buzzer, etc.
     controller.update();
