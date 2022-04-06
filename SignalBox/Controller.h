@@ -21,16 +21,18 @@ class Controller
 {
     private:
 
-    long     tickHardwareScan = 0L;         // Time for next scan for hardware.
-    long     tickInputScan    = 0L;         // Time for next scan of input switches.
-    long     tickHeartBeat    = 0L;         // Time for next heartbeat.
+    unsigned long tickHardwareScan = 0L;        // Time for next scan for hardware.
+    unsigned long tickInputScan    = 0L;        // Time for next scan of input switches.
+    unsigned long tickGateway      = 0L;        // Time for next gateway request.
 
-    long     displayTimeout   = 1L;         // Timeout for the display when important messages are showing.
-                                            // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
-    long     timeoutInterlock = 0L;         // Timeout for interlock warning to be reset.
-    long     timeoutBuzzer    = 0L;         // Time at which buzzer2 sound should be made.
+    unsigned long tickHeartBeat    = 0L;        // Time for next heartbeat.
 
-    uint16_t inputState[INPUT_NODE_MAX];    // Current state of inputs.
+    unsigned long displayTimeout   = 1L;        // Timeout for the display when important messages are showing.
+                                                // Using 1 forces an initial redisplay unless a start-up process has requested a delay.
+    unsigned long timeoutInterlock = 0L;        // Timeout for interlock warning to be reset.
+    unsigned long timeoutBuzzer    = 0L;        // Time at which buzzer2 sound should be made.
+
+    uint16_t      inputState[INPUT_NODE_MAX];   // Current state of inputs.
 
 
     public:
@@ -53,7 +55,7 @@ class Controller
      */
     void update()
     {
-        long now = millis();
+        unsigned long now = millis();
 
         if (INTERLOCK_WARNING_PIN > 0)
         {
@@ -92,6 +94,17 @@ class Controller
             scanInputs(NULL);
         }
     
+#if I2C_GATEWAY_ID
+        // See if there are any Gateway requests
+        if (now > tickGateway)
+        {
+            if (!gatewayRequest())
+            {
+                tickGateway = now + STEP_GATEWAY;
+            }
+        }
+#endif
+
         // If display timeout has expired, clear it.
         if (   (displayTimeout > 0)
             && (now > displayTimeout))
@@ -638,6 +651,62 @@ class Controller
         }
 
         return false;
+    }
+
+
+    /** See if there's a Gateway request.
+     *  Process the request.
+     *  Return true if work done.
+     */
+    bool gatewayRequest()
+    {
+        bool workDone = false;
+    
+        i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_GATEWAY, -1, -1);
+        if (i2cComms.requestGateway())
+        {
+            uint8_t command = i2cComms.readByte();
+            uint8_t node    = i2cComms.readByte();
+            uint8_t option  = command & COMMS_OPTION_MASK;
+            // uint8_t pin     = option & OUTPUT_PIN_MASK;
+    
+            command &= COMMS_COMMAND_MASK;
+    
+            switch (command)
+            {
+                case COMMS_CMD_SYSTEM: if (option == COMMS_SYS_OUT_STATES)
+                                       {
+                                           i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_OUT_STATES, getOutputStates(node), -1);
+                                           workDone = true;
+                                       }
+                                       else if (option == COMMS_SYS_INP_STATES)
+                                       {
+                                           i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_INP_STATES,
+                                                                (getInputState(node) >> 8) & 0xFF,
+                                                                (getInputState(node)     ) & 0xFF);
+                                           workDone = true;
+                                       }
+                                       else
+                                       {
+                                           systemFail(M_GATEWAY, command | option);
+                                       }
+                                       break;
+    
+                case COMMS_CMD_NONE:   break;
+    
+                default:               systemFail(M_GATEWAY, command | option);
+                                       break;
+            }
+        }
+    //    else
+    //    {
+    //        // Turn off Gateway if there's a comms error.
+    //        i2cComms.setGateway(0);
+    //    }
+    
+        i2cComms.readAll();
+    
+        return workDone;
     }
 };
 

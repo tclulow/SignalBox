@@ -206,62 +206,6 @@ void firstRun()
 }
 
 
-/** See if there's a Gateway request.
- *  Process the request.
- *  Return true if work done.
- */
-bool gatewayRequest()
-{
-    bool workDone = false;
-
-    i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_GATEWAY, -1, -1);
-    if (i2cComms.requestGateway())
-    {
-        uint8_t command = i2cComms.readByte();
-        uint8_t node    = i2cComms.readByte();
-        uint8_t option  = command & COMMS_OPTION_MASK;
-        // uint8_t pin     = option & OUTPUT_PIN_MASK;
-
-        command &= COMMS_COMMAND_MASK;
-
-        switch (command)
-        {
-            case COMMS_CMD_SYSTEM: if (option == COMMS_SYS_OUT_STATES)
-                                   {
-                                       i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_OUT_STATES, getOutputStates(node), -1);
-                                       workDone = true;
-                                   }
-                                   else if (option == COMMS_SYS_INP_STATES)
-                                   {
-                                       i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_INP_STATES,
-                                                            (controller.getInputState(node) >> 8) & 0xFF,
-                                                            (controller.getInputState(node)     ) & 0xFF);
-                                       workDone = true;
-                                   }
-                                   else
-                                   {
-                                       systemFail(M_GATEWAY, command | option);
-                                   }
-                                   break;
-
-            case COMMS_CMD_NONE:   break;
-
-            default:               systemFail(M_GATEWAY, command | option);
-                                   break;
-        }
-    }
-//    else
-//    {
-//        // Turn off Gateway if there's a comms error.
-//        i2cComms.setGateway(0);
-//    }
-
-    i2cComms.readAll();
-
-    return workDone;
-}
-
-
 /** Pause for user-input if so configured.
  *  Use buttons to adjust report level.
  */
@@ -318,16 +262,12 @@ void reportPause()
 //}
 
 
-// Ticking
-//unsigned long tickGateway = 0L;     // Time for next gateway request.
-
 #if SERIAL_COMMAND
 Command command;                    // Serial command handler.
 #endif
 
 #if SERIAL_CMRI
-/** Cmri handler using Serial. */
-Cmri cmri(Serial);
+Cmri cmri(Serial);                  // Cmri handler using Serial.
 #endif
 
 
@@ -463,17 +403,6 @@ void loop()
 #endif
     {
         command.update();   // Handle serial command processing.
-    }
-#endif
-
-#if I2C_GATEWAY_ID
-    // See if there are any Gateway requests
-    if (millis() > tickGateway)
-    {
-        if (!gatewayRequest())
-        {
-            tickGateway = millis() + STEP_GATEWAY;
-        }
     }
 #endif
 
