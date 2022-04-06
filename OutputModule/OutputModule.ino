@@ -91,7 +91,7 @@ static const uint8_t ROAD_UK_NEXT_PHASE[] = { 2, 3, 1, 0 }; // Representation of
 static const uint8_t ROAD_RW_NEXT_PHASE[] = { 2, 0, 1, 1 }; // Representation of table above for ROADRW.
 
 //                                                                   Other     This
-// States where the pin is forced off (both outputs low)    // State 3 2 1 0   3 2 1 0
+// Phases where the pin is forced off (both outputs low)    // Phase 3 2 1 0   3 2 1 0
 static const uint8_t LED_4_OFF = 0x92;                      //       1 0 0 1   0 0 1 0 = 0x92.
 static const uint8_t ROAD_OFF  = 0x52;                      //       0 1 0 1   0 0 1 0 = 0x52.
 
@@ -1014,8 +1014,8 @@ bool actionLed(uint8_t aPin, bool aState)
  */
 bool actionDoubleLed(uint8_t aPin, bool aState)
 {
-    bool newState = aState;      // Might want to change the state.
-    bool ledState = false;
+    bool    newState = aState;      // Might want to override the state change.
+    bool    ledState = false;
     uint8_t ledPin   = aPin - 1;
     uint8_t offFlag  = (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4) ? LED_4_OFF : ROAD_OFF;
     uint8_t oldPhase = (outputDefs[ledPin].getState()     )     // Convert state of both outputs to a phase.
@@ -1067,19 +1067,19 @@ bool actionDoubleLed(uint8_t aPin, bool aState)
         outputs[ledPin].target    = ledState ? outputDefs[ledPin].getHi() : 0;
         outputs[ledPin].altTarget = ledState ? 0 : outputDefs[ledPin].getLo();
 
-        // Force off if states demand it.
-        if (offFlag & (0x10 << newPhase))
+        // Force off if phase demands it.
+        if (offFlag & (0x10 << newPhase))                           // LED pin in upper-nibble of offFlag.
         {
             outputs[ledPin].target    = 0;
             outputs[ledPin].altTarget = 0;
         }
-        if (offFlag & (0x01 << newPhase))
+        if (offFlag & (0x01 << newPhase))                           // LED_4/ROAD pin in lower-nibble of offFlag.
         {
             outputs[aPin].target    = 0;
             outputs[aPin].altTarget = 0;
         }
 
-        // Save the new state if persisting is enabled.
+        // Save the new state (of the LED pin) if persisting is enabled.
         if (persisting)
         {
             outputMgr.saveOutput(ledPin);
@@ -1362,7 +1362,7 @@ void stepServo(uint8_t aPin)
         digitalWrite(ioPins[aPin], outputs[aPin].step <= (outputs[aPin].steps >> 1));
     }
 
-    // Move Servo to new state.
+    // Move Servo to new position.
     outputs[aPin].servo.write(outputs[aPin].value);
 
     // Report activity if debug level high enough.
@@ -1690,32 +1690,18 @@ void loop()
     // Record the time now
     now = millis();
 
-//  // Metrics
-//  count += 1;
-//  if ((now - start) > 1000L)
-//  {
-//    Serial.println();
-//    Serial.print(now);
-//    Serial.print(": ");
-//    Serial.print(count);
-//    Serial.println();
-//
-//    count = 0;
-//    start = now;
-//  }
-//
-//    // DEBUG tests.
-//    if (   (now > 5000)
-//        && (testRun == 0))
+//    // Metrics
+//    count += 1;
+//    if ((now - start) > 1000L)
 //    {
-//        test1();
-//        testRun += 1;
-//    }
-//    if (   (now > 15000)
-//        && (testRun == 1))
-//    {
-//        test2();
-//        testRun += 1;
+//        Serial.println();
+//        Serial.print(now);
+//        Serial.print(": ");
+//        Serial.print(count);
+//        Serial.println();
+//        
+//        count = 0;
+//        start = now;
 //    }
 
     // Every STEP_SERVO msecs, step the servos if necessary
