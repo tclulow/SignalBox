@@ -318,15 +318,20 @@ class Controller
                 Serial.println();
             }
 
-            // Action the Output state change.
-            writeOutputState(outNode, outPin, aState, endDelay);
-
-            // Recover all states from output module (in case a double-LED has changed one).
-            readOutputStates(outNode);
-            // setOutputState(outNode, outPin, aState);
+            processOutput(outNode, outPin, aState, endDelay);
         }
 
         return endDelay;
+    }
+
+
+    /** Action an Output state change.
+     */
+    void processOutput(uint8_t aNode, uint8_t aPin, bool aState, uint8_t aDelay)
+    {
+        writeOutputState(aNode, aPin, aState, aDelay);      // Action the Output state change.
+        readOutputStates(aNode);                            // Recover all states from output module (in case a double-LED has changed one).
+        // setOutputState(aNode, aPin, aState);
     }
 
 

@@ -119,8 +119,7 @@ class Command
                 case 'h': if (   (node < OUTPUT_NODE_MAX)
                               && (pin  < OUTPUT_PIN_MAX))
                           {
-                              writeOutputState(node, pin, state, 0);
-                              readOutputStates(node);                   // Recover states in case LED_4 has moved one.
+                              controller.processOutput(node, pin, state, 0);
                               executed = true;
                           }
                           break;

@@ -113,7 +113,7 @@ class Cmri
                             else
                             {
                                 cmriState = CMRI_ETX;
-//                                error("Syn ", CHAR_SYN, currentByte);
+                                // error("Syn ", CHAR_SYN, currentByte);
                             }
                             break;
                     
@@ -124,7 +124,7 @@ class Cmri
                             else
                             {
                                 cmriState = CMRI_ETX;
-//                                error("Stx ", CHAR_STX, currentByte);
+                                // error("Stx ", CHAR_STX, currentByte);
                             }
                             break;
 
@@ -186,7 +186,7 @@ class Cmri
                             break;
 
             default:        cmriState = CMRI_ETX;
-//                            error("State", -1, cmriState);      // Unexpected state.
+                            // error("State", -1, cmriState);      // Unexpected state.
                             break;
         }
 
@@ -263,8 +263,9 @@ class Cmri
             case TYPE_RECEIVE:
             case TYPE_ERROR:    break;
 
-//            default:            error("Type", -1, messageType);
-//                                break;
+            default:            // Ignore unrecognised message types.
+                                // error("Type", -1, messageType);
+                                break;
         }
 
         messageLength += 1;     // Record that a character has been processed.
@@ -272,6 +273,7 @@ class Cmri
 
 
     /** Process a transmitted byte.
+     *  Action the associated Input.
      */
     void processTransByte()
     {
@@ -280,14 +282,23 @@ class Cmri
 //            disp.printHexByteAt(messageLength * 3, LCD_ROW_BOT, currentByte);
 //        }
 
-        uint8_t node = (messageLength    ) >> 1;      // Two bytes per node, so divide by 2.
-        uint8_t pin  = (messageLength & 1) << 3;      // Start at pin zero, or pin 8 if second byte;
+        bool    isInput = messageLength < (INPUT_NODE_MAX * 2);                     // Input nodes sent first, 2 bytes per Input node, then Output nodes.
+        uint8_t node    = (isInput ? (messageLength >> 1)                           // Inputs use two bytes per node.
+                                   : (messageLength - (INPUT_NODE_MAX * 2)));       // Outputs start after 2 * INPUT_NODE_MAX bytes, 1 byte per node.
+        uint8_t pin     = (isInput ? (messageLength & 1) << 3 : 0);                 // Start at pin zero except 2nd byte of Input node starts at 8.
         
         for (uint8_t mask = 1; mask > 0; pin++, mask <<= 1)
         {
-            if ((currentByte & mask) != 0)          // CMRI signal high means fire the input.
+            if ((currentByte & mask) != 0)                                          // CMRI signal high means fire the Input/Output.
             {
-                controller.processInput(node, pin, false);
+                if (isInput)
+                {
+                    controller.processInput(node, pin, false);
+                }
+                else
+                {
+                    controller.processOutput(node, pin, !getOutputState(node, pin), 0);
+                }
             }
         }
     }
@@ -303,17 +314,26 @@ class Cmri
         if (messageType == TYPE_POLL)
         {
             delay(50);                      // tiny delay to let things recover
+
+            // Send CMRI header
             sendByte(CHAR_SYN, false);
             sendByte(CHAR_SYN, false);
             sendByte(CHAR_STX, false);
             sendByte(address,  false);
             sendByte(TYPE_RECEIVE, false);
 
+            // Send Input node states.
             for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
             {
                 uint16_t inputStates = controller.getInputState(node);
                 sendByte((inputStates     ) & 0xff, true);
                 sendByte((inputStates >> 8) & 0xff, true);
+            }
+
+            // Send Output node states.
+            for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
+            {
+                sendByte(getOutputStates(node) & 0xff, true);
             }
 
             sendByte(CHAR_ETX, false);
