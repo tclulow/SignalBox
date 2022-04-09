@@ -349,8 +349,7 @@ class Cmri
     {
         if (escape)
         {
-            if (   (aByte <= CHAR_DLE)
-                || (aByte == CHAR_ETX))
+            if (aByte <= CHAR_DLE)
             {
                 stream.write(CHAR_DLE);
             }
