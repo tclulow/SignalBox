@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE throttles-preferences SYSTEM "/xml/DTD/throttles-preferences.dtd">
+<throttles-preferences>
+  <throttlesPreferences isUsingExThrottle="true" isUsingToolBar="true" isUsingFunctionIcon="false" isResizingWindow="false" windowDimensionWidth="800" windowDimensionHeight="600" isSavingThrottleOnLayoutSave="true" isUsingRosterImage="true" isEnablingRosterSearch="true" isAutoLoading="true" isHidingUndefinedFunctionButtons="false" isIgnoringThrottlePosition="true" isSilentSteal="false" isSilentShare="false" isUsingLargeSpeedSlider="false" defaultThrottleFilePath="">
+    <throttlesControls moreSpeedMultiplier="5.0">
+      <nextThrottleWindowKeys>
+        <ksc-0 m="0" k="155" />
+      </nextThrottleWindowKeys>
+      <prevThrottleWindowKeys>
+        <ksc-0 m="0" k="127" />
+      </prevThrottleWindowKeys>
+      <nextThrottleFrameKeys>
+        <ksc-0 m="0" k="35" />
+      </nextThrottleFrameKeys>
+      <prevThrottleFrameKeys>
+        <ksc-0 m="0" k="36" />
+      </prevThrottleFrameKeys>
+      <nextRunThrottleFrameKeys>
+        <ksc-0 m="128" k="35" />
+      </nextRunThrottleFrameKeys>
+      <prevRunThrottleFrameKeys>
+        <ksc-0 m="128" k="36" />
+      </prevRunThrottleFrameKeys>
+      <nextThrottleInternalWindowKeys>
+        <ksc-0 m="0" k="75" />
+      </nextThrottleInternalWindowKeys>
+      <prevThrottleInternalWindowKeys>
+        <ksc-0 m="0" k="76" />
+      </prevThrottleInternalWindowKeys>
+      <moveToControlPanelKeys>
+        <ksc-0 m="0" k="67" />
+      </moveToControlPanelKeys>
+      <moveToFunctionPanelKeys>
+        <ksc-0 m="0" k="70" />
+      </moveToFunctionPanelKeys>
+      <moveToAddressPanelKeys>
+        <ksc-0 m="0" k="65" />
+      </moveToAddressPanelKeys>
+      <reverseKeys>
+        <ksc-0 m="0" k="40" />
+      </reverseKeys>
+      <forwardKeys>
+        <ksc-0 m="0" k="38" />
+      </forwardKeys>
+      <switchDirectionKeys />
+      <idleKeys>
+        <ksc-0 m="0" k="106" />
+        <ksc-1 m="0" k="32" />
+      </idleKeys>
+      <stopKeys>
+        <ksc-0 m="0" k="111" />
+        <ksc-1 m="0" k="27" />
+      </stopKeys>
+      <accelerateKeys>
+        <ksc-0 m="0" k="107" />
+        <ksc-1 m="0" k="37" />
+      </accelerateKeys>
+      <decelerateKeys>
+        <ksc-0 m="0" k="109" />
+        <ksc-1 m="0" k="39" />
+      </decelerateKeys>
+      <accelerateMoreKeys>
+        <ksc-0 m="0" k="33" />
+        <ksc-1 m="128" k="37" />
+      </accelerateMoreKeys>
+      <decelerateMoreKeys>
+        <ksc-0 m="0" k="34" />
+        <ksc-1 m="128" k="39" />
+      </decelerateMoreKeys>
+      <functionsKeys-0>
+        <ksc-0 m="0" k="96" />
+      </functionsKeys-0>
+      <functionsKeys-1>
+        <ksc-0 m="0" k="112" />
+        <ksc-1 m="0" k="97" />
+      </functionsKeys-1>
+      <functionsKeys-2>
+        <ksc-0 m="0" k="113" />
+        <ksc-1 m="0" k="98" />
+      </functionsKeys-2>
+      <functionsKeys-3>
+        <ksc-0 m="0" k="114" />
+        <ksc-1 m="0" k="99" />
+      </functionsKeys-3>
+      <functionsKeys-4>
+        <ksc-0 m="0" k="115" />
+        <ksc-1 m="0" k="100" />
+      </functionsKeys-4>
+      <functionsKeys-5>
+        <ksc-0 m="0" k="116" />
+        <ksc-1 m="0" k="101" />
+      </functionsKeys-5>
+      <functionsKeys-6>
+        <ksc-0 m="0" k="117" />
+        <ksc-1 m="0" k="102" />
+      </functionsKeys-6>
+      <functionsKeys-7>
+        <ksc-0 m="0" k="118" />
+        <ksc-1 m="0" k="103" />
+      </functionsKeys-7>
+      <functionsKeys-8>
+        <ksc-0 m="0" k="119" />
+        <ksc-1 m="0" k="104" />
+      </functionsKeys-8>
+      <functionsKeys-9>
+        <ksc-0 m="0" k="120" />
+        <ksc-1 m="0" k="105" />
+      </functionsKeys-9>
+      <functionsKeys-10>
+        <ksc-0 m="0" k="121" />
+        <ksc-1 m="0" k="110" />
+        <ksc-2 m="64" k="96" />
+      </functionsKeys-10>
+      <functionsKeys-11>
+        <ksc-0 m="0" k="122" />
+        <ksc-1 m="64" k="112" />
+        <ksc-2 m="64" k="97" />
+      </functionsKeys-11>
+      <functionsKeys-12>
+        <ksc-0 m="0" k="123" />
+        <ksc-1 m="64" k="113" />
+        <ksc-2 m="64" k="98" />
+      </functionsKeys-12>
+      <functionsKeys-13>
+        <ksc-0 m="0" k="61440" />
+        <ksc-1 m="64" k="114" />
+        <ksc-2 m="64" k="99" />
+      </functionsKeys-13>
+      <functionsKeys-14>
+        <ksc-0 m="0" k="61441" />
+        <ksc-1 m="64" k="115" />
+        <ksc-2 m="64" k="100" />
+      </functionsKeys-14>
+      <functionsKeys-15>
+        <ksc-0 m="0" k="61442" />
+        <ksc-1 m="64" k="116" />
+        <ksc-2 m="64" k="101" />
+      </functionsKeys-15>
+      <functionsKeys-16>
+        <ksc-0 m="0" k="61443" />
+        <ksc-1 m="64" k="117" />
+        <ksc-2 m="64" k="102" />
+      </functionsKeys-16>
+      <functionsKeys-17>
+        <ksc-0 m="0" k="61444" />
+        <ksc-1 m="64" k="118" />
+        <ksc-2 m="64" k="103" />
+      </functionsKeys-17>
+      <functionsKeys-18>
+        <ksc-0 m="0" k="61445" />
+        <ksc-1 m="64" k="119" />
+        <ksc-2 m="64" k="104" />
+      </functionsKeys-18>
+      <functionsKeys-19>
+        <ksc-0 m="0" k="61446" />
+        <ksc-1 m="64" k="120" />
+        <ksc-2 m="64" k="105" />
+      </functionsKeys-19>
+      <functionsKeys-20>
+        <ksc-0 m="0" k="61447" />
+        <ksc-1 m="128" k="121" />
+        <ksc-2 m="128" k="96" />
+      </functionsKeys-20>
+      <functionsKeys-21>
+        <ksc-0 m="0" k="61448" />
+        <ksc-1 m="128" k="112" />
+        <ksc-2 m="128" k="97" />
+      </functionsKeys-21>
+      <functionsKeys-22>
+        <ksc-0 m="0" k="61449" />
+        <ksc-1 m="128" k="113" />
+        <ksc-2 m="128" k="98" />
+      </functionsKeys-22>
+      <functionsKeys-23>
+        <ksc-0 m="0" k="61450" />
+        <ksc-1 m="128" k="114" />
+        <ksc-2 m="128" k="99" />
+      </functionsKeys-23>
+      <functionsKeys-24>
+        <ksc-0 m="0" k="61451" />
+        <ksc-1 m="128" k="115" />
+        <ksc-2 m="128" k="100" />
+      </functionsKeys-24>
+      <functionsKeys-25>
+        <ksc-0 m="128" k="116" />
+        <ksc-1 m="128" k="101" />
+      </functionsKeys-25>
+      <functionsKeys-26>
+        <ksc-0 m="128" k="117" />
+        <ksc-1 m="128" k="102" />
+      </functionsKeys-26>
+      <functionsKeys-27>
+        <ksc-0 m="128" k="118" />
+        <ksc-1 m="128" k="103" />
+      </functionsKeys-27>
+      <functionsKeys-28>
+        <ksc-0 m="128" k="119" />
+        <ksc-1 m="128" k="104" />
+      </functionsKeys-28>
+    </throttlesControls>
+  </throttlesPreferences>
+</throttles-preferences>
