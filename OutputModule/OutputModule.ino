@@ -178,9 +178,6 @@ void setup()
     {
         systemMgr.flashVersion();
     }
-
-    // Show system data (depending on debug level).
-    systemMgr.debugSystemData(M_STARTUP);
 }
 
 
