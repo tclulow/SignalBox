@@ -189,6 +189,7 @@ class SystemMgr: public Persisted
 //            Serial.println();
         }
 
+        debugSystemData(M_DEBUG_LOAD);
         return systemData.magic == MAGIC_NUMBER;
     }
 
@@ -197,9 +198,10 @@ class SystemMgr: public Persisted
      */
     void saveSystemData()
     {
+        systemData.magic = MAGIC_NUMBER;
         EEPROM.put(getBase(), systemData);
 
-        debugSystemData();
+        debugSystemData(M_DEBUG_SAVE);
     }
 
 
@@ -406,7 +408,7 @@ class SystemMgr: public Persisted
 
     /** Print system data if debug so enabled.
      */
-    void debugSystemData()
+    void debugSystemData(PGM_P aMessage)
     {
         if (isDebug(DEBUG_BRIEF))
         {
@@ -414,13 +416,19 @@ class SystemMgr: public Persisted
             Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_SYSTEM));
             Serial.print(CHAR_SPACE);
+            Serial.print(PGMT(aMessage));
+            Serial.print(CHAR_SPACE);
+            Serial.print(PGMT(M_DEBUG_MODULE));
+            Serial.print(CHAR_SPACE);
+            Serial.print(systemData.i2cModuleId, HEX);
+            Serial.print(CHAR_SPACE);
             Serial.print(PGMT(M_DEBUG_DEBUG));
             Serial.print(CHAR_SPACE);
-            Serial.print(systemData.debugLevel,      HEX);
+            Serial.print(systemData.debugLevel,  HEX);
             Serial.print(CHAR_SPACE);
             Serial.print(PGMT(M_DEBUG_REPORT));
             Serial.print(CHAR_SPACE);
-            Serial.print(systemData.reportLevel,     HEX);
+            Serial.print(systemData.reportLevel, HEX);
             Serial.println();
 
 //            if (isDebug(DEBUG_FULL))

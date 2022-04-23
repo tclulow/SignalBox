@@ -180,7 +180,7 @@ void setup()
     }
 
     // Show system data (depending on debug level).
-    systemMgr.debugSystemData();
+    systemMgr.debugSystemData(M_STARTUP);
 }
 
 
