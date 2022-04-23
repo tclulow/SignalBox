@@ -1,3 +1,6 @@
+#System	Version	Report	Debug
+System	v4.3.1	Long	None
+
 #Input	Node	Pin	Type	OutputA	OutputB	OutputC	OutputD	OutputE	OutputF
 Input	0	0	On_Off	. .	. .	. .	. .	. .	. .
 Input	0	1	On_Off	3 5	. .	. .	. .	. .	. .
@@ -29,7 +32,7 @@ Input	1	9	On_Off	4 2	. .	. .	. .	. .	. .
 Input	1	A	On_Off	4 3	. .	. .	. .	. .	. .
 Input	1	B	On_Off	4 0	. .	. .	. .	. .	. .
 Input	1	C	On_Off	2 0	. .	. .	. .	. .	. .
-Input	1	D	On_Off	2 1	. .	. .	. .	. .	. .
+Input	1	D	On_Off	2 1	9 7	. .	. .	. .	. .
 Input	1	E	On_Off	1 0	. .	. .	. .	. .	. .
 Input	1	F	On_Off	. .	. .	. .	. .	. .	. .
 
@@ -188,7 +191,7 @@ Output	9	3	Servo	64	28	04	00
 Output	9	4	None	00	FF	0C	00
 Output	9	5	None	5A	5A	0C	05
 Output	9	6	None	5A	5A	0F	00
-Output	9	7	None	53	6A	0F	02
+Output	9	7	LED	FF	FF	0C	00
 
 Output	A	0	Servo	46	78	04	00
 Output	A	1	Servo	5F	87	04	00
@@ -262,3 +265,4 @@ Lock	A	4	.	.	.	.	.	.	.	.
 Lock	A	5	.	.	.	.	.	.	.	.
 Lock	A	6	.	.	.	.	.	.	.	.
 Lock	A	7	.	.	.	.	.	.	.	.
+
