@@ -20,7 +20,7 @@
     #define MAGIC_NUMBER 0x74756f53         // Magic number = "Sout".
 #endif
 
-#define VERSION          0x0431             // Version number of software.  See also Messages.M_VERSION.
+#define VERSION          0x0432             // Version number of software.  See also Messages.M_VERSION.
 
 
 // Timing constants
@@ -189,7 +189,7 @@ class SystemMgr: public Persisted
 //            Serial.println();
         }
 
-        debugSystemData(M_DEBUG_LOAD);
+        debugSystemData();
         return systemData.magic == MAGIC_NUMBER;
     }
 
@@ -201,7 +201,7 @@ class SystemMgr: public Persisted
         systemData.magic = MAGIC_NUMBER;
         EEPROM.put(getBase(), systemData);
 
-        debugSystemData(M_DEBUG_SAVE);
+        // debugSystemData();
     }
 
 
@@ -408,20 +408,18 @@ class SystemMgr: public Persisted
 
     /** Print system data if debug so enabled.
      */
-    void debugSystemData(PGM_P aMessage)
+    void debugSystemData()
     {
         if (isDebug(DEBUG_BRIEF))
         {
             Serial.print(millis());
             Serial.print(CHAR_TAB);
-            Serial.print(PGMT(M_DEBUG_SYSTEM));
-            Serial.print(CHAR_SPACE);
-            Serial.print(PGMT(aMessage));
-            Serial.print(CHAR_SPACE);
+#if SB_OUTPUT_MODULE
             Serial.print(PGMT(M_DEBUG_MODULE));
             Serial.print(CHAR_SPACE);
             Serial.print(systemData.i2cModuleId, HEX);
             Serial.print(CHAR_SPACE);
+#endif
             Serial.print(PGMT(M_DEBUG_DEBUG));
             Serial.print(CHAR_SPACE);
             Serial.print(systemData.debugLevel,  HEX);
