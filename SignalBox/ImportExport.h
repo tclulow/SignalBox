@@ -37,6 +37,87 @@ class ImportExport
     unsigned long messageTick = 1L;             // Time the last message was emitted.
 
 
+    public:
+
+    /** An ImportExport object.
+     */
+    ImportExport()
+    {
+    }
+
+
+    /** Import configuration from Serial line.
+     */
+    void doImport()
+    {
+        int len = 0;
+
+        messageTick = 1;            // Ensure "waiting" message appears.
+        buttons.waitForButtonRelease();
+
+        // Clear the buffer
+        while (Serial.available())
+        {
+            Serial.read();
+        }
+
+        // Keep going until until button pressed.
+        while (   ((len = readWord()) >= 0)
+               && (!buttons.readButton()))
+        {
+            if (   (len > 0)
+                && (wordBuffer[0] != CHAR_HASH))
+            {
+                importLine();
+                messageTick = millis() + DELAY_READ;
+            }
+
+            // Skip rest of line.
+            skipLine();
+        }
+    }
+
+
+    /** Export selected items.
+     */
+    void doExport(int aExport)
+    {
+        uint8_t debugLevel = systemMgr.getDebugLevel();
+
+        disp.printProgStrAt(-strlen_P(M_EXPORTING), LCD_ROW_DET, M_EXPORTING);
+        systemMgr.setDebugLevel(DEBUG_NONE);
+
+        switch(aExport)
+        {
+            case EXP_ALL:     exportSystem(debugLevel >= DEBUG_FULL);
+                              exportInputs(true);
+                              exportOutputs();
+                              exportLocks();
+                              break;
+
+            case EXP_SYSTEM:  exportSystem(debugLevel);
+                              break;
+
+            case EXP_INPUTS:  exportInputs(false);
+                              break;
+
+            case EXP_OUTPUTS: exportOutputs();
+                              break;
+
+            case EXP_LOCKS:   exportLocks();
+                              break;
+
+            default:          systemFail(M_EXPORT, aExport);
+                              break;
+        }
+
+        disp.clearRow(-strlen_P(M_EXPORTING), LCD_ROW_DET);
+        systemMgr.setDebugLevel(debugLevel);
+    }
+
+
+    private:
+
     /** Import a line.
      */
     void importLine()
@@ -600,85 +681,6 @@ class ImportExport
                 Serial.println();
             }
         }
-    }
-
-
-    public:
-
-    /** An ImportExport object.
-     */
-    ImportExport()
-    {
-    }
-
-
-    /** Import configuration from Serial line.
-     */
-    void doImport()
-    {
-        int len = 0;
-
-        messageTick = 1;            // Ensure "waiting" message appears.
-        buttons.waitForButtonRelease();
-
-        // Clear the buffer
-        while (Serial.available())
-        {
-            Serial.read();
-        }
-
-        // Keep going until until button pressed.
-        while (   ((len = readWord()) >= 0)
-               && (!buttons.readButton()))
-        {
-            if (   (len > 0)
-                && (wordBuffer[0] != CHAR_HASH))
-            {
-                importLine();
-                messageTick = millis() + DELAY_READ;
-            }
-
-            // Skip rest of line.
-            skipLine();
-        }
-    }
-
-
-    /** Export selected items.
-     */
-    void doExport(int aExport)
-    {
-        uint8_t debugLevel = systemMgr.getDebugLevel();
-
-        disp.printProgStrAt(-strlen_P(M_EXPORTING), LCD_ROW_DET, M_EXPORTING);
-        systemMgr.setDebugLevel(DEBUG_NONE);
-
-        switch(aExport)
-        {
-            case EXP_ALL:     exportSystem(debugLevel >= DEBUG_FULL);
-                              exportInputs(true);
-                              exportOutputs();
-                              exportLocks();
-                              break;
-
-            case EXP_SYSTEM:  exportSystem(debugLevel);
-                              break;
-
-            case EXP_INPUTS:  exportInputs(false);
-                              break;
-
-            case EXP_OUTPUTS: exportOutputs();
-                              break;
-
-            case EXP_LOCKS:   exportLocks();
-                              break;
-
-            default:          systemFail(M_EXPORT, aExport);
-                              break;
-        }
-
-        disp.clearRow(-strlen_P(M_EXPORTING), LCD_ROW_DET);
-        systemMgr.setDebugLevel(debugLevel);
     }
 };
 
