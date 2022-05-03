@@ -313,8 +313,6 @@ class Cmri
         // If message was a poll, respond with the current state.
         if (messageType == TYPE_POLL)
         {
-            delay(50);                      // tiny delay to let things recover
-
             // Send CMRI header
             sendByte(CHAR_SYN, false);
             sendByte(CHAR_SYN, false);
