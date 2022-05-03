@@ -14,10 +14,6 @@
 #define Buttons_h
 
 
-// The analog button
-#define BUTTON_ANALOG 0
-
-
 // Button values.
 const uint8_t BUTTON_NONE       = 0;        // Button enums.
 const uint8_t BUTTON_SELECT     = 1;
@@ -29,6 +25,7 @@ const uint8_t BUTTON_RIGHT      = 5;
 const uint8_t BUTTON_LOW        = 1;        // Button range, 1 to 5
 const uint8_t BUTTON_HIGH       = 5;  
 
+const uint8_t BUTTON_ANALOG     =   A0;     // The analog button
 const int     BUTTON_THRESHHOLD = 1000;     // Analog limit above which no button is considered to be pressed.
 const uint8_t BUTTON_MARGIN     =   50;     // Analog buttons must be this far from each other to avoid possible confusion.
 
