@@ -84,7 +84,7 @@ class Buttons
         disp.printProgStrAt(LCD_COL_START, LCD_ROW_TOP, M_CALIBRATE);
 
         // Wait for no button being pressed
-        while (analogRead(A0) < BUTTON_THRESHHOLD);
+        while (analogRead(BUTTON_ANALOG) < BUTTON_THRESHHOLD);
 
         // Now start calibration
         buttonsPtr[BUTTON_HIGH] = 0;                                    // Marker for last button.
@@ -97,10 +97,7 @@ class Buttons
             disp.printProgStrAt(LCD_COL_CALIBRATE, LCD_ROW_DET, M_BUTTONS[button + 1], LCD_LEN_OPTION);
 
             // Wait for a button to be pressed
-            while ((value = analogRead(A0)) > BUTTON_THRESHHOLD)
-            {
-                delay(DELAY_BUTTON_WAIT);
-            }
+            while ((value = analogRead(BUTTON_ANALOG)) > BUTTON_THRESHHOLD);
 
 //            if (isDebug(DEBUG_BRIEF))
 //            {
@@ -119,10 +116,7 @@ class Buttons
             disp.printDec(value, 4, CHAR_SPACE);
 
             // Wait for button to be released.
-            while (analogRead(A0) < BUTTON_THRESHHOLD)
-            {
-                delay(DELAY_BUTTON_WAIT);
-            }
+            while (analogRead(BUTTON_ANALOG) < BUTTON_THRESHHOLD);
 
             // Check for buttons out-of-sequence
             if (value > (previous - BUTTON_MARGIN))
