@@ -22,8 +22,6 @@ uint8_t    outputNode   = 0;    // Current Output node.
 uint8_t    outputPin    = 0;    // Current Output pin.
 OutputDef  outputDef;           // Definition of current Output.
 
-uint8_t    outputStates[OUTPUT_NODE_MAX];   // State of all the attached output module's Outputs.
-
 
 /** Helper to write the current OutputDef.
  */
@@ -35,6 +33,11 @@ void writeOutputDef()
 
 class OutputCtl
 {
+    private:
+    
+    uint8_t outputStates[OUTPUT_NODE_MAX];      // State of all the attached output module's Outputs.
+
+
     public:
     
     /** Record the presence of an OutputNode in the map.
