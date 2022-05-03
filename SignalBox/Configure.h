@@ -106,7 +106,7 @@ class Configure
         {
             inpNode = nextNode(inpNode, 1, true, true);
         }
-        if (!isOutputNodePresent(outNode))
+        if (!outputCtl.isOutputNodePresent(outNode))
         {
             outNode = nextNode(outNode, 1, false, true);
         }
@@ -119,9 +119,9 @@ class Configure
         {
             // Ensure correct Input and Output node definitions are loaded.
             inputMgr.loadInput(inpNode, inpPin);
-            if (isOutputNodePresent(outNode))
+            if (outputCtl.isOutputNodePresent(outNode))
             {
-                readOutput(outNode, outPin);
+                outputCtl.readOutput(outNode, outPin);
             }
 
             switch (buttons.waitForButtonPress())
@@ -149,14 +149,14 @@ class Configure
                                                          break;
                                                          
                                         case TOP_INPUT:  menuNode(true);
-                                                         if (isOutputNodePresent(outNode))  // The outNode may have been corrupted by input node processing.
+                                                         if (outputCtl.isOutputNodePresent(outNode))    // The outNode may have been corrupted by input node processing.
                                                          {
-                                                            readOutput(outNode, outPin);    // So reload it.
+                                                            outputCtl.readOutput(outNode, outPin);                // So reload it.
                                                          }
                                                          break;
                                                          
                                         case TOP_OUTPUT:
-                                        case TOP_LOCKS:  if (isOutputNodePresent(outNode))  // Only if the output node is present
+                                        case TOP_LOCKS:  if (outputCtl.isOutputNodePresent(outNode))  // Only if the output node is present
                                                          {
                                                             menuNode(false);                // Process the Output node.
                                                          }
@@ -389,10 +389,10 @@ class Configure
                                     else
                                     {
                                         outNode = nextNode(outNode, adjust, aIsInput, true);
-                                        readOutput(outNode, outPin);
+                                        outputCtl.readOutput(outNode, outPin);
 
                                         // Handle (rare) case where output node has failed (and this is first time we noticed).
-                                        if (!isOutputNodePresent(outNode))
+                                        if (!outputCtl.isOutputNodePresent(outNode))
                                         {
                                             delay(DELAY_READ);      // Time to read error message.
                                             displayAll();           // Recover display.
@@ -506,7 +506,7 @@ class Configure
                                         if (confirm())      // Ask if change should be saved.
                                         {
                                             outNode = renumberNode(outNode, (jumpers ? I2C_MODULE_ID_JUMPERS : newNode));
-                                            readOutput(outNode, outPin);
+                                            outputCtl.readOutput(outNode, outPin);
                                             displayAll();
                                             finished = true;
                                         }
@@ -581,13 +581,13 @@ class Configure
             if (aOldNode != response)           // Change actually happened.
             {
                 // Mark the old node absent and the new one present.
-                setOutputNodePresent(aOldNode, false);
-                setOutputNodePresent(response, true);
+                outputCtl.setOutputNodePresent(aOldNode, false);
+                outputCtl.setOutputNodePresent(response, true);
 
                 // Swap the state flags of the two nodes.
-                uint8_t oldStates = getOutputStates(aOldNode);
-                setOutputStates(aOldNode, getOutputStates(response));
-                setOutputStates(response, oldStates);
+                uint8_t oldStates = outputCtl.getOutputStates(aOldNode);
+                outputCtl.setOutputStates(aOldNode, outputCtl.getOutputStates(response));
+                outputCtl.setOutputStates(response, oldStates);
 
                 // Show work as Inputs are updated.
                 disp.clearRow(LCD_COL_START, LCD_ROW_DET);
@@ -642,7 +642,7 @@ class Configure
                     {
                         disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_BOT);
                     }
-                    if (isOutputNodePresent(node))
+                    if (outputCtl.isOutputNodePresent(node))
                     {
                         disp.printHexCh(node);
 
@@ -716,7 +716,7 @@ class Configure
                                     else
                                     {
                                         outPin = (outPin + 1) & OUTPUT_PIN_MASK;
-                                        readOutput(outNode, outPin);
+                                        outputCtl.readOutput(outNode, outPin);
                                     }
                                     disp.printHexChAt(LCD_COL_PIN, LCD_ROW_TOP, aIsInput ? inpPin : outPin);
                                     displayDetail();
@@ -730,7 +730,7 @@ class Configure
                                     else
                                     {
                                         outPin = (outPin - 1) & OUTPUT_PIN_MASK;
-                                        readOutput(outNode, outPin);
+                                        outputCtl.readOutput(outNode, outPin);
                                     }
                                     disp.printHexChAt(LCD_COL_PIN, LCD_ROW_TOP, aIsInput ? inpPin : outPin);
                                     displayDetail();
@@ -742,9 +742,9 @@ class Configure
                                     }
                                     else
                                     {
-                                        writeOutput();                      // Ensure changes aren't persisted.
+                                        outputCtl.writeOutput();                      // Ensure changes aren't persisted.
                                         testOutput();
-                                        resetOutput();                      // Ensure output is reset.
+                                        outputCtl.resetOutput();                      // Ensure output is reset.
                                     }
                                     break;
 
@@ -847,7 +847,7 @@ class Configure
         }
 
         // Ensure output node is reset (we may have corrupted it when chaninging an Input's Outputs).
-        readOutput(outNode, outPin);
+        outputCtl.readOutput(outNode, outPin);
 
         displayDetailInput();
     }
@@ -1021,7 +1021,7 @@ class Configure
                                     outputType += OUTPUT_TYPE_MAX;      // Ensure in-range.
                                     outputType %= OUTPUT_TYPE_MAX;
                                     outputDef.setType(outputType);
-                                    writeOutput();
+                                    outputCtl.writeOutput();
 
                                     disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputType], LCD_LEN_OPTION);
                                     displayOutputParams(outputType);
@@ -1033,7 +1033,7 @@ class Configure
                                     {
                                         if (confirm())                  // Ask if change should be saved.
                                         {
-                                            writeSaveOutput();
+                                            outputCtl.writeSaveOutput();
                                             finished = true;
                                         }
                                         else
@@ -1092,7 +1092,7 @@ class Configure
             }
         }
 
-        resetOutput();              // Ensure output module is in correct state (and will persist state changes).
+        outputCtl.resetOutput();              // Ensure output module is in correct state (and will persist state changes).
         displayDetailOutput();
     }
 
@@ -1109,7 +1109,7 @@ class Configure
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
 
         outputDef.setState(false);
-        writeOutput();
+        outputCtl.writeOutput();
 
         while (!finished)
         {
@@ -1168,7 +1168,7 @@ class Configure
         markField(LCD_COL_OUTPUT_LO, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
 
         outputDef.setState(state);
-        writeOutput();
+        outputCtl.writeOutput();
 
         return changed;
     }
@@ -1184,7 +1184,7 @@ class Configure
         markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, true);
 
         outputDef.setState(true);
-        writeOutput();
+        outputCtl.writeOutput();
 
         while (!finished)
         {
@@ -1244,7 +1244,7 @@ class Configure
         markField(LCD_COL_OUTPUT_HI, LCD_ROW_BOT, OUTPUT_HI_LO_SIZE, false);
 
         outputDef.setState(false);
-        writeOutput();
+        outputCtl.writeOutput();
 
         return changed;
     }
@@ -1270,14 +1270,14 @@ class Configure
                 case BUTTON_UP:     value = (value + 1) & OUTPUT_PACE_MASK;
                                     outputDef.setPace(value);
                                     disp.printHexChAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, value);
-                                    writeOutput();
+                                    outputCtl.writeOutput();
                                     changed = true;
                                     break;
 
                 case BUTTON_DOWN:   value = (value - 1) & OUTPUT_PACE_MASK;
                                     outputDef.setPace(value);
                                     disp.printHexChAt(LCD_COL_OUTPUT_PACE, LCD_ROW_BOT, value);
-                                    writeOutput();
+                                    outputCtl.writeOutput();
                                     changed = true;
                                     break;
 
@@ -1324,7 +1324,7 @@ class Configure
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (buttons.readButton() != 0);
-                                    writeOutput();
+                                    outputCtl.writeOutput();
                                     changed = true;
                                     break;
 
@@ -1336,7 +1336,7 @@ class Configure
                                         autoRepeat = DELAY_BUTTON_REPEAT;
                                     }
                                     while (buttons.readButton() != 0);
-                                    writeOutput();
+                                    outputCtl.writeOutput();
                                     changed = true;
                                     break;
 
@@ -1383,8 +1383,8 @@ class Configure
                                     {
                                         if (confirm())                  // Ask if change should be saved.
                                         {
-                                            writeOutput();
-                                            writeSaveOutput();
+                                            outputCtl.writeOutput();
+                                            outputCtl.writeSaveOutput();
                                             finished = true;
                                         }
                                         else
@@ -1403,7 +1403,7 @@ class Configure
                                     {
                                         if (cancel())                   // Ask if change should be cancelled.
                                         {
-                                            resetOutput();
+                                            outputCtl.resetOutput();
                                             finished = true;
                                         }
                                         else
@@ -1754,7 +1754,7 @@ class Configure
     void displayOutputNode()
     {
         disp.clearRow(LCD_COL_MARK, LCD_ROW_TOP);
-        if (isOutputNodePresent(outNode))
+        if (outputCtl.isOutputNodePresent(outNode))
         {
             disp.printHexChAt(LCD_COL_NODE, LCD_ROW_TOP, outNode);
             disp.printHexChAt(LCD_COL_PIN,  LCD_ROW_TOP, outPin);
@@ -1903,7 +1903,7 @@ class Configure
      */
     void displayDetailOutput()
     {
-        if (isOutputNodePresent(outNode))
+        if (outputCtl.isOutputNodePresent(outNode))
         {
             disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_OPTION + 1);
             displayOutputParams(outputDef.getType());
@@ -2114,12 +2114,12 @@ class Configure
             // Test all the nodes in turn.
             for (uint8_t node = 0; (node < OUTPUT_NODE_MAX) && !interrupted; node++)
             {
-                if (isOutputNodePresent(node))
+                if (outputCtl.isOutputNodePresent(node))
                 {
                     // Test all the pins in turn.
                     for (int pin = 0; pin < OUTPUT_PIN_MAX && !interrupted; ) // pin++)
                     {
-                        readOutput(node, pin);
+                        outputCtl.readOutput(node, pin);
 
                         // Pin is active, test it.
                         if (outputDef.getType() != OUTPUT_TYPE_NONE)
@@ -2144,17 +2144,17 @@ class Configure
                                    && (button == BUTTON_NONE))
                             {
                                 outputDef.setState(!outputDef.getState());
-                                writeOutput();
+                                outputCtl.writeOutput();
                                 button = delayFor(interval);
 
                                 outputDef.setState(!outputDef.getState());
-                                writeOutput();
+                                outputCtl.writeOutput();
                                 if (button == BUTTON_NONE)
                                 {
                                     button = delayFor(interval);
                                 }
                             }
-                            resetOutput();
+                            outputCtl.resetOutput();
                         }
 
                         // If button pressed, handle the interuption.
@@ -2178,7 +2178,7 @@ class Configure
 
                                 case BUTTON_LEFT:   for (pin -= 1; pin > 0; pin--)
                                                     {
-                                                        readOutput(node, pin);
+                                                        outputCtl.readOutput(node, pin);
                                                         if (outputDef.getType() != OUTPUT_TYPE_NONE)
                                                         {
                                                             break;
@@ -2205,7 +2205,7 @@ class Configure
         }
 
         // Ensure original output is loaded.
-        readOutput(outNode, outPin);
+        outputCtl.readOutput(outNode, outPin);
     }
 
 
@@ -2247,7 +2247,7 @@ class Configure
                 break;
             }
             else if (   (!aIsInput)
-                     && (aInUse == isOutputNodePresent(next)))
+                     && (aInUse == outputCtl.isOutputNodePresent(next)))
             {
                 break;
             }
@@ -2271,7 +2271,7 @@ class Configure
     {
         bool currentState = false;
 
-        readOutput(inputDef.getOutput(inputDef.getFirstOutput()));
+        outputCtl.readOutput(inputDef.getOutput(inputDef.getFirstOutput()));
         currentState = outputDef.getState();
 
         controller.processInputOutputs(!currentState);
@@ -2286,7 +2286,7 @@ class Configure
     {
         bool currentState = false;
 
-        readOutput(inputDef.getOutput(aIndex));
+        outputCtl.readOutput(inputDef.getOutput(aIndex));
         currentState = outputDef.getState();
         controller.processInputOutput(aIndex, !currentState, 0);
         buttons.waitForButtonRelease();
@@ -2302,15 +2302,15 @@ class Configure
     {
         if (outputDef.isFlasher())
         {
-            writeOutputState(outputNode, outputPin, true,  0);
+            outputCtl.writeOutputState(outputNode, outputPin, true,  0);
             buttons.waitForButtonRelease();
-            writeOutput();
+            outputCtl.writeOutput();
         }
         else
         {
-            writeOutputState(outputNode, outputPin, !outputDef.getState(), 0);
+            outputCtl.writeOutputState(outputNode, outputPin, !outputDef.getState(), 0);
             buttons.waitForButtonRelease();
-            writeOutputState(outputNode, outputPin,  outputDef.getState(), 0);
+            outputCtl.writeOutputState(outputNode, outputPin,  outputDef.getState(), 0);
         }
     }
 
@@ -2320,9 +2320,9 @@ class Configure
      */
     void testOutput(uint8_t aNode, uint8_t aPin)
     {
-        writeOutputState(aNode, aPin, !getOutputState(aNode, aPin), 0);
+        outputCtl.writeOutputState(aNode, aPin, !outputCtl.getOutputState(aNode, aPin), 0);
         buttons.waitForButtonRelease();
-        writeOutputState(aNode, aPin,  getOutputState(aNode, aPin), 0);
+        outputCtl.writeOutputState(aNode, aPin,  outputCtl.getOutputState(aNode, aPin), 0);
     }
 
 

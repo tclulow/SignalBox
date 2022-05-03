@@ -278,7 +278,7 @@ class Controller
 //                || (   (isReportEnabled(REPORT_SHORT))
 //                    && (inputDef.getOutputCount() <= 1)))
             {
-                readOutput(inputDef.getOutput(aIndex));
+                outputCtl.readOutput(inputDef.getOutput(aIndex));
                 disp.printProgStrAt(LCD_COL_START,  LCD_ROW_BOT, M_OUTPUT_TYPES[outputDef.getType()], LCD_COLS);
                 disp.printHexChAt(LCD_COL_OUTPUT_PARAM, LCD_ROW_BOT, outNode);
                 disp.printHexCh(outPin);
@@ -329,8 +329,8 @@ class Controller
      */
     void processOutput(uint8_t aNode, uint8_t aPin, bool aState, uint8_t aDelay)
     {
-        writeOutputState(aNode, aPin, aState, aDelay);      // Action the Output state change.
-        readOutputStates(aNode);                            // Recover all states from output module (in case a double-LED has changed one).
+        outputCtl.writeOutputState(aNode, aPin, aState, aDelay);      // Action the Output state change.
+        outputCtl.readOutputStates(aNode);                            // Recover all states from output module (in case a double-LED has changed one).
         // setOutputState(aNode, aPin, aState);
     }
 
@@ -349,7 +349,7 @@ class Controller
     {
         for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
         {
-            if (isOutputNodePresent(node))
+            if (outputCtl.isOutputNodePresent(node))
             {
                 i2cComms.sendShort(I2C_OUTPUT_BASE_ID + node, COMMS_CMD_DEBUG | (systemMgr.getDebugLevel() & COMMS_OPTION_MASK));
 
@@ -393,7 +393,7 @@ class Controller
 
                 case INPUT_TYPE_ON_OFF: // Find first real output (not a delay) to determine new state.
                                         first = inputDef.getFirstOutput();
-                                        newState = !getOutputState(inputDef.getOutputNode(first), inputDef.getOutputPin(first));
+                                        newState = !outputCtl.getOutputState(inputDef.getOutputNode(first), inputDef.getOutputPin(first));
                                         break;
 
                 case INPUT_TYPE_ON:     newState = true;            // Set the state.
@@ -522,9 +522,9 @@ class Controller
     {
         for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
         {
-            if (!isOutputNodePresent(node))
+            if (!outputCtl.isOutputNodePresent(node))
             {
-                readOutputStates(node);     // Automatically marked as present if it responds.
+                outputCtl.readOutputStates(node);     // Automatically marked as present if it responds.
             }
         }
     }
@@ -545,7 +545,7 @@ class Controller
                 disp.setCursor(-OUTPUT_NODE_HALF, LCD_ROW_BOT);
             }
 
-            if (isOutputNodePresent(node))
+            if (outputCtl.isOutputNodePresent(node))
             {
                 disp.printHexCh(node);
             }
@@ -602,7 +602,7 @@ class Controller
             // Process all definitions that aren't "delay"s.
             if (!inputDef.isDelay(inpIndex))
             {
-                readOutput(inputDef.getOutputNode(inpIndex), inputDef.getOutputPin(inpIndex));
+                outputCtl.readOutput(inputDef.getOutputNode(inpIndex), inputDef.getOutputPin(inpIndex));
 
                 // Check all the Output's locks.
                 for (uint8_t outIndex = 0; outIndex < OUTPUT_LOCK_MAX; outIndex++)
@@ -611,7 +611,7 @@ class Controller
                     if (outputDef.isLock(aNewState, outIndex))
                     {
                         // And the state change is prohibited.
-                        bool state = getOutputState(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
+                        bool state = outputCtl.getOutputState(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
                         if (outputDef.getLockState(aNewState, outIndex) == state)
                         {
                             if (systemMgr.isReportEnabled(REPORT_SHORT))
@@ -630,7 +630,7 @@ class Controller
                             if (isDebug(DEBUG_BRIEF))
                             {
                                 outputDef.printDef(M_LOCK, outputNode, outputPin);
-                                readOutput(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
+                                outputCtl.readOutput(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
                                 outputDef.printDef(M_VS, outputNode, outputPin);
                             }
 
@@ -681,7 +681,7 @@ class Controller
             {
                 case COMMS_CMD_SYSTEM: if (option == COMMS_SYS_OUT_STATES)
                                        {
-                                           i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_OUT_STATES, getOutputStates(node), -1);
+                                           i2cComms.sendGateway(COMMS_CMD_SYSTEM | COMMS_SYS_OUT_STATES, outputCtl.getOutputStates(node), -1);
                                            workDone = true;
                                        }
                                        else if (option == COMMS_SYS_INP_STATES)

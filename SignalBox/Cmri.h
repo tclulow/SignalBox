@@ -297,7 +297,7 @@ class Cmri
                 }
                 else
                 {
-                    controller.processOutput(node, pin, !getOutputState(node, pin), 0);
+                    controller.processOutput(node, pin, !outputCtl.getOutputState(node, pin), 0);
                 }
             }
         }
@@ -333,7 +333,7 @@ class Cmri
             // Send Output node states.
             for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
             {
-                sendByte(getOutputStates(node) & 0xff, true);
+                sendByte(outputCtl.getOutputStates(node) & 0xff, true);
             }
 
             sendByte(CHAR_ETX, false);

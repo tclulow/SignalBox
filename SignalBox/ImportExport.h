@@ -239,7 +239,7 @@ class ImportExport
         {
             // Read the Output's definition.
             outputDef.setType(type);
-            outputDef.setState(getOutputState(outputNode, outputPin));
+            outputDef.setState(outputCtl.getOutputState(outputNode, outputPin));
             outputDef.setLo(readData());
             outputDef.setHi(readData());
 
@@ -270,8 +270,8 @@ class ImportExport
             disp.printHexChAt(LCD_COL_NODE,  LCD_ROW_DET, outputNode);
             disp.printHexChAt(LCD_COL_PIN ,  LCD_ROW_DET, outputPin);
 
-            writeOutput();
-            writeSaveOutput();
+            outputCtl.writeOutput();
+            outputCtl.writeSaveOutput();
         }
     }
 
@@ -289,12 +289,12 @@ class ImportExport
         disp.printHexChAt(LCD_COL_NODE,  LCD_ROW_DET, outputNode);
         disp.printHexChAt(LCD_COL_PIN ,  LCD_ROW_DET, outputPin);
 
-        if (isOutputNodePresent(outputNode))
+        if (outputCtl.isOutputNodePresent(outputNode))
         {
             disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_OUTPUT_TYPES[outputDef.getType()], LCD_LEN_STATUS);
             
             // Fetch the Output's definition to update its locks.
-            readOutput(outputNode, outputPin);
+            outputCtl.readOutput(outputNode, outputPin);
 
             // Process the Lo and Hi lock definitions.
             for (uint8_t hi = 0; hi < 2; hi++)
@@ -325,8 +325,8 @@ class ImportExport
                 }
             }
 
-            writeOutput();
-            writeSaveOutput();
+            outputCtl.writeOutput();
+            outputCtl.writeSaveOutput();
         }
         else
         {
@@ -590,12 +590,12 @@ class ImportExport
         // Export all the Outputs.
         for (int node = 0; node < OUTPUT_NODE_MAX; node++)
         {
-            if (isOutputNodePresent(node))
+            if (outputCtl.isOutputNodePresent(node))
             {
                 for (int pin = 0; pin < OUTPUT_PIN_MAX; pin++)
                 {
                     // Export Output definition.
-                    readOutput(node, pin);
+                    outputCtl.readOutput(node, pin);
 
                     Serial.print(PGMT(M_OUTPUT));
                     Serial.print(CHAR_TAB);
@@ -642,12 +642,12 @@ class ImportExport
         // Export all the locks.
         for (int node = 0; node < OUTPUT_NODE_MAX; node++)
         {
-            if (isOutputNodePresent(node))
+            if (outputCtl.isOutputNodePresent(node))
             {
                 for (int pin = 0; pin < OUTPUT_PIN_MAX; pin++)
                 {
                     // Export a lock definition.
-                    readOutput(node, pin);
+                    outputCtl.readOutput(node, pin);
 
                     Serial.print(PGMT(M_LOCK));
                     Serial.print(CHAR_TAB);

@@ -112,7 +112,7 @@ class Command
                           }
                           break;
     
-                case 'o': state = getOutputState(node, pin);
+                case 'o': state = outputCtl.getOutputState(node, pin);
                           [[fallthrough]];
                 case 'l': state = !state;
                           [[fallthrough]];
