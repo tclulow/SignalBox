@@ -151,14 +151,14 @@ class Configure
                                         case TOP_INPUT:  menuNode(true);
                                                          if (outputCtl.isOutputNodePresent(outNode))    // The outNode may have been corrupted by input node processing.
                                                          {
-                                                            outputCtl.readOutput(outNode, outPin);                // So reload it.
+                                                            outputCtl.readOutput(outNode, outPin);      // So reload it.
                                                          }
                                                          break;
                                                          
                                         case TOP_OUTPUT:
-                                        case TOP_LOCKS:  if (outputCtl.isOutputNodePresent(outNode))  // Only if the output node is present
+                                        case TOP_LOCKS:  if (outputCtl.isOutputNodePresent(outNode))    // Only if the output node is present
                                                          {
-                                                            menuNode(false);                // Process the Output node.
+                                                            menuNode(false);                            // Process the Output node.
                                                          }
                                                          break;
                                                          
@@ -378,7 +378,7 @@ class Configure
             {
                 case BUTTON_NONE:   break;
 
-                case BUTTON_UP:     adjust += 2;            // Use +1 to compensate for the -1 that the code below will do.
+                case BUTTON_UP:     adjust += 2;                // Use +1 to compensate for the -1 that the code below will do.
                                     [[fallthrough]];
                 case BUTTON_DOWN:   adjust -= 1;
                                     if (aIsInput)
@@ -469,9 +469,9 @@ class Configure
      */
     void menuNewNode()
     {
-        bool finished = false;       // Set when done.
-        bool changed  = false;       // Set if a new node number has been chosen.
-        bool jumpers  = false;       // Set to reset node to its jumper setting.
+        bool    finished = false;       // Set when done.
+        bool    changed  = false;       // Set if a new node number has been chosen.
+        bool    jumpers  = false;       // Set to reset node to its jumper setting.
         uint8_t newNode  = outNode;     // The new node number to renumber to.
 
         displayNewNode(jumpers, newNode);
