@@ -282,7 +282,7 @@ void setup()
 
     // Detect presence of LCD shield using LCD_SHIELD_DETECT_PIN if necessary
     if (   (! LCD_SHIELD)
-        && (LCD_SHIELD_DETECT_PIN))
+        && (LCD_SHIELD_DETECT_PIN > 0))
     {
         pinMode(LCD_SHIELD_DETECT_PIN, INPUT_PULLUP);
         hasLcdShield = !digitalRead(LCD_SHIELD_DETECT_PIN);
