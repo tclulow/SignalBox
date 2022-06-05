@@ -36,9 +36,9 @@ const uint32_t I2C_TIMEOUT           = 25000L;  // Wire timeout in microseconds.
 
 
 // Attached LCD displays.
-#define LCD_I2C                 true    // Include code for LCD connected by I2C.
-#define LCD_SHIELD              false   // Assume LCD shield present (or not). If false, use LCD_SHIELD_DETECT_PIN.
-const uint8_t LCD_SHIELD_DETECT_PIN = 0;      // Use this pin (must be low) to detect presence of LCD shield. If zero, don't detect.
+#define        LCD_I2C                 true    // Include code for LCD connected by I2C.
+const uint8_t  LCD_SHIELD            = false;  // Assume LCD shield present (or not). If false, use LCD_SHIELD_DETECT_PIN.
+const uint8_t  LCD_SHIELD_DETECT_PIN = 0;      // Use this pin (must be low) to detect presence of LCD shield. If zero, don't detect.
 
 
 /** Configuration constants.

@@ -281,13 +281,12 @@ void setup()
     Serial.begin(SERIAL_SPEED);
 
     // Detect presence of LCD shield using LCD_SHIELD_DETECT_PIN if necessary
-#if ! LCD_SHIELD
-    if (LCD_SHIELD_DETECT_PIN)
+    if (   (! LCD_SHIELD)
+        && (LCD_SHIELD_DETECT_PIN))
     {
         pinMode(LCD_SHIELD_DETECT_PIN, INPUT_PULLUP);
         hasLcdShield = !digitalRead(LCD_SHIELD_DETECT_PIN);
     }
-#endif
 
     if (hasLcdShield)
     {
