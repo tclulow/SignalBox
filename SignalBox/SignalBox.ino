@@ -281,9 +281,12 @@ void setup()
     Serial.begin(SERIAL_SPEED);
 
     // Detect presence of LCD shield using LCD_SHIELD_DETECT_PIN if necessary
-#if ! LCD_SHIELD && LCD_SHIELD_DETECT_PIN
-    pinMode(LCD_SHIELD_DETECT_PIN, INPUT_PULLUP);
-    hasLcdShield = !digitalRead(LCD_SHIELD_DETECT_PIN);
+#if ! LCD_SHIELD
+    if (LCD_SHIELD_DETECT_PIN)
+    {
+        pinMode(LCD_SHIELD_DETECT_PIN, INPUT_PULLUP);
+        hasLcdShield = !digitalRead(LCD_SHIELD_DETECT_PIN);
+    }
 #endif
 
     if (hasLcdShield)
@@ -297,7 +300,7 @@ void setup()
 
     // Initialise I2C.
     Wire.begin(I2C_CONTROLLER_ID);          // I2C network
-    // Wire.setTimeout(25000L);             // Doesn't seem to have any effect.
+    Wire.setWireTimeout(I2C_TIMEOUT);       // Timeout (microseconds) if protocol hangs.
 
 #if LCD_I2C
     // Scan for I2C LCD.

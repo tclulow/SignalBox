@@ -94,16 +94,15 @@ class Controller
             scanInputs(NULL);
         }
     
-#if I2C_GATEWAY_ID
         // See if there are any Gateway requests
-        if (now > tickGateway)
+        if (   (I2C_GATEWAY_ID > 0)
+            && (now > tickGateway))
         {
             if (!gatewayRequest())
             {
                 tickGateway = now + STEP_GATEWAY;
             }
         }
-#endif
 
         // If display timeout has expired, clear it.
         if (   (displayTimeout > 0)
