@@ -36,10 +36,10 @@ Input	1	D	On_Off	2 1	9 7	. .	. .	. .	. .
 Input	1	E	On_Off	1 0	. .	. .	. .	. .	. .
 Input	1	F	On_Off	. .	. .	. .	. .	. .	. .
 
-Input	2	0	On_Off	D 4	. .	. .	. .	. .	. .
-Input	2	1	On_Off	D 5	A 0	. .	. .	. .	. .
-Input	2	2	On_Off	D 6	. .	. .	. .	. .	. .
-Input	2	3	On_Off	D 7	A 2	. .	. .	. .	. .
+Input	2	0	On_Off	4 4	. .	. .	. .	. .	. .
+Input	2	1	On_Off	4 5	A 0	. .	. .	. .	. .
+Input	2	2	On_Off	4 6	. .	. .	. .	. .	. .
+Input	2	3	On_Off	4 7	A 2	. .	. .	. .	. .
 Input	2	4	On_Off	3 2	A 1	. 1	A 3	. .	. .
 Input	2	5	On_Off	3 3	. .	. .	. .	. .	. .
 Input	2	6	On_Off	. .	. .	. .	. .	. .	. .
