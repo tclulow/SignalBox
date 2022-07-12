@@ -20,7 +20,7 @@
 // Include optional code
 #define SERIAL_CMRI     true    // Include serial CMRI processing.
 #define SERIAL_COMMAND  true    // Include serial command processing.
-#define EZYBUS_CONVERT  false   // Include code to detect and convert EzyBus installation.
+#define EZYBUS_CONVERT  true    // Include code to detect and convert EzyBus installation.
 
 
 // I2C node numbers.
