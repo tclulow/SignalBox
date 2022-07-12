@@ -334,7 +334,8 @@ void setup()
     }
 
     // Check for I2C Gateway.
-    if (i2cComms.exists(I2C_GATEWAY_ID))
+    if (   (I2C_GATEWAY_ID > 0)
+        && (i2cComms.exists(I2C_GATEWAY_ID)))
     {
         i2cComms.setGateway(I2C_GATEWAY_ID);
     }
