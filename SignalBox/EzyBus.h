@@ -14,6 +14,8 @@
 #define EzyBus_h
 
 
+#if EZYBUS_CONVERT
+
 const int     EZY_BASE        =   0;    // EEPROM address of output module definitions.
 const uint8_t EZY_OUTPUT_SIZE =   4;    // Four bytes for an EzyBus output definition.
 
@@ -40,5 +42,7 @@ void ezyBusClear()
         EEPROM.put(EZY_MAGIC_ADDR, EZY_MAGIC + 1);      // Corrupt the EzyBus magic number slightly.
     }
 }
+
+#endif
 
 #endif

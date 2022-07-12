@@ -98,6 +98,8 @@ void systemFail(PGM_P aMessage, int aValue)
 }
 
 
+#if EZYBUS_CONVERT
+
 /** Convert EzyBus configuration.
  *  One-one mapping with EzyBus modules, and their inputs.
  */
@@ -129,6 +131,8 @@ void ezyBusConvert()
         }
     }
 }
+
+#endif
 
 
 /** Set the default initial setup
@@ -175,6 +179,9 @@ void firstRun()
         buttons.calibrateButtons();
     }
 
+
+#if EZYBUS_CONVERT
+
     // Decide if EzyBus conversion required.
     if (ezyBusDetected())
     {
@@ -195,6 +202,9 @@ void firstRun()
         }
     }
     else
+    
+#endif
+
     {
         defaultInputs(INPUT_TYPE_ON_OFF);
     }
