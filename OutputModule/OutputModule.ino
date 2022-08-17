@@ -1233,13 +1233,25 @@ void stepServos()
     // Move any Outputs that need moving.
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
-        if (   (outputDefs[pin].isServo())
-            && (outputs[pin].steps > 0))
+        if (outputDefs[pin].isServo())
         {
-            if (   (outputs[pin].delayTo == 0)
-                || (outputs[pin].delayTo <= now))
+            if (outputs[pin].steps > 0)
             {
-                stepServo(pin);
+                if (   (outputs[pin].delayTo == 0)
+                    || (outputs[pin].delayTo <= now))
+                {
+                    if (!outputs[pin].attached)
+                    {
+                        outputs[pin].servo.attach(pin);     // ServoOff: Attach servo if necessary.
+                        outputs[pin].attached = true;
+                    }
+                    stepServo(pin);
+                }
+            }
+            else if (outputs[pin].attached)                 // ServoOff: Detach servo if finished movement.
+            {
+                outputs[pin].servo.detach();
+                outputs[pin].attached = false;
             }
         }
     }
@@ -1256,13 +1268,6 @@ void stepServo(uint8_t aPin)
 //    {
 //        reportOutput(M_DEBUG_MOVE, aPin);
 //    }
-
-    // ServoOff: Attach servo if necessary.
-    if (!outputs[aPin].attached)
-    {
-        outputs[aPin].servo.attach(aPin);
-        outputs[aPin].attached = true;
-    }
 
     // Handle SIGNAL triggers (if set).
     if (outputs[aPin].altValue)
@@ -1379,13 +1384,6 @@ void stepServo(uint8_t aPin)
                 || (outputs[aPin].step == outputs[aPin].steps))))
     {
         reportOutput(M_DEBUG_MOVE, aPin);
-    }
-
-    // ServoOff: Detach servo if necessary.
-    if (outputs[aPin].steps == 0)
-    {
-        outputs[aPin].servo.detach();
-        outputs[aPin].attached = false;
     }
 }
 
