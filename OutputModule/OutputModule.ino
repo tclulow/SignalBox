@@ -123,7 +123,6 @@ volatile uint8_t requestNode    = 0;
 struct
 {
     Servo         servo;                // The Servo (if there is one).
-    bool          attached  = false;    // Is the Servo attached?
     unsigned long delayTo   = 0;        // Start at this time.
     uint8_t       steps     = 0;        // The number of steps to take.
     uint8_t       step      = 0;        // The current step.
@@ -1240,18 +1239,16 @@ void stepServos()
                 if (   (outputs[pin].delayTo == 0)
                     || (outputs[pin].delayTo <= now))
                 {
-                    if (!outputs[pin].attached)
+                    if (!outputs[pin].servo.attached())
                     {
                         outputs[pin].servo.attach(pin);     // ServoOff: Attach servo if necessary.
-                        outputs[pin].attached = true;
                     }
                     stepServo(pin);
                 }
             }
-            else if (outputs[pin].attached)                 // ServoOff: Detach servo if finished movement.
+            else if (outputs[pin].servo.attached())         // ServoOff: Detach servo if finished movement.
             {
                 outputs[pin].servo.detach();
-                outputs[pin].attached = false;
             }
         }
     }
