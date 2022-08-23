@@ -1241,13 +1241,29 @@ void stepServos()
                 {
                     if (!outputs[pin].servo.attached())
                     {
-                        outputs[pin].servo.attach(pin);     // ServoOff: Attach servo if necessary.
+                        if (isDebug(DEBUG_DETAIL))
+                        {
+                            Serial.print(millis());
+                            Serial.print(CHAR_TAB);
+                            Serial.print(PGMT(M_DEBUG_ATTACH));
+                            Serial.print(pin, HEX);
+                            Serial.println();
+                        }
+                        outputs[pin].servo.attach(sigPins[pin]);    // ServoOff: Attach servo if necessary.
                     }
                     stepServo(pin);
                 }
             }
-            else if (outputs[pin].servo.attached())         // ServoOff: Detach servo if finished movement.
+            else if (outputs[pin].servo.attached())                 // ServoOff: Detach servo if finished movement.
             {
+                if (isDebug(DEBUG_DETAIL))
+                {
+                    Serial.print(millis());
+                    Serial.print(CHAR_TAB);
+                    Serial.print(PGMT(M_DEBUG_DETACH));
+                    Serial.print(pin);
+                    Serial.println();
+                }
                 outputs[pin].servo.detach();
             }
         }
