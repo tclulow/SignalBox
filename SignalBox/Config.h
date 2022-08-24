@@ -25,7 +25,7 @@
 
 // I2C node numbers.
 const uint8_t  I2C_CONTROLLER_ID       = 0x10;      // Controller ID.
-const uint8_t  I2C_GATEWAY_ID          = 0x11;      // Gateway ID. Set to zero to disable Gateway code.
+const uint8_t  I2C_GATEWAY_ID          = 0x00;      // Gateway ID. Set to zero to disable Gateway code.
 const uint8_t  I2C_INPUT_BASE_ID       = 0x20;      // Input nodes base ID.
 const uint8_t  I2C_OUTPUT_BASE_ID      = 0x50;      // Output nodes base ID.
 const uint8_t  I2C_MODULE_ID_JUMPERS   = 0xff;      // Use jumpers to decide module ID.
