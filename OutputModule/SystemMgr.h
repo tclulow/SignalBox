@@ -85,8 +85,8 @@ const char    CHAR_LOWER_A = 'a';
 const char    CHAR_LO      = 0;
 
 // Hex characters - they are in fact base 32.
-const uint8_t HEX_MAX      = 32;
 const char    HEX_CHARS[]  = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
+const uint8_t HEX_MAX      = sizeof(HEX_CHARS);
 
 
 /** A System manager (extends Persisted) for persisting SystemData in EEPROM.
