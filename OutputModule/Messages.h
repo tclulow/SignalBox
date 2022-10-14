@@ -25,8 +25,8 @@
 #elif SB_OUTPUT_MODULE
     const char M_SOFTWARE[]     PROGMEM = "Output module";
 #endif
-const char M_VERSION[]          PROGMEM = "v4.4.1";        // See also SystemMgr.VERSION.
-const char M_VERSION_DATE[]     PROGMEM = "Aug 22";
+const char M_VERSION[]          PROGMEM = "v4.5.1";        // See also SystemMgr.VERSION.
+const char M_VERSION_DATE[]     PROGMEM = "Oct 22";
 const char M_INIT_I2C[]         PROGMEM = "Init I2C";
 const char M_STARTUP[]          PROGMEM = "Startup";
 const char M_UPDATE[]           PROGMEM = "Update";
