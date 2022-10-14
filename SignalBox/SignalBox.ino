@@ -62,10 +62,10 @@
 
 #include "Forward.h"                // SignalBox-specific classes.
 #include "Display.h"
-#include "EzyBus.h"
 #include "InputDef.h"
 #include "InputMgr.h"
 #include "OutputCtl.h"
+#include "EzyBus.h"
 
 #include "Buttons.h"
 #include "ImportExport.h"
@@ -96,43 +96,6 @@ void systemFail(PGM_P aMessage, int aValue)
 
     controller.setDisplayTimeout(DELAY_FAIL);
 }
-
-
-#if EZYBUS_CONVERT
-
-/** Convert EzyBus configuration.
- *  One-one mapping with EzyBus modules, and their inputs.
- */
-void ezyBusConvert()
-{
-    int     ezyBus = 0;
-
-    disp.clearRow(LCD_COL_START, LCD_ROW_DET);
-    disp.clearBottomRows();
-    disp.printProgStrAt(LCD_COL_START, LCD_ROW_EDT, M_EZY_UPDATING, LCD_COLS);
-    disp.setCursor(LCD_COL_START, LCD_ROW_BOT);
-
-    for (outputNode = 0; outputNode < EZY_NODE_MAX; outputNode++)
-    {
-        disp.printHexCh(outputNode);
-
-        for (outputPin = 0; outputPin < OUTPUT_PIN_MAX; outputPin++)
-        {
-            // Create an Output that reflects the Ezybus one.
-            outputDef.setState(false);
-            outputDef.setType((EEPROM.read(ezyBus++) + 1) & OUTPUT_TYPE_MASK);                  // Output types are 1 greater then those of Ezybus.
-            outputDef.setLo(EEPROM.read(ezyBus++));
-            outputDef.setHi(EEPROM.read(ezyBus++));
-            outputDef.setPace((EEPROM.read(ezyBus++) >> EZY_SPEED_SHIFT) & OUTPUT_PACE_MASK);   // Convert Ezybus pace.
-            outputDef.setReset(OUTPUT_DEFAULT_RESET);
-
-            outputCtl.writeOutput();
-            outputCtl.writeSaveOutput();
-        }
-    }
-}
-
-#endif
 
 
 /** Set the default initial setup
