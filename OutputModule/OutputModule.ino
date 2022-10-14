@@ -256,7 +256,6 @@ void reportOutput(PGM_P aHeader, uint8_t aPin)
 
 
 /** Initialise an Output.
- *  Detach/attach servo as necessary.
  *  Set outputs entry if movement necessary.
  */
 void initOutput(uint8_t aPin, uint8_t aOldType)
@@ -280,12 +279,12 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
     {
         if (outputMgr.isServo(aOldType))
         {
-            // Already attached, move (at correct pace) to new position (immediately).
+            // Already a servo, move (at correct pace) to new position (immediately).
             actionState(aPin, outputDefs[aPin].getState(), 0, true);
         }
         else
         {
-            // Ensure servo is set to correct angle, and attach it.
+            // Ensure servo is set to correct angle and state.
             if (outputDefs[aPin].getState())
             {
                 outputs[aPin].servo.write(outputDefs[aPin].getHi());
@@ -295,6 +294,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
                 outputs[aPin].servo.write(outputDefs[aPin].getLo());
             }
             digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
+
             // ServoOff: 
             // outputs[aPin].servo.attach(sigPins[aPin]);
         }
@@ -783,12 +783,13 @@ void processWrite(uint8_t aPin)
     {
         persisting = false;             // Stop saving state to EEPROM.
         outputDefs[aPin].read();        // Read the Output definition.
-        initOutput(aPin, oldType);      // Initialise the pin.
 
         if (isDebug(DEBUG_BRIEF))
         {
             outputDefs[aPin].printDef(M_DEBUG_WRITE, systemMgr.getModuleId(false), aPin);
         }
+
+        initOutput(aPin, oldType);      // Initialise the pin.
     }
 }
 
@@ -1239,6 +1240,8 @@ void stepServos()
                 if (   (outputs[pin].delayTo == 0)
                     || (outputs[pin].delayTo <= now))
                 {
+                    outputs[pin].delayTo = 0L;                      // Clear the delay to avoid confusion when operation complete and detach must be delayed.
+                    
                     if (!outputs[pin].servo.attached())
                     {
                         if (isDebug(DEBUG_DETAIL))
@@ -1251,20 +1254,28 @@ void stepServos()
                         }
                         outputs[pin].servo.attach(sigPins[pin]);    // ServoOff: Attach servo if necessary.
                     }
-                    stepServo(pin);
+
+                    stepServo(pin);                                 // Step the servo.
                 }
             }
             else if (outputs[pin].servo.attached())                 // ServoOff: Detach servo if finished movement.
             {
-                if (isDebug(DEBUG_DETAIL))
+                if (outputs[pin].delayTo == 0)
                 {
-                    Serial.print(millis());
-                    Serial.print(CHAR_TAB);
-                    Serial.print(PGMT(M_DEBUG_DETACH));
-                    Serial.print(pin);
-                    Serial.println();
+                    outputs[pin].delayTo = now + DELAY_DETACH;      // Set the time for the detach to occur (gives the servo a chance to finish moving).
                 }
-                outputs[pin].servo.detach();
+                else if (outputs[pin].delayTo <= now)
+                {
+                    if (isDebug(DEBUG_DETAIL))                      // Time to detach the servo.
+                    {
+                        Serial.print(millis());
+                        Serial.print(CHAR_TAB);
+                        Serial.print(PGMT(M_DEBUG_DETACH));
+                        Serial.print(pin);
+                        Serial.println();
+                    }
+                    outputs[pin].servo.detach();
+                }
             }
         }
     }

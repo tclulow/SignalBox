@@ -78,7 +78,9 @@ const long    DELAY_BUTTON_WAIT        =     50;    // Delay when waiting for bu
 const long    DELAY_BUTTON_DELAY       =    250;    // Delay before auto-repeating button.
 const long    DELAY_BUTTON_REPEAT      =    100;    // Auto-repeat button when held continuously.
 
-const long    DELAY_MULTIPLIER         =   1000;    // Multiply delay values by this amount (convert to seconds).
+const long    DELAY_DETACH             =   1000;    // Delay detaching servos for msecs.
+
+const long    DELAY_MULTIPLIER         =   1000;    // Multiply OutputDef.delay values by this amount (convert to seconds).
 
 
 // Steps (all in msecs)
