@@ -185,21 +185,22 @@ class ImportExport
             // Read all the Input's Outputs.
             for (int index = 0; index < INPUT_OUTPUT_MAX; index++)
             {
-                int value = readData();
-                if (value >= 0)
+                int outNode = readData();
+                int outPin  = readData();
+                boolean outDelay = outNode < 0;
+                
+                if (outDelay)
                 {
-                    // Active Output
-                    inputDef.setOutputNode(index, value & OUTPUT_NODE_MASK);
-                    inputDef.setOutputPin(index, readData() & OUTPUT_PIN_MASK);
-                    inputDef.setDelay(index, false);
+                    outNode = node;
                 }
-                else
+                if (outPin < 0)
                 {
-                    // Delay
-                    inputDef.setOutputNode(index, node);
-                    inputDef.setOutputPin(index, readData() & OUTPUT_PIN_MASK);
-                    inputDef.setDelay(index, true);
+                    outPin = 0;
                 }
+                
+                inputDef.setOutputNode(index, outNode & OUTPUT_NODE_MASK);
+                inputDef.setOutputPin(index, outPin & OUTPUT_PIN_MASK);
+                inputDef.setDelay(index, outDelay);
             }
 
             disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_INPUT, LCD_LEN_OPTION);
