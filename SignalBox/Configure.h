@@ -110,6 +110,8 @@ class Configure
         {
             outNode = nextNode(outNode, 1, false, true);
         }
+        inputMgr.loadInput(inpNode, inpPin);
+        outputCtl.readOutput(outNode, outPin);
 
         disp.clear();
         displayAll();
@@ -364,8 +366,8 @@ class Configure
      */
     void menuNode(bool aIsInput)
     {
-        bool finished    = false;
-        int8_t  reportLevel = systemMgr.getReportLevel();       // Record reportLevel so we can turn it back on again.
+        bool   finished    = false;
+        int8_t reportLevel = systemMgr.getReportLevel();    // Record reportLevel so we can turn it back on again.
 
         systemMgr.setReportLevel(REPORT_NONE);
         markField(LCD_COL_NODE, LCD_ROW_TOP, 1, true);
