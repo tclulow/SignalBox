@@ -178,6 +178,24 @@ class InputDef
     }
 
 
+    /** Does the input operate the given node/pin?
+     */
+    bool operates(uint8_t aNode, uint8_t aPin)
+    {
+        for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
+        {
+            if (   (!isDelay(index))
+                && (aNode == getOutputNode(index))
+                && (aPin  == getOutputPin(index)))
+            {
+                return true;
+            }
+        }
+
+        return false;        
+    }
+
+
 //    /** Gets the number of outputs this input drives.
 //     *  Ignoring delay entries.
 //     */

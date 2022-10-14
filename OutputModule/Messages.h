@@ -25,8 +25,8 @@
 #elif SB_OUTPUT_MODULE
     const char M_SOFTWARE[]     PROGMEM = "Output module";
 #endif
-const char M_VERSION[]          PROGMEM = "v4.3.4";        // See also SystemMgr.VERSION.
-const char M_VERSION_DATE[]     PROGMEM = "Jun 22";
+const char M_VERSION[]          PROGMEM = "v4.4.1";        // See also SystemMgr.VERSION.
+const char M_VERSION_DATE[]     PROGMEM = "Aug 22";
 const char M_INIT_I2C[]         PROGMEM = "Init I2C";
 const char M_STARTUP[]          PROGMEM = "Startup";
 const char M_UPDATE[]           PROGMEM = "Update";
@@ -164,7 +164,9 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
 
 // Common debug messages.
 
+const char M_DEBUG_ATTACH[]     PROGMEM = "Attach";
 const char M_DEBUG_DEBUG[]      PROGMEM = "Debug";
+const char M_DEBUG_DETACH[]     PROGMEM = "Detach";
 const char M_DEBUG_INP_LO[]     PROGMEM = "InpLo";
 const char M_DEBUG_INP_HI[]     PROGMEM = "InpHi";
 const char M_DEBUG_LOAD[]       PROGMEM = "Load";

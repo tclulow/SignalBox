@@ -610,44 +610,51 @@ class Controller
                     if (outputDef.isLock(aNewState, outIndex))
                     {
                         // And the state change is prohibited.
-                        bool state = outputCtl.getOutputState(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
+                        uint8_t lockNode = outputDef.getLockNode(aNewState, outIndex);
+                        uint8_t lockPin  = outputDef.getLockPin(aNewState, outIndex);
+                        bool state = outputCtl.getOutputState(lockNode, lockPin);
+                        
                         if (outputDef.getLockState(aNewState, outIndex) == state)
                         {
-                            if (systemMgr.isReportEnabled(REPORT_SHORT))
+                            // Ignore lock if against an Output that's in this Inputs list of outputs
+                            if (!inputDef.operates(lockNode, lockPin))
                             {
-                                disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_LOCK, LCD_LEN_OPTION);
-                                disp.printCh(aNewState ? CHAR_HI : CHAR_LO);
-                                disp.printHexCh(outputNode);
-                                disp.printHexCh(outputPin);
-                                disp.printProgStr(M_VS);
-                                disp.printCh(state ? CHAR_HI : CHAR_LO);
-                                disp.printHexCh(outputDef.getLockNode(aNewState, outIndex));
-                                disp.printHexCh(outputDef.getLockPin (aNewState, outIndex));
-                                setDisplayTimeout(systemMgr.getReportDelay());
+                                if (systemMgr.isReportEnabled(REPORT_SHORT))
+                                {
+                                    disp.printProgStrAt(LCD_COL_START, LCD_ROW_BOT, M_LOCK, LCD_LEN_OPTION);
+                                    disp.printCh(aNewState ? CHAR_HI : CHAR_LO);
+                                    disp.printHexCh(outputNode);
+                                    disp.printHexCh(outputPin);
+                                    disp.printProgStr(M_VS);
+                                    disp.printCh(state ? CHAR_HI : CHAR_LO);
+                                    disp.printHexCh(outputDef.getLockNode(aNewState, outIndex));
+                                    disp.printHexCh(outputDef.getLockPin (aNewState, outIndex));
+                                    setDisplayTimeout(systemMgr.getReportDelay());
+                                }
+    
+                                if (isDebug(DEBUG_BRIEF))
+                                {
+                                    outputDef.printDef(M_LOCK, outputNode, outputPin);
+                                    outputCtl.readOutput(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
+                                    outputDef.printDef(M_VS, outputNode, outputPin);
+                                }
+    
+                                if (INTERLOCK_WARNING_PIN)
+                                {
+                                    pinMode(INTERLOCK_WARNING_PIN, OUTPUT);
+                                    digitalWrite(INTERLOCK_WARNING_PIN, HIGH);
+                                    timeoutInterlock = millis() + INTERLOCK_WARNING_TIME;
+                                }
+    
+                                if (INTERLOCK_BUZZER_PIN)
+                                {
+                                    pinMode(INTERLOCK_BUZZER_PIN, OUTPUT);
+                                    tone(INTERLOCK_BUZZER_PIN, INTERLOCK_BUZZER_FREQ1, INTERLOCK_BUZZER_TIME1);
+                                    timeoutBuzzer = millis() + INTERLOCK_BUZZER_TIME1;
+                                }
+                                
+                                return true;            // A lock exists.
                             }
-
-                            if (isDebug(DEBUG_BRIEF))
-                            {
-                                outputDef.printDef(M_LOCK, outputNode, outputPin);
-                                outputCtl.readOutput(outputDef.getLockNode(aNewState, outIndex), outputDef.getLockPin(aNewState, outIndex));
-                                outputDef.printDef(M_VS, outputNode, outputPin);
-                            }
-
-                            if (INTERLOCK_WARNING_PIN)
-                            {
-                                pinMode(INTERLOCK_WARNING_PIN, OUTPUT);
-                                digitalWrite(INTERLOCK_WARNING_PIN, HIGH);
-                                timeoutInterlock = millis() + INTERLOCK_WARNING_TIME;
-                            }
-
-                            if (INTERLOCK_BUZZER_PIN)
-                            {
-                                pinMode(INTERLOCK_BUZZER_PIN, OUTPUT);
-                                tone(INTERLOCK_BUZZER_PIN, INTERLOCK_BUZZER_FREQ1, INTERLOCK_BUZZER_TIME1);
-                                timeoutBuzzer = millis() + INTERLOCK_BUZZER_TIME1;
-                            }
-                            
-                            return true;            // A lock exists.
                         }
                     }
                 }
