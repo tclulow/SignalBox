@@ -122,16 +122,16 @@ volatile uint8_t requestNode    = 0;
 // An Array of Output control structures.
 struct
 {
-    Servo         servo;          // The Servo (if there is one).
-    unsigned long delayTo   = 0;  // Start at this time.
-    uint8_t       steps     = 0;  // The number of steps to take.
-    uint8_t       step      = 0;  // The current step.
-    uint8_t       start     = 0;  // The starting value.
-    uint8_t       value     = 0;  // The value of the output.
-    uint8_t       target    = 0;  // The target value to aim for.
-    uint8_t       altStart  = 0;  // The alt starting value.
-    uint8_t       altValue  = 0;  // The alt value of the output.
-    uint8_t       altTarget = 0;  // The alt target value to aim for.
+    Servo         servo;                // The Servo (if there is one).
+    unsigned long delayTo   = 0;        // Start at this time.
+    uint8_t       steps     = 0;        // The number of steps to take.
+    uint8_t       step      = 0;        // The current step.
+    uint8_t       start     = 0;        // The starting value.
+    uint8_t       value     = 0;        // The value of the output.
+    uint8_t       target    = 0;        // The target value to aim for.
+    uint8_t       altStart  = 0;        // The alt starting value.
+    uint8_t       altValue  = 0;        // The alt value of the output.
+    uint8_t       altTarget = 0;        // The alt target value to aim for.
 } outputs[IO_PINS];
 
 
@@ -266,13 +266,14 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
         reportOutput(M_DEBUG_INIT, aPin);
     }
 
-    // Detach servo if currently attached and no longer required.
-    if (   (outputMgr.isServo(aOldType))
-        && (!outputDefs[aPin].isServo()))
-    {
-        // Detach servo.
-        outputs[aPin].servo.detach();
-    }
+//    ServoOff: Code no longer required - servos attached/detached only when moving.
+//    // Detach servo if currently attached and no longer required.
+//    if (   (outputMgr.isServo(aOldType))
+//        && (!outputDefs[aPin].isServo()))
+//    {
+//        // Detach servo.
+//        outputs[aPin].servo.detach();
+//    }
 
     // Establish new type.
     if (outputDefs[aPin].isServo())
@@ -294,7 +295,8 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
                 outputs[aPin].servo.write(outputDefs[aPin].getLo());
             }
             digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
-            outputs[aPin].servo.attach(sigPins[aPin]);
+            // ServoOff: 
+            // outputs[aPin].servo.attach(sigPins[aPin]);
         }
     }
     else if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_RANDOM)
@@ -1230,13 +1232,23 @@ void stepServos()
     // Move any Outputs that need moving.
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
-        if (   (outputDefs[pin].isServo())
-            && (outputs[pin].steps > 0))
+        if (outputDefs[pin].isServo())
         {
-            if (   (outputs[pin].delayTo == 0)
-                || (outputs[pin].delayTo <= now))
+            if (outputs[pin].steps > 0)
             {
-                stepServo(pin);
+                if (   (outputs[pin].delayTo == 0)
+                    || (outputs[pin].delayTo <= now))
+                {
+                    if (!outputs[pin].servo.attached())
+                    {
+                        outputs[pin].servo.attach(pin);     // ServoOff: Attach servo if necessary.
+                    }
+                    stepServo(pin);
+                }
+            }
+            else if (outputs[pin].servo.attached())         // ServoOff: Detach servo if finished movement.
+            {
+                outputs[pin].servo.detach();
             }
         }
     }

@@ -50,8 +50,8 @@ class Cmri
     uint8_t   address       = 0;            // Address of the current message.
     uint8_t   messageType   = 0;            // Type of the current message.
     uint8_t   nodeType      = 0;            // Node type.
-    uint16_t  transDelay    = 0;            // Delay when transmitting data.
-    uint8_t   sets          = 0;            // Number of sets.
+    uint16_t  transDelay    = 0;            // Delay when transmitting data - not used.
+    uint8_t   sets          = 0;            // Number of sets               - not used.
     uint8_t   messageLength = 0;            // Length of data message (so far).
 
 
@@ -99,7 +99,7 @@ class Cmri
         {
             case CMRI_IDLE: if (currentByte == CHAR_SYN)
                             {
-                                cmriState = CMRI_SYN;       // Move to next state.
+                                cmriState     = CMRI_SYN;   // Move to next state.
                                 address       = 0;          // Address of the current message.
                                 messageType   = 0;          // Type of the current message.
                                 messageLength = 0;          // Length of data message (so far).
