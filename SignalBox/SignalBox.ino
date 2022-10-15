@@ -117,16 +117,14 @@ void defaultInputs(uint8_t aInputType)
         for (uint8_t pin = 0; pin < INPUT_PIN_MAX; pin++)
         {
             // Create an input.
-            inputDef.setOutput(0, inputNumber);     // Map 1-1 inputs to outputs.
-            inputDef.setDelay(0, false);
-            for (uint8_t index = 1; index < INPUT_OUTPUT_MAX; index++)
+            for (uint8_t index = 0; index < INPUT_OUTPUT_MAX; index++)
             {
                 inputDef.setOutput(index, 0);       // Zero-length delay.
                 inputDef.setDelay(index, true);
             }
 
             inputMgr.saveInput();
-            inputNumber += 1;       // Input numbers map nicely to OutputNumbers.
+            inputNumber += 1;       // Step through Input numbers.
         }
     }
 }
