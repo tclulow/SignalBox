@@ -151,7 +151,13 @@ class ImportExport
     void importSystem()
     {
         disp.printProgStrAt(LCD_COLS - LCD_LEN_OPTION, LCD_ROW_TOP, M_SYSTEM, LCD_LEN_OPTION);
-        disp.clearRow(LCD_COL_START, LCD_ROW_DET);
+        disp.setCursor(LCD_COL_START, LCD_ROW_DET);
+        while (readWord() > 0)
+        {
+            disp.printStr(wordBuffer);
+            disp.printCh(CHAR_SPACE);
+        }
+        // disp.clearRow(LCD_COL_START, LCD_ROW_DET);
     }
 
 
