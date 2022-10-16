@@ -162,7 +162,9 @@ void setup()
         for (uint8_t pin = 0; pin < IO_PINS; pin++)
         {
             outputMgr.loadOutput(pin);
-            initOutput(pin, OUTPUT_TYPE_NONE);
+            outputs[pin].value    = (outputDefs[pin].getState() ? outputDefs[pin].getHi() : outputDefs[pin].getLo());
+            outputs[pin].altValue = (outputDefs[pin].getState() ? outputDefs[pin].getLo() : outputDefs[pin].getHi());
+            initOutput(pin);
             initFlasher(pin);
         }
     }
@@ -258,7 +260,7 @@ void reportOutput(PGM_P aHeader, uint8_t aPin)
 /** Initialise an Output.
  *  Set outputs entry if movement necessary.
  */
-void initOutput(uint8_t aPin, uint8_t aOldType)
+void initOutput(uint8_t aPin)
 {
     if (isDebug(DEBUG_BRIEF))
     {
@@ -277,27 +279,13 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
     // Establish new type.
     if (outputDefs[aPin].isServo())
     {
-        if (outputMgr.isServo(aOldType))
-        {
-            // Already a servo, move (at correct pace) to new position (immediately).
-            actionState(aPin, outputDefs[aPin].getState(), 0, true);
-        }
-        else
-        {
-            // Ensure servo is set to correct angle and state.
-            if (outputDefs[aPin].getState())
-            {
-                outputs[aPin].servo.write(outputDefs[aPin].getHi());
-            }
-            else
-            {
-                outputs[aPin].servo.write(outputDefs[aPin].getLo());
-            }
-            digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
+        // Ensure servo is set to correct angle and state.
+        outputs[aPin].servo.write(outputs[aPin].value);
+        digitalWrite(ioPins[aPin], outputDefs[aPin].getState());
+        actionState(aPin, outputDefs[aPin].getState(), 0, true);
 
-            // ServoOff: 
-            // outputs[aPin].servo.attach(sigPins[aPin]);
-        }
+        // ServoOff: 
+        // outputs[aPin].servo.attach(sigPins[aPin]);
     }
     else if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_RANDOM)
              && (persisting))
@@ -356,7 +344,7 @@ void initOutput(uint8_t aPin, uint8_t aOldType)
             }
             else if (outputMgr.isDoubleLed(aPin + 1))
             {
-                initOutput(aPin + 1, outputDefs[aPin + 1].getType());
+                initOutput(aPin + 1);
             }
         }
     }
@@ -764,8 +752,6 @@ void processMoveLocks()
  */
 void processWrite(uint8_t aPin)
 {
-    uint8_t oldType = outputDefs[aPin].getType();       // Remember old type.
-
     if (i2cComms.available() < ((int)sizeof(OutputDef)))
     {
         if (isDebug(DEBUG_ERRORS))
@@ -789,7 +775,7 @@ void processWrite(uint8_t aPin)
             outputDefs[aPin].printDef(M_DEBUG_WRITE, systemMgr.getModuleId(false), aPin);
         }
 
-        initOutput(aPin, oldType);      // Initialise the pin.
+        initOutput(aPin);               // Initialise the pin.
     }
 }
 
@@ -798,11 +784,9 @@ void processWrite(uint8_t aPin)
  */
 void processSave(uint8_t aPin)
 {
-    uint8_t oldType = outputDefs[aPin].getType();
-
     persisting = true;              // Resume saving output to EEPROM.
     outputMgr.saveOutput(aPin);     // And save the output.
-    initOutput(aPin, oldType);      // Ensure output is initialised to new state.
+    initOutput(aPin);               // Ensure output is initialised to new state.
     initFlasher(aPin);              // Ensure flasher is operating (or not).
 }
 
@@ -811,11 +795,9 @@ void processSave(uint8_t aPin)
  */
 void processReset(uint8_t aPin)
 {
-    uint8_t oldType = outputDefs[aPin].getType();
-
     persisting = true;              // Resume saving output to EEPROM.
     outputMgr.loadOutput(aPin);     // And recover the output's definition.
-    initOutput(aPin, oldType);      // Ensure output is initialised to new state.
+    initOutput(aPin);               // Ensure output is initialised to new state.
     initFlasher(aPin);              // Ensure flasher is operating (or not).
 }
 
@@ -845,7 +827,7 @@ void processSet(uint8_t aPin, uint8_t aValue)
     {
         outputDefs[aPin].setLo(aValue);
     }
-    initOutput(aPin, outputDefs[aPin].getType());
+    initOutput(aPin);
 }
 
 
