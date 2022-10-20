@@ -176,7 +176,7 @@ void setup()
 
     // Flash out version number on the built-in LED,
     // unless that's a Servo - don't want to mess with it's attached base pin.
-    if (!outputDefs[OUTPUT_BUILTIN_PIN].isServo())
+    // if (!outputDefs[OUTPUT_BUILTIN_PIN].isServo())
     {
         systemMgr.flashVersion();
     }
