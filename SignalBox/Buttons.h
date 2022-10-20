@@ -92,12 +92,26 @@ class Buttons
         // Request values for all buttons in turn.
         for (int button = 0; button < BUTTON_HIGH; button++)
         {
+            unsigned long abandon  = millis() + DELAY_FAIL;             // Abandon calibration after this interval
+            
             // Announce the button to be calibrated.
             disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_PRESS, LCD_COLS);
             disp.printProgStrAt(LCD_COL_CALIBRATE, LCD_ROW_DET, M_BUTTONS[button + 1], LCD_LEN_OPTION);
 
-            // Wait for a button to be pressed
-            while ((value = analogRead(BUTTON_ANALOG)) > BUTTON_THRESHHOLD);
+            // Wait for a button to be pressed. Timeout if operation takes too long.
+            while ((value = analogRead(BUTTON_ANALOG)) > BUTTON_THRESHHOLD)
+            {
+                if (millis() > abandon)
+                {
+                    disp.printProgStrAt(LCD_COL_START, LCD_ROW_DET, M_ABANDONED, LCD_COLS);
+                    waitForButtonClick();
+
+                    // Recover original settings.
+                    systemMgr.loadSystemData();
+                    buttonsPtr[BUTTON_NONE] = BUTTON_THRESHHOLD;        // Ensure automatic calibration is now disabled
+                    return;
+                }
+            }
 
 //            if (isDebug(DEBUG_BRIEF))
 //            {
@@ -258,6 +272,22 @@ class Buttons
 
         return button;
     }
+
+
+//    /** Display the analog values of the buttons.
+//     */
+//    void displayButtons()
+//    {
+//        Serial.print(PGMT(M_DEBUG_BUTTON));
+//        for (uint8_t i = 0; i <= BUTTON_HIGH; i++)
+//        {
+//            Serial.print(CHAR_SPACE);
+//            Serial.print(i);
+//            Serial.print(CHAR_COLON);
+//            Serial.print(buttonsPtr[i]);
+//        }
+//        Serial.println();
+//    }
 };
 
 

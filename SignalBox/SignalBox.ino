@@ -320,6 +320,8 @@ void setup()
         controller.announce();                                  // Re-announce. Calibration will have overwritten the display.
     }
 
+//    buttons.displayButtons();
+    
 //    // Dump memory in raw format if debug-full.
 //    if (isDebug(DEBUG_FULL))
 //    {
