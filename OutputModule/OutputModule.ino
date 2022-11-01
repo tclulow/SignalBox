@@ -197,12 +197,6 @@ void firstRun()
 {
     uint8_t moduleId = systemMgr.getModuleId(false);
 
-    // Initialise SystemData.
-    // TODO - re-instate this?   systemData.magic = MAGIC_NUMBER;
-    Serial.print("Magic=");
-    Serial.print(systemData.magic, HEX);
-    Serial.println();
-    
     // Initialise EEPROM with suitable data.
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
