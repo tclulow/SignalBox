@@ -65,8 +65,8 @@
 
 // Definitions for paired LEDS
 // Other (pin - 1) LED             output is wired Hi=Red,   Lo=Amber
-// This  (pin    ) LED_4/3 or ROAD output is wired Hi=Amber, Lo=Green.
-// Phase is calculated using LED state for bit 0, other state for bit 1 => 0 to 3.
+// This  (pin    ) LED_3/4 or ROAD output is wired Hi=Amber, Lo=Green.
+// Phase is calculated using LED state for bit 0, this state for bit 1 => 0 to 3.
 //
 // Colour   LED   LED_4  On      Off    Phase   Next    Amber  Red  Green  Amber
 // Green     Lo    Lo    LED_4   LED      0      0       Off          Lo
@@ -92,8 +92,8 @@
 // Amber     Lo    Hi    ROAD    LED      2      1       Off                 Hi
 //           Hi    Hi    Both    None     3      0      ------Not used----------
 
-static const uint8_t LED_4_NEXT_PHASE[]   = { 0, 3, 0, 2 }; // Representation of table above for LED_4.
 static const uint8_t LED_3_NEXT_PHASE[]   = { 0, 2, 0, 0 }; // Representation of table above for LED_3.
+static const uint8_t LED_4_NEXT_PHASE[]   = { 0, 3, 0, 2 }; // Representation of table above for LED_4.
 static const uint8_t ROAD_UK_NEXT_PHASE[] = { 2, 3, 1, 0 }; // Representation of table above for ROADUK.
 static const uint8_t ROAD_RW_NEXT_PHASE[] = { 2, 0, 1, 0 }; // Representation of table above for ROADRW.
 
@@ -199,7 +199,10 @@ void firstRun()
 
     // Initialise SystemData.
     // TODO - re-instate this?   systemData.magic = MAGIC_NUMBER;
-
+    Serial.print("Magic=");
+    Serial.print(systemData.magic, HEX);
+    Serial.println();
+    
     // Initialise EEPROM with suitable data.
     for (uint8_t pin = 0; pin < IO_PINS; pin++)
     {
