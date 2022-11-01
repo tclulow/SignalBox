@@ -64,35 +64,43 @@
 
 
 // Definitions for paired LEDS
-// Other (pin - 1) LED           output is wired Hi=Red,   Lo=Amber
-// This  (pin    ) LED_4 or ROAD output is wired Hi=Amber, Lo=Green.
-// Phase is calculated using LED state for bit 0, this state for bit 1 => 0 to 3.
+// Other (pin - 1) LED             output is wired Hi=Red,   Lo=Amber
+// This  (pin    ) LED_4/3 or ROAD output is wired Hi=Amber, Lo=Green.
+// Phase is calculated using LED state for bit 0, other state for bit 1 => 0 to 3.
 //
-// Colour   LED   LED_4  On      Off    Phase   Next
-// Red       Hi    Lo    LED     LED_4    1      3
-// Amber     Hi    Hi    LED_4   LED      3      2
-// Amber*2   Lo    Hi    Both    None     2      0
-// Green     Lo    Lo    LED_4   LED      0      0
+// Colour   LED   LED_4  On      Off    Phase   Next    Amber  Red  Green  Amber
+// Green     Lo    Lo    LED_4   LED      0      0       Off          Lo
+// Red       Hi    Lo    LED     LED_4    1      3              Hi   Off
+// Amber*2   Lo    Hi    Both    None     2      0        Lo                 Hi
+// Amber     Hi    Hi    LED_4   LED      3      2             Off           Hi
 //
-// Colour   LED   ROADUK On      Off    Phase   Next
-// Red       Hi    Lo    LED     ROAD     1      3
-// Red&Amber Hi    Hi    Both    None     3      0
-// Green     Lo    Lo    ROADUK  LED      0      2
-// Amber     Lo    Hi    ROADUK  LED      2      1
+// Colour   LED   LED_3  On      Off    Phase   Next    Amber  Red  Green  Amber
+// Green     Lo    Lo    LED_3   LED      0      0       Off          Lo
+// Red       Hi    Lo    LED     LED_3    1      2              Hi   Off
+// Amber     Lo    Hi    Both    None     2      0        On                 On
+//           Hi    Hi    Both    None     3      0      ------Not used----------
 //
-// Colour   LED   ROADRW On      Off    Phase   Next
-// Red       Hi    Lo    LED     ROAD     1      0
-//           Hi    Hi    ROADRW  LED      3      1          // Not used
-// Green     Lo    Lo    ROADRW  LED      0      2
-// Amber     Lo    Hi    ROADRW  LED      2      1
+// Colour   LED   ROADUK On      Off    Phase   Next    Amber  Red  Green  Amber
+// Green     Lo    Lo    ROAD    LED      0      2       Off          Lo
+// Red       Hi    Lo    LED     ROAD     1      3              Hi   Off
+// Amber     Lo    Hi    ROAD    LED      2      1       Off                 Hi
+// Red&Amber Hi    Hi    Both    None     3      0              Hi           Hi
+//
+// Colour   LED   ROADRW On      Off    Phase   Next    Amber  Red  Green  Amber
+// Green     Lo    Lo    ROAD    LED      0      2       Off          Lo
+// Red       Hi    Lo    LED     ROAD     1      0              Hi   Off
+// Amber     Lo    Hi    ROAD    LED      2      1       Off                 Hi
+//           Hi    Hi    Both    None     3      0      ------Not used----------
 
 static const uint8_t LED_4_NEXT_PHASE[]   = { 0, 3, 0, 2 }; // Representation of table above for LED_4.
+static const uint8_t LED_3_NEXT_PHASE[]   = { 0, 2, 0, 0 }; // Representation of table above for LED_3.
 static const uint8_t ROAD_UK_NEXT_PHASE[] = { 2, 3, 1, 0 }; // Representation of table above for ROADUK.
-static const uint8_t ROAD_RW_NEXT_PHASE[] = { 2, 0, 1, 1 }; // Representation of table above for ROADRW.
+static const uint8_t ROAD_RW_NEXT_PHASE[] = { 2, 0, 1, 0 }; // Representation of table above for ROADRW.
 
 //                                                                   Other     This
 // Phases where the pin is forced off (both outputs low)    // Phase 3 2 1 0   3 2 1 0
 static const uint8_t LED_4_OFF = 0x92;                      //       1 0 0 1   0 0 1 0 = 0x92.
+static const uint8_t LED_3_OFF = 0x12;                      //       0 0 0 1   0 0 1 0 = 0x12.
 static const uint8_t ROAD_OFF  = 0x52;                      //       0 1 0 1   0 0 1 0 = 0x52.
 
 
@@ -308,7 +316,8 @@ void initOutput(uint8_t aPin)
             // See table at top of source for states and colour sequences.
             if (outputMgr.isDoubleLed(aPin))
             {
-                if  (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
+                if  (   (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_3)
+                     || (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4))
                 {
                     if (outputDefs[aPin].getState() == outputDefs[aPin - 1].getState())
                     {
@@ -877,6 +886,7 @@ void actionState(uint8_t aPin, bool aState, uint8_t aDelay, bool aUseValue)
                                       break;
 
             case OUTPUT_TYPE_LED:
+            case OUTPUT_TYPE_LED_3:
             case OUTPUT_TYPE_LED_4:
             case OUTPUT_TYPE_ROAD_UK:
             case OUTPUT_TYPE_ROAD_RW: newState = actionLed(aPin, aState);
@@ -999,8 +1009,10 @@ bool actionDoubleLed(uint8_t aPin, bool aState)
     bool    newState = aState;      // Might want to override the state change.
     bool    ledState = false;
     uint8_t ledPin   = aPin - 1;
-    uint8_t offFlag  = (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4) ? LED_4_OFF : ROAD_OFF;
-    uint8_t oldPhase = (outputDefs[ledPin].getState()     )     // Convert state of both outputs to a phase.
+    uint8_t offFlag  = (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_3) ? LED_3_OFF 
+                     : (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4) ? LED_4_OFF
+                     : ROAD_OFF;
+    uint8_t oldPhase = (outputDefs[ledPin].getState()     )         // Convert state of both outputs to a phase.
                      | (outputDefs[aPin]  .getState() << 1);
     uint8_t newPhase = oldPhase;
 
@@ -1008,6 +1020,10 @@ bool actionDoubleLed(uint8_t aPin, bool aState)
     if (aState)
     {
         newPhase = 1;
+    }
+    else if (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_3)
+    {
+        newPhase = LED_3_NEXT_PHASE[oldPhase];
     }
     else if (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
     {

@@ -50,13 +50,14 @@ const uint8_t OUTPUT_TYPE_NONE     = 0x00;  // Placeholder to mark "no type".
 const uint8_t OUTPUT_TYPE_SERVO    = 0x01;  // Output is a servo.
 const uint8_t OUTPUT_TYPE_SIGNAL   = 0x02;  // Output is a signal.
 const uint8_t OUTPUT_TYPE_LED      = 0x03;  // Output is a LED or other IO device.
-const uint8_t OUTPUT_TYPE_LED_4    = 0x04;  // Output is a LED 4-aspect paired with next output.
+const uint8_t OUTPUT_TYPE_LED_4    = 0x04;  // Output is a LED 4-aspect paired with previous output.
 const uint8_t OUTPUT_TYPE_ROAD_UK  = 0x05;  // Output is a LED 3-aspect UK road signal.
 const uint8_t OUTPUT_TYPE_ROAD_RW  = 0x06;  // Output is a LED 3-aspect (Rest of World) road signal.
 const uint8_t OUTPUT_TYPE_FLASH    = 0x07;  // Output is a flashing LED.
 const uint8_t OUTPUT_TYPE_BLINK    = 0x08;  // Output is a blinking LED.
 const uint8_t OUTPUT_TYPE_RANDOM   = 0x09;  // Output is a random LED.
-const uint8_t OUTPUT_TYPE_MAX      = 0x0A;  // Limit of output types.
+const uint8_t OUTPUT_TYPE_LED_3    = 0x0A;  // Output is a LED 3-aspect paired with previous output.
+const uint8_t OUTPUT_TYPE_MAX      = 0x0B;  // Limit of output types.
 
 
  /** Definition of an Output.
@@ -93,6 +94,7 @@ class OutputDef
     bool isLed()
     {
         return    getType() == OUTPUT_TYPE_LED
+               || getType() == OUTPUT_TYPE_LED_3
                || getType() == OUTPUT_TYPE_LED_4
                || getType() == OUTPUT_TYPE_ROAD_UK
                || getType() == OUTPUT_TYPE_ROAD_RW;

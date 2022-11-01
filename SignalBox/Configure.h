@@ -1077,6 +1077,7 @@ class Configure
                                         case OUTPUT_TYPE_SIGNAL:  changed |= menuOutputLo(OUTPUT_SERVO_MAX);
                                                                   break;
                                         case OUTPUT_TYPE_LED:
+                                        case OUTPUT_TYPE_LED_3:
                                         case OUTPUT_TYPE_LED_4:
                                         case OUTPUT_TYPE_ROAD_UK:
                                         case OUTPUT_TYPE_ROAD_RW:

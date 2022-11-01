@@ -78,7 +78,8 @@ class OutputMgr: public Persisted
         return    (aPin > 0)
                && (aPin < OUTPUT_PIN_MAX)
                && (outputDefs[aPin - 1].getType() == OUTPUT_TYPE_LED)
-               && (   (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
+               && (   (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_3)
+                   || (outputDefs[aPin].getType() == OUTPUT_TYPE_LED_4)
                    || (outputDefs[aPin].getType() == OUTPUT_TYPE_ROAD_UK)
                    || (outputDefs[aPin].getType() == OUTPUT_TYPE_ROAD_RW));
     }

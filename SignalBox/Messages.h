@@ -49,6 +49,7 @@ const char M_NONE[]             PROGMEM = "None";
 const char M_SERVO[]            PROGMEM = "Servo";
 const char M_SIGNAL[]           PROGMEM = "Signal";
 const char M_LED[]              PROGMEM = "LED";
+const char M_LED_3[]            PROGMEM = "LED_3";
 const char M_LED_4[]            PROGMEM = "LED_4";
 const char M_ROAD_UK[]          PROGMEM = "RoadUK";
 const char M_ROAD_RW[]          PROGMEM = "RoadRW";
@@ -63,7 +64,7 @@ const char M_PACE[]             PROGMEM = "Spd";
 const char M_RESET[]            PROGMEM = "Reset";
 
 const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_LED_4, M_ROAD_UK, M_ROAD_RW, M_FLASH,
-                                         M_BLINK, M_RANDOM, M_RFU,    M_RFU, M_RFU,   M_RFU,     M_RFU,     M_RFU };
+                                         M_BLINK, M_RANDOM, M_LED_3,  M_RFU, M_RFU,   M_RFU,     M_RFU,     M_RFU };
 
 
 #if SB_CONTROLLER
