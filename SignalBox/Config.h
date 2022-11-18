@@ -45,8 +45,9 @@ const uint8_t  LCD_SHIELD_DETECT_PIN   = 11;        // Use this pin (must be low
 /** Configuration constants.
  */
  
-// Serial IO
+// IO speeds
 const long    SERIAL_SPEED             = 115200;    // Speed of the serial port.
+const long    I2C_SPEED                =  10000;    // Speed of I2C comms. Set to 0 for default (100k).
 
 
 // LCD shield pins.

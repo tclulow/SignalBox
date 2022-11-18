@@ -132,12 +132,28 @@ class I2cComms
 
     public:
 
-    /** Set the I2C node ID.
+    /** I2cComms constructor.
+     */
+    I2cComms()
+    {
+        if (I2C_SPEED)
+        {
+            Serial.print("TWBR Before=");
+            Serial.print(TWBR);
+            Wire.setClock(I2C_SPEED);   // Set custom clock speed if one was specified.
+            Serial.print(", after=");
+            Serial.println(TWBR);
+        }
+    }
+
+
+    /** Start I2C as a particular node
      */
     void setId(uint8_t aNodeId)
     {
         Wire.begin(aNodeId);
-    }
+        // Wire.setWireTimeout(I2C_TIMEOUT);        // Timeout (microseconds) if protocol hangs.
+   }
 
 
     /** Set the Receive handler.
