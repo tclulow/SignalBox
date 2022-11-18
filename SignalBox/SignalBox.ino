@@ -269,8 +269,7 @@ void setup()
     }
 
     // Initialise I2C.
-    Wire.begin(I2C_CONTROLLER_ID);          // I2C network
-    Wire.setWireTimeout(I2C_TIMEOUT);       // Timeout (microseconds) if protocol hangs.
+    i2cComms.setId(I2C_CONTROLLER_ID);          // I2C network
 
 #if LCD_I2C
     // Scan for I2C LCD.
