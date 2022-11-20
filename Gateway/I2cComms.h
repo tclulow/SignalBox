@@ -138,11 +138,7 @@ class I2cComms
     {
         if (I2C_SPEED)
         {
-            Serial.print("TWBR Before=");
-            Serial.print(TWBR);
             Wire.setClock(I2C_SPEED);   // Set custom clock speed if one was specified.
-            Serial.print(", after=");
-            Serial.println(TWBR);
         }
     }
 
