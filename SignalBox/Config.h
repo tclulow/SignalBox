@@ -34,6 +34,7 @@ const uint8_t  I2C_LCD_LO              = 0x27;      // Range of IDs to scan for 
 const uint8_t  I2C_LCD_HI              = 0x3F;
 
 const uint32_t I2C_TIMEOUT             = 25000L;    // Wire timeout in microseconds.
+const long     I2C_SPEED               = 10000;     // Speed of I2C comms. Set to 0 for default (100k).
 
 
 // Attached LCD displays.
@@ -45,9 +46,8 @@ const uint8_t  LCD_SHIELD_DETECT_PIN   = 11;        // Use this pin (must be low
 /** Configuration constants.
  */
  
-// IO speeds
+// Serial IO speed.
 const long    SERIAL_SPEED             = 115200;    // Speed of the serial port.
-const long    I2C_SPEED                =  10000;    // Speed of I2C comms. Set to 0 for default (100k).
 
 
 // LCD shield pins.
