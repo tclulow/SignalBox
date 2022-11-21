@@ -21,6 +21,7 @@
 #define SERIAL_CMRI     true    // Include serial CMRI processing.
 #define SERIAL_COMMAND  true    // Include serial command processing.
 #define EZYBUS_CONVERT  true    // Include code to detect and convert EzyBus installation.
+#define LCD_I2C         true    // Include code for LCD connected by I2C.
 
 
 // I2C node numbers.
@@ -38,7 +39,6 @@ const long     I2C_SPEED               = 10000;     // Speed of I2C comms. Set t
 
 
 // Attached LCD displays.
-#define        LCD_I2C                   true       // Include code for LCD connected by I2C.
 const bool     LCD_SHIELD              = false;     // Assume LCD shield present (or not). If false, use LCD_SHIELD_DETECT_PIN.
 const uint8_t  LCD_SHIELD_DETECT_PIN   = 11;        // Use this pin (must be low) to detect presence of LCD shield. If zero, don't detect.
 
