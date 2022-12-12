@@ -193,7 +193,6 @@ void processReceipt(int aLen)
         // Read the command byte.
         uint8_t command = i2cComms.readByte();
         uint8_t option  = command & COMMS_OPTION_MASK;
-        uint8_t node    = 0;
         uint8_t pin     = option  & 0x07;
 
         command &= COMMS_COMMAND_MASK;
