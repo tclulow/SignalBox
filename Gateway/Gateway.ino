@@ -41,6 +41,7 @@
  */
 
 
+#include "Config.h"
 #include "Gateway.h"
 
 
@@ -57,85 +58,85 @@ volatile uint16_t inputStates[OUTPUT_NODE_MAX];
 
 
 // CBUS definitions
-unsigned char moduleName[] = "SB_GW  ";   // CBUS module name, 7 characters.
-CBUS2515      cbus2515;
-CBUSConfig    config;                     // Configuration object must be called "config".
+//unsigned char moduleName[] = "SB_GW  ";   // CBUS module name, 7 characters.
+//CBUS2515      cbus2515;
+//CBUSConfig    config;                     // Configuration object must be called "config".
 
 
-/** Handle an incomming CBUS frame.
- */
-void cbusFrameHandler(CANFrame *aFrame)
-{
-    debugPrint(F("Frame"));
-    debugFrame(aFrame);
-    debugPrintln();
-}
-
-
-/** Handle an incomming CBUS (learned) event.
- */
-void cbusEventHandler(byte index, CANFrame *aFrame)
-{
-    debugPrint(F("Event, index="));
-    debugPrintHex(index);
-    debugFrame(aFrame);
-    debugPrintln();
-}
-
-
-/** Debug output of a CANFrame.
- */
-void debugFrame(CANFrame *aFrame)
-{
-    debugPrint(F(", id="));    
-    debugPrintHex(aFrame->id);
-    debugPrint(F(", ext="));
-    debugPrintHex(aFrame->ext);
-    debugPrint(F(", rtr="));
-    debugPrintHex(aFrame->rtr);
-    debugPrint(F(", len="));
-    debugPrintHex(aFrame->len);
-    debugPrint(F(", data="));
-    for (uint8_t ind = 0; ind < sizeof(aFrame->data); ind++)
-    {
-        debugPrintHex(aFrame->data[ind]);
-        debugPrint(' ');
-    }
-}
-
-
-/** Initialise CBUS interface.
- */
-void initCbus()
-{
-    // Configure modules config (persistence of NVs and EVs)
-    config.EE_NVS_START       = 10;
-    config.EE_NUM_NVS         = 1;
-    config.EE_EVENTS_START    = 50;
-    config.EE_MAX_EVENTS      = 64;
-    config.EE_NUM_EVS         = 0;
-    config.EE_BYTES_PER_EVENT = 0;
-
-    config.setEEPROMtype(EEPROM_INTERNAL);
-    config.begin();
-
-    // Configure CBUS interface
-    CBUSParams params(config);
-    params.setVersion(CBUS_MAJ, CBUS_MIN, CBUS_BETA);
-    params.setModuleId(CBUS_ID);
-    params.setFlags(PF_FLiM | PF_PRODUCER);
-    cbus2515.setParams(params.getParams());
-
-    cbus2515.setName(moduleName);
-    cbus2515.setNumBuffers(2);
-    cbus2515.setOscFreq(CBUS_FREQ);
-    cbus2515.setPins(CBUS_PIN_CS, CBUS_PIN_INT);    // Chip select and interupt pins.
-
-    cbus2515.setEventHandler(cbusEventHandler);     // Handlers
-    cbus2515.setFrameHandler(cbusFrameHandler);
-
-    cbus2515.begin();
-}
+///** Handle an incomming CBUS frame.
+// */
+//void cbusFrameHandler(CANFrame *aFrame)
+//{
+//    debugPrint(F("Frame"));
+//    debugFrame(aFrame);
+//    debugPrintln();
+//}
+//
+//
+///** Handle an incomming CBUS (learned) event.
+// */
+//void cbusEventHandler(byte index, CANFrame *aFrame)
+//{
+//    debugPrint(F("Event, index="));
+//    debugPrintHex(index);
+//    debugFrame(aFrame);
+//    debugPrintln();
+//}
+//
+//
+///** Debug output of a CANFrame.
+// */
+//void debugFrame(CANFrame *aFrame)
+//{
+//    debugPrint(F(", id="));    
+//    debugPrintHex(aFrame->id);
+//    debugPrint(F(", ext="));
+//    debugPrintHex(aFrame->ext);
+//    debugPrint(F(", rtr="));
+//    debugPrintHex(aFrame->rtr);
+//    debugPrint(F(", len="));
+//    debugPrintHex(aFrame->len);
+//    debugPrint(F(", data="));
+//    for (uint8_t ind = 0; ind < sizeof(aFrame->data); ind++)
+//    {
+//        debugPrintHex(aFrame->data[ind]);
+//        debugPrint(' ');
+//    }
+//}
+//
+//
+///** Initialise CBUS interface.
+// */
+//void initCbus()
+//{
+//    // Configure modules config (persistence of NVs and EVs)
+//    config.EE_NVS_START       = 10;
+//    config.EE_NUM_NVS         = 1;
+//    config.EE_EVENTS_START    = 50;
+//    config.EE_MAX_EVENTS      = 64;
+//    config.EE_NUM_EVS         = 0;
+//    config.EE_BYTES_PER_EVENT = 0;
+//
+//    config.setEEPROMtype(EEPROM_INTERNAL);
+//    config.begin();
+//
+//    // Configure CBUS interface
+//    CBUSParams params(config);
+//    params.setVersion(CBUS_MAJ, CBUS_MIN, CBUS_BETA);
+//    params.setModuleId(CBUS_ID);
+//    params.setFlags(PF_FLiM | PF_PRODUCER);
+//    cbus2515.setParams(params.getParams());
+//
+//    cbus2515.setName(moduleName);
+//    cbus2515.setNumBuffers(2);
+//    cbus2515.setOscFreq(CBUS_FREQ);
+//    cbus2515.setPins(CBUS_PIN_CS, CBUS_PIN_INT);    // Chip select and interupt pins.
+//
+//    cbus2515.setEventHandler(cbusEventHandler);     // Handlers
+//    cbus2515.setFrameHandler(cbusFrameHandler);
+//
+//    cbus2515.begin();
+//}
 
 
 /** Setup the Arduino.
@@ -148,7 +149,7 @@ void setup()
     i2cComms.onReceive(processReceipt);
     i2cComms.onRequest(processRequest);
 
-    initCbus();                             // Start CBUS communications.
+//    initCbus();                             // Start CBUS communications.
 
     debugPrint(F("Gateway"));
 }
@@ -361,51 +362,51 @@ void processStateChange(uint8_t aCommand, uint8_t aPin)
     }
     debugPrintln();
 
-    sendCbusMessage((isHi     ? OPC_ACON    : OPC_ACON), 
-                    (isOutput ? 1           : 0),
-                    (isOutput ? (node << 3) : (node << 4)) | aPin);
+//    sendCbusMessage((isHi     ? OPC_ACON    : OPC_ACON), 
+//                    (isOutput ? 1           : 0),
+//                    (isOutput ? (node << 3) : (node << 4)) | aPin);
 }
 
 
-/** Send a CBUS message.
- */
-void sendCbusMessage(uint8_t aOpCode, uint8_t aEventHi, uint8_t aEventLo)
-{
-    CANFrame frame;
-    frame.id      = config.CANID;
-    frame.len     = 5;
-    frame.data[0] = aOpCode;
-    frame.data[1] = highByte(config.nodeNum);
-    frame.data[2] = lowByte(config.nodeNum);
-    frame.data[3] = aEventHi;
-    frame.data[4] = aEventLo;
-
-    boolean sent = cbus2515.sendMessage(&frame);
-
-    debugPrint(millis());
-    debugPrint('\t');
-    debugPrint(F("CBUS, opCode="));
-    debugPrintHex(aOpCode);
-    debugPrint(F(", EventHi="));
-    debugPrintHex(aEventHi);
-    debugPrint(F(", EventLo="));
-    debugPrintHex(aEventLo);
-    if (sent)
-    {
-        debugPrint(F(" sent"));
-    }
-    else
-    {
-        debugPrint(F(" fail"));
-    }
-    debugPrintln();
-}
+///** Send a CBUS message.
+// */
+//void sendCbusMessage(uint8_t aOpCode, uint8_t aEventHi, uint8_t aEventLo)
+//{
+//    CANFrame frame;
+//    frame.id      = config.CANID;
+//    frame.len     = 5;
+//    frame.data[0] = aOpCode;
+//    frame.data[1] = highByte(config.nodeNum);
+//    frame.data[2] = lowByte(config.nodeNum);
+//    frame.data[3] = aEventHi;
+//    frame.data[4] = aEventLo;
+//
+//    boolean sent = cbus2515.sendMessage(&frame);
+//
+//    debugPrint(millis());
+//    debugPrint('\t');
+//    debugPrint(F("CBUS, opCode="));
+//    debugPrintHex(aOpCode);
+//    debugPrint(F(", EventHi="));
+//    debugPrintHex(aEventHi);
+//    debugPrint(F(", EventLo="));
+//    debugPrintHex(aEventLo);
+//    if (sent)
+//    {
+//        debugPrint(F(" sent"));
+//    }
+//    else
+//    {
+//        debugPrint(F(" fail"));
+//    }
+//    debugPrintln();
+//}
 
 
 /** Main loop.
  */
 void loop()
 {
-    // Process CBUS stuff
-    cbus2515.process();
+//    // Process CBUS stuff
+//    cbus2515.process();
 }
