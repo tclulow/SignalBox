@@ -178,8 +178,8 @@ class I2cComms
 
 
     /** Set the Id of the Gateway module.
-    *  Certain messages get duplicated to this ID.
-    */
+     *  Certain messages get duplicated to this ID.
+     */
     void setGateway(uint8_t aId)
     {
         gatewayId = aId;       // Marks the presence of an I2C gateway module.
