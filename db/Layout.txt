@@ -1,5 +1,7 @@
+
+SignalBox v4.6.1 Nov 22
 #System	Version	Report	Debug
-System	v4.3.4	Long	None
+System	v4.6.1	Long	None
 
 #Input	Node	Pin	Type	OutputA	OutputB	OutputC	OutputD	OutputE	OutputF
 Input	0	0	On_Off	. .	. .	. .	. .	. .	. .
@@ -14,8 +16,8 @@ Input	0	8	On_Off	. .	. .	. .	. .	. .	. .
 Input	0	9	On_Off	5 5	. .	. .	. .	. .	. .
 Input	0	A	On_Off	5 1	. .	. .	. .	. .	. .
 Input	0	B	On_Off	5 2	C 1	. .	. .	. .	. .
-Input	0	C	On_Off	5 4	C 2	. 1	C 0	. .	. .
-Input	0	D	On_Off	5 3	C 4	. .	. .	. .	. .
+Input	0	C	On_Off	5 4	C 4	. 1	C 0	. .	. .
+Input	0	D	On_Off	5 3	C 2	. .	. .	. .	. .
 Input	0	E	On_Off	5 0	C 5	. .	. .	. .	. .
 Input	0	F	On_Off	5 6	C 7	. .	. .	. .	. .
 
@@ -27,9 +29,9 @@ Input	1	4	On_Off	1 5	. .	. .	. .	. .	. .
 Input	1	5	On_Off	1 6	. .	. .	. .	. .	. .
 Input	1	6	On_Off	1 1	. .	. .	. .	. .	. .
 Input	1	7	On_Off	. .	. .	. .	. .	. .	. .
-Input	1	8	On_Off	D 1	. .	. .	. .	. .	. .
-Input	1	9	On_Off	D 2	. .	. .	. .	. .	. .
-Input	1	A	On_Off	D 3	. .	. .	. .	. .	. .
+Input	1	8	On_Off	4 1	. .	. .	. .	. .	. .
+Input	1	9	On_Off	4 2	. .	. .	. .	. .	. .
+Input	1	A	On_Off	4 3	. .	. .	. .	. .	. .
 Input	1	B	On_Off	4 0	D 0	. .	. .	. .	. .
 Input	1	C	On_Off	2 0	. .	. .	. .	. .	. .
 Input	1	D	On_Off	2 1	9 7	. .	. .	. .	. .
@@ -45,7 +47,7 @@ Input	2	5	On_Off	3 3	. .	. .	. .	. .	. .
 Input	2	6	On_Off	. .	. .	. .	. .	. .	. .
 Input	2	7	On_Off	. .	. .	. .	. .	. .	. .
 Input	2	8	On_Off	2 6	. .	. .	. .	. .	. .
-Input	2	9	On_Off	2 5	9 0	. .	. .	. .	. .
+Input	2	9	On_Off	2 6	. 2	2 5	9 0	. .	. .
 Input	2	A	On_Off	2 4	. .	. .	. .	. .	. .
 Input	2	B	On_Off	2 3	9 1	. 1	9 2	. .	. .
 Input	2	C	On_Off	2 2	9 3	. .	. .	. .	. .
@@ -187,7 +189,7 @@ Output	5	7	None	5A	5A	0D	00
 Output	9	0	Servo	41	73	04	00
 Output	9	1	Servo	55	32	04	00
 Output	9	2	Servo	54	78	04	00
-Output	9	3	Servo	64	28	04	00
+Output	9	3	Servo	64	19	04	00
 Output	9	4	None	00	FF	0C	00
 Output	9	5	None	5A	5A	0C	05
 Output	9	6	None	5A	5A	0F	00
@@ -202,19 +204,19 @@ Output	A	5	None	5A	5A	0C	00
 Output	A	6	None	00	B4	0D	00
 Output	A	7	None	00	B4	0D	00
 
-Output	C	0	Servo	62	52	04	00
-Output	C	1	Servo	64	50	02	00
-Output	C	2	Servo	73	55	04	00
+Output	C	0	Servo	61	50	04	00
+Output	C	1	Servo	69	55	02	00
+Output	C	2	Servo	5B	6E	04	00
 Output	C	3	None	5A	5A	04	00
-Output	C	4	Servo	5A	73	04	00
-Output	C	5	Servo	4B	5F	04	00
+Output	C	4	Servo	6E	55	04	00
+Output	C	5	Signal	46	5D	04	00
 Output	C	6	None	5A	5A	04	00
-Output	C	7	Servo	64	78	04	00
+Output	C	7	Servo	66	78	02	00
 
 Output	D	0	Servo	39	4B	04	00
 Output	D	1	Servo	61	50	04	00
 Output	D	2	None	5A	5A	0C	00
-Output	D	3	None	5A	5A	0C	00
+Output	D	3	Servo	5F	5A	04	00
 Output	D	4	None	5A	5A	0C	00
 Output	D	5	None	5A	5A	0C	00
 Output	D	6	None	5A	5A	0C	00
@@ -275,7 +277,7 @@ Lock	5	5	.	.	.	.	.	.	.	.
 Lock	5	6	.	.	.	.	.	.	.	.
 Lock	5	7	.	.	.	.	.	.	.	.
 
-Lock	9	0	.	.	.	.	Lo 2 6	.	.	.
+Lock	9	0	.	.	.	.	.	.	.	.
 Lock	9	1	.	.	.	.	.	.	.	.
 Lock	9	2	.	.	.	.	.	.	.	.
 Lock	9	3	.	.	.	.	.	.	.	.
