@@ -236,22 +236,6 @@ class I2cComms
     }
 
     
-    /** Begin transmission to a particular node.
-     */    
-    void beginTransmission(uint8_t aNodeId)
-    {
-        Wire.beginTransmission(aNodeId);
-    }
-    
-
-    /** End transmission to current node.
-     */    
-    uint8_t endTransmission()
-    {
-        return Wire.endTransmission();
-    }
-    
-
     /** Send a byte.
      *  Use the Wire library to send a byte.
      */
@@ -292,14 +276,6 @@ class I2cComms
     }
 
 
-    /** Gets the number of bytes available to read.
-     */
-    int available()
-    {
-        return Wire.available();
-    }
-
-
     /** Reads a byte from the receive buffer.
      */
     int readByte()
@@ -326,6 +302,32 @@ class I2cComms
         {
             Wire.read();
         }
+    }
+
+
+    private:
+    
+    /** End transmission to current node.
+     */    
+    uint8_t endTransmission()
+    {
+        return Wire.endTransmission();
+    }
+    
+
+    /** Begin transmission to a particular node.
+     */    
+    void beginTransmission(uint8_t aNodeId)
+    {
+        Wire.beginTransmission(aNodeId);
+    }
+    
+
+    /** Gets the number of bytes available to read.
+     */
+    int available()
+    {
+        return Wire.available();
     }
 };
 
