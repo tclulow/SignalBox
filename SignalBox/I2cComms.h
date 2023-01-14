@@ -191,7 +191,7 @@ class I2cComms
     uint8_t sendShort(uint8_t aNodeId, uint8_t aCommand)
     {
         Wire.beginTransmission(aNodeId);
-        Wire.write(aCommand);
+        sendByte(aCommand);
         return Wire.endTransmission();
     }
 
@@ -201,14 +201,14 @@ class I2cComms
     uint8_t sendData(uint8_t aNodeId, uint8_t aCommand, int aDataByte1, int aDataByte2)
     {
         Wire.beginTransmission(aNodeId);
-        Wire.write(aCommand);
+        sendByte(aCommand);
         if (aDataByte1 >= 0)
         {
-            Wire.write((uint8_t)aDataByte1);
+            sendByte((uint8_t)aDataByte1);
         }
         if (aDataByte2 >= 0)
         {
-            Wire.write((uint8_t)aDataByte2);
+            sendByte((uint8_t)aDataByte2);
         }
         return Wire.endTransmission();
     }
@@ -230,14 +230,14 @@ class I2cComms
     uint8_t sendPayload(uint8_t aNodeId, uint8_t aCommand, void(* payload)())
     {
         Wire.beginTransmission(aNodeId);
-        Wire.write(aCommand);
+        sendByte(aCommand);
         payload();
         return Wire.endTransmission();
     }
 
 
     /** Send a byte.
-     *  For use by payload functions.
+     *  Use the Wire library to send a byte.
      */
     size_t sendByte(uint8_t aByte)
     {
