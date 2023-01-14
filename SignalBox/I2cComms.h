@@ -274,6 +274,14 @@ class I2cComms
         return    (gatewayId > 0)
                && (requestPacket(gatewayId, 2));
     }
+    
+
+    /** Gets the number of bytes available to read.
+     */
+    int available()
+    {
+        return Wire.available();
+    }
 
 
     /** Reads a byte from the receive buffer.
@@ -320,14 +328,6 @@ class I2cComms
     void beginTransmission(uint8_t aNodeId)
     {
         Wire.beginTransmission(aNodeId);
-    }
-    
-
-    /** Gets the number of bytes available to read.
-     */
-    int available()
-    {
-        return Wire.available();
     }
 };
 

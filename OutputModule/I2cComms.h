@@ -172,8 +172,8 @@ class I2cComms
      */
     bool exists(uint8_t aNodeId)
     {
-        Wire.beginTransmission(aNodeId);
-        return Wire.endTransmission() == 0;
+        beginTransmission(aNodeId);
+        return endTransmission() == 0;
     }
 
 
@@ -190,9 +190,9 @@ class I2cComms
      */
     uint8_t sendShort(uint8_t aNodeId, uint8_t aCommand)
     {
-        Wire.beginTransmission(aNodeId);
-        Wire.write(aCommand);
-        return Wire.endTransmission();
+        beginTransmission(aNodeId);
+        sendByte(aCommand);
+        return endTransmission();
     }
 
 
@@ -200,17 +200,17 @@ class I2cComms
      */
     uint8_t sendData(uint8_t aNodeId, uint8_t aCommand, int aDataByte1, int aDataByte2)
     {
-        Wire.beginTransmission(aNodeId);
-        Wire.write(aCommand);
+        beginTransmission(aNodeId);
+        sendByte(aCommand);
         if (aDataByte1 >= 0)
         {
-            Wire.write((uint8_t)aDataByte1);
+            sendByte((uint8_t)aDataByte1);
         }
         if (aDataByte2 >= 0)
         {
-            Wire.write((uint8_t)aDataByte2);
+            sendByte((uint8_t)aDataByte2);
         }
-        return Wire.endTransmission();
+        return endTransmission();
     }
 
 
@@ -229,15 +229,15 @@ class I2cComms
      */
     uint8_t sendPayload(uint8_t aNodeId, uint8_t aCommand, void(* payload)())
     {
-        Wire.beginTransmission(aNodeId);
-        Wire.write(aCommand);
+        beginTransmission(aNodeId);
+        sendByte(aCommand);
         payload();
-        return Wire.endTransmission();
+        return endTransmission();
     }
 
-
+    
     /** Send a byte.
-     *  For use by payload functions.
+     *  Use the Wire library to send a byte.
      */
     size_t sendByte(uint8_t aByte)
     {
@@ -274,7 +274,7 @@ class I2cComms
         return    (gatewayId > 0)
                && (requestPacket(gatewayId, 2));
     }
-
+    
 
     /** Gets the number of bytes available to read.
      */
@@ -310,6 +310,24 @@ class I2cComms
         {
             Wire.read();
         }
+    }
+
+
+    private:
+    
+    /** End transmission to current node.
+     */    
+    uint8_t endTransmission()
+    {
+        return Wire.endTransmission();
+    }
+    
+
+    /** Begin transmission to a particular node.
+     */    
+    void beginTransmission(uint8_t aNodeId)
+    {
+        Wire.beginTransmission(aNodeId);
     }
 };
 
