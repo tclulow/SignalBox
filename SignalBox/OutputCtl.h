@@ -116,8 +116,6 @@ class OutputCtl
     
             if (isDebug(DEBUG_DETAIL))
             {
-                Serial.print(millis());
-                Serial.print(CHAR_TAB);
                 Serial.print(PGMT(M_DEBUG_READ));
                 Serial.print(HEX_CHARS[outputNode]);
                 Serial.print(HEX_CHARS[outputPin]);
@@ -167,8 +165,6 @@ class OutputCtl
     {
         if (isDebug(DEBUG_DETAIL))
         {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_WRITE));
             Serial.print(HEX_CHARS[outputNode]);
             Serial.print(HEX_CHARS[outputPin]);
@@ -186,8 +182,6 @@ class OutputCtl
     {
         if (isDebug(DEBUG_DETAIL))
         {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_SAVE));
             Serial.print(HEX_CHARS[outputNode]);
             Serial.print(HEX_CHARS[outputPin]);
@@ -207,8 +201,6 @@ class OutputCtl
     
         if (isDebug(DEBUG_BRIEF))
         {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_SEND));
             Serial.print(aNode, HEX);
             Serial.print(aPin, HEX);
@@ -231,8 +223,6 @@ class OutputCtl
     {
         if (isDebug(DEBUG_DETAIL))
         {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_RESET));
             Serial.print(outputNode, HEX);
             Serial.print(outputPin, HEX);
@@ -262,8 +252,6 @@ class OutputCtl
     
             if (isDebug(DEBUG_DETAIL))
             {
-                Serial.print(millis());
-                Serial.print(CHAR_TAB);
                 Serial.print(PGMT(M_DEBUG_STATES));
                 Serial.print(aNode, HEX);
                 Serial.print(CHAR_SPACE);

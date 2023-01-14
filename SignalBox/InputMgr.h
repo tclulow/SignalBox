@@ -94,8 +94,6 @@ class InputMgr: public Persisted
 
         if (isDebug(DEBUG_DETAIL))
         {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_LOAD));
             Serial.print(CHAR_SPACE);
             Serial.print(inputNumber, HEX);
@@ -118,8 +116,7 @@ class InputMgr: public Persisted
             }
             Serial.println();
 
-//            Serial.print(millis());
-//            Serial.print("\tLoad types ");
+//            Serial.print("Load types ");
 //            Serial.print(aNode, HEX);
 //            Serial.print(CHAR_COMMA);
 //            Serial.print(aPin, HEX);
@@ -152,8 +149,6 @@ class InputMgr: public Persisted
 
             if (isDebug(DEBUG_DETAIL))
             {
-                Serial.print(millis());
-                Serial.print(CHAR_TAB);
                 Serial.print(PGMT(M_DEBUG_SAVE));
                 Serial.print(CHAR_SPACE);
                 Serial.print(inputNumber, HEX);
@@ -176,8 +171,7 @@ class InputMgr: public Persisted
                 }
                 Serial.println();
 
-//                Serial.print(millis());
-//                Serial.print("\tSave types ");
+//                Serial.print("Save types ");
 //                Serial.print(node, HEX);
 //                Serial.print(",");
 //                Serial.print(pin, HEX);

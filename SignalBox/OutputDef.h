@@ -323,8 +323,6 @@ class OutputDef
      */
     void printDef(PGM_P aHeader, uint8_t aNode, uint8_t aPin)
     {
-        Serial.print(millis());
-        Serial.print(CHAR_TAB);
         Serial.print(PGMT(aHeader));
         Serial.print(HEX_CHARS[aNode & OUTPUT_NODE_MASK]);
         Serial.print(aPin);

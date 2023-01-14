@@ -570,8 +570,6 @@ class Configure
 
             if (isDebug(DEBUG_BRIEF))
             {
-                Serial.print(millis());
-                Serial.print(CHAR_TAB);
                 Serial.print(PGMT(M_RENUMBER));
                 Serial.print(PGMT(M_DEBUG_NODE));
                 Serial.print(aOldNode, HEX);
@@ -650,8 +648,6 @@ class Configure
 
                         if (isDebug(DEBUG_BRIEF))
                         {
-                            Serial.print(millis());
-                            Serial.print(CHAR_TAB);
                             Serial.print(PGMT(M_DEBUG_MOVE));
                             Serial.print(CHAR_SPACE);
                             Serial.print(node, HEX);
@@ -675,8 +671,6 @@ class Configure
         {
             if (isDebug(DEBUG_ERRORS))
             {
-                Serial.print(millis());
-                Serial.print(CHAR_TAB);
                 Serial.print(PGMT(M_RENUMBER));
                 Serial.print(CHAR_SPACE);
                 Serial.print(aOldNode, HEX);

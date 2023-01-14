@@ -231,8 +231,6 @@ void firstRun()
  */
 void reportOutput(PGM_P aHeader, uint8_t aPin)
 {
-    Serial.print(millis());
-    Serial.print(CHAR_TAB);
     Serial.print(PGMT(aHeader));
     Serial.print(aPin, HEX);
     Serial.print(PGMT(M_DEBUG_TYPE));
@@ -389,8 +387,6 @@ void unrecognisedCommand(PGM_P aMessage, uint8_t aCommand, uint8_t aOption)
 {
     if  (isDebug(DEBUG_ERRORS))
     {
-        Serial.print(millis());
-        Serial.print(CHAR_TAB);
         Serial.print(PGMT(aMessage));
         Serial.print(PGMT(M_DEBUG_COMMAND));
         Serial.print(aCommand, HEX);
@@ -409,8 +405,6 @@ void processRequest()
     if (isDebug(DEBUG_BRIEF))
     {
         Serial.println();
-        Serial.print(millis());
-        Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_REQUEST));
         Serial.print(PGMT(M_DEBUG_COMMAND));
         Serial.print(PGMT(M_DEBUG_COMMANDS[requestCommand >> COMMS_COMMAND_SHIFT]));
@@ -473,8 +467,6 @@ void returnStates()
 
     if (isDebug(DEBUG_BRIEF))
     {
-        Serial.print(millis());
-        Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_STATES));
         Serial.print(CHAR_SPACE);
         Serial.print(states, HEX);
@@ -528,8 +520,6 @@ void processReceipt(int aLen)
         if (isDebug(DEBUG_BRIEF))
         {
             Serial.println();
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_RECEIPT));
             Serial.print(PGMT(M_DEBUG_COMMAND));
             Serial.print(PGMT(M_DEBUG_COMMANDS[command >> COMMS_COMMAND_SHIFT]));
@@ -585,8 +575,6 @@ void processReceipt(int aLen)
         if (isDebug(DEBUG_BRIEF))
         {
             Serial.println();
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_RECEIPT));
             Serial.print(CHAR_SPACE);
             Serial.print(PGMT(M_DEBUG_LEN));
@@ -601,8 +589,6 @@ void processReceipt(int aLen)
         if (isDebug(DEBUG_ERRORS))
         {
             Serial.println();
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_UNEXPECTED));
             Serial.print(PGMT(M_DEBUG_LEN));
             Serial.print(i2cComms.available(), HEX);
@@ -664,8 +650,6 @@ void processRenumber()
     {
         if (isDebug(DEBUG_ERRORS))
         {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_RECEIPT));
             Serial.print(PGMT(M_DEBUG_COMMAND));
             Serial.print(PGMT(M_DEBUG_COMMANDS[requestCommand >> COMMS_COMMAND_SHIFT]));
@@ -694,8 +678,6 @@ void processMoveLocks()
 
         if (isDebug(DEBUG_DETAIL))
         {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_MOVE));
             Serial.print(PGMT(M_DEBUG_NODE));
             Serial.print(oldNode, HEX);
@@ -739,8 +721,6 @@ void processMoveLocks()
     {
         if (isDebug(DEBUG_ERRORS))
         {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_RECEIPT));
             Serial.print(PGMT(M_DEBUG_COMMAND));
             Serial.print(PGMT(M_DEBUG_MOVE));
@@ -762,8 +742,6 @@ void processWrite(uint8_t aPin)
     {
         if (isDebug(DEBUG_ERRORS))
         {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_WRITE));
             Serial.print(aPin, HEX);
             Serial.print(PGMT(M_DEBUG_LEN));
@@ -816,8 +794,6 @@ void processSet(uint8_t aPin, uint8_t aValue)
 
     if (isDebug(DEBUG_DETAIL))
     {
-        Serial.print(millis());
-        Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_SET));
         Serial.print(aPin, HEX);
         Serial.print(PGMT(M_DEBUG_TO));
@@ -847,8 +823,6 @@ void actionState(uint8_t aPin, bool aState, uint8_t aDelay, bool aUseValue)
 
     if (isDebug(DEBUG_BRIEF))
     {
-        Serial.print(millis());
-        Serial.print(CHAR_TAB);
         Serial.print(PGMT(M_DEBUG_ACTION));
         Serial.print(aPin, HEX);
         Serial.print(PGMT(M_DEBUG_STATE));
@@ -905,8 +879,6 @@ void actionState(uint8_t aPin, bool aState, uint8_t aDelay, bool aUseValue)
 
             default:                  if (isDebug(DEBUG_ERRORS))
                                       {
-                                          Serial.print(millis());
-                                          Serial.print(CHAR_TAB);
                                           Serial.print(PGMT(M_UNKNOWN));
                                           Serial.print(aPin);
                                           Serial.print(PGMT(M_DEBUG_TYPE));
@@ -1162,8 +1134,6 @@ void processCommand()
 
     if (isDebug(DEBUG_BRIEF))
     {
-      Serial.print(millis());
-      Serial.print(CHAR_TAB);
       Serial.print(PGMT(M_INPUT));
       Serial.print(PGMT(M_DEBUG_COMMAND));
       Serial.println(commandBuffer);
@@ -1190,8 +1160,6 @@ void processCommand()
 
                               if (isDebug(DEBUG_ERRORS))
                               {
-                                  Serial.print(millis());
-                                  Serial.print(CHAR_TAB);
                                   Serial.print(PGMT(M_RENUMBER));
                                   Serial.print(PGMT(M_DEBUG_NODE));
                                   Serial.print(systemMgr.getModuleId(false));
@@ -1211,8 +1179,6 @@ void processCommand()
     {
         if (isDebug(DEBUG_ERRORS))
         {
-          Serial.print(millis());
-          Serial.print(CHAR_TAB);
           Serial.print(PGMT(M_UNKNOWN));
           Serial.print(PGMT(M_DEBUG_COMMAND));
           Serial.println(commandBuffer);
@@ -1241,8 +1207,6 @@ void stepServos()
                     {
                         if (isDebug(DEBUG_DETAIL))
                         {
-                            Serial.print(millis());
-                            Serial.print(CHAR_TAB);
                             Serial.print(PGMT(M_DEBUG_ATTACH));
                             Serial.print(pin, HEX);
                             Serial.println();
@@ -1263,8 +1227,6 @@ void stepServos()
                 {
                     if (isDebug(DEBUG_DETAIL))                      // Time to detach the servo.
                     {
-                        Serial.print(millis());
-                        Serial.print(CHAR_TAB);
                         Serial.print(PGMT(M_DEBUG_DETACH));
                         Serial.print(pin);
                         Serial.println();
@@ -1634,8 +1596,7 @@ void stepFlash(uint8_t aPin)
 
             if (doSwitch)
             {
-//                Serial.print(millis());
-//                Serial.print("\tLo=");
+//                Serial.print("Lo=");
 //                Serial.print(outputDefs[aPin].getLo(), HEX);
 //                Serial.print(", Hi=");
 //                Serial.print(outputDefs[aPin].getHi(), HEX);

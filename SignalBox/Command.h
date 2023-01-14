@@ -89,8 +89,6 @@ class Command
     
         if (isDebug(DEBUG_BRIEF))
         {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_INPUT));
             Serial.print(PGMT(M_DEBUG_COMMAND));
             Serial.println(commandBuffer);
@@ -133,8 +131,6 @@ class Command
         {
             if (isDebug(DEBUG_ERRORS))
             {
-                Serial.print(millis());
-                Serial.print(CHAR_TAB);
                 Serial.print(PGMT(M_UNKNOWN));
                 Serial.print(PGMT(M_DEBUG_COMMAND));
                 Serial.println(commandBuffer);

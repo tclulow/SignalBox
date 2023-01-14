@@ -327,8 +327,6 @@ class SystemMgr: public Persisted
         if (   (isDebug(DEBUG_BRIEF))
             && (aIncludeBase))
         {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_MODULE));
             Serial.print(CHAR_SPACE);
             Serial.print(I2C_OUTPUT_BASE_ID + moduleId, HEX);
@@ -412,8 +410,6 @@ class SystemMgr: public Persisted
     {
         if (isDebug(DEBUG_BRIEF))
         {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
 #if SB_OUTPUT_MODULE
             Serial.print(PGMT(M_DEBUG_MODULE));
             Serial.print(CHAR_SPACE);

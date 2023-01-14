@@ -115,8 +115,6 @@ class Buttons
 
 //            if (isDebug(DEBUG_BRIEF))
 //            {
-//                Serial.print(millis());
-//                Serial.print(CHAR_TAB);
 //                Serial.print(PGMT(M_BUTTONS[button + 1]));
 //                Serial.print(PGMT(M_DEBUG_VALUE));
 //                Serial.print(value, HEX);
@@ -167,8 +165,6 @@ class Buttons
 //        if (value != previous)
 //        {
 //            previous = value;
-//            Serial.print(millis());
-//            Serial.print(" ");
 //            Serial.println(value);
 //        }
 
@@ -201,8 +197,6 @@ class Buttons
         if (   (button != lastButton)
             && (isDebug(DEBUG_FULL)))
         {
-            Serial.print(millis());
-            Serial.print(CHAR_TAB);
             Serial.print(PGMT(M_DEBUG_BUTTON));
             Serial.print(CHAR_SPACE);
             Serial.print(PGMT(M_BUTTONS[button]));
