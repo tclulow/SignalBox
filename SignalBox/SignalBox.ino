@@ -56,8 +56,8 @@
 #include "Config.h"                 // Common classes
 #include "Messages.h"
 #include "Persisted.h"
-#include "I2cComms.h"
 #include "SystemMgr.h"
+#include "I2cComms.h"
 #include "OutputDef.h"
 
 #include "Forward.h"                // SignalBox-specific classes.
