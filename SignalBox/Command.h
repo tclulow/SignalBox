@@ -44,7 +44,8 @@ class Command
                 {
                     // Ignore carriage-return
                 }
-                else if (ch == CHAR_NEWLINE)
+                else if (   (ch == CHAR_NEWLINE)
+                         || (ch == CHAR_COMMA))
                 {
                     if (commandLen > 0)                 // Process the received command
                     {
@@ -85,7 +86,7 @@ class Command
         bool    executed = false;
         uint8_t node     = 0;
         uint8_t pin      = 0;
-        bool    state    = true;
+        bool    state    = true;        // Default to setting state high - see switch statement.
     
         if (isDebug(DEBUG_BRIEF))
         {
@@ -110,11 +111,11 @@ class Command
                           }
                           break;
     
-                case 'o': state = outputCtl.getOutputState(node, pin);
+                case 'o': state = outputCtl.getOutputState(node, pin);    // Use current state - new state will be the opposite of this.
                           [[fallthrough]];
-                case 'l': state = !state;
+                case 'l': state = !state;                                 // Use opposite of default state, or opposite of current state if fallthrough.
                           [[fallthrough]];
-                case 'h': if (   (node < OUTPUT_NODE_MAX)
+                case 'h': if (   (node < OUTPUT_NODE_MAX)                 // Use default state, or state as dictated by fallthrough cases.
                               && (pin  < OUTPUT_PIN_MAX))
                           {
                               controller.processOutput(node, pin, state, 0);
