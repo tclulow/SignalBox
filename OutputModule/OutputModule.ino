@@ -919,25 +919,33 @@ bool actionServo(uint8_t aPin, bool aState, bool aUseValue)
 
     long range = abs(outputs[aPin].target - outputs[aPin].start);
 
-    // Adjust steps in proportion to the Servo's range.
-    outputs[aPin].steps = ((long)outputs[aPin].steps - 1)
-                        * (range)
-                        / ((long)OUTPUT_SERVO_MAX)
-                        + 1;
-
-    // Adjust start step for Servos that are already in mid-travel.
-    outputs[aPin].step = ((long)outputs[aPin].steps)
-                       * (abs(((long)outputs[aPin].value) - ((long)outputs[aPin].start)))
-                       / (range + 1);
-
-    // Add trigger point for SIGNALS, but only if they're ascending the whole range.
-    if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
-        && (aState)
-        && (persisting)
-        && (outputs[aPin].start == outputDefs[aPin].getLo())
-        && (random(100) < SIGNAL_PAUSE_CHANCE))
+    if (outputs[aPin].value == outputs[aPin].target)
     {
-        outputs[aPin].altValue = (outputs[aPin].steps + random(outputs[aPin].steps)) / 3;
+        // Already at the target position, no movement necessary.
+        outputs[aPin].steps = 0;
+    }
+    else
+    {
+        // Adjust steps in proportion to the Servo's range.
+        outputs[aPin].steps = ((long)outputs[aPin].steps - 1)
+                            * (range)
+                            / ((long)OUTPUT_SERVO_MAX)
+                            + 1;
+
+        // Adjust start step for Servos that are already in mid-travel.
+        outputs[aPin].step = ((long)outputs[aPin].steps)
+                          * (abs(((long)outputs[aPin].value) - ((long)outputs[aPin].start)))
+                          / (range + 1);
+
+        // Add trigger point for SIGNALS, but only if they're ascending the whole range.
+        if (   (outputDefs[aPin].getType() == OUTPUT_TYPE_SIGNAL)
+            && (aState)
+            && (persisting)
+            && (outputs[aPin].start == outputDefs[aPin].getLo())
+            && (random(100) < SIGNAL_PAUSE_CHANCE))
+        {
+            outputs[aPin].altValue = (outputs[aPin].steps + random(outputs[aPin].steps)) / 3;
+        }
     }
 
     return aState;
