@@ -20,7 +20,7 @@
     #define MAGIC_NUMBER 0x74756f53         // Magic number = "Sout".
 #endif
 
-#define VERSION          0x0462             // Version number of software.  See also Messages.M_VERSION.
+#define VERSION          0x0463             // Version number of software.  See also Messages.M_VERSION.
 
 
 // Timing constants
@@ -71,6 +71,7 @@ const char    CHAR_NULL    = 0;
 const char    CHAR_HASH    = '#';
 const char    CHAR_STAR    = '*';
 const char    CHAR_DOT     = '.';
+const char    CHAR_COMMA   = ',';
 const char    CHAR_COLON   = ':';
 const char    CHAR_LEFT    = '<';
 const char    CHAR_RIGHT   = '>';
