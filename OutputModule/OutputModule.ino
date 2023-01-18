@@ -294,7 +294,16 @@ void initOutput(uint8_t aPin)
              && (persisting))
     {
         // Ensure random LEDs are initialised correctly.
-        actionState(aPin, outputDefs[aPin].getState(), 0, false);
+        if (outputDefs[aPin].getState())
+        {
+            actionState(aPin, outputDefs[aPin].getState(), 0, false);
+        }
+        else
+        {
+            outputs[aPin].value    = 0;     // Both outputs off.
+            outputs[aPin].altValue = 0;
+            outputs[aPin].steps    = 0;     // No fading required.
+        }
     }
     else if (outputDefs[aPin].isPwm())
     {
