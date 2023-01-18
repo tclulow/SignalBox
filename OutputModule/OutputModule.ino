@@ -846,7 +846,7 @@ void actionState(uint8_t aPin, bool aState, uint8_t aDelay, bool aUseValue)
     else
     {
         // Set common parameters
-        outputs[aPin].delayTo = millis() + DELAY_MULTIPLIER * aDelay;
+        outputs[aPin].delayTo = aDelay ? (millis() + DELAY_MULTIPLIER * aDelay) : 0;
         outputs[aPin].steps   = outputDefs[aPin].getPaceAsSteps() + 1;
         outputs[aPin].step    = 0;
 
