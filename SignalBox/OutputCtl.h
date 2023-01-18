@@ -206,8 +206,8 @@ class OutputCtl
             Serial.print(aPin, HEX);
             Serial.print(PGMT(M_DEBUG_STATE));
             Serial.print(PGMT(aState ? M_HI : M_LO));
-            Serial.print(PGMT(M_DEBUG_DELAY_TO));
-            Serial.print(aDelay, HEX);
+            Serial.print(PGMT(M_DEBUG_DELAY));
+            Serial.print(aDelay);
             Serial.println();
         }
     

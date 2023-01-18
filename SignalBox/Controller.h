@@ -310,8 +310,8 @@ class Controller
                 Serial.print(outNode, HEX);
                 Serial.print(PGMT(M_DEBUG_PIN));
                 Serial.print(outPin,  HEX);
-                Serial.print(PGMT(M_DEBUG_DELAY_TO));
-                Serial.print(aDelay, HEX);
+                Serial.print(PGMT(M_DEBUG_DELAY));
+                Serial.print(aDelay);
                 Serial.println();
             }
 

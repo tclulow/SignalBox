@@ -185,7 +185,7 @@ const char M_DEBUG_SYSTEM[]     PROGMEM = "System";
 const char M_DEBUG_WRITE[]      PROGMEM = "Write";
 
 const char M_DEBUG_COMMAND[]    PROGMEM = ", cmd=";
-const char M_DEBUG_DELAY_TO[]   PROGMEM = ", delayTo=";
+const char M_DEBUG_DELAY[]      PROGMEM = ", delay=";
 const char M_DEBUG_HI[]         PROGMEM = ", hi=";
 const char M_DEBUG_LO[]         PROGMEM = ", lo=";
 const char M_DEBUG_LOCK_HI[]    PROGMEM = ", lockHi=";

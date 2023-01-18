@@ -237,8 +237,8 @@ void reportOutput(PGM_P aHeader, uint8_t aPin)
     Serial.print(PGMT(M_OUTPUT_TYPES[outputDefs[aPin].getType() & OUTPUT_TYPE_MASK]));
     Serial.print(PGMT(M_DEBUG_STATE));
     Serial.print(PGMT(outputDefs[aPin].getState() ? M_HI : M_LO));
-    Serial.print(PGMT(M_DEBUG_DELAY_TO));
-    Serial.print(outputs[aPin].delayTo);
+    Serial.print(PGMT(M_DEBUG_DELAY));
+    Serial.print((outputs[aPin].delayTo > 0) ? (outputs[aPin].delayTo - millis()) : 0);
     Serial.print(PGMT(M_DEBUG_STEPS));
     Serial.print(outputs[aPin].steps, HEX);
     Serial.print(PGMT(M_DEBUG_STEP));
@@ -827,8 +827,8 @@ void actionState(uint8_t aPin, bool aState, uint8_t aDelay, bool aUseValue)
         Serial.print(aPin, HEX);
         Serial.print(PGMT(M_DEBUG_STATE));
         Serial.print(PGMT(aState ? M_HI : M_LO));
-        Serial.print(PGMT(M_DEBUG_DELAY_TO));
-        Serial.print(aDelay, HEX);
+        Serial.print(PGMT(M_DEBUG_DELAY));
+        Serial.print(aDelay);
         Serial.println();
     }
 
