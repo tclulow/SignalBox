@@ -21,17 +21,17 @@ const uint8_t INPUT_NODE_MAX    =                   16;     // Maximum nodes.
 const uint8_t INPUT_NODE_MAX    =                    8;     // Maximum nodes.
 #endif
 const uint8_t INPUT_NODE_MASK   = (INPUT_NODE_MAX - 1);     // Mask for node numbers.
-const uint8_t INPUT_NODE_SHIFT  =                    4;     // Shift input number this amount to get a node number.
+const uint8_t INPUT_NODE_SHIFT  =                    4;     // Shift input number this amount to get a node number (16 inputs per node so shift 4 bits). 
 const uint8_t INPUT_PIN_MAX     =                   16;     // 16 inputs to each node.
 const uint8_t INPUT_PIN_MASK    = (INPUT_PIN_MAX  - 1);     // Mask to get input pin within a node.
 
 // Mask for Input options
 const uint8_t INPUT_OUTPUT_MAX  =    6;     // Number of outputs each input can control. See also EEPROM in System.h
-const uint8_t INPUT_OUTPUT_DISP =    3;     // Number of outputs each input can display.
+// const uint8_t INPUT_OUTPUT_DISP =    3;     // Number of outputs each input can display.
 
 // Input types
 const uint8_t INPUT_TYPE_MASK   = 0x03;     // Input types take 2 bits each.
-const uint8_t INPUT_TYPE_SHIFT  =    1;     // Input type shifted by 1 bit = multiplied by 2.
+const uint8_t INPUT_TYPE_SHIFT  =    1;     // Input type shifted by 1 bit = multiplied by 2 as the Input types ake 2 bits each.
 
 const uint8_t INPUT_TYPE_TOGGLE =    0;     // A Toggle Input.
 const uint8_t INPUT_TYPE_ON_OFF =    1;     // An on/off Input.

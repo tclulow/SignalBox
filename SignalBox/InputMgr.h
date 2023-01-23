@@ -66,6 +66,8 @@ class InputMgr: public Persisted
     public:
 
     /** An InputMgr.
+     *  super.base is start of Input types (INPUT_TYPES_SIZE * INPUT_NODE_MAX).
+     *  baseInputs is start of Input definitions (INPUT_SIZE * INPUT_MAX).
      */
     InputMgr(uint16_t aBase) : Persisted(aBase)
     {
