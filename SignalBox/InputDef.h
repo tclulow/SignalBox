@@ -71,8 +71,8 @@ const uint8_t MCP_OLATA         = 0x14;     // Output latches (connected to GPIO
 const uint8_t MCP_OLATB         = 0x15;
 
 // Commands required to initialise MCPs.
-const uint8_t INPUT_COMMANDS_LEN = 4;
-uint8_t INPUT_COMMANDS[] = { MCP_IODIRA, MCP_IODIRB, MCP_GPPUA, MCP_GPPUB };
+const uint8_t INPUT_COMMANDS[] = { MCP_IODIRA, MCP_IODIRB, MCP_GPPUA, MCP_GPPUB };
+const uint8_t INPUT_COMMANDS_LEN = sizeof(INPUT_COMMANDS) / sizeof(uint8_t);
 
 
 /** Definition of an Input..
