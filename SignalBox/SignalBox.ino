@@ -319,13 +319,25 @@ void setup()
         controller.announce();                                  // Re-announce. Calibration will have overwritten the display.
     }
 
-//    buttons.displayButtons();
+    // buttons.displayButtons();
     
-//    // Dump memory in raw format if debug-full.
-//    if (isDebug(DEBUG_FULL))
-//    {
-//        dumpMemory();
-//    }
+    // // Dump memory in raw format if debug-full.
+    // if (isDebug(DEBUG_FULL))
+    // {
+    //     dumpMemory();
+    // }
+
+    // // Report EEPROM object locations and sizes.
+    // Serial.print("System base=");
+    // Serial.print(systemMgr.getBase(), HEX);
+    // Serial.print(", end=");
+    // Serial.print(systemMgr.getEnd(), HEX);
+    // Serial.println();
+    // Serial.print("Input  base=");
+    // Serial.print(inputMgr.getBase(), HEX);
+    // Serial.print(", end=");
+    // Serial.print(inputMgr.getEnd(), HEX);
+    // Serial.println();
 
     // Check if version update required.
     if (systemMgr.isUpdateRequired())
