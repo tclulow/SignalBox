@@ -132,7 +132,7 @@ class Display
     void enableLcd(boolean aState)
     {
         lcdEnabled =    aState 
-                     && (lcdShield != 0);
+                     && (lcdShield != NULL);
     }
 
 
