@@ -187,6 +187,7 @@ const char M_DEBUG_WRITE[]      PROGMEM = "Write";
 const char M_DEBUG_COMMAND[]    PROGMEM = ", cmd=";
 const char M_DEBUG_DELAY[]      PROGMEM = ", delay=";
 const char M_DEBUG_HI[]         PROGMEM = ", hi=";
+const char M_DEBUG_LEN[]        PROGMEM = ", len=";
 const char M_DEBUG_LO[]         PROGMEM = ", lo=";
 const char M_DEBUG_LOCK_HI[]    PROGMEM = ", lockHi=";
 const char M_DEBUG_LOCK_LO[]    PROGMEM = ", lockLo=";
@@ -223,7 +224,6 @@ const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG,  M_DEB
     const char M_DEBUG_UNEXPECTED[] PROGMEM = "Unexpected";
 
     const char M_DEBUG_ALT[]        PROGMEM = ", alt=";
-    const char M_DEBUG_LEN[]        PROGMEM = ", len=";
     const char M_DEBUG_OPTION[]     PROGMEM = ", opt=";
     const char M_DEBUG_START[]      PROGMEM = ", start=";
     const char M_DEBUG_STEP[]       PROGMEM = ", step=";
