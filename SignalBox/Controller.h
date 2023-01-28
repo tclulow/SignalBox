@@ -35,15 +35,6 @@ class Controller
     uint16_t      inputState[INPUT_NODE_MAX];   // Current state of inputs.
 
 
-    /** Display an activity character on the LCD.
-     *  Second row, column 10.
-     */
-    void showActivity(char aActivityChar)
-    {
-        disp.printChAt(10, LCD_ROW_TOP, aActivityChar);
-    }
-
-
     public:
     
     /** Announce ourselves.
@@ -194,8 +185,6 @@ class Controller
      */
     void scanInputs(void aCallback(uint8_t, uint8_t))
     {
-        showActivity('S');
-
         // Scan all the nodes.
         for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
         {
@@ -233,8 +222,6 @@ class Controller
                 inputState[node] = 0xffff;
             }
         }
-        
-        showActivity('s');
     }
 
 
@@ -459,7 +446,6 @@ class Controller
      */
     void scanInputHardware()
     {
-        showActivity('I');
         for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
         {
             if (!isInputNodePresent(node))
@@ -487,7 +473,6 @@ class Controller
                 }
             }
         }
-        showActivity('i');
     }
 
 
@@ -533,7 +518,6 @@ class Controller
      */
     void scanOutputHardware()
     {
-        showActivity('O');
         for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
         {
             if (!outputCtl.isOutputNodePresent(node))
@@ -541,7 +525,6 @@ class Controller
                 outputCtl.readOutputStates(node);     // Automatically marked as present if it responds.
             }
         }
-        showActivity('o');
     }
 
 
@@ -590,18 +573,41 @@ class Controller
      */
     uint16_t readInputNode(uint8_t aNode)
     {
-        uint16_t value = 0;
+        uint16_t value = inputState[aNode];   // Pretend no change in case of comms error.
 
-        if (   (i2cComms.sendShort(I2C_INPUT_BASE_ID + aNode, MCP_GPIOA))
-            || (!i2cComms.requestPacket(I2C_INPUT_BASE_ID + aNode, INPUT_STATE_LEN)))
+        int error = i2cComms.sendShort(I2C_INPUT_BASE_ID + aNode, MCP_GPIOA);
+        if (error)
         {
+            if (isDebug(DEBUG_ERRORS))
+            {
+                Serial.print(PGMT(M_INPUT));
+                Serial.print(PGMT(M_DEBUG_RETURN));
+                Serial.print(error);
+                Serial.println();
+            }
             recordInputError(aNode);
-            value = inputState[aNode];  // Pretend no change if comms error.
+        }
+        else if (!i2cComms.requestPacket(I2C_INPUT_BASE_ID + aNode, INPUT_STATE_LEN))
+        {
+            if (isDebug(DEBUG_ERRORS))
+            {
+                Serial.print(PGMT(M_INPUT));
+                Serial.print(PGMT(M_DEBUG_LEN));
+                Serial.print(Wire.available());
+                Serial.println();
+            }
+            recordInputError(aNode);
         }
         else
         {
             value = i2cComms.readWord();
         }
+
+        // if (   (i2cComms.sendShort(I2C_INPUT_BASE_ID + aNode, MCP_GPIOA))
+        //     || (!i2cComms.requestPacket(I2C_INPUT_BASE_ID + aNode, INPUT_STATE_LEN)))
+        // {
+        //     recordInputError(aNode);
+        // }
 
         return value;
     }
