@@ -148,7 +148,7 @@ class I2cComms
     void setId(uint8_t aNodeId)
     {
         Wire.begin(aNodeId);
-        // Wire.setWireTimeout(I2C_TIMEOUT);        // Timeout (microseconds) if protocol hangs.
+        Wire.setWireTimeout(I2C_TIMEOUT, true);        // Timeout (microseconds) if protocol hangs.
    }
 
 
@@ -261,6 +261,27 @@ class I2cComms
      */
     bool requestPacket(uint8_t aNodeId, uint8_t aLength)
     {
+        // int len = Wire.requestFrom(aNodeId, aLength);
+        // if (len != aLength)
+        // {
+        //     Serial.print("Len ");
+        //     Serial.print(len);
+        //     Serial.print(" != ");
+        //     Serial.print(aLength);
+        //     Serial.println();
+        // }
+        // int avail = Wire.available(); 
+        // if (avail != aLength)
+        // {
+        //     Serial.print("Avail ");
+        //     Serial.print(avail);
+        //     Serial.print(" != ");
+        //     Serial.print(aLength);
+        //     Serial.println();
+        // }
+        // return    (len == aLength)
+        //        && (avail == aLength);
+
         return    (Wire.requestFrom(aNodeId, aLength) == aLength)
                && (Wire.available() == aLength);
     }
@@ -315,19 +336,19 @@ class I2cComms
 
     private:
     
-    /** End transmission to current node.
-     */    
-    uint8_t endTransmission()
-    {
-        return Wire.endTransmission();
-    }
-    
-
     /** Begin transmission to a particular node.
      */    
     void beginTransmission(uint8_t aNodeId)
     {
         Wire.beginTransmission(aNodeId);
+    }
+
+    
+    /** End transmission to current node.
+     */    
+    uint8_t endTransmission()
+    {
+        return Wire.endTransmission();
     }
 };
 
