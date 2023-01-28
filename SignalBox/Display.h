@@ -84,7 +84,8 @@ class Display
      *  LiquidCrystal lcdShield( 8,  9, 4, 5, 6, 7);
      *  LiquidCrystal lcdShield(12, 11, 5, 4, 3, 2);
      */
-    LiquidCrystal* lcdShield;
+    LiquidCrystal* lcdShield;       // The LCD shield if there is one.
+    boolean lcdEnabled = false;     // Enable/disable the LCD shield (lcdI2C is unaffected).
 
 #if LCD_I2C
     LiquidCrystal_I2C* lcdI2C;      // An LCD attached using I2C.
@@ -112,6 +113,8 @@ class Display
         // lcdShield->noCursor();
         // lcdShield->noBlink();
         lcdShield->createChar(CHAR_LO, BYTES_LO);       // Custom character to indicate "Lo".
+        
+        enableLcd(true);
     }
 
 
@@ -120,6 +123,24 @@ class Display
     bool hasShield()
     {
         return lcdShield != 0;
+    }
+
+
+    /** Enable/disable LCD shield.
+     *  Doesn't affect the I2C LCD if there is one.
+     */    
+    void enableLcd(boolean aState)
+    {
+        lcdEnabled =    aState 
+                     && (lcdShield != 0);
+    }
+
+
+    /** Is the Lcd shield enabled?
+     */
+    boolean isLcdEnabled()
+    {
+        return lcdEnabled;
     }
 
 
@@ -154,7 +175,7 @@ class Display
      */
     void clear()
     {
-        if (lcdShield)
+        if (lcdEnabled)
         {
             lcdShield->clear();
         }
@@ -175,7 +196,7 @@ class Display
         if (aCol < 0)
         {
             // Position relative to the end of the row.
-            if (lcdShield)
+            if (lcdEnabled)
             {
                 lcdShield->setCursor(aCol + LCD_COLS, aRow & LCD_ROW_MASK);
             }
@@ -187,7 +208,7 @@ class Display
         else
         {
             // Position relative to the start of the row.
-            if (lcdShield)
+            if (lcdEnabled)
             {
                 lcdShield->setCursor(aCol, aRow & LCD_ROW_MASK);
             }
@@ -204,7 +225,7 @@ class Display
      */
     void printCh(char aChar)
     {
-        if (lcdShield)
+        if (lcdEnabled)
         {
             lcdShield->print(aChar);
         }
@@ -229,7 +250,7 @@ class Display
      */
     void printStr(const char* aString)
     {
-        if (lcdShield)
+        if (lcdEnabled)
         {
             lcdShield->print(aString);
         }
@@ -245,7 +266,7 @@ class Display
      */
     void printProgStr(PGM_P aMessagePtr)
     {
-        if (lcdShield)
+        if (lcdEnabled)
         {
             lcdShield->print(PGMT(aMessagePtr));
         }

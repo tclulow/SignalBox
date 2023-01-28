@@ -35,6 +35,15 @@ class Controller
     uint16_t      inputState[INPUT_NODE_MAX];   // Current state of inputs.
 
 
+    /** Display an activity character on the LCD.
+     *  Second row, column 10.
+     */
+    void showActivity(char aActivityChar)
+    {
+        disp.printChAt(10, LCD_ROW_TOP, aActivityChar);
+    }
+
+
     public:
     
     /** Announce ourselves.
@@ -113,14 +122,17 @@ class Controller
         }
 
         // Show heartbeat if no display timeout is pending.
-        if (   (displayTimeout == 0)
-            && (now > tickHeartBeat))
+        // if (   (displayTimeout == 0)
+        //     && (now > tickHeartBeat))
+        if (now > tickHeartBeat)
         {
             int hours = (now)                                                       / MILLIS_PER_HOUR;
             int mins  = (now - MILLIS_PER_HOUR * hours)                             / MILLIS_PER_MINUTE;
             int secs  = (now - MILLIS_PER_HOUR * hours  - MILLIS_PER_MINUTE * mins) / MILLIS_PER_SECOND;
 
-            tickHeartBeat = now + STEP_HEARTBEAT;
+            disp.enableLcd(displayTimeout == 0);          // Disable the shield if displayTimeout active.
+
+            tickHeartBeat = now + STEP_HEARTBEAT;         // Display the current heartbeat
             disp.setCursor(LCD_COL_START, LCD_ROW_DET);
             if (hours > 0)
             {
@@ -130,6 +142,8 @@ class Controller
             disp.printDec(mins, 2, CHAR_ZERO);
             disp.printCh(CHAR_COLON);
             disp.printDec(secs, 2, CHAR_ZERO);
+
+            disp.enableLcd(true);                         // Ensure all other display activity appears on the LCD shield.
         }
     }
 
@@ -180,6 +194,8 @@ class Controller
      */
     void scanInputs(void aCallback(uint8_t, uint8_t))
     {
+        showActivity('S');
+
         // Scan all the nodes.
         for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
         {
@@ -217,6 +233,8 @@ class Controller
                 inputState[node] = 0xffff;
             }
         }
+        
+        showActivity('s');
     }
 
 
@@ -441,6 +459,7 @@ class Controller
      */
     void scanInputHardware()
     {
+        showActivity('I');
         for (uint8_t node = 0; node < INPUT_NODE_MAX; node++)
         {
             if (!isInputNodePresent(node))
@@ -468,6 +487,7 @@ class Controller
                 }
             }
         }
+        showActivity('i');
     }
 
 
@@ -513,6 +533,7 @@ class Controller
      */
     void scanOutputHardware()
     {
+        showActivity('O');
         for (uint8_t node = 0; node < OUTPUT_NODE_MAX; node++)
         {
             if (!outputCtl.isOutputNodePresent(node))
@@ -520,6 +541,7 @@ class Controller
                 outputCtl.readOutputStates(node);     // Automatically marked as present if it responds.
             }
         }
+        showActivity('o');
     }
 
 
