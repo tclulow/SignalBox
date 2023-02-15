@@ -35,7 +35,7 @@ const uint8_t  I2C_LCD_LO              = 0x27;      // Range of IDs to scan for 
 const uint8_t  I2C_LCD_HI              = 0x3F;
 
 const uint32_t I2C_TIMEOUT             = 25000L;    // Wire timeout in microseconds.
-const long     I2C_SPEED               = 0;         // Speed of I2C comms. Set to 0 for default (100k).
+const long     I2C_SPEED               = 0;         // Speed of I2C comms. Set to 0 for default (100k). Not very robust, see I2cComms.setId().
 
 // Attached LCD displays.
 const bool     LCD_SHIELD              = false;     // Assume LCD shield present (or not). If false, use LCD_SHIELD_DETECT_PIN.

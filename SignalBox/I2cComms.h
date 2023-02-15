@@ -138,7 +138,7 @@ class I2cComms
     {
         if (I2C_SPEED)
         {
-            Wire.setClock(I2C_SPEED);   // Set custom clock speed if one was specified.
+            Wire.setClock(I2C_SPEED);   // Set custom clock speed if one was specified. Not very robust, see setId() below.
         }
     }
 
@@ -148,7 +148,9 @@ class I2cComms
     void setId(uint8_t aNodeId)
     {
         Wire.begin(aNodeId);
-        Wire.setWireTimeout(I2C_TIMEOUT, true);        // Timeout (microseconds) if protocol hangs.
+        Wire.setWireTimeout(I2C_TIMEOUT, true);     // Timeout (microseconds) if protocol hangs.
+//        TWBR = 158;                                 // Slow speed (12.5kHz).
+//        TWSR |= bit (TWPS0);                        // See http://www.gammon.com.au/i2c
    }
 
 
@@ -335,11 +337,16 @@ class I2cComms
 
 
     private:
+
+//    long start;
+//    long send;
+//    long sent;
     
     /** Begin transmission to a particular node.
      */    
     void beginTransmission(uint8_t aNodeId)
     {
+//        start = micros();
         Wire.beginTransmission(aNodeId);
     }
 
@@ -348,7 +355,15 @@ class I2cComms
      */    
     uint8_t endTransmission()
     {
-        return Wire.endTransmission();
+//        send = micros();
+        uint8_t ret = Wire.endTransmission();
+//        sent = micros();
+//
+//        Serial.print(send - start);
+//        Serial.print(CHAR_TAB);
+//        Serial.print(sent - send);
+//        Serial.println();
+        return ret;
     }
 };
 
