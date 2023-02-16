@@ -149,8 +149,9 @@ class I2cComms
     {
         Wire.begin(aNodeId);
         Wire.setWireTimeout(I2C_TIMEOUT, true);     // Timeout (microseconds) if protocol hangs.
-//        TWBR = 158;                                 // Slow speed (12.5kHz).
-//        TWSR |= bit (TWPS0);                        // See http://www.gammon.com.au/i2c
+        
+//        TWBR = 158;                                 // Slow speed; 158=12.5kHz, 78=25kHz, 152=50kHz (prescaler=1).
+//        TWSR |= bit (TWPS0);                        // Prescaler = 4 for 12.5kHz & 25kHz. See http://www.gammon.com.au/i2c
    }
 
 
