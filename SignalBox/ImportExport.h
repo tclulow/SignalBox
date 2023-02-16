@@ -89,7 +89,7 @@ class ImportExport
 
         switch(aExport)
         {
-            case EXP_ALL:     exportSystem(debugLevel >= DEBUG_FULL);
+            case EXP_ALL:     exportSystem(debugLevel);
                               exportInputs(true);
                               exportOutputs();
                               exportLocks();
