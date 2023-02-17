@@ -267,7 +267,8 @@ class SystemMgr: public Persisted
             }
         }
 
-        if (isDebug(DEBUG_NONE))
+        // Always output software version info, even if debugging disabled.
+        // if (isDebug(DEBUG_NONE))
         {
             Serial.print(PGMT(M_SOFTWARE));
             Serial.print(CHAR_SPACE);
