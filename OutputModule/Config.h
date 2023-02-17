@@ -14,7 +14,7 @@
 #define Config_h
 
 
-// Remove all debug code using this definition.
+// Remove all debug code using this definition. Saves around 3k code. Supress to fit in a ATmega168 (16k FLASH) Nano.
 // #define isDebug(x) (false)
 
 // Include optional code
