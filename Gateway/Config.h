@@ -35,7 +35,7 @@ const uint8_t  I2C_LCD_LO              = 0x27;      // Range of IDs to scan for 
 const uint8_t  I2C_LCD_HI              = 0x3F;
 
 const uint32_t I2C_TIMEOUT             = 25000L;    // Wire timeout in microseconds.
-const long     I2C_SPEED               = 0;         // Speed of I2C comms. Set to 0 for default (100k).
+const long     I2C_SPEED               = 0;         // Speed of I2C comms. Set to 0 for default (100k). Not very robust, see I2cComms.setId().
 
 // Attached LCD displays.
 const bool     LCD_SHIELD              = false;     // Assume LCD shield present (or not). If false, use LCD_SHIELD_DETECT_PIN.
@@ -84,8 +84,8 @@ const long    DELAY_MULTIPLIER         =   1000;    // Multiply OutputDef.delay 
 
 
 // Steps (all in msecs)
-const long    STEP_HARDWARE_SCAN       =  10000;    // Scan for new hardware every 10 seconds.
-const long    STEP_INPUT_SCAN          =     50;    // Scan the input switches.
+const long    STEP_HARDWARE_SCAN       =  10000;    // Scan for new hardware - zero means no scan.
+const long    STEP_INPUT_SCAN          =     50;    // Scan the input switches - zero means no scan.
 const long    STEP_GATEWAY             =    100;    // Scan the gateway.
 const long    STEP_HEARTBEAT           =    200;    // Refresh heartbeat indicator.
 const long    STEP_SERVO               =     25;    // Step Servos.

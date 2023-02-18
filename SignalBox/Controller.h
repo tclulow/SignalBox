@@ -79,7 +79,8 @@ class Controller
         }
 
         // Rescan for new hardware
-        if (now > tickHardwareScan)
+        if (   (STEP_HARDWARE_SCAN > 0)
+            && (now > tickHardwareScan))
         {
             tickHardwareScan = now + STEP_HARDWARE_SCAN;
             scanInputHardware();
@@ -87,7 +88,8 @@ class Controller
         }
     
         // Process any inputs
-        if (now > tickInputScan)
+        if (   (STEP_INPUT_SCAN > 0)
+            && (now > tickInputScan))
         {
             tickInputScan = now + STEP_INPUT_SCAN;
             // scanOutputs();
