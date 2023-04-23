@@ -13,7 +13,7 @@
 #ifndef Command_h
 #define Command_h
 
-#define COMMAND_BUFFER_LEN   8                  // Serial command buffer length
+const uint8_t COMMAND_BUFFER_LEN = 8;               // Serial command buffer length
 
 
 /** Command class.
@@ -54,7 +54,7 @@ class Command
                         commandLen = 0;
                     }
                 }
-                else if (commandLen <= COMMAND_BUFFER_LEN)
+                else if (commandLen < COMMAND_BUFFER_LEN)
                 {
                     commandBuffer[commandLen++] = ch;   // Add the character to the command.
                 }
