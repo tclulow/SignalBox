@@ -67,7 +67,7 @@ const uint8_t LCD_COL_CMRI          =  6;   // CMRI detail starts here.
 
 
 /** A Display class that can print PROGMEM messages.
- *  Can display of LCD shield (LCD_ROWS x LCD_COLS) and/or an I2C LCD display (LCD2_ROWS x LCD2_COLS).
+ *  Can display on LCD shield (LCD_ROWS x LCD_COLS) and/or an I2C LCD display (LCD2_ROWS x LCD2_COLS).
  */
 class Display
 {
