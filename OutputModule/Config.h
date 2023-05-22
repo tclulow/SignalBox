@@ -119,28 +119,22 @@ const uint8_t ANALOG_PIN_LAST          =     A7;    // Last analog pin.
 const int     ANALOG_PIN_CUTOFF        =  0x200;    // When using analog pin for digital purposes, cutoff at this value (half of full range 0-3ff).
 
 
-#if SB_CONTROLLER
-
-// Alternate pins that can be used to control the menus. First entry unused.
+// COntroller alternate pins that can be used to controll the menus. First entry unused.
 // Unused, Select, Left, Down, Up, right.
 const uint8_t BUTTON_PINS[] = { 0xff, A1, A2, A3, 2, 3 };
 
 
-#elif SB_OUTPUT_MODULE
-
-// The module jumper pins. 0xff means don't use.
+// The output module jumper pins. 0xff means don't use.
 // const uint8_t jumperPins[JUMPER_PINS] = { 1, 0, A7, A6 };
 const uint8_t jumperPins[JUMPER_PINS] = { 0xff, 0xff, A7, A6 };
 
-// Alternate jumper pins for new output module.
+// Output module alternate jumper pins (for new output module).
 // const uint8_t jumperPins[JUMPER_PINS] = { 4, 5, 6, 7 };
 
-// The signal IO pins.
+// Output module signal IO pins.
 const uint8_t sigPins[IO_PINS]        = { 4, 5, 6, 7, 8, 9, 10, 11 };
 
-// The digital IO pins.
+// Output module digital IO pins.
 const uint8_t ioPins[IO_PINS]         = { 3, 2, A3, A2, A1, A0, 13, 12 };
-
-#endif
 
 #endif

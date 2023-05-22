@@ -301,8 +301,7 @@ class SystemMgr: public Persisted
     }
 
 
-#if SB_OUTPUT_MODULE
-    /** Is the ID set by jumpers?
+    /** Is the OutputModule ID set by jumpers?
      */
     bool isJumperId()
     {
@@ -310,7 +309,7 @@ class SystemMgr: public Persisted
     }
 
 
-    /** Set the I2C module Id.
+    /** Set the OutputModule I2C Id.
      */
     void setModuleId(uint8_t aModuleId)
     {
@@ -337,7 +336,6 @@ class SystemMgr: public Persisted
 
         return (aIncludeBase ? I2C_OUTPUT_BASE_ID : 0) + moduleId;
     }
-#endif
 
 
     /** Sets the debug level.

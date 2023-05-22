@@ -67,8 +67,6 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
                                          M_BLINK, M_RANDOM, M_LED_3,  M_RFU, M_RFU,   M_RFU,     M_RFU,     M_RFU };
 
 
-#if SB_CONTROLLER
-
     // General messages.
     const char M_CONFIRM[]          PROGMEM = "Confirm? Sel=Yes";
     const char M_CANCEL[]           PROGMEM = "Cancel?  Sel=Yes";
@@ -160,8 +158,6 @@ const char* const M_OUTPUT_TYPES[]   = { M_NONE,  M_SERVO,  M_SIGNAL, M_LED, M_L
     const char* const M_DEBUG_PROMPTS[]  = { M_NONE, M_ERRORS, M_BRIEF, M_DETAIL, M_FULL };
     const char* const M_INPUT_TYPES[]    = { M_TOGGLE, M_ON_OFF, M_ON,  M_OFF };
 
-#endif
-
 
 // Common debug messages.
 
@@ -203,7 +199,6 @@ const char M_DEBUG_VALUE[]      PROGMEM = ", value=";
 const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG,  M_DEBUG_SET_LO, M_DEBUG_SET_HI, M_DEBUG_READ, M_DEBUG_WRITE, M_DEBUG_SAVE, M_DEBUG_RESET,
                                            M_DEBUG_SET,    M_DEBUG_INP_LO, M_DEBUG_INP_HI, M_RFU,          M_RFU,        M_RFU,         M_RFU,        M_NONE };
 
-#if SB_CONTROLLER
 
     // Controller-only debug messages.
     const char M_DEBUG_BUTTON[]     PROGMEM = "Button";
@@ -212,7 +207,6 @@ const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG,  M_DEB
     const char M_DEBUG_PIN[]        PROGMEM = ", pin=";
     const char M_DEBUG_RETURN[]     PROGMEM = ", ret=";
 
-#elif SB_OUTPUT_MODULE
 
     // Output module debug messages.
     const char M_DEBUG_ACTION[]     PROGMEM = "Action";
@@ -228,7 +222,5 @@ const char* const M_DEBUG_COMMANDS[]   = { M_DEBUG_SYSTEM, M_DEBUG_DEBUG,  M_DEB
     const char M_DEBUG_START[]      PROGMEM = ", start=";
     const char M_DEBUG_STEP[]       PROGMEM = ", step=";
     const char M_DEBUG_STEPS[]      PROGMEM = ", steps=";
-
-#endif
 
 #endif
