@@ -280,15 +280,15 @@ class SystemMgr: public Persisted
 
 #if SB_OUTPUT_MODULE
         // Decide how many jumper pins to indicate
-        uint8_t maskLimit = 0x1f;       // TODO - tie to Output max node number.
+        uint8_t maskLimit = OUTPUT_NODE_MAX;        // Mask limit for legal output node numbers (assumes power of 2).
         if (isJumperId())
         {
-            maskLimit >>= 1;            // Don't show software jumper pin
+            maskLimit OUTPUT_NODE_HALF;             // Mask if only half the nodes are available.
         }
 
         // Flash module number, short blink for set (one), long blink for unset (zero).
         delay(DELAY_BLINK_LONG);
-        for (uint8_t mask = 1; mask <= maskLimit; mask <<= 1)
+        for (uint8_t mask = 1; mask < maskLimit; mask <<= 1)
         {
             digitalWrite(LED_BUILTIN, HIGH);
             delay((getModuleId(false) & mask) ? DELAY_BLINK : DELAY_BLINK_LONG);
