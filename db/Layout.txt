@@ -1,5 +1,6 @@
+SignalBox v4.6.3 Jan 23
 #System	Version	Report	Debug
-System	v4.6.1	Long	None
+System	v4.6.3	Long	Errors
 
 #Input	Node	Pin	Type	OutputA	OutputB	OutputC	OutputD	OutputE	OutputF
 Input	0	0	On_Off	. .	. .	. .	. .	. .	. .
@@ -202,16 +203,16 @@ Output	A	5	None	5A	5A	0C	00
 Output	A	6	None	00	B4	0D	00
 Output	A	7	None	00	B4	0D	00
 
-Output	C	0	Servo	61	50	04	00
+Output	C	0	Servo	5F	50	04	00
 Output	C	1	Servo	69	55	02	00
 Output	C	2	Servo	5B	6E	04	00
 Output	C	3	None	5A	5A	04	00
 Output	C	4	Servo	6E	55	04	00
-Output	C	5	Signal	46	5D	04	00
+Output	C	5	Signal	46	5A	04	00
 Output	C	6	None	5A	5A	04	00
 Output	C	7	Servo	66	78	02	00
 
-Output	D	0	Servo	39	4B	04	00
+Output	D	0	Servo	3C	50	04	00
 Output	D	1	Servo	61	50	04	00
 Output	D	2	None	5A	5A	0C	00
 Output	D	3	Servo	5F	5A	04	00
@@ -230,48 +231,48 @@ Output	E	6	None	5A	5A	0C	00
 Output	E	7	None	5A	5A	0C	00
 
 #Lock	Node	Pin	LockLoA	LockLoB	LockLoC	LockLoD	LockHiA	LockHiB	LockHiC	LockHiD
-Lock	1	0	.	.	.	.	.	.	.	.
-Lock	1	1	.	.	.	.	.	.	.	.
-Lock	1	2	.	.	.	.	.	.	.	.
-Lock	1	3	.	.	.	.	.	.	.	.
-Lock	1	4	.	.	.	.	.	.	.	.
-Lock	1	5	.	.	.	.	.	.	.	.
-Lock	1	6	.	.	.	.	.	.	.	.
+Lock	1	0	Lo 1 1	.	.	.	.	.	.	.
+Lock	1	1	Lo 1 0	.	.	.	.	.	.	.
+Lock	1	2	Lo 4 3	.	.	.	Lo 4 3	.	.	.
+Lock	1	3	Lo 4 3	.	.	.	.	.	.	.
+Lock	1	4	Lo 1 6	.	.	.	Lo 1 6	.	.	.
+Lock	1	5	Lo 1 6	.	.	.	Lo 4 1	.	.	.
+Lock	1	6	Lo 1 5	.	.	.	.	.	.	.
 Lock	1	7	.	.	.	.	.	.	.	.
 
 Lock	2	0	.	.	.	.	.	.	.	.
 Lock	2	1	.	.	.	.	.	.	.	.
 Lock	2	2	.	.	.	.	.	.	.	.
-Lock	2	3	.	.	.	.	.	.	.	.
-Lock	2	4	.	.	.	.	.	.	.	.
-Lock	2	5	.	.	.	.	.	.	.	.
-Lock	2	6	Hi 9 0	.	.	.	.	.	.	.
+Lock	2	3	Lo 2 4	.	.	.	Lo 2 4	.	.	.
+Lock	2	4	Lo 2 3	Lo 2 5	.	.	.	.	.	.
+Lock	2	5	Lo 2 4	.	.	.	.	.	.	.
+Lock	2	6	Hi 2 5	.	.	.	.	.	.	.
 Lock	2	7	.	.	.	.	.	.	.	.
 
 Lock	3	0	.	.	.	.	.	.	.	.
 Lock	3	1	.	.	.	.	.	.	.	.
-Lock	3	2	.	.	.	.	.	.	.	.
-Lock	3	3	.	.	.	.	.	.	.	.
+Lock	3	2	Lo 3 3	.	.	.	Lo 4 6	Lo 4 4	.	.
+Lock	3	3	Lo 3 2	.	.	.	.	.	.	.
 Lock	3	4	.	.	.	.	.	.	.	.
 Lock	3	5	.	.	.	.	.	.	.	.
 Lock	3	6	.	.	.	.	.	.	.	.
 Lock	3	7	.	.	.	.	.	.	.	.
 
-Lock	4	0	.	.	.	.	.	.	.	.
-Lock	4	1	.	.	.	.	.	.	.	.
+Lock	4	0	Lo 4 1	.	.	.	.	.	.	.
+Lock	4	1	Lo 4 0	Hi 1 4	Hi 1 5	.	.	.	.	.
 Lock	4	2	.	.	.	.	.	.	.	.
-Lock	4	3	.	.	.	.	.	.	.	.
-Lock	4	4	.	.	.	.	.	.	.	.
-Lock	4	5	.	.	.	.	.	.	.	.
-Lock	4	6	.	.	.	.	.	.	.	.
-Lock	4	7	.	.	.	.	.	.	.	.
+Lock	4	3	Lo 1 3	.	.	.	.	.	.	.
+Lock	4	4	Lo 4 5	Hi 4 7	Hi 3 2	.	.	.	.	.
+Lock	4	5	Lo 4 4	.	.	.	Lo 4 4	.	.	.
+Lock	4	6	Lo 4 7	Hi 3 2	.	.	.	.	.	.
+Lock	4	7	Lo 4 6	.	.	.	.	Lo 4 4	.	.
 
 Lock	5	0	.	.	.	.	.	.	.	.
-Lock	5	1	.	.	.	.	.	.	.	.
-Lock	5	2	.	.	.	.	.	.	.	.
-Lock	5	3	.	.	.	.	.	.	.	.
-Lock	5	4	.	.	.	.	.	.	.	.
-Lock	5	5	.	.	.	.	.	.	.	.
+Lock	5	1	Lo 5 2	Lo 5 3	Lo 5 4	.	.	.	.	.
+Lock	5	2	Lo 5 1	.	.	.	.	.	.	.
+Lock	5	3	Lo 5 1	.	.	.	Lo 5 1	.	.	.
+Lock	5	4	Lo 5 5	Lo 5 1	.	.	Lo 5 5	.	.	.
+Lock	5	5	Hi 5 4	.	.	.	.	.	.	.
 Lock	5	6	.	.	.	.	.	.	.	.
 Lock	5	7	.	.	.	.	.	.	.	.
 
