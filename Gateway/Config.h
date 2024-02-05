@@ -119,7 +119,7 @@ const uint8_t ANALOG_PIN_LAST          =     A7;    // Last analog pin.
 const int     ANALOG_PIN_CUTOFF        =  0x200;    // When using analog pin for digital purposes, cutoff at this value (half of full range 0-3ff).
 
 
-// COntroller alternate pins that can be used to controll the menus. First entry unused.
+// Controller alternate pins that can be used to controll the menus. First entry unused.
 // Unused, Select, Left, Down, Up, right.
 const uint8_t BUTTON_PINS[] = { 0xff, A1, A2, A3, 2, 3 };
 
