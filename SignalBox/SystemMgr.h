@@ -20,7 +20,7 @@
     const long MAGIC_NUMBER = 0x74756f53;   // Magic number = "Sout".
 #endif
 
-const long    VERSION       = 0x0463;       // Version number of software.  See also Messages.M_VERSION.
+const long    VERSION       = 0x0464;       // Version number of software.  See also Messages.M_VERSION.
 
 
 // Timing constants
