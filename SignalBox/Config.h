@@ -68,7 +68,7 @@ const long    INTERLOCK_BUZZER_TIME1   =    200;    // Duration (msecs) of inter
 const long    INTERLOCK_BUZZER_TIME2   =    300;    // Duration (msecs) of interlock warning second tone.
 
 
-// Delays
+// Delays (all in msecs)
 const long    DELAY_BLINK              =    250;    // Blink interval when showing version number.
 const long    DELAY_BLINK_LONG         =    750;    // Blink to show zero, or gap between sections.
 const long    DELAY_READ               =   2000;    // Delay in msecs when the LCD may need to be read by an operator.
