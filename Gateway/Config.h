@@ -40,7 +40,7 @@ const long     I2C_SPEED               = 0;         // Speed of I2C comms. Set t
 // Attached LCD displays.
 const bool     LCD_SHIELD              = false;     // Assume LCD shield present (or not). If false, use LCD_SHIELD_DETECT_PIN.
 const uint8_t  LCD_SHIELD_DETECT_PIN   = 11;        // Use this pin (must be low) to detect presence of LCD shield. If zero, don't detect.
-
+const uint8_t  LCD_SHIELD_POSSIBLE     = LCD_SHIELD || LCD_SHIELD_DETECT_PIN;
 
 /** Configuration constants.
  */
