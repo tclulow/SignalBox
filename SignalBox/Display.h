@@ -196,30 +196,42 @@ class Display
      */
     void setCursor(int aCol, int aRow)
     {
-        if (aCol < 0)
+        int lcdCol = (aCol < 0 ? aCol + LCD_COLS  : aCol);
+        int i2cCol = (aCol < 0 ? aCol + LCD2_COLS : aCol);
+        
+        if (LCD_SHIELD_POSSIBLE && lcdEnabled)
         {
-            // Position relative to the end of the row.
-            if (LCD_SHIELD_POSSIBLE && lcdEnabled)
-            {
-                lcdShield->setCursor(aCol + LCD_COLS, aRow & LCD_ROW_MASK);
-            }
-            if (LCD_I2C && lcdI2C)
-            {
-                lcdI2C->setCursor(aCol + LCD2_COLS, aRow & LCD2_ROW_MASK);
-            }
+            lcdShield->setCursor(lcdCol, aRow & LCD_ROW_MASK);
         }
-        else
+        if (LCD_I2C && lcdI2C)
         {
-            // Position relative to the start of the row.
-            if (LCD_SHIELD_POSSIBLE && lcdEnabled)
-            {
-                lcdShield->setCursor(aCol, aRow & LCD_ROW_MASK);
-            }
-            if (LCD_I2C && lcdI2C)
-            {
-                lcdI2C->setCursor(aCol, aRow & LCD2_ROW_MASK);
-            }
+            lcdI2C->setCursor(i2cCol, aRow & LCD2_ROW_MASK);
         }
+            
+//        if (aCol < 0)
+//        {
+//            // Position relative to the end of the row.
+//            if (LCD_SHIELD_POSSIBLE && lcdEnabled)
+//            {
+//                lcdShield->setCursor(aCol + LCD_COLS, aRow & LCD_ROW_MASK);
+//            }
+//            if (LCD_I2C && lcdI2C)
+//            {
+//                lcdI2C->setCursor(aCol + LCD2_COLS, aRow & LCD2_ROW_MASK);
+//            }
+//        }
+//        else
+//        {
+//            // Position relative to the start of the row.
+//            if (LCD_SHIELD_POSSIBLE && lcdEnabled)
+//            {
+//                lcdShield->setCursor(aCol, aRow & LCD_ROW_MASK);
+//            }
+//            if (LCD_I2C && lcdI2C)
+//            {
+//                lcdI2C->setCursor(aCol, aRow & LCD2_ROW_MASK);
+//            }
+//        }
     }
 
 
