@@ -105,6 +105,7 @@ class Display
 
 
     /** Create the LCD shield.
+     *  Never called if LCD_SHIELD_POSSIBLE is false;
      */
     void createLcdShield()
     {
@@ -122,7 +123,7 @@ class Display
      */
     bool hasShield()
     {
-        return lcdShield != 0;
+        return LCD_SHIELD_POSSIBLE && (lcdShield != 0);
     }
 
 
@@ -131,16 +132,18 @@ class Display
      */    
     void enableLcd(boolean aState)
     {
-        lcdEnabled =    aState 
+        lcdEnabled =    LCD_SHIELD_POSSIBLE
+                     && aState 
                      && (lcdShield != NULL);
     }
 
 
     /** Is the Lcd shield enabled?
+     *  Defunct - never called.
      */
     boolean isLcdEnabled()
     {
-        return lcdEnabled;
+        return LCD_SHIELD_POSSIBLE && lcdEnabled;
     }
 
 
@@ -175,12 +178,12 @@ class Display
      */
     void clear()
     {
-        if (lcdEnabled)
+        if (LCD_SHIELD_POSSIBLE && lcdEnabled)
         {
             lcdShield->clear();
         }
 
-        if (lcdI2C)
+        if (LCD_I2C && lcdI2C)
         {
             lcdI2C->clear();
         }
@@ -196,11 +199,11 @@ class Display
         if (aCol < 0)
         {
             // Position relative to the end of the row.
-            if (lcdEnabled)
+            if (LCD_SHIELD_POSSIBLE && lcdEnabled)
             {
                 lcdShield->setCursor(aCol + LCD_COLS, aRow & LCD_ROW_MASK);
             }
-            if (lcdI2C)
+            if (LCD_I2C && lcdI2C)
             {
                 lcdI2C->setCursor(aCol + LCD2_COLS, aRow & LCD2_ROW_MASK);
             }
@@ -208,11 +211,11 @@ class Display
         else
         {
             // Position relative to the start of the row.
-            if (lcdEnabled)
+            if (LCD_SHIELD_POSSIBLE && lcdEnabled)
             {
                 lcdShield->setCursor(aCol, aRow & LCD_ROW_MASK);
             }
-            if (lcdI2C)
+            if (LCD_I2C && lcdI2C)
             {
                 lcdI2C->setCursor(aCol, aRow & LCD2_ROW_MASK);
             }
@@ -225,11 +228,11 @@ class Display
      */
     void printCh(char aChar)
     {
-        if (lcdEnabled)
+        if (LCD_SHIELD_POSSIBLE && lcdEnabled)
         {
             lcdShield->print(aChar);
         }
-        if (lcdI2C)
+        if (LCD_I2C && lcdI2C)
         {
             lcdI2C->print(aChar);
         }
@@ -250,11 +253,11 @@ class Display
      */
     void printStr(const char* aString)
     {
-        if (lcdEnabled)
+        if (LCD_SHIELD_POSSIBLE && lcdEnabled)
         {
             lcdShield->print(aString);
         }
-        if (lcdI2C)
+        if (LCD_I2C && lcdI2C)
         {
             lcdI2C->print(aString);
         }
@@ -266,11 +269,11 @@ class Display
      */
     void printProgStr(PGM_P aMessagePtr)
     {
-        if (lcdEnabled)
+        if (LCD_SHIELD_POSSIBLE && lcdEnabled)
         {
             lcdShield->print(PGMT(aMessagePtr));
         }
-        if (lcdI2C)
+        if (LCD_I2C && lcdI2C)
         {
             lcdI2C->print(PGMT(aMessagePtr));
         }
@@ -430,7 +433,7 @@ class Display
         }
 
         // Add extra spaces for lcdI2C if necessary.
-        if (   (lcdI2C)
+        if (   (LCD_I2C && lcdI2C)
             && (aCol >= 0))
         {
             for (uint8_t spaces = LCD_COLS; spaces < LCD2_COLS; spaces++)
