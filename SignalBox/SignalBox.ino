@@ -284,14 +284,14 @@ void setup()
     }
 #endif
 
-    // Force an LCD shield if no I2C LCD present.
-    if (   (!hasLcdShield)
-        && (disp.getLcdId() == 0))
-    {
-        hasLcdShield = true;
-        disp.createLcdShield();
-        controller.announce();
-    }
+//    // Force an LCD shield if no I2C LCD present.
+//    if (   (!hasLcdShield)
+//        && (disp.getLcdId() == 0))
+//    {
+//        hasLcdShield = true;
+//        disp.createLcdShield();
+//        controller.announce();
+//    }
 
     // Check for I2C Gateway.
     if (   (I2C_GATEWAY_ID > 0)
