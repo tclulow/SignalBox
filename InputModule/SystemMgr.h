@@ -19,7 +19,7 @@
 #elif SB_OUTPUT_MODULE
     const long MAGIC_NUMBER = 0x74756f53;   // Magic number = "Sout".
 #elif SB_INPUT_MODULE
-    const long MAGIC_NUMBER = 0x20696e53;   // Magic number = "Sin ".
+    const long MAGIC_NUMBER = 0x206e6953;   // Magic number = "Sin ".
 #else
     #error "Module type must be defined."
 #endif
