@@ -17,27 +17,51 @@
 #include <IRremote.hpp>
 
 
-static const uint8_t REMOTE_PIN  = 11;          // Remote control IR pin.
+static const uint8_t REMOTE_PIN    = 11;        // Remote control IR pin.
+static const uint8_t INPUT_PIN_MAX = 16;        // 16 inputs to the node. Must match InputDef.INPUT_PIN_MAX.
 
 
 /** Handle IR commands from a remote controller.
+ *  Extends Persisted to store IR codes.
  */
-class Remote
+class Remote: public Persisted
 {
+    private:
+
+    uint16_t flags = 0xffff;
+    uint32_t irCodes[INPUT_PIN_MAX];
+    
+
     public:
 
     /** Constructor.
      */
-    Remote()
+    Remote(uint16_t aBase) : Persisted(aBase)
     {
-
+        size = sizeof(irCodes);
     }
 
 
     /** Initialise.
      */
-    void init()
+    void init(boolean aFirstRun)
     {
+        if (aFirstRun)
+        {
+            // Load the saved IR codes.
+            EEPROM.get(getBase(), irCodes);
+        }
+        else
+        {
+            // First run, initialise the IR codes.
+            for (int i = 0; i < INPUT_PIN_MAX; i++)
+            {
+                irCodes[i] = 0;
+            }
+            EEPROM.put(getBase(), irCodes);
+        }
+
+        // Initialise the Receiver.
         IrReceiver.begin(REMOTE_PIN, ENABLE_LED_FEEDBACK);
         IrReceiver.printActiveIRProtocols(&Serial);
     }
@@ -91,10 +115,20 @@ class Remote
             }
         }
     }
+
+
+    /** Get the flags.
+     */
+    uint16_t getFlags()
+    {
+        return flags;
+    }
 };
 
 
-// Singleton instance
-Remote remote;
+/** Singleton instance of Remote.
+ *  In EEPROM immediately after the end of SystemMgr.
+ */
+Remote remote(systemMgr.getEnd());
 
 #endif

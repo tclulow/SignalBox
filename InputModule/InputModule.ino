@@ -82,22 +82,8 @@ void setup()
     systemMgr.init();               // Initialise SystemMgr.
     
     // Load SystemData from EEPROM and check it's valid.
-    if (!systemMgr.loadSystemData())
-    {
-        firstRun();
-    }
-    else
-    {
-        // Recover state from EEPROM.
-    }
-
-    // Start I2C communications.
-    i2cComms.setId(systemMgr.getModuleId(true));
-    i2cComms.onReceive(processReceipt);
-    i2cComms.onRequest(processRequest);
-
-    // Flash out version number on the built-in LED,
-    systemMgr.flashVersion();
+    bool firstRun = !systemMgr.loadSystemData();
+    remote.init(firstRun);
 
     // Check if version update required.
     if (systemMgr.isUpdateRequired())
@@ -116,15 +102,13 @@ void setup()
         systemMgr.update();
     }
 
-    remote.init();
-}
+    // Start I2C communications.
+    i2cComms.setId(systemMgr.getModuleId(true));
+    i2cComms.onReceive(processReceipt);
+    i2cComms.onRequest(processRequest);
 
-
-/** Initialise data when first run.
- */
-void firstRun()
-{
-    systemMgr.saveSystemData();
+    // Flash out version number on the built-in LED,
+    systemMgr.flashVersion();
 }
 
 
