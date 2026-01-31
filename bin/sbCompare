@@ -1,20 +1,55 @@
 #!/bin/bash
 # Check common files have no differences
 
-cd ~/JavaDev/Pentad/Arduino/SignalBox/SignalBox
+# Function to check a particular directory.
+checkDir()
+{
+    DIR=`basename $1`
 
-DIR=OutputModule
-echo
-for FILE in I2cComms.h Config.h Messages.h OutputDef.h Persisted.h SystemMgr.h
+    for FILE in `cd $DIR; ls $PATTERN.h 2>/dev/null`
+    do
+        if [ -e $SRC/$FILE ]
+        then
+            echo $DIR/$FILE
+            if ! diff $SRC/$FILE $DIR
+            then
+                DIFFS="$DIFFS $DIR/$FILE"
+            fi
+        fi
+    done
+}
+
+
+# Setup and run in the parent directory of the command.
+PATTERN=${1:-*}
+SRC=SignalBox
+DIFFS=
+cd `dirname $0`/..
+
+# Scan all the directories for .h files matching the PATTERN
+for DIR in `ls -d */`
 do
-    echo $DIR/$FILE
-    diff $FILE ../$DIR
+    if [ "$DIR" != "$SRC/" ]
+    then
+        checkDir $DIR
+    fi
 done
 
-DIR=Gateway
-echo
-for FILE in I2cComms.h Config.h
-do
-    echo $DIR/$FILE
-    diff $FILE ../$DIR
-done
+# Deal with any differeces.
+if [ "$DIFFS" == "" ]
+then
+    echo No differences
+else
+    echo Differences: $DIFFS
+    echo -n "Fix them? "
+    read RESPONSE
+    if [[ "$RESPONSE" == "Y" || "$RESPONSE" == "y" ]]
+    then
+        for PATHNAME in $DIFFS
+        do
+            DIR=$(dirname $PATHNAME)
+            FILE=$(basename $PATHNAME)
+            cp $SRC/$FILE $DIR
+        done
+    fi
+fi
