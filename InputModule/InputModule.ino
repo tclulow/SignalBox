@@ -103,7 +103,7 @@ void setup()
     }
 
     // Start I2C communications.
-    i2cComms.setId(systemMgr.getModuleId(false) + I2C_INPUT_MOD_BASE_ID);
+    i2cComms.setId(systemMgr.getModuleId(false) + I2C_INP_MOD_BASE_ID);
     i2cComms.onReceive(processReceipt);
     i2cComms.onRequest(processRequest);
 
