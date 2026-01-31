@@ -24,6 +24,8 @@
     const char M_SOFTWARE[]     PROGMEM = "SignalBox";
 #elif SB_OUTPUT_MODULE
     const char M_SOFTWARE[]     PROGMEM = "Output module";
+#elif SB_INPUT_MODULE
+    const char M_SOFTWARE[]     PROGMEM = "Input module";
 #endif
 const char M_VERSION[]          PROGMEM = "v4.6.4";        // See also SystemMgr.VERSION.
 const char M_VERSION_DATE[]     PROGMEM = "Feb 24";

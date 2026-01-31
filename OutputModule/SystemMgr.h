@@ -18,6 +18,10 @@
     const long MAGIC_NUMBER = 0x786f6253;   // Magic number = "Sbox".
 #elif SB_OUTPUT_MODULE
     const long MAGIC_NUMBER = 0x74756f53;   // Magic number = "Sout".
+#elif SB_INPUT_MODULE
+    const long MAGIC_NUMBER = 0x20696e53;   // Magic number = "Sin ".
+#else
+    #error "Module type must be defined."
 #endif
 
 const long    VERSION       = 0x0464;       // Version number of software.  See also Messages.M_VERSION.
