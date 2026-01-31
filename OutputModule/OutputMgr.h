@@ -2,7 +2,7 @@
  *  @file
  *
  *
- *  (c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
+ *  (c)Copyright Tony Clulow  2021-25   antony.clulow@gmail.com
  *
  *  This work is licensed under the:
  *      Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.

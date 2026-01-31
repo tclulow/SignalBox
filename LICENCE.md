@@ -8,4 +8,4 @@ http://creativecommons.org/licenses/by-nc-sa/4.0/
 
 For commercial use, please contact the original copyright holder(s) to agree licensing terms
 
-(c)Copyright Tony Clulow  2021    tony.clulow@pentadtech.com
+(c)Copyright Tony Clulow  2021    antony.clulow@gmail.com

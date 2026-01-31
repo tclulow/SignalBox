@@ -1,7 +1,7 @@
 /** OutputModule.
  *  @file
  *
- *  (c)Copyright Tony Clulow  2021  tony.clulow@pentadtech.com
+ *  (c)Copyright Tony Clulow  2021-25   antony.clulow@gmail.com
  *
  *  This work is licensed under the:
  *      Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
@@ -175,6 +175,23 @@ void setup()
             initOutput(pin);
             initFlasher(pin);
         }
+    }
+
+    // Check if version update required.
+    if (systemMgr.isUpdateRequired())
+    {
+        if (isDebug(DEBUG_NONE))
+        {
+            Serial.print(PGMT(M_UPDATE));
+            Serial.print(CHAR_SPACE);
+            Serial.print(systemMgr.getVersion(), HEX);
+            Serial.print(CHAR_TILDE);
+            Serial.print(VERSION, HEX);
+            Serial.println();
+        }
+
+        // Do the update here.
+        systemMgr.update();
     }
 
     // Start I2C communications.
