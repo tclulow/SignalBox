@@ -50,6 +50,9 @@
 #define SB_INPUT_MODULE true       // The is an input module.
 
 
+const uint8_t MCP_GPIOA         = 0x12;     // MCP request for GPIO pins.
+
+
 #include "Config.h"                 // Common classes.
 #include "Messages.h"
 #include "Persisted.h"
@@ -135,8 +138,8 @@ void processReceipt(int aLen)
 {
     if (aLen > 0)
     {
-        // Read the command byte.
-        uint8_t command = i2cComms.readByte();
+        uint8_t  command = i2cComms.readByte();         // Note current flags in case they're needed.
+        uint16_t flags   = remote.getFlags();           // Read the command byte.
 
         if (isDebug(DEBUG_BRIEF))
         {
@@ -149,10 +152,14 @@ void processReceipt(int aLen)
             Serial.println();
         }
 
+        // Only MCP IO request command recognised at present.
         switch (command)
         {
-            default:               unrecognisedCommand(M_DEBUG_RECEIPT, command, 0);
-                                   break;
+            case MCP_GPIOA: i2cComms.sendByte((flags      ) & 0xff);    // Lo byte.
+                            i2cComms.sendByte((flags >> 8 ) & 0xff);    // Hi byte.
+                            break;
+            default:        unrecognisedCommand(M_DEBUG_RECEIPT, command, 0);
+                            break;
         }
     }
     else
