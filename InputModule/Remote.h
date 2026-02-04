@@ -46,7 +46,7 @@ class Remote: public Persisted
         uint16_t address = 0;                       // Address and command for IR receiver.
         uint16_t command = 0;
 
-        char     bluetoothCommand = ' ';            // Bluetooth commands.
+        char     bluetoothCommand = 0x00;           // Bluetooth commands.
     };
 
     uint16_t flags = 0xffff;                        // All 16 inputs are high by default.
@@ -134,7 +134,7 @@ class Remote: public Persisted
                 {
                     Serial.println(F("Received noise or an unknown (or not yet enabled) protocol"));
                     IrReceiver.printIRResultRawFormatted(&Serial, true);
-                    auto tDecodedRawData = IrReceiver.decodedIRData.decodedRawData; // uint32_t on 8 and 16 bit CPUs and uint64_t on 32 and 64 bit CPUs
+                    auto tDecodedRawData = IrReceiver.decodedIRData.decodedRawData;     // uint32_t on 8 and 16 bit CPUs and uint64_t on 32 and 64 bit CPUs
                     Serial.print(F("Raw data received are 0x"));
                     Serial.println(tDecodedRawData);
                 }
@@ -212,6 +212,7 @@ class Remote: public Persisted
             {
                 inputCodes[pin].address = IrReceiver.lastDecodedAddress;
                 inputCodes[pin].command = IrReceiver.lastDecodedCommand;
+                inputCodes[pin].bluetoothCommand = 0x00;
                 flash(++pin, DELAY_BLINK);
                 IrReceiver.resume();
                 expiry = millis() + DELAY_PROGRAM;
@@ -220,9 +221,11 @@ class Remote: public Persisted
             if (btSerial.available())
             {
                 char ch = btSerial.read();
-                if (   (ch >= 'A')
-                    && (ch <= 'z'))
+                if (   (ch >= 0x20)
+                    && (ch <= 0x7e))
                 {
+                    inputCodes[pin].address = 0;
+                    inputCodes[pin].command = 0;
                     inputCodes[pin].bluetoothCommand = ch;
                     flash(++pin, DELAY_BLINK);
                     expiry = millis() + DELAY_PROGRAM;
@@ -238,6 +241,8 @@ class Remote: public Persisted
     }
 
 
+    /** Flash the LED pin a number of times at the given interval.
+     */
     void flash(uint8_t aFlashes, long aInterval)
     {
         while (aFlashes-- > 0)                      // n flashes.
