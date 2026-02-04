@@ -16,31 +16,41 @@
 
 #include <IRremote.hpp>
 #include <EEPROM.h>
+#include <SoftwareSerial.h>
 
 
-static const uint8_t REMOTE_PIN    = 11;        // Remote control IR pin.
+static const uint8_t IR_PIN        = 11;        // Remote control IR pin.
+static const uint8_t BT_PIN_RX     = 10;        // Bluetooth RX pin.
+static const uint8_t BT_PIN_TX     = 9;         // Bluetooth TX pin.
 static const uint8_t INPUT_PIN_MAX = 16;        // 16 inputs to the node. Must match InputDef.INPUT_PIN_MAX.
-static const long    DELAY_EXPIRE  = 5000;      // Give up waiting for proramming after this interval (msecs).
+static const long    DELAY_PROGRAM = 5000;      // Give up waiting for proramming after this interval (msecs).
+static const long    DELAY_RESET   = 1000;      // Reset inputs after this interval.
 static const long    DELAY_WAITING = 20;        // Fast flicker when waiting for programming.
 
 
-
-/** Handle IR commands from a remote controller.
+/** Handle IR commands from a remote controller
+ *  and/or commands from a BT receiver.
  *  Extends Persisted to store IR codes.
  */
 class Remote: public Persisted
 {
     private:
 
-    struct IrCode
+    unsigned long expiry = millis();
+    SoftwareSerial btSerial{BT_PIN_RX, BT_PIN_TX};  // Rx, Tx
+
+    // Structure holding the programmed state.
+    struct Codes
     {   
         public:
-        uint16_t address = 0;
+        uint16_t address = 0;                       // Address and command for IR receiver.
         uint16_t command = 0;
+
+        char     bluetoothCommand = ' ';            // Bluetooth commands.
     };
 
-    uint16_t flags = 0xffff;                    // All 16 inputs are high by default.
-    IrCode irCodes[INPUT_PIN_MAX];              // The programmed IR codes.
+    uint16_t flags = 0xffff;                        // All 16 inputs are high by default.
+    Codes inputCodes[INPUT_PIN_MAX];                // The programmed input codes.
     
 
     public:
@@ -49,7 +59,7 @@ class Remote: public Persisted
      */
     Remote(uint16_t aBase) : Persisted(aBase)
     {
-        size = sizeof(irCodes);
+        size = sizeof(inputCodes);
     }
 
 
@@ -62,23 +72,27 @@ class Remote: public Persisted
             // First run, initialise the IR codes.
             for (int i = 0; i < INPUT_PIN_MAX; i++)
             {
-                irCodes[i].address = 0;
-                irCodes[i].command = 0;
+                inputCodes[i].address = 0;
+                inputCodes[i].command = 0;
+                inputCodes[i].bluetoothCommand = ' ';
             }
-            EEPROM.put(getBase(), irCodes);
+            EEPROM.put(getBase(), inputCodes);
         }
         else
         {
             // Load the saved IR codes.
-            EEPROM.get(getBase(), irCodes);
+            EEPROM.get(getBase(), inputCodes);
         }
 
         // Configure the on-board LED pin for output
         pinMode(LED_BUILTIN, OUTPUT);       
 
-        // Initialise the Receiver.
-        IrReceiver.begin(REMOTE_PIN, ENABLE_LED_FEEDBACK);
+        // Initialise the IR Receiver.
+        IrReceiver.begin(IR_PIN, ENABLE_LED_FEEDBACK);
         IrReceiver.printActiveIRProtocols(&Serial);
+
+        // Initialise Bluetooth (Default speed of HC-05).
+        btSerial.begin(9600);
 
         programIrCodes();
     }
@@ -87,6 +101,25 @@ class Remote: public Persisted
     /** Update the state.
      */
     void update()
+    {
+        irUpdate();
+        btUpdate();
+    }
+
+
+    /** Get the flags.
+     */
+    uint16_t getFlags()
+    {
+        return flags;
+    }
+
+
+    private:
+
+    /** Update IR inputs.
+     */
+    void irUpdate()
     {
         if (IrReceiver.decode())
         {
@@ -115,10 +148,10 @@ class Remote: public Persisted
             }
             for (uint16_t pin = 0; pin < INPUT_PIN_MAX; pin++)
             {
-                if (   (irCodes[pin].address == IrReceiver.lastDecodedAddress)
-                    && (irCodes[pin].command == IrReceiver.lastDecodedCommand))
+                if (   (inputCodes[pin].address == IrReceiver.lastDecodedAddress)
+                    && (inputCodes[pin].command == IrReceiver.lastDecodedCommand))
                 {
-                    flags = ~(1 << pin);
+                    flags &= ~(1 << pin);
                 }
             }
         
@@ -142,44 +175,65 @@ class Remote: public Persisted
     }
 
 
-    /** Get the flags.
+    /** Update BT inputs.
      */
-    uint16_t getFlags()
+    void btUpdate()
     {
-        return flags;
+        if (btSerial.available())
+        {
+            char ch = btSerial.read();
+            for (uint16_t pin = 0; pin < INPUT_PIN_MAX; pin++)
+            {
+                if (ch == inputCodes[pin].bluetoothCommand)
+                {
+                    flags &= ~(1 << pin);
+                }
+            }
+
+        }
     }
 
-
-    private:
 
     /** Program IR codes */
     void programIrCodes()
     {
-        unsigned long expire = millis() + DELAY_EXPIRE;
+        expiry = millis() + DELAY_PROGRAM;
         uint8_t pin = 0;
 
         flash(pin, DELAY_BLINK_LONG);
 
         // Loop waiting for a programming event.
         while (   (pin < INPUT_PIN_MAX)
-               && (expire < millis()))
+               && (expiry < millis()))
         {
             flash(1, DELAY_WAITING);
 
             if (IrReceiver.decode())
             {
-                irCodes[pin].address = IrReceiver.lastDecodedAddress;
-                irCodes[pin].command = IrReceiver.lastDecodedCommand;
+                inputCodes[pin].address = IrReceiver.lastDecodedAddress;
+                inputCodes[pin].command = IrReceiver.lastDecodedCommand;
                 flash(++pin, DELAY_BLINK);
                 IrReceiver.resume();
-                expire = millis() + DELAY_EXPIRE;
+                expiry = millis() + DELAY_PROGRAM;
+            }
+
+            if (btSerial.available())
+            {
+                char ch = btSerial.read();
+                if (   (ch >= 'A')
+                    && (ch <= 'z'))
+                {
+                    inputCodes[pin].bluetoothCommand = ch;
+                    flash(++pin, DELAY_BLINK);
+                    expiry = millis() + DELAY_PROGRAM;
+                }
             }
         }
 
-        // Update the IR codes if they've been changed.
+        // Update input codes if they've been changed.
         if (pin > 0)
         {
-            EEPROM.put(getBase(), irCodes);
+            EEPROM.put(getBase(), inputCodes);
         }
     }
 

@@ -29,8 +29,8 @@
  *  D6      Alternate jumper J3.
  *  D7      Alternate jumper J4.
  *  D8      Unused.
- *  D9      Unused.
- *  D10     Unused.
+ *  D9      BT TX.
+ *  D10     BT RX.
  *  D11     Remote IR.
  *  D12     Unused.
  *  D13     Unused.         Also flash firmware version.
