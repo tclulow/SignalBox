@@ -565,7 +565,7 @@ void processReceipt(int aLen)
                                    systemMgr.saveSystemData();
                                    break;
 
-            case COMMS_CMD_SET_LO:
+            case COMMS_CMD_SET_LO: [[fallthrough]];
             case COMMS_CMD_SET_HI: i2cComms.readByte();                 // Dummy node number (not required).
                                    delay = i2cComms.readByte();         // Delay value.
                                    actionState(pin, command == COMMS_CMD_SET_HI, delay, false);
