@@ -204,7 +204,7 @@ class Remote: public Persisted
 
         // Loop waiting for a programming event.
         while (   (pin < INPUT_PIN_MAX)
-               && (expiry < millis()))
+               && (millis() < expiry))
         {
             flash(1, DELAY_WAITING);
 
