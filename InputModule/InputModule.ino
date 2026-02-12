@@ -62,16 +62,13 @@ const uint8_t MCP_GPIOA         = 0x12;     // MCP request for GPIO pins.
 #include "Remote.h"
 
 
-// Ticking
-unsigned long  now       = 0;   // To keep the current time (since boot).
-
 #define COMMAND_BUFFER_LEN   8                  // Serial command buffer length
 char    commandBuffer[COMMAND_BUFFER_LEN + 1];  // Buffer to read characters with null terminator on the end.
 uint8_t commandLen = 0;                         // Length of command.
 
 
 // I2C request command parameters
-volatile uint8_t requestCommand = COMMS_CMD_NONE;
+volatile uint8_t requestCommand = 0;
 volatile uint8_t requestOption  = 0;
 volatile uint8_t requestNode    = 0;
 
@@ -138,27 +135,25 @@ void processReceipt(int aLen)
 {
     if (aLen > 0)
     {
-        uint8_t  command = i2cComms.readByte();         // Note current flags in case they're needed.
-        uint16_t flags   = remote.getFlags();           // Read the command byte.
+        requestCommand = i2cComms.readByte();         // Note current flags.
 
         if (isDebug(DEBUG_BRIEF))
         {
             Serial.println();
             Serial.print(PGMT(M_DEBUG_RECEIPT));
             Serial.print(PGMT(M_DEBUG_COMMAND));
-            Serial.print(command, HEX);
+            Serial.print(requestCommand, HEX);
             Serial.print(PGMT(M_DEBUG_LEN));
             Serial.print(aLen, HEX);
             Serial.println();
         }
 
         // Only MCP IO request command recognised at present.
-        switch (command)
+        switch (requestCommand)
         {
-            case MCP_GPIOA: i2cComms.sendByte((flags      ) & 0xff);    // Lo byte.
-                            i2cComms.sendByte((flags >> 8 ) & 0xff);    // Hi byte.
-                            break;
-            default:        unrecognisedCommand(M_DEBUG_RECEIPT, command, 0);
+            case MCP_GPIOA: break;
+
+            default:        unrecognisedCommand(M_DEBUG_RECEIPT, requestCommand, 0);
                             break;
         }
     }
@@ -223,22 +218,33 @@ void processRequest()
 
     switch (requestCommand)
     {
-        default:               unrecognisedCommand(M_DEBUG_REQUEST, requestCommand, 0);
-                               break;
+        case MCP_GPIOA: processFlags();
+                        break;
+        default:        unrecognisedCommand(M_DEBUG_REQUEST, requestCommand, 0);
+                        break;
     }
 
     // Clear pending command.
-    requestCommand = COMMS_CMD_NONE;
+    requestCommand = 0;
 }
 
 
-/** Process a received command.
- *  Using the contents of the commandBuffer:
+/** Process the getFlags request.
+ */
+void processFlags()
+{
+    uint16_t flags = remote.getFlags();
+    i2cComms.sendByte((flags      ) & 0xff);    // Lo byte.
+    i2cComms.sendByte((flags >> 8 ) & 0xff);    // Hi byte.
+}
+
+
+/** Process a serial command.
+    TODO - implement this.
  */
 void processCommand()
 {
 }
-
 
 //// Metrics.
 //long start = 0;
@@ -275,12 +281,8 @@ void loop()
         }
     }
 
-    // Record the time now
-    now = millis();
-
     // Trigger an update of the Remote.
     remote.update();
-
 
 //    // Metrics
 //    count += 1;
